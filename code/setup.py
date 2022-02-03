@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 version = 0.1
 
@@ -8,5 +8,5 @@ VERSION = version
 
 setup(name='slope',
       license=LICENSE,
-      packages=['slope']
+      packages=find_packages()
       )

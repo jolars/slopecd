@@ -83,6 +83,6 @@ class SortedL1Norm:
                 beta[i] = d
 
         beta[ord] = beta.copy()
-        beta = beta * beta_sign
+        beta *=  beta_sign
 
         return beta

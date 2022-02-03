@@ -18,6 +18,12 @@ class SortedL1Norm:
         lam : array
             Regularization sequence. Should be non-negative and non-increasing.
         """
+        if np.any(lam < 0):
+            raise ValueError("lambdas should all be positive")
+
+        if np.any(np.diff(lam) > 0):
+            raise ValueError("lambdas should all be non-increasing")
+
         self.lam = lam
 
     def evaluate(self, beta):

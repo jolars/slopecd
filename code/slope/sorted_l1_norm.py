@@ -52,8 +52,8 @@ class SortedL1Norm:
 
         s = np.empty(p)
         w = np.empty(p)
-        idx_i = np.empty(p, np.int8)
-        idx_j = np.empty(p, np.int8)
+        idx_i = np.empty(p, np.int64)
+        idx_j = np.empty(p, np.int64)
 
         k = 0
 

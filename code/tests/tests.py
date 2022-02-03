@@ -16,10 +16,8 @@ class TestPenalty(unittest.TestCase):
 
         self.assertAlmostEqual(pen.evaluate(beta), 22.53)
 
-        self.assertTrue(
-            np.allclose(pen.prox(beta),
-                        np.array([1.0, 0.8, 0.1, -1.3, 0.0, -0.0]),
-                        rtol=1e-12))
+        np.testing.assert_allclose(pen.prox(beta),
+                                   np.array([1.0, 0.8, 0.1, -1.3, 0.0, -0.0]))
 
     def test_assertions(self):
         with self.assertRaises(ValueError):

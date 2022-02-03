@@ -34,7 +34,7 @@ class SortedL1Norm:
         beta : array
             Vector of coefficients.
         """
-        return np.sum(self.lam * np.flip(np.sort(np.abs(beta))))
+        return np.sum(self.lam * np.sort(np.abs(beta))[::-1])
 
     def prox(self, beta):
         """Compute the sorted L1 proximal operator

@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 version = 0.1
 
@@ -9,4 +9,5 @@ VERSION = version
 setup(name='slope',
       install_requires=['numpy>=1.12'],
       license=LICENSE,
-      packages=['slope'])
+      packages=find_packages()
+      )

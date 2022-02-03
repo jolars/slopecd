@@ -38,7 +38,7 @@ def prox_grad(X, y, alphas, max_iter=100, tol=1e-10, verbose=True):
         w = prox_slope(w + (X.T @ R) / (L * n_samples), alphas / L)
         R[:] = y - X @ w
         theta = R / n_samples
-        theta /= dual_norm_slope(X, theta, alphas)
+        theta /= max(1, dual_norm_slope(X, theta, alphas))
         dual = (norm(y) ** 2 - norm(y - theta * n_samples) ** 2) / \
             (2 * n_samples)
         primal = norm(R) ** 2 / (2 * n_samples) + \
@@ -56,7 +56,7 @@ X, y, _ = make_correlated_data(n_samples=100, n_features=40, random_state=0)
 randnorm = stats.norm(loc=0, scale=1)
 q = 0.5
 
-alphas = 0.1 * \
+alphas = 1 * \
     randnorm.ppf(1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1]))
 # alphas = np.full(X.shape[1], np.max(np.abs(X.T @ y)) / len(y) / 4)
 

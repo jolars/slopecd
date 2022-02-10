@@ -6,22 +6,32 @@ from slope.utils import prox_slope, ST, dual_norm_slope
 
 
 def get_clusters(w):
-    abs_w = np.abs(w)
-    order = np.argsort(abs_w)[::-1]
-    clusters = []
-    current_cluster = [order[0]]
-    for j in range(len(w) - 1):
-        if len(current_cluster) == 0:
-            current_cluster.append(order[j])
-        if np.isclose(abs_w[order[j]], abs_w[order[j+1]]):
-            current_cluster.append(order[j+1])
-        else:
-            clusters.append(current_cluster)
-            current_cluster = []
+    # abs_w = np.abs(w)
+    # order = np.argsort(abs_w)[::-1]
+    # clusters = []
+    # current_cluster = [order[0]]
+    # for j in range(len(w) - 1):
+    #     if len(current_cluster) == 0:
+    #         current_cluster.append(order[j])
+    #     if np.isclose(abs_w[order[j]], abs_w[order[j+1]]):
+    #         current_cluster.append(order[j+1])
+    #     else:
+    #         clusters.append(current_cluster)
+    #         current_cluster = []
 
-    if len(current_cluster) != 0:
-        clusters.append(current_cluster)
+    # if len(current_cluster) != 0:
+    #     clusters.append(current_cluster)
+    unique, indices = np.unique(np.abs(w), return_inverse=True)
+
+    clusters = [[] for _ in range(len(unique))]
+    for i in range(len(indices)):
+        clusters[indices[i]].append(i)
     return clusters
+
+    # TODO UT:
+    # assert sum([len(cluster) for cluster in clusters]) == len(w)
+    # for cluster in clusters:
+    #     assert len(np.unique(np.abs(w[cluster]))) == 1
 
 
 @njit
@@ -139,16 +149,21 @@ def oracle_cd(X, y, alphas, max_iter, tol):
         X, y, alphas, max_iter=10000, tol=1e-10, n_cd=0)[0]
     clusters = get_clusters(w_star)
     n_clusters = len(clusters)
-    # create collapsed design. Beware, we ignore the last cluster (0-valued)
-    X_reduced = np.zeros([n_samples, n_clusters - 1])
-    alphas_reduced = np.zeros(n_clusters - 1)
+    # create collapsed design. Beware, we ignore the last cluster, but only
+    # if it is 0 valued
+    if w_star[clusters[-1][0]] == 0:
+        clusters = clusters[:-1]
+        n_clusters -= 1
 
-    for idx, cluster in enumerate(clusters[:-1]):
+    X_reduced = np.zeros([n_samples, n_clusters])
+    alphas_reduced = np.zeros(n_clusters)
+
+    for idx, cluster in enumerate(clusters):
         X_reduced[:, idx] = (
             X[:, cluster] * np.sign(w_star[cluster])).sum(axis=1)
         alphas_reduced[idx] = alphas[cluster].sum()
     # run CD on it:
-    w_reduced = np.zeros(n_clusters - 1)
+    w_reduced = np.zeros(n_clusters)
     R = y.copy()
     lc = norm(X_reduced, axis=0) ** 2 / n_samples
     E = []
@@ -158,7 +173,7 @@ def oracle_cd(X, y, alphas, max_iter, tol):
                  (alphas_reduced * np.abs(w_reduced)).sum())
 
     w = np.zeros(n_features)
-    for idx, cluster in enumerate(clusters[:-1]):
+    for idx, cluster in enumerate(clusters):
         w[cluster] = w_reduced[idx] * np.sign(w_star[cluster])
 
     return w, E

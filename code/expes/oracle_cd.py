@@ -14,6 +14,8 @@ q = 0.5
 alphas_seq = randnorm.ppf(
     1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1]))
 
+# make it infinity norm:
+alphas_seq[1:] = 0
 
 alpha_max = dual_norm_slope(X, y / len(y), alphas_seq)
 

@@ -119,3 +119,46 @@ def hybrid(X, y, alphas, max_iter=100, tol=1e-10, verbose=True):
         # Using the separability property on clusters
         clusters = get_clusters(w)
     return w, E, gaps, theta
+
+
+# @njit
+def pure_cd_epoch(w, X, R, alphas, lc):
+    n_samples, n_features = X.shape
+    for j in range(n_features):
+        old = w[j]
+        w[j] = ST(w[j] + X[:, j] @ R / (lc[j] * n_samples),
+                  alphas[j] / lc[j])
+        if w[j] != old:
+            R += (old - w[j]) * X[:, j]
+
+
+def oracle_cd(X, y, alphas, max_iter, tol):
+    """Oracle CD: get solution clusters and run CD on collapsed design."""
+    n_samples, n_features = X.shape
+    w_star = prox_grad(
+        X, y, alphas, max_iter=10000, tol=1e-10, n_cd=0)[0]
+    clusters = get_clusters(w_star)
+    n_clusters = len(clusters)
+    # create collapsed design. Beware, we ignore the last cluster (0-valued)
+    X_reduced = np.zeros([n_samples, n_clusters - 1])
+    alphas_reduced = np.zeros(n_clusters - 1)
+
+    for idx, cluster in enumerate(clusters[:-1]):
+        X_reduced[:, idx] = (
+            X[:, cluster] * np.sign(w_star[cluster])).sum(axis=1)
+        alphas_reduced[idx] = alphas[cluster].sum()
+    # run CD on it:
+    w_reduced = np.zeros(n_clusters - 1)
+    R = y.copy()
+    lc = norm(X_reduced, axis=0) ** 2 / n_samples
+    E = []
+    for it in range(max_iter):
+        pure_cd_epoch(w_reduced, X_reduced, R, alphas_reduced, lc)
+        E.append(norm(R) ** 2 / (2 * n_samples) +
+                 (alphas_reduced * np.abs(w_reduced)).sum())
+
+    w = np.zeros(n_features)
+    for idx, cluster in enumerate(clusters[:-1]):
+        w[cluster] = w_reduced[idx] * np.sign(w_star[cluster])
+
+    return w, E

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from benchopt.datasets import make_correlated_data
 
 from slope.utils import dual_norm_slope
-from slope.solvers import prox_grad, hybrid
+from slope.solvers import prox_grad, oracle_cd
 
 
 X, y, _ = make_correlated_data(n_samples=100, n_features=40, random_state=0)
@@ -20,16 +20,15 @@ alpha_max = dual_norm_slope(X, y / len(y), alphas_seq)
 alphas = alpha_max * alphas_seq / 5
 plt.close('all')
 
-for n_cd in [0, 1, 5, 10]:
-    w, E, gaps, theta = prox_grad(
-        X, y, alphas, max_iter=1000 // (n_cd + 1), n_cd=n_cd, verbose=1)
-    print(gaps[0])
+w, E, gaps, theta = prox_grad(
+    X, y, alphas, max_iter=1000, n_cd=0, verbose=1)
 
-    plt.semilogy(np.arange(len(E)) * (1 + n_cd), gaps,
-                 label=f'n_cd = {n_cd}')
-w, E, gaps, theta = hybrid(
-    X, y, alphas, max_iter=1000, verbose=1)
-plt.semilogy(np.arange(len(E)), gaps,
-             label='Hybrid strategy')
+w_oracle, E_oracle = oracle_cd(X, y, alphas, 1000, tol=0)
+
+
+E_min = min(np.min(E), np.min(E_oracle))
+
+plt.semilogy(E - E_min, label="PGD")
+plt.semilogy(E_oracle - E_min, label="oracle")
 plt.legend()
 plt.show(block=False)

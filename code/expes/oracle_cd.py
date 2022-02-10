@@ -15,7 +15,7 @@ alphas_seq = randnorm.ppf(
     1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1]))
 
 # make it infinity norm:
-alphas_seq[1:] = 0
+# alphas_seq[1:] = 0
 
 alpha_max = dual_norm_slope(X, y / len(y), alphas_seq)
 
@@ -31,6 +31,6 @@ w_oracle, E_oracle = oracle_cd(X, y, alphas, 1000, tol=0)
 E_min = min(np.min(E), np.min(E_oracle))
 
 plt.semilogy(E - E_min, label="PGD")
-plt.semilogy(E_oracle - E_min, label="oracle")
+plt.semilogy(E_oracle - E_min, label="oracle CD")
 plt.legend()
 plt.show(block=False)

@@ -21,12 +21,14 @@ def get_clusters(w):
 
     # if len(current_cluster) != 0:
     #     clusters.append(current_cluster)
-    unique, indices = np.unique(np.abs(w), return_inverse=True)
+    unique, indices, counts = np.unique(
+        np.abs(w), return_inverse=True, return_counts=True)
 
     clusters = [[] for _ in range(len(unique))]
     for i in range(len(indices)):
         clusters[indices[i]].append(i)
-    return clusters
+    # return cluster of largest value first, then 2nd largest, etc:
+    return clusters[::-1], counts[::-1]
 
     # TODO UT:
     # assert sum([len(cluster) for cluster in clusters]) == len(w)
@@ -147,7 +149,9 @@ def oracle_cd(X, y, alphas, max_iter, tol):
     n_samples, n_features = X.shape
     w_star = prox_grad(
         X, y, alphas, max_iter=10000, tol=1e-10, n_cd=0)[0]
-    clusters = get_clusters(w_star)
+    clusters, cluster_sizes = get_clusters(w_star)
+    cluster_ptr = np.cumsum(cluster_sizes)
+    cluster_ptr = np.r_[0, cluster_ptr]
     n_clusters = len(clusters)
     # create collapsed design. Beware, we ignore the last cluster, but only
     # if it is 0 valued
@@ -161,7 +165,7 @@ def oracle_cd(X, y, alphas, max_iter, tol):
     for idx, cluster in enumerate(clusters):
         X_reduced[:, idx] = (
             X[:, cluster] * np.sign(w_star[cluster])).sum(axis=1)
-        alphas_reduced[idx] = alphas[cluster].sum()
+        alphas_reduced[idx] = alphas[cluster_ptr[idx]:cluster_ptr[idx + 1]].sum()
     # run CD on it:
     w_reduced = np.zeros(n_clusters)
     R = y.copy()

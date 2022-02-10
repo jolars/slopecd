@@ -1,12 +1,8 @@
-from cmath import isclose
-from scipy import stats
-from numba import njit
 import numpy as np
-from benchopt.datasets import make_correlated_data
+from numba import njit
 from numpy.linalg import norm
-import matplotlib.pyplot as plt
 
-from slope.utils import ST, dual_norm_slope, prox_slope
+from slope.utils import prox_slope, ST, dual_norm_slope
 
 
 def get_clusters(w):
@@ -74,7 +70,7 @@ def prox_grad(X, y, alphas, max_iter=100, tol=1e-10, n_cd=0, verbose=True):
     return w, E, gaps, theta
 
 
-def hybrid_strategy(X, y, alphas, max_iter=100, tol=1e-10, verbose=True):
+def hybrid(X, y, alphas, max_iter=100, tol=1e-10, verbose=True):
     n_samples, n_features = X.shape
     R = y.copy()
     w = np.zeros(n_features)
@@ -123,32 +119,3 @@ def hybrid_strategy(X, y, alphas, max_iter=100, tol=1e-10, verbose=True):
         # Using the separability property on clusters
         clusters = get_clusters(w)
     return w, E, gaps, theta
-
-
-X, y, _ = make_correlated_data(n_samples=100, n_features=40, random_state=0)
-randnorm = stats.norm(loc=0, scale=1)
-q = 0.5
-
-alphas_seq = randnorm.ppf(
-    1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1]))
-
-# alphas_seq = np.ones(X.shape[1])
-
-alpha_max = dual_norm_slope(X, y / len(y), alphas_seq)
-
-alphas = alpha_max * alphas_seq / 500
-plt.close('all')
-
-for n_cd in [0, 1, 5, 10]:
-    w, E, gaps, theta = prox_grad(
-        X, y, alphas, max_iter=1000 // (n_cd + 1), n_cd=n_cd, verbose=1)
-    print(gaps[0])
-
-    plt.semilogy(np.arange(len(E)) * (1 + n_cd), gaps,
-                 label=f'n_cd = {n_cd}')
-w, E, gaps, theta = hybrid_strategy(
-        X, y, alphas, max_iter=1000, verbose=1)
-plt.semilogy(np.arange(len(E)), gaps,
-             label='Hybrid strategy')
-plt.legend()
-plt.show(block=False)

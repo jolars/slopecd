@@ -55,6 +55,7 @@ def prox_grad(X, y, alphas, max_iter=100, tol=1e-10, n_cd=0, verbose=True):
     n_samples, n_features = X.shape
     R = y.copy()
     w = np.zeros(n_features)
+    theta = np.zeros(n_samples)
 
     L = norm(X, ord=2)**2 / n_samples
     lc = norm(X, axis=0)**2 / n_samples

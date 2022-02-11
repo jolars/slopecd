@@ -92,6 +92,7 @@ def hybrid(X, y, alphas, max_iter=100, tol=1e-10, verbose=True):
     n_samples, n_features = X.shape
     R = y.copy()
     w = np.zeros(n_features)
+    theta = np.zeros(n_samples)
     clusters = [np.arange(0, n_features)]
 
     L = norm(X, ord=2)**2 / n_samples
@@ -183,7 +184,7 @@ def oracle_cd(X, y, alphas, max_iter, tol):
     lc = norm(X_reduced, axis=0)**2 / n_samples
     E = []
 
-    for it in range(max_iter):
+    for _ in range(max_iter):
         pure_cd_epoch(w_reduced, X_reduced, R, alphas_reduced, lc)
         E.append(
             norm(R)**2 / (2 * n_samples) +

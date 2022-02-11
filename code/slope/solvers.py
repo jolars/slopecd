@@ -2,7 +2,7 @@ import numpy as np
 from numba import njit
 from numpy.linalg import norm
 
-from slope.utils import prox_slope, ST, dual_norm_slope
+from slope.utils import ST, dual_norm_slope, prox_slope
 
 
 def get_clusters(w):
@@ -21,8 +21,9 @@ def get_clusters(w):
 
     # if len(current_cluster) != 0:
     #     clusters.append(current_cluster)
-    unique, indices, counts = np.unique(
-        np.abs(w), return_inverse=True, return_counts=True)
+    unique, indices, counts = np.unique(np.abs(w),
+                                        return_inverse=True,
+                                        return_counts=True)
 
     clusters = [[] for _ in range(len(unique))]
     for i in range(len(indices)):
@@ -55,8 +56,8 @@ def prox_grad(X, y, alphas, max_iter=100, tol=1e-10, n_cd=0, verbose=True):
     R = y.copy()
     w = np.zeros(n_features)
 
-    L = norm(X, ord=2) ** 2 / n_samples
-    lc = norm(X, axis=0) ** 2 / n_samples
+    L = norm(X, ord=2)**2 / n_samples
+    lc = norm(X, axis=0)**2 / n_samples
     E, gaps = [], []
     E.append(norm(y)**2 / (2 * n_samples))
     gaps.append(E[0])
@@ -88,8 +89,8 @@ def hybrid(X, y, alphas, max_iter=100, tol=1e-10, verbose=True):
     w = np.zeros(n_features)
     clusters = [np.arange(0, n_features)]
 
-    L = norm(X, ord=2) ** 2 / n_samples
-    lc = norm(X, axis=0) ** 2 / n_samples
+    L = norm(X, ord=2)**2 / n_samples
+    lc = norm(X, axis=0)**2 / n_samples
     E, gaps = [], []
     E.append(norm(y)**2 / (2 * n_samples))
     gaps.append(E[0])
@@ -98,8 +99,7 @@ def hybrid(X, y, alphas, max_iter=100, tol=1e-10, verbose=True):
         low = 0
         high = 0
         if t % 2 == 0:
-            w = prox_slope(
-                w + (X.T @ R) / (L * n_samples), alphas / L)
+            w = prox_slope(w + (X.T @ R) / (L * n_samples), alphas / L)
             R[:] = y - X @ w
         else:
             for b in clusters:
@@ -107,12 +107,11 @@ def hybrid(X, y, alphas, max_iter=100, tol=1e-10, verbose=True):
                 if len(b) == 1:
                     # if update a single cd then use local Lipschitz constant
                     w[b] = prox_slope(
-                        w[b] + (X[:, b].T @ R) / (
-                            lc[b] * n_samples), alphas[low:high] / lc[b])
+                        w[b] + (X[:, b].T @ R) / (lc[b] * n_samples),
+                        alphas[low:high] / lc[b])
                 else:
-                    w[b] = prox_slope(
-                        w[b] + (X[:, b].T @ R) / (
-                            L * n_samples), alphas[low:high] / L)
+                    w[b] = prox_slope(w[b] + (X[:, b].T @ R) / (L * n_samples),
+                                      alphas[low:high] / L)
                 R[:] = y - X @ w
                 low = high
         theta = R / n_samples
@@ -138,8 +137,7 @@ def pure_cd_epoch(w, X, R, alphas, lc):
     n_samples, n_features = X.shape
     for j in range(n_features):
         old = w[j]
-        w[j] = ST(w[j] + X[:, j] @ R / (lc[j] * n_samples),
-                  alphas[j] / lc[j])
+        w[j] = ST(w[j] + X[:, j] @ R / (lc[j] * n_samples), alphas[j] / lc[j])
         if w[j] != old:
             R += (old - w[j]) * X[:, j]
 
@@ -147,8 +145,7 @@ def pure_cd_epoch(w, X, R, alphas, lc):
 def oracle_cd(X, y, alphas, max_iter, tol):
     """Oracle CD: get solution clusters and run CD on collapsed design."""
     n_samples, n_features = X.shape
-    w_star = prox_grad(
-        X, y, alphas, max_iter=10000, tol=1e-10, n_cd=0)[0]
+    w_star = prox_grad(X, y, alphas, max_iter=10000, tol=1e-10, n_cd=0)[0]
     clusters, cluster_sizes = get_clusters(w_star)
     cluster_ptr = np.cumsum(cluster_sizes)
     cluster_ptr = np.r_[0, cluster_ptr]
@@ -163,18 +160,20 @@ def oracle_cd(X, y, alphas, max_iter, tol):
     alphas_reduced = np.zeros(n_clusters)
 
     for idx, cluster in enumerate(clusters):
-        X_reduced[:, idx] = (
-            X[:, cluster] * np.sign(w_star[cluster])).sum(axis=1)
-        alphas_reduced[idx] = alphas[cluster_ptr[idx]:cluster_ptr[idx + 1]].sum()
+        X_reduced[:,
+                  idx] = (X[:, cluster] * np.sign(w_star[cluster])).sum(axis=1)
+        alphas_reduced[idx] = alphas[cluster_ptr[idx]:cluster_ptr[idx +
+                                                                  1]].sum()
     # run CD on it:
     w_reduced = np.zeros(n_clusters)
     R = y.copy()
-    lc = norm(X_reduced, axis=0) ** 2 / n_samples
+    lc = norm(X_reduced, axis=0)**2 / n_samples
     E = []
     for it in range(max_iter):
         pure_cd_epoch(w_reduced, X_reduced, R, alphas_reduced, lc)
-        E.append(norm(R) ** 2 / (2 * n_samples) +
-                 (alphas_reduced * np.abs(w_reduced)).sum())
+        E.append(
+            norm(R)**2 / (2 * n_samples) +
+            (alphas_reduced * np.abs(w_reduced)).sum())
 
     w = np.zeros(n_features)
     for idx, cluster in enumerate(clusters):

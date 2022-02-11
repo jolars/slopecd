@@ -1,0 +1,136 @@
+\PassOptionsToPackage{unicode,pdfusetitle}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+
+\documentclass[english,a4paper]{article}
+
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath,amsthm,mathtools,isomath}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{textcomp} % provide euro and other symbols
+\usepackage{babel}
+
+\usepackage{upquote} % straight quotes in verbatim environments
+\usepackage{nicefrac}	% compact symbols for 1/2, etc.
+\usepackage[]{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+
+\usepackage{xcolor}
+\usepackage{xurl}
+\usepackage{bookmark}
+\usepackage{csquotes}
+\usepackage{siunitx}
+
+\usepackage{todonotes}
+
+\usepackage[noabbrev]{cleveref}
+
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks = true,
+  linkcolor  = Maroon,
+  filecolor  = Maroon,
+  citecolor  = Blue,
+  urlcolor   = Blue
+}
+
+\usepackage{longtable}
+\usepackage{booktabs}
+
+\usepackage{etoolbox}
+
+% Allow footnotes in longtable head/foot
+\usepackage{footnotehyper}
+\makesavenoteenv{longtable}
+
+\usepackage{graphicx}
+\usepackage{subcaption}
+
+% % tikz
+% \usepackage{pgfplots}
+% \pgfplotsset{width=7cm,compat=1.16}
+% \usepgfplotslibrary{external}
+% \tikzexternalize 
+
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+\usepackage{pdfpages}
+\usepackage{algorithm,algpseudocode}
+
+\usepackage[]{authblk}
+\renewcommand\Affilfont{\itshape\small}
+
+% bibliography
+\makeatletter
+\def\blx@nowarnpolyglossia{}
+\makeatother
+\usepackage[citestyle=alphabetic,language=english]{biblatex}
+\addbibresource{slopecd.bib}
+
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+
+% operators
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\range}{range}
+\DeclareMathOperator{\nullspace}{null}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\card}{card}
+\DeclareMathOperator{\sign}{sign}
+
+% theorems
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}[theorem]{Assumption}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+% title block
+\title{Coordinate Descent for SLOPE}
+\author[1,*]{}
+\affil[1]{Department of Statistics, Lund University}
+\affil[*]{Corresponding author:
+  \href{}{}
+}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+  \input{tex/abstract}
+\end{abstract}
+
+\section{Introduction}\label{sec:introduction}
+\input{tex/introduction}
+
+\section{Theory}\label{sec:theory}
+\input{tex/theory}
+
+\section{Experiments}\label{sec:experiments}
+\input{tex/experiments}
+
+\section{Discussion}\label{sec:discussion}
+\input{tex/discussion.tex}
+
+\printbibliography
+
+\appendix
+
+\section{Proofs}\label{sec:proofs}
+\input{tex/proofs.tex}
+
+\end{document}

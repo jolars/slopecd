@@ -155,7 +155,7 @@ def pure_cd_epoch(w, X, R, alphas, lc):
             R += (old - w[j]) * X[:, j]
 
 
-def oracle_cd(X, y, alphas, max_iter, tol):
+def oracle_cd(X, y, alphas, max_iter, tol=1e-10, verbose=False):
     """Oracle CD: get solution clusters and run CD on collapsed design."""
     n_samples, n_features = X.shape
     w_star = prox_grad(X, y, alphas, max_iter=10000, tol=1e-10, n_cd=0)[0]
@@ -179,20 +179,33 @@ def oracle_cd(X, y, alphas, max_iter, tol):
         alphas_reduced[idx] = alphas[cluster_ptr[idx]:cluster_ptr[idx +
                                                                   1]].sum()
     # run CD on it:
+    w = np.zeros(n_features)
     w_reduced = np.zeros(n_clusters)
     R = y.copy()
     lc = norm(X_reduced, axis=0)**2 / n_samples
     E = []
+    gaps = []
 
-    for _ in range(max_iter):
+    for it in range(max_iter):
         pure_cd_epoch(w_reduced, X_reduced, R, alphas_reduced, lc)
-        E.append(
-            norm(R)**2 / (2 * n_samples) +
-            (alphas_reduced * np.abs(w_reduced)).sum())
 
-    w = np.zeros(n_features)
+        for idx, cluster in enumerate(clusters):
+            w[cluster] = w_reduced[idx] * np.sign(w_star[cluster])
 
-    for idx, cluster in enumerate(clusters):
-        w[cluster] = w_reduced[idx] * np.sign(w_star[cluster])
+        theta = R / n_samples
+        theta /= max(1, dual_norm_slope(X, theta, alphas))
 
-    return w, E
+        dual = (norm(y)**2 - norm(y - theta * n_samples)**2) / (2 * n_samples)
+        primal = norm(R)**2 / (2 * n_samples) + np.sum(
+            alphas * np.sort(np.abs(w))[::-1])
+
+        E.append(primal)
+        gap = primal - dual
+        gaps.append(gap)
+
+        if verbose:
+            print(f"Iter: {it + 1}, loss: {primal}, gap: {gap:.2e}")
+        if gap < tol:
+            break
+
+    return w, E, gaps

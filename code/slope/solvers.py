@@ -62,6 +62,7 @@ def prox_grad(X, y, alphas, max_iter=100, tol=1e-10, n_cd=0, verbose=True):
     E, gaps = [], []
     E.append(norm(y)**2 / (2 * n_samples))
     gaps.append(E[0])
+
     for t in range(max_iter):
         w = prox_slope(w + (X.T @ R) / (L * n_samples), alphas / L)
         R[:] = y - X @ w
@@ -70,13 +71,16 @@ def prox_grad(X, y, alphas, max_iter=100, tol=1e-10, n_cd=0, verbose=True):
 
         theta = R / n_samples
         theta /= max(1, dual_norm_slope(X, theta, alphas))
+
         dual = (norm(y) ** 2 - norm(y - theta * n_samples) ** 2) / \
             (2 * n_samples)
         primal = norm(R) ** 2 / (2 * n_samples) + \
             np.sum(alphas * np.sort(np.abs(w))[::-1])
+
         E.append(primal)
         gap = primal - dual
         gaps.append(gap)
+
         if verbose:
             print(f"Iter: {t + 1}, loss: {primal}, gap: {gap:.2e}")
         if gap < tol:
@@ -99,6 +103,7 @@ def hybrid(X, y, alphas, max_iter=100, tol=1e-10, verbose=True):
     for t in range(max_iter):
         low = 0
         high = 0
+
         if t % 2 == 0:
             w = prox_slope(w + (X.T @ R) / (L * n_samples), alphas / L)
             R[:] = y - X @ w
@@ -115,21 +120,27 @@ def hybrid(X, y, alphas, max_iter=100, tol=1e-10, verbose=True):
                                       alphas[low:high] / L)
                 R[:] = y - X @ w
                 low = high
+
         theta = R / n_samples
         theta /= max(1, dual_norm_slope(X, theta, alphas))
+
         dual = (norm(y) ** 2 - norm(y - theta * n_samples) ** 2) / \
             (2 * n_samples)
         primal = norm(R) ** 2 / (2 * n_samples) + \
             np.sum(alphas * np.sort(np.abs(w))[::-1])
+
         E.append(primal)
         gap = primal - dual
         gaps.append(gap)
+
         if verbose:
             print(f"Iter: {t + 1}, loss: {primal}, gap: {gap:.2e}")
         if gap < tol:
             break
+
         # Using the separability property on clusters
         clusters = get_clusters(w)
+
     return w, E, gaps, theta
 
 
@@ -151,6 +162,7 @@ def oracle_cd(X, y, alphas, max_iter, tol):
     cluster_ptr = np.cumsum(cluster_sizes)
     cluster_ptr = np.r_[0, cluster_ptr]
     n_clusters = len(clusters)
+
     # create collapsed design. Beware, we ignore the last cluster, but only
     # if it is 0 valued
     if w_star[clusters[-1][0]] == 0:
@@ -170,6 +182,7 @@ def oracle_cd(X, y, alphas, max_iter, tol):
     R = y.copy()
     lc = norm(X_reduced, axis=0)**2 / n_samples
     E = []
+
     for it in range(max_iter):
         pure_cd_epoch(w_reduced, X_reduced, R, alphas_reduced, lc)
         E.append(
@@ -177,6 +190,7 @@ def oracle_cd(X, y, alphas, max_iter, tol):
             (alphas_reduced * np.abs(w_reduced)).sum())
 
     w = np.zeros(n_features)
+
     for idx, cluster in enumerate(clusters):
         w[cluster] = w_reduced[idx] * np.sign(w_star[cluster])
 

@@ -1,0 +1,67 @@
+\subsection{Directional Derivatives}%
+\label{sec:directional-derivatives}
+
+\subsubsection{The Sorted \texorpdfstring{\(\ell_1\)}{l1}
+  Norm}
+
+\begin{theorem}
+  \label{thm:sl1-directional-derivative}
+  Let \(h_0 \in \big(0, \min_{i,j \in \{i \mid \beta_i \neq 0\}}\big| |\beta_i| -
+  |\beta_j| \big| \big]\) and define \((\cdot)^*\) to be the
+  permutation such that
+  \[
+    |\beta + h_0v|_{(1)^*} \geq |\beta + h_0v |_{(2)^*}
+    \geq \cdots \geq |\beta + h_0v|_{(p)^*}.
+  \]
+  The directional derivative for the sorted \(\ell_1\) norm, \(J(\beta,
+  \lambda)\), is
+  \[
+    D_v J(\beta ; \lambda) =
+    \sum_i \sum_{j \in \mathcal{B}_i} \lambda_j v_{(j)^*}\sign(\beta_{(j)^*} + h_0v_{(j)^*})\]
+  where
+  \[
+    \mathcal{B}_i = \{j \mid |\beta_j| = |\beta_i|\}.
+  \]
+  \todo[author=JL]{We need something that doesn't define clusters multiple times.}
+\end{theorem}
+\begin{proof}
+  The directional derivative for the sorted \(\ell_1\) norm and a direction
+  \(v\) with \(\lVert v \rVert = 1\) is
+  \begin{equation}
+    \label{eq:sl1-directional-derivative}
+    \begin{aligned}
+      D_v J(\beta, \lambda) & = \lim_{h \searrow 0} \frac{J(\beta + h v; \lambda) - J(\beta; \lambda)}{h}                                            \\
+                            & = \lim_{h \searrow 0} \frac{\sum_{j=1}^p\lambda_j\big(|\beta + vh|_{(j)} - |\beta|_{(j)}\big)}{h}                      \\
+                            & = \lim_{h \searrow 0}\frac{\sum_i \sum_{j \in \mathcal{B}_i} \lambda_j\big(|\beta + vh|_{(j)} - |\beta|_{(j)}\big)}{h} \\
+    \end{aligned}
+  \end{equation}
+  First, assume that that is an \(i\) such that \(\card \mathcal{B}_i \neq 0\)
+  and \(\beta_i = 0\).
+  Then
+  \[
+    \begin{aligned}
+      \sum_{j \in \mathcal{B}_i}\frac{\lambda_j \big( |\beta + vh|_{(j)} - |\beta|_{(j)}\big)}{h}
+       & = \sum_{j \in \mathcal{B}_i} \lambda_j \sign(v)_{(j)}v_{(j)}               \\
+       & = \sum_{j \in \mathcal{B}_i} \lambda_j \sign(\beta + hv)_{(j)^*}v_{(j)^*},
+    \end{aligned}
+  \]
+  where the last equality follows from the fact that \(\sign(\beta + hv) =
+  \sign(\beta)\) and \((i) = (i)^*\) for all \(i\) whenever \(h > 0\) and
+  \(\beta \neq 0\).
+
+  Next, for each \(i\) such that \(\card \mathcal{B}_i \neq 0\) and
+  \(\beta_i \neq 0\), observe that \(\sign(\beta + hv) = \sign(\beta)\) and
+  \((i)^* = (i)\) whenever \(0 < h < h_0\), recalling the construction
+  of \(h_0\).
+  Therefore, we have
+  \[
+    \sum_{j \in \mathcal{B}_i} \frac{\lambda_j\big(|\beta + hv|_{(j)} - |\beta|_{(j)}\big)}{h}
+    = \sum_{j \in \mathcal{B}_i} \lambda_j\sign(\beta + vh)_{(j)^*}v_{(j)^*}.
+  \]
+  From this, we see that \eqref{eq:sl1-directional-derivative} reduces to
+  \[
+    \lim_{h \searrow 0} \sum_i \sum_{j \in \mathcal{B}_i} \lambda_j\sign(\beta + vh)_{(j)^*}v_{(j)^*}
+    = \sum_i \sum_{j \in \mathcal{B}_i} \lambda_j\sign(\beta + vh_0)_{(j)^*}v_{(j)^*}.
+  \]
+
+\end{proof}

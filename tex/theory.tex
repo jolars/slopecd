@@ -1,5 +1,10 @@
+%!TEX root = ../slopecd.tex
+\section{Theory}\label{sec:theory}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Directional Derivatives}%
 \label{sec:directional-derivatives}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 \subsubsection{The Sorted \texorpdfstring{\(\ell_1\)}{l1}
   Norm}
@@ -8,7 +13,7 @@
   \label{thm:sl1-directional-derivative}
   Let \(h_0 \in \big(0, \min_{i,j \in \{i \mid \beta_i \neq 0\}}\big| |\beta_i| -
   |\beta_j| \big| \big]\) and define \((\cdot)^*\) to be the
-  permutation such that
+  permutation such that  \mathurin{maybe naming the permutation $\sigma$ is more classical for the newcomer? }
   \[
     |\beta + h_0v|_{(1)^*} \geq |\beta + h_0v |_{(2)^*}
     \geq \cdots \geq |\beta + h_0v|_{(p)^*}.
@@ -23,6 +28,8 @@
     \mathcal{B}_i = \{j \mid |\beta_j| = |\beta_i|\}.
   \]
   \todo[author=JL]{We need something that doesn't define clusters multiple times.}
+  \mathurin{Good remark, I guess we could avoid naming the variable $i$ since above we have $i$ and $j$ being both in $[p]$ while here $i$ would in fact be in $[n_{clusters}/n_{groups}]$. $g$ for groups, as used in group Lasso? "For a fixed $\beta$, let $G$ be the number of different values taken by $\abs{\beta_j}$, i.e. the number of groups, and let $(\cB_g)_{g \in G}$ be a partition of $[p]$ such that $\forall (j, j') \in \cB_g, \abs{\beta_j} = \abs{\beta_{j'}}$}
+
 \end{theorem}
 \begin{proof}
   The directional derivative for the sorted \(\ell_1\) norm and a direction
@@ -35,7 +42,7 @@
                             & = \lim_{h \searrow 0}\frac{\sum_i \sum_{j \in \mathcal{B}_i} \lambda_j\big(|\beta + vh|_{(j)} - |\beta|_{(j)}\big)}{h} \\
     \end{aligned}
   \end{equation}
-  First, assume that that is an \(i\) such that \(\card \mathcal{B}_i \neq 0\)
+  First, assume that there is an \(i\) such that \(\card \mathcal{B}_i \neq 0\)
   and \(\beta_i = 0\).
   Then
   \[

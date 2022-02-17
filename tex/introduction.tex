@@ -1,5 +1,10 @@
+%!TEX root = ../slopecd.tex
+\section{Introduction}\label{sec:introduction}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 Sorted L-One Penalized Estimation (SLOPE)~\cite{bogdan2013,bogdan2015} is a
 type of sparse regression represented by the convex optimization problem
+\mathurin{For brevity, since it seems we are going to consider problems with a fixed sequence of lambdas, we could remove the $\lambda$ from $J$ and start with: "for a fixed non increasing sequence $(\lambda)_{i \in [n]}$, the SLOPE penalty is defined as...}
 \begin{equation}
   \label{eq:slope-problem}
   \operatorname{minimize}_{\beta \in \mathbb{R}^p}

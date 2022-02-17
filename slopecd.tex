@@ -3,6 +3,7 @@
 \PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
 
 \documentclass[english,a4paper]{article}
+\usepackage[margin=1in]{geometry}
 
 \usepackage{lmodern}
 \usepackage{amssymb,amsmath,amsthm,mathtools,isomath}
@@ -24,8 +25,14 @@
 \usepackage{siunitx}
 
 \usepackage[textsize=scriptsize]{todonotes}
+\newcommand{\mathurin}[1]{\textcolor{purple}{[MM: #1]}}
+\newcommand{\mm}[1]{\todo[color=purple!20]{{\bf Mathurin:} #1}}
+\newcommand{\qbe}[1]{\todo[color=blue!20]{{\bf qbe:} #1}}
+\newcommand{\quentin}[1]{\textcolor{blue}{#1}}
+\newcommand{\klopfe}[1]{\todo[color=orange]{{\bf Klopfe:} #1}}
+\newcommand{\qk}[1]{\textcolor{orange}{#1}}
 
-\usepackage[noabbrev]{cleveref}
+\usepackage[noabbrev,nameinlink]{cleveref}
 
 \usepackage{hyperref}
 \hypersetup{
@@ -52,7 +59,7 @@
 % \usepackage{pgfplots}
 % \pgfplotsset{width=7cm,compat=1.16}
 % \usepgfplotslibrary{external}
-% \tikzexternalize 
+% \tikzexternalize
 
 % Set default figure placement to htbp
 \makeatletter
@@ -85,6 +92,10 @@
 \DeclareMathOperator{\card}{card}
 \DeclareMathOperator{\sign}{sign}
 
+
+\newcommand{\cB}{\mathcal{B}}
+\newcommand{\abs}[1]{\lvert {#1} \rvert}
+\newcommand{\norm}[1]{\lVert {#1} \rVert}
 % theorems
 \theoremstyle{plain}
 \newtheorem{theorem}{Theorem}[section]
@@ -112,23 +123,15 @@
   \input{tex/abstract}
 \end{abstract}
 
-\section{Introduction}\label{sec:introduction}
 \input{tex/introduction}
-
-\section{Theory}\label{sec:theory}
 \input{tex/theory}
-
-\section{Experiments}\label{sec:experiments}
 \input{tex/experiments}
-
-\section{Discussion}\label{sec:discussion}
-\input{tex/discussion.tex}
+\input{tex/discussion}
 
 \printbibliography
 
 \appendix
 
-\section{Proofs}\label{sec:proofs}
 \input{tex/proofs.tex}
 
 \end{document}

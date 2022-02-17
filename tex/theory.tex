@@ -25,10 +25,14 @@
     \sum_i \sum_{j \in \mathcal{B}_i} \lambda_j v_{(j)^*}\sign(\beta_{(j)^*} + h_0v_{(j)^*})\]
   where
   \[
-    \mathcal{B}_i = \{j \mid |\beta_j| = |\beta_i|\}.
+    \mathcal{B}_i = \{j \mid |\beta_j| = c_i\},\qquad
+    c_1 > c_2 > \cdots > c_m \geq 0,
   \]
-  \todo[author=JL]{We need something that doesn't define clusters multiple times.}
+  such that \(m\) is the number of clusters.
+  \jl{We need something that doesn't define clusters multiple times.}
   \mathurin{Good remark, I guess we could avoid naming the variable $i$ since above we have $i$ and $j$ being both in $[p]$ while here $i$ would in fact be in $[n_{clusters}/n_{groups}]$. $g$ for groups, as used in group Lasso? "For a fixed $\beta$, let $G$ be the number of different values taken by $\abs{\beta_j}$, i.e. the number of groups, and let $(\cB_g)_{g \in G}$ be a partition of $[p]$ such that $\forall (j, j') \in \cB_g, \abs{\beta_j} = \abs{\beta_{j'}}$}
+  \jl{Thanks, yes that would work. I have tried something slightly different 
+  here, however, which may be enough for us.}
 
 \end{theorem}
 \begin{proof}

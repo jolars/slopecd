@@ -5,13 +5,12 @@
 \label{sec:directional-derivatives}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
 \subsubsection{The Sorted \texorpdfstring{\(\ell_1\)}{l1}
   Norm}
 
 \begin{theorem}
   \label{thm:sl1-directional-derivative} Let \(h_0 \in \big(0, \min_{i,j \in
-  \{i \mid \beta_i \neq 0\}}\big| |\beta_i| - |\beta_j| \big|/\max_k|v_k| \big]\) and
+    \{i \mid \beta_i \neq 0\}}\big| |\beta_i| - |\beta_j| \big|/\max_k|v_k| \big]\) and
   define \(\sigma\) to be the permutation such that
   \[
     |\beta + h_0v|_{\sigma(1)} \geq |\beta + h_0v |_{\sigma(2)}
@@ -28,9 +27,11 @@
   \]
   such that \(m\) is the number of clusters.
   \jl{We need something that doesn't define clusters multiple times.}
-  \mathurin{Good remark, I guess we could avoid naming the variable $i$ since above we have $i$ and $j$ being both in $[p]$ while here $i$ would in fact be in $[n_{clusters}/n_{groups}]$. $g$ for groups, as used in group Lasso? "For a fixed $\beta$, let $G$ be the number of different values taken by $\abs{\beta_j}$, i.e. the number of groups, and let $(\cB_g)_{g \in G}$ be a partition of $[p]$ such that $\forall (j, j') \in \cB_g, \abs{\beta_j} = \abs{\beta_{j'}}$}
-  \jl{Thanks, yes that would work. I have tried something slightly different 
-  here, however, which may be enough for us.}
+  \mathurin{Good remark, I guess we could avoid naming the variable \(i\) since above we have \(i\) and \(j\) being both in \([p]\) while here \(i\) would in fact be in \([n_{clusters}/n_{groups}]\). \(g\) for groups, as used in group Lasso? "For a fixed \(\beta\), let \(G\) be the number of different values taken by \(\abs{\beta_j}\), i.e. the number of groups, and let \((\cB_g)_{g \in G}\) be a partition of \([p]\) such that \(\forall (j, j') \in \cB_g, \abs{\beta_j} = \abs{\beta_{j'}}\)}
+  \jl{Thanks, yes that would work.
+    I have tried something slightly different
+    here, however, which may be enough for us.
+  }
 
 \end{theorem}
 \begin{proof}
@@ -39,20 +40,22 @@
   \begin{equation}
     \label{eq:sl1-directional-derivative}
     \begin{aligned}
-      D_v J(\beta) & = \lim_{h \searrow 0} \frac{J(\beta + h v) - J(\beta)}{h}                                            \\
-                            & = \lim_{h \searrow 0} \frac{\sum_{j=1}^p\lambda_j\big(|\beta + vh|_{\sigma(j)} - |\beta|_{(j)}\big)}{h}                      \\
-                            & = \lim_{h \searrow 0}\frac{\sum_i \sum_{j \in \mathcal{B}_i} \lambda_j\big(|\beta + vh|_{\sigma(j)} - |\beta|_{(j)}\big)}{h} \\
+      D_v J(\beta) & = \lim_{h \searrow 0} \frac{J(\beta + h v) - J(\beta)}{h}                                                                    \\
+                   & = \lim_{h \searrow 0} \frac{\sum_{j=1}^p\lambda_j\big(|\beta + vh|_{\sigma(j)} - |\beta|_{(j)}\big)}{h}                      \\
+                   & = \lim_{h \searrow 0}\frac{\sum_i \sum_{j \in \mathcal{B}_i} \lambda_j\big(|\beta + vh|_{\sigma(j)} - |\beta|_{(j)}\big)}{h} \\
     \end{aligned}
   \end{equation}
-  Assume without loss of generality that \(c_m = 0\). Then
+  Assume without loss of generality that \(c_m = 0\).
+  Then
   \[
-      \sum_{j \in \mathcal{B}_m}\frac{\lambda_j \big( |\beta + vh|_{\sigma(j)} - |\beta|_{(j)}\big)}{h}
-      = \sum_{j \in \mathcal{B}_m} \lambda_j \sign(\beta + hv)_{\sigma(j)}v_{\sigma(j)}.
+    \sum_{j \in \mathcal{B}_m}\frac{\lambda_j \big( |\beta + vh|_{\sigma(j)} - |\beta|_{(j)}\big)}{h}
+    = \sum_{j \in \mathcal{B}_m} \lambda_j \sign(\beta + hv)_{\sigma(j)}v_{\sigma(j)}.
   \]
   Next, recall the construction of \(h_0\) and
   observe that \(\sign(\beta_j + hv_j) = \sign(\beta_j)\)
   and \(\sigma(j) = (j)\) for all \(j \notin \mathcal{B}_m\)
-  whenever \(0 < h < h_0\). It follows that
+  whenever \(0 < h < h_0\).
+  It follows that
   \[
     \sum_{j \in \mathcal{B}_i} \frac{\lambda_j\big(|\beta + hv|_{\sigma(j)} - |\beta|_{(j)}\big)}{h}
     = \sum_{j \in \mathcal{B}_i} \lambda_j\sign(\beta + vh)_{\sigma(j)}v_{\sigma(j)}.
@@ -65,7 +68,7 @@
 \end{proof}
 
 \begin{remark}
-  Using \cref{thm:sl1-directional-derivative}, we see that 
+  Using \cref{thm:sl1-directional-derivative}, we see that
   the directional derivative for \eqref{eq:slope-problem} is
   \[
     D_v P(\beta) = v^T \big(\nabla L(\beta)\big) + D_v J(\beta).

@@ -1,6 +1,5 @@
 \subsection{Directional Derivatives}%
 \label{sec:directional-derivatives}
-
 \subsubsection{The Sorted \texorpdfstring{\(\ell_1\)}{l1}
   Norm}
 
@@ -63,5 +62,11 @@
     \lim_{h \searrow 0} \sum_i \sum_{j \in \mathcal{B}_i} \lambda_j\sign(\beta + vh)_{(j)^*}v_{(j)^*}
     = \sum_i \sum_{j \in \mathcal{B}_i} \lambda_j\sign(\beta + vh_0)_{(j)^*}v_{(j)^*}.
   \]
-
 \end{proof}
+
+\begin{remark}
+  The directional derivative for \eqref{eq:slope-problem} is
+  \[
+    D_v f(\beta; \lambda) = v^T \big(\nabla f(\beta; \lambda)\big) + D_v J(\beta; \lambda).
+  \]
+\end{remark}

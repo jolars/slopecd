@@ -2,24 +2,20 @@
 \section{Introduction}\label{sec:introduction}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Sorted L-One Penalized Estimation (SLOPE)~\cite{bogdan2013,bogdan2015} is a
-type of sparse regression represented by the convex optimization problem
-\mathurin{For brevity, since it seems we are going to consider problems with a fixed sequence of lambdas, we could remove the $\lambda$ from $J$ and start with: "for a fixed non increasing sequence $(\lambda)_{i \in [n]}$, the SLOPE penalty is defined as...}
+For a fixed non-increasing and non-negative sequence \(\lambda\), the 
+Sorted L-One Penalized Estimation (SLOPE) problem~\cite{bogdan2013,bogdan2015} 
+is defined as
 \begin{equation}
   \label{eq:slope-problem}
   \operatorname{minimize}_{\beta \in \mathbb{R}^p}
-  f(\beta; \lambda) = g(\beta) + J(\beta;\lambda)
+  P(\beta) = L(\beta) + J(\beta)
 \end{equation}
-where we take \(g(\beta)\) to be smooth and twice differentiable and
+where we take \(L(\beta)\) to be smooth and twice differentiable and
 \begin{equation}
   \label{eq:sortedl-l1-norm}
-  J(\beta; \lambda) = \sum_{j=1}^p \lambda_j|\beta_{(j)}|
+  J(\beta) = \sum_{j=1}^p \lambda_j|\beta_{(j)}|
 \end{equation}
 is the \emph{sorted \(\ell_1\) norm}, defined such that
 \[
-  |\beta_{(1)}| \geq |\beta_{(2)}| \geq \cdots \geq |\beta_{(p)}|
-\]
-and
-\[
-  \lambda_1 \geq \lambda_2 \geq \cdots \geq 0.
+  |\beta_{(1)}| \geq |\beta_{(2)}| \geq \cdots \geq |\beta_{(p)}|.
 \]

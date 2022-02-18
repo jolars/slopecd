@@ -74,3 +74,26 @@
     D_v P(\beta) = v^T \big(\nabla L(\beta)\big) + D_v J(\beta).
   \]
 \end{remark}
+
+\subsection{Coordinate Updates}%
+\label{sec:coordinate-updates}
+
+Assume that we want to compute the coordinate update for the \(q\)th cluster
+\(\mathcal{C}_q\) under the constraint that \(\sign(\beta) = s\).
+We have
+\[
+  \begin{aligned}
+    P(\beta) & = \frac{1}{2} \lVert y - X\beta\rVert_2^2 + J(\beta)                                                                                                                                                                                                                        \\
+             & = \frac{1}{2} \lVert y - X_{\bar{\mathcal{C}_q}} \beta_{\bar{\mathcal{C}_q}} - c_q X_{\mathcal{C}_q} s_{\mathcal{C}_q} \rVert_2^2 + \sum_{k \notin {\mathcal{C}_q}} \lambda_{(k)^-}|\beta_k| + |c_q|\sum_{k \in {\mathcal{C}_q}} \lambda_{(k)^-}                                                                                                                            \\
+             & = \splitfrac{\frac{1}{2} \left(y^Ty - 2y^T X_{\bar{\mathcal{C}_q}} \beta_{\bar{\mathcal{C}_q}} - 2 c_q y^T X_{\mathcal{C}_q} s_{\mathcal{C}_q} + 2 c_q (X_{\mathcal{C}_q} s_{\mathcal{C}_q})^T X_{\bar{\mathcal{C}_q}} \beta_{\bar{\mathcal{C}_q}} + \lVert X_{\bar{\mathcal{C}_q}} \beta_{\bar{\mathcal{C}_q}} \rVert_2^2 + c_q^2 \lVert X_{\mathcal{C}_q} s_{\mathcal{C}_q}\rVert_2^2 \right)}{+ \sum_{k \notin {\mathcal{C}_q}} \lambda_{(k)^-}|\beta_k| + |c_q|\sum_{k \in {\mathcal{C}_q}} \lambda_{(k)^-}} \\
+  \end{aligned}
+\]
+Taking the derivative with respect to \(c_q\) yields
+\[
+  \frac{\partial}{\partial c_q}P(\beta) = -y^T X_{\mathcal{C}_q} s_{\mathcal{C}_q} + (X_{\bar{\mathcal{C}_q}} \beta_{\bar{\mathcal{C}_q}})^T{X_{\mathcal{C}_q} s_{\mathcal{C}_q}} + c_q \lVert X_{\mathcal{C}_q} s_{\mathcal{C}_q} \rVert_2^2 + \frac{\partial}{\partial c_q}|c_q|\sum_{k \in {\mathcal{C}_q}} \lambda_{(k)^-}.
+\]
+The optimality condition for this sub-problem is
+\[
+  c_q + \frac{(X_{\mathcal{C}_q} s_{\mathcal{C}_q})^T\left( X_{\bar{\mathcal{C}_q}}\beta_{\bar{\mathcal{C}_q}} - y \right) + \frac{\partial}{\partial c_q}|c_q|\sum_{k \in {\mathcal{C}_q}} \lambda_{(k)^-}}{\lVert X_{\mathcal{C}_q} s_{\mathcal{C}_q} \rVert_2^2} \in \boldsymbol{0}.
+\]
+

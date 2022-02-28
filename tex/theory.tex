@@ -110,8 +110,7 @@ norm. The optimality condition for this sub-problem is \( \partial_{\tilde
     \begin{cases}
       \{\sign(\tilde\beta) S\big(C(\tilde\beta)\big)\}                    & \text{if } \tilde\beta \neq c_i \neq 0, \\
       [-S(\mathcal{C}_m), S(\mathcal{C}_m)]                               & \text{if } \tilde\beta = 0,             \\
-      [S\big( C(c_i - \varepsilon_i)\big), S\big(C(c_i + \varepsilon_i)\big)] & \text{if } \tilde\beta = c_i,            \\
-      [-S\big(C(c_i + \varepsilon_i)), -S\big(C(c_i - \varepsilon_i)\big)]    & \text{if } \tilde\beta= - c_i,
+      [\sign(\tilde\beta)S\big( C(c_i - \sign(\tilde\beta)\varepsilon_i)\big), \sign(\tilde\beta)S\big(C(c_i + \sign(\tilde\beta)\varepsilon_i)\big)] & \text{if } |\tilde\beta| = c_i,
     \end{cases}
   \]
   where \(\varepsilon \in (0, \min_{j}|c_i - c_j|)\).
@@ -167,6 +166,9 @@ norm. The optimality condition for this sub-problem is \( \partial_{\tilde
   For all other choices of \(x\), \(f\) is differentiable with
   derivative \(\sign(\tilde\beta)S\big(C(\tilde\beta)\big)\).
 \end{proof}
+
+The objective and subgradient for the cluster-wise problem are shown in
+\cref{fig:cluster-grad-obj}.
 
 \begin{figure}[htbp]
   \centering

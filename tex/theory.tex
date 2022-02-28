@@ -93,10 +93,11 @@ We have
 Now let \(\tilde y = X_{\bar{\mathcal{C}_q}} \beta_{\bar{\mathcal{C}_q}}\)
 such that \(y - \tilde y\) is the \emph{partial residual} and take the
 derivate with respect to \(\tilde\beta\), yielding
-\[
+\begin{equation}
+  \label{eq:cluster-grad}
   \partial_{\tilde\beta}
   P(\beta) = (\tilde y - y)^T X_{\mathcal{C}_q} s_{\mathcal{C}_q} + s_{\mathcal{C}_q}^T X_{{\mathcal{C}_q}}^T X_{\mathcal{C}_q} s_{\mathcal{C}_q} \tilde\beta + \partial_{\tilde\beta}\Bigg(\bigg(\sum_{k \in {\mathcal{C}_q}} \lambda_{(k)^-}\bigg)|\tilde\beta| + \sum_{k \notin \mathcal{C}_q}\lambda_{(k)^-}|\beta_k|\Bigg),
-\]
+\end{equation}
 where the last term is the partial subdifferential of the sorted \(\ell_1\)
 norm. The optimality condition for this sub-problem is \( \partial_{\tilde
 \beta} P(\beta) \in \boldsymbol{0}. \)
@@ -120,8 +121,8 @@ norm. The optimality condition for this sub-problem is \( \partial_{\tilde
   \(g\) is a subgradient of \(f\) at \(x\) if
   \begin{equation}
     \label{eq:subgrad-ineq}
-    |y|\sum_{j \in C(y)}\lambda_{(k)^-} + \sum_{j \notin C(y)}\lambda_{(j)^-}|\beta_j| 
-    \geq |x|\sum_{j \in C(x)} \lambda_{(k)^-} + \sum_{j \notin C(x)}\lambda_{(j)^-}|\beta_j| + g(y - x).
+    |y|\sum_{j \in C(y)}\lambda_{(j)^-} + \sum_{j \notin C(y)}\lambda_{(j)^-}|\beta_j| 
+    \geq |x|\sum_{j \in C(x)} \lambda_{(j)^-} + \sum_{j \notin C(x)}\lambda_{(j)^-}|\beta_j| + g(y - x).
   \end{equation}
   Without loss of generality, since \(f\) is convex, assume that we have
   a vector \(\beta\) such that there are two clusters: one corresponding
@@ -130,7 +131,7 @@ norm. The optimality condition for this sub-problem is \( \partial_{\tilde
   coefficient \(c_q\). Then we can rewrite \eqref{eq:subgrad-ineq} as
   \[
     |y|S\big(C(y)\big) + c_q S\big(\widebar{C(y)}\big) \geq
-    x S\big(C(x)\big) + c_q S\big(\widebar{C(x)}\big) + g(y - x).
+    |x| S\big(C(x)\big) + c_q S\big(\widebar{C(x)}\big) + g(y - x).
   \]
   First observe that any \(g\) is permissible whenever \(x = y\).
 
@@ -180,3 +181,4 @@ The objective and subgradient for the cluster-wise problem are shown in
   }%
   \label{fig:cluster-grad-obj}
 \end{figure}
+

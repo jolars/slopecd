@@ -114,7 +114,7 @@ norm. The optimality condition for this sub-problem is \( \partial_{\tilde
       [\sign(\tilde\beta)S\big( C(c_i - \sign(\tilde\beta)\varepsilon_i)\big), \sign(\tilde\beta)S\big(C(c_i + \sign(\tilde\beta)\varepsilon_i)\big)] & \text{if } |\tilde\beta| = c_i,
     \end{cases}
   \]
-  where \(\varepsilon \in (0, \min_{j}|c_i - c_j|)\).
+  where \(\varepsilon_i \in (0, \min_{j \neq i}|c_i - c_j|)\).
 \end{theorem}
 \begin{proof}
   Let \(f(\tilde\beta) = |\tilde\beta|\sum_{k \in \mathcal{C}_q}\lambda_{(k)^-} + \sum_{k \notin \mathcal{C}_q} \lambda_{(k)^-}|\beta_k|\).

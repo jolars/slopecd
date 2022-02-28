@@ -79,34 +79,102 @@
 \label{sec:coordinate-updates}
 
 Assume that we want to compute the coordinate update for the \(q\)th cluster
-\(\mathcal{C}_q\) under the constraint that \(\sign(\beta) = s\).
+\(\mathcal{C}_q\) under the constraint that \(\sign(\beta) = s\) and
+\(|\beta_j| = |\tilde \beta|\) for all \(j \in \mathcal{C}_q\).
+To avoid verbosity, let
+\(u = c_q\).
 We have
-\jl{Need to redefine permutation to act on \(c\) instead.}
 \[
   \begin{aligned}
-    P(\beta) & = \frac{1}{2} \lVert y - X\beta\rVert_2^2 + J(\beta)                                                                                                                                                                                                                        \\
-             & = \frac{1}{2} \lVert y - X_{\bar{\mathcal{C}_q}} \beta_{\bar{\mathcal{C}_q}} - z X_{\mathcal{C}_q} s_{\mathcal{C}_q} \rVert_2^2 + \sum_{k \notin {\mathcal{C}_q}} \lambda_{(k)^-}|\beta_k| + |z|\sum_{k \in {\mathcal{C}_q}} \lambda_{(k)^-}                                                                                                                            \\
-             & = \splitfrac{\frac{1}{2} \left(y^Ty - 2y^T X_{\bar{\mathcal{C}_q}} \beta_{\bar{\mathcal{C}_q}} - 2 z y^T X_{\mathcal{C}_q} s_{\mathcal{C}_q} + 2 z (X_{\mathcal{C}_q} s_{\mathcal{C}_q})^T X_{\bar{\mathcal{C}_q}} \beta_{\bar{\mathcal{C}_q}} + \lVert X_{\bar{\mathcal{C}_q}} \beta_{\bar{\mathcal{C}_q}} \rVert_2^2 + z^2 \lVert X_{\mathcal{C}_q} s_{\mathcal{C}_q}\rVert_2^2 \right)}{+ \sum_{k \notin {\mathcal{C}_q}} \lambda_{(k)^-}|\beta_k| + |z|\sum_{k \in {\mathcal{C}_q}} \lambda_{(k)^-}} \\
+    P(\beta) & =  \frac{1}{2} \lVert y - X\beta\rVert_2^2 + J(\beta)                                                                                                                                                                                                                                   \\
+             & = \frac{1}{2} \lVert y - X_{\bar{\mathcal{C}_q}} \beta_{\bar{\mathcal{C}_q}} - \big(X_{\mathcal{C}_q} s_{\mathcal{C}_q}\big)\tilde\beta  \rVert_2^2 + \sum_{k \notin {\mathcal{C}_q}} \lambda_{(k)^-}|\beta_k| + \bigg(\sum_{k \in {\mathcal{C}_q}} \lambda_{(k)^-}\bigg)|\tilde\beta|.
   \end{aligned}
 \]
-Taking the derivative with respect to \(z\) yields
+Now let \(\tilde y = X_{\bar{\mathcal{C}_q}} \beta_{\bar{\mathcal{C}_q}}\)
+such that \(y - \tilde y\) is the \emph{partial residual} and take the
+derivate with respect to \(\tilde\beta\), yielding
 \[
-  \frac{\partial}{\partial z}P(\beta) = -y^T X_{\mathcal{C}_q} s_{\mathcal{C}_q} + (X_{\bar{\mathcal{C}_q}} \beta_{\bar{\mathcal{C}_q}})^T{X_{\mathcal{C}_q} s_{\mathcal{C}_q}} + z \lVert X_{\mathcal{C}_q} s_{\mathcal{C}_q} \rVert_2^2 + \frac{\partial}{\partial z}|z|\sum_{k \in {\mathcal{C}_q}} \lambda_{(k)^-}.
+  \partial_{\tilde\beta}
+  P(\beta) = (\tilde y - y)^T X_{\mathcal{C}_q} s_{\mathcal{C}_q} + s_{\mathcal{C}_q}^T X_{{\mathcal{C}_q}}^T X_{\mathcal{C}_q} s_{\mathcal{C}_q} \tilde\beta + \partial_{\tilde\beta}\Bigg(\bigg(\sum_{k \in {\mathcal{C}_q}} \lambda_{(k)^-}\bigg)|\tilde\beta| + \sum_{k \notin \mathcal{C}_q}\lambda_{(k)^-}|\beta_k|\Bigg),
 \]
-The optimality condition for this sub-problem is
-\[
-  z + \frac{(X_{\mathcal{C}_q} s_{\mathcal{C}_q})^T\left( X_{\bar{\mathcal{C}_q}}\beta_{\bar{\mathcal{C}_q}} - y \right) + \frac{\partial}{\partial z}|z|\sum_{k \in {\mathcal{C}_q}} \lambda_{(k)^-}}{s_{\mathcal{C}_q}^T X_{{\mathcal{C}_q}}^T X_{\mathcal{C}_q} s_{\mathcal{C}_q}} \in \boldsymbol{0}.
-\]
+where the last term is the partial subdifferential of the sorted \(\ell_1\)
+norm. The optimality condition for this sub-problem is \( \partial_{\tilde
+\beta} P(\beta) \in \boldsymbol{0}. \)
+
+\begin{theorem}
+  \label{thm:cluster-subdifferential}
+  The partial subdifferential for the sorted \(\ell_1\) norm with respect
+  to \(\tilde\beta\) is
+  \[
+    \partial =
+    \begin{cases}
+      \{\sign(\tilde\beta) S\big(C(\tilde\beta)\big)\}                    & \text{if } \tilde\beta \neq c_i \neq 0, \\
+      [-S(\mathcal{C}_m), S(\mathcal{C}_m)]                               & \text{if } \tilde\beta = 0,             \\
+      [S\big( C(c_i - \varepsilon_i)\big), S\big(C(c_i + \varepsilon_i)\big)] & \text{if } \tilde\beta = c_i,            \\
+      [-S\big(C(c_i + \varepsilon_i)), -S\big(C(c_i - \varepsilon_i)\big)]    & \text{if } \tilde\beta= - c_i,
+    \end{cases}
+  \]
+  where \(\varepsilon \in (0, \min_{j}|c_i - c_j|)\).
+\end{theorem}
+\begin{proof}
+  Let \(f(\tilde\beta) = |\tilde\beta|\sum_{k \in \mathcal{C}_q}\lambda_{(k)^-} + \sum_{k \notin \mathcal{C}_q} \lambda_{(k)^-}|\beta_k|\).
+  \(g\) is a subgradient of \(f\) at \(x\) if
+  \begin{equation}
+    \label{eq:subgrad-ineq}
+    |y|\sum_{j \in C(y)}\lambda_{(k)^-} + \sum_{j \notin C(y)}\lambda_{(j)^-}|\beta_j| 
+    \geq |x|\sum_{j \in C(x)} \lambda_{(k)^-} + \sum_{j \notin C(x)}\lambda_{(j)^-}|\beta_j| + g(y - x).
+  \end{equation}
+  Without loss of generality, since \(f\) is convex, assume that we have
+  a vector \(\beta\) such that there are two clusters: one corresponding
+  to \(\tilde\beta\), which we are optimizing over, and
+  one additional cluster \(\mathcal{C}_q\) with corresponding
+  coefficient \(c_q\). Then we can rewrite \eqref{eq:subgrad-ineq} as
+  \[
+    |y|S\big(C(y)\big) + c_q S\big(\widebar{C(y)}\big) \geq
+    x S\big(C(x)\big) + c_q S\big(\widebar{C(x)}\big) + g(y - x).
+  \]
+  First observe that any \(g\) is permissible whenever \(x = y\).
+
+  At \(x = 0\), \eqref{eq:subgrad-ineq} reduces to
+  \[
+    |y|S\big(C(y)\big) + c_q S\big(\widebar{C(y)}\big)
+    \geq c_q(\mathcal{C}_1) + gy.
+  \]
+  Because \(f\) is convex, it is sufficient to consider \(|y| < c_q\).
+  In this case, we get
+  \[
+    |y|S(\mathcal{C}_2) \geq gy,
+  \]
+  which means that \(-S(\mathcal{C}_2) \leq g \leq S(\mathcal{C}_2)\).
+
+  If \(x = c_q\), \eqref{eq:subgrad-ineq} becomes
+  \[
+    |y|S\big(C(y)\big) + x S\big(C(x)\big) \geq x(S(\mathcal{C}_1) + S(\mathcal{C}_2)) + g(y - x).
+  \]
+  Then, for \(y > x\), we have
+  \[
+    y\big(S(\mathcal{C}_1) - g\big) + x\big(g - S(\mathcal{C}_1)\big) \geq 0,
+  \]
+  which means that \(g \leq S(\mathcal{C}_1)\).
+  Then, for \(0 < y < x\), we see
+  \[
+    y\big(S(\mathcal{C}_2) - g\big) + x(g - S(\mathcal{C}_2)\big) \geq 0,
+  \]
+  and hence \(g \geq S(\mathcal{C}_2)\).
+  Using the same argument for \(x = -c_q\), we find that we in this case
+  must have \(g\) such that 
+  \(-S(\mathcal{C}_1) \geq g \geq - S(\mathcal{C}_2)\).
+  For all other choices of \(x\), \(f\) is differentiable with
+  derivative \(\sign(\tilde\beta)S\big(C(\tilde\beta)\big)\).
+\end{proof}
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[]{figures/clusterupdate-grad-obj}
   \caption{%
     Objective and gradient under the constraint that we have a fixed
-    cluster. The optimum is found at \(z = 0.3\).
-  }
+    cluster.
+    The optimum is found at \(\tilde\beta = 0.3\).
+  }%
   \label{fig:cluster-grad-obj}
 \end{figure}
-
-
-

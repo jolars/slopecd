@@ -2,9 +2,7 @@ from bisect import bisect_left
 
 import matplotlib.pyplot as plt
 import numpy as np
-from numpy.linalg import norm
 from scipy import stats
-
 from slope.utils import dual_norm_slope
 
 
@@ -88,7 +86,6 @@ a_list = np.sort(np.hstack((-a_list, a_list)))
 res = []
 
 zerosum = np.sum(lambdas[::-1][range(2)])
-lastsum = np.sum(lambdas[range(2)])
 
 for a in a_list:
     k = np.where(
@@ -108,7 +105,7 @@ for a in a_list:
 
 plt.rcParams['text.usetex'] = True
 
-fig, ax = plt.subplots(figsize=(4.2,2.8))
+fig, ax = plt.subplots(figsize=(4.2, 2.8))
 ax.hlines(0, xmin=min(a_list), xmax=max(a_list), color="lightgrey")
 ax.vlines(np.hstack((-l_sums, -r_sums, l_sums, r_sums, sums[-1], -sums[-1])),
           ymin=min(res),

@@ -78,25 +78,23 @@
 \subsection{Coordinate Updates}%
 \label{sec:coordinate-updates}
 
-Assume that we want to compute the coordinate update for the \(q\)th cluster
-\(\mathcal{C}_q\) under the constraint that \(\sign(\beta) = s\) and
-\(|\beta_j| = |\tilde \beta|\) for all \(j \in \mathcal{C}_q\).
-To avoid verbosity, let
-\(u = c_q\).
+Assume that we want to compute the coordinate update for the \(k\)th cluster
+\(\mathcal{C}_k\) under the constraint that \(\sign(\beta) = s\) and
+\(|\beta_j| = |\tilde \beta|\) for all \(j \in \mathcal{C}_k\).
 We have
 \[
   \begin{aligned}
     P(\beta) & =  \frac{1}{2} \lVert y - X\beta\rVert_2^2 + J(\beta)                                                                                                                                                                                                                                   \\
-             & = \frac{1}{2} \lVert y - X_{\bar{\mathcal{C}_q}} \beta_{\bar{\mathcal{C}_q}} - \big(X_{\mathcal{C}_q} s_{\mathcal{C}_q}\big)\tilde\beta  \rVert_2^2 + \sum_{k \notin {\mathcal{C}_q}} \lambda_{(k)^-}|\beta_k| + \bigg(\sum_{k \in {\mathcal{C}_q}} \lambda_{(k)^-}\bigg)|\tilde\beta|.
+             & = \frac{1}{2} \lVert y - X_{\bar{\mathcal{C}_k}} \beta_{\bar{\mathcal{C}_k}} - \big(X_{\mathcal{C}_k} s_{\mathcal{C}_k}\big)\tilde\beta  \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)|\tilde\beta|.
   \end{aligned}
 \]
-Now let \(\tilde y = X_{\bar{\mathcal{C}_q}} \beta_{\bar{\mathcal{C}_q}}\)
+Now let \(\tilde y = X_{\bar{\mathcal{C}_k}} \beta_{\bar{\mathcal{C}_k}}\)
 such that \(y - \tilde y\) is the \emph{partial residual} and take the
 derivate with respect to \(\tilde\beta\), yielding
 \begin{equation}
   \label{eq:cluster-grad}
   \partial_{\tilde\beta}
-  P(\beta) = (\tilde y - y)^T X_{\mathcal{C}_q} s_{\mathcal{C}_q} + s_{\mathcal{C}_q}^T X_{{\mathcal{C}_q}}^T X_{\mathcal{C}_q} s_{\mathcal{C}_q} \tilde\beta + \partial_{\tilde\beta}\Bigg(\bigg(\sum_{k \in {\mathcal{C}_q}} \lambda_{(k)^-}\bigg)|\tilde\beta| + \sum_{k \notin \mathcal{C}_q}\lambda_{(k)^-}|\beta_k|\Bigg),
+  P(\beta) = (\tilde y - y)^T X_{\mathcal{C}_k} s_{\mathcal{C}_k} + s_{\mathcal{C}_k}^T X_{{\mathcal{C}_k}}^T X_{\mathcal{C}_k} s_{\mathcal{C}_k} \tilde\beta + \partial_{\tilde\beta}\Bigg(\bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)|\tilde\beta| + \sum_{j \notin \mathcal{C}_k}\lambda_{(j)^-}|\beta_k|\Bigg),
 \end{equation}
 where the last term is the partial subdifferential of the sorted \(\ell_1\)
 norm.
@@ -123,13 +121,14 @@ The optimality condition for this sub-problem is \(\boldsymbol{0} \in
   \]
 \end{theorem}
 \begin{proof}
-  Let \(f(\tilde\beta) = |\tilde\beta|\sum_{j \in \mathcal{C}_i}\lambda_{(j)^-} + \sum_{j \notin \mathcal{C}_i} \lambda_{(j)^-}|\beta_j|\).
+  Let \(f(\tilde\beta) = |\tilde\beta|\sum_{j \in \mathcal{C}_k}\lambda_{(j)^-} + \sum_{j \notin \mathcal{C}_k} \lambda_{(j)^-}|\beta_j|\).
   \(g\) is a subgradient of \(f\) at \(x\) if
   \begin{equation}
     \label{eq:subgrad-ineq}
     |y|\sum_{j \in C(y)}\lambda_{(j)^-} + \sum_{j \notin C(y)}\lambda_{(j)^-}|\beta_j|
-    \geq |x|\sum_{j \in C(x)} \lambda_{(j)^-} + \sum_{j \notin C(x)}\lambda_{(j)^-}|\beta_j| + g(y - x).
+    \geq |x|\sum_{j \in C(x)} \lambda_{(j)^-} + \sum_{j \notin C(x)}\lambda_{(j)^-}|\beta_j| + g(y - x)
   \end{equation}
+  for all \(y \in \mathbb{R}\).
   Without loss of generality, since \(f\) is convex, assume that we have
   a vector \(\beta\) such that there are two clusters: one corresponding
   to \(\tilde\beta\), which we are optimizing over, and
@@ -147,18 +146,19 @@ The optimality condition for this sub-problem is \(\boldsymbol{0} \in
     |y|S\big(C(y)\big) + c_q S\big(\widebar{C(y)}\big)
     \geq c_q(\mathcal{C}_1) + gy.
   \]
-  Because \(f\) is convex, it is sufficient to consider \(|y| < c_q\).
-  In this case, we get
-  \[
-    |y|S(\mathcal{C}_2) \geq gy,
-  \]
+  Because \(f\) is convex, it is sufficient to consider \(|y| < c_q\),
+  in which case \(C(y) = \mathcal{C}_1\) and hence
+  \begin{equation}
+      |y|S(\mathcal{C}_2) + c_q S(\mathcal{C}_1) \geq c_q(\mathcal{C}_1) + gy \implies
+      |y|S(\mathcal{C}_2) \geq gy,
+  \end{equation}
   which means that \(-S(\mathcal{C}_2) \leq g \leq S(\mathcal{C}_2)\).
 
   If \(x = c_q\), \eqref{eq:subgrad-ineq} becomes
   \[
     |y|S\big(C(y)\big) + x S\big(C(x)\big) \geq x(S(\mathcal{C}_1) + S(\mathcal{C}_2)) + g(y - x).
   \]
-  Then, for \(y > x\), we have
+  For \(y > x\) we have \(C(y) = \mathcal{C}_1\) and consequently
   \[
     y\big(S(\mathcal{C}_1) - g\big) + x\big(g - S(\mathcal{C}_1)\big) \geq 0,
   \]
@@ -197,7 +197,7 @@ Then the coordinate update for \(\beta_\mathcal{B}\) is
   s_\mathcal{B} \odot
   \frac{
     T \big(
-    (\tilde y - y)^T X_{\mathcal{B}} s_{\mathcal{B}}, \lambda\big)
+    (y - \tilde y)^T X_{\mathcal{B}} s_{\mathcal{B}}, \lambda\big)
   }{
     s_{\mathcal{B}}^T X_{\mathcal{B}}^T X_{\mathcal{B}} s_{\mathcal{B}}
   }
@@ -207,7 +207,7 @@ where
   \label{eq:slope-thresholding}
   T(a; \lambda) =
   \begin{cases}
-    0                                                        & \text{if } |a| \leq \sum_{i=1}^{|\mathcal{B}|}\lambda^{C(0)}_i                                                                                                     \\
+    0                                                        & \text{if } |a| \leq \sum_{i=1}^{|\mathcal{B}|}\lambda^{C(0)}_i                                                                                                                      \\
     \sign(a)c_i                                              & \text{if } \sum_{j= |\mathcal{C}_i| - |\mathcal{B}|}^{|\mathcal{C}_i|} \lambda^{\mathcal{C}_i}_j \leq \big| |a| - c_i\big| \leq \sum_{j=1}^{|\mathcal{B}|}\lambda^{\mathcal{C}_i}_j \\
     \sign(a)\big(|a| - \sum_{j \in C(a)}\lambda_{(j)^-}\big) & \text{otherwise.
     }
@@ -242,7 +242,7 @@ Here is a rough sketch of a possible algorithm.
 \end{enumerate}
 It is hopefully sufficient to only check if the coefficient with the
 largest gradient splits from the cluster for most of the iterations since
-checking all possible combinations of a cluster likely is expensive. We have
+checking all possible combinations of a cluster likely is expensive.
+We have
 to hope that's it's rare for multiple coefficients to leave a cluster in
 a new cluster.
-

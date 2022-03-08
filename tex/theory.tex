@@ -191,7 +191,9 @@ The objective and subgradient for the cluster-wise problem are shown in
 
 Let \(\mathcal{B}\) be a cluster initialized to \(\mathcal{C}_k\), with
 corresponding coefficient \(c_k\).
-Then the coordinate update for \(\beta_\mathcal{B}\) is
+Then the coordinate update for \(\beta_\mathcal{B}\) is\jl{This obviously
+does not work when \(s=0\). Can we just set \(s = 1\) here? It's just
+the relative signs that really matter, right?}
 \[
   \beta_\mathcal{B} \gets
   s_\mathcal{B} \odot

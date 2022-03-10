@@ -22,16 +22,15 @@
   The directional derivative for the sorted \(\ell_1\) norm, \(J(\beta)\), is
   \[
     D_v J(\beta) =
-    \sum_{i=1}^m \sum_{j \in \mathcal{B}_i} \lambda_j v_{\sigma(j)}\sign(\beta_{\sigma(j)} + h_0v_{\sigma(j)})\]
+    \sum_{i=1}^m \sum_{j \in \mathcal{C}_i} \lambda_j v_{\sigma(j)}\sign(\beta_{\sigma(j)} + h_0v_{\sigma(j)})\]
   \mm{doesn't the definition of $h_0$ imply that $\beta_j + h_0 v_j$ has the sign of $\beta_j$?}
   where
   \[
-    \mathcal{B}_i = \{j : |\beta_j| = c_i\},\qquad
+    \mathcal{C}_i = \{j : |\beta_j| = c_i\},\qquad
     c_1 > c_2 > \cdots > c_m \geq 0,
   \]
   \mm{cosmit: I use : instead of | in sets to avoid confusion with following absolute value}
   such that \(m\) is the number of clusters.
-  \mathurin{to be sure: it's what we called $\cC_i$ above ? I tend to prefer C for clusters}
 \end{theorem}
 \begin{proof}
   The directional derivative for the sorted \(\ell_1\) norm and a direction
@@ -41,28 +40,28 @@
     \begin{aligned}
       D_v J(\beta) & = \lim_{h \searrow 0} \frac{J(\beta + h v) - J(\beta)}{h}                                                                    \\
                    & = \lim_{h \searrow 0} \frac{\sum_{j=1}^p\lambda_j\big(|\beta + vh|_{\sigma(j)} - |\beta|_{(j)}\big)}{h}                      \\
-                   & = \lim_{h \searrow 0}\frac{\sum_i \sum_{j \in \mathcal{B}_i} \lambda_j\big(|\beta + vh|_{\sigma(j)} - |\beta|_{(j)}\big)}{h} \\
+                   & = \lim_{h \searrow 0}\frac{\sum_i \sum_{j \in \mathcal{C}_i} \lambda_j\big(|\beta + vh|_{\sigma(j)} - |\beta|_{(j)}\big)}{h} \\
     \end{aligned}
   \end{equation}
   Assume without loss of generality that \(c_m = 0\).
   Then
   \[
-    \sum_{j \in \mathcal{B}_m}\frac{\lambda_j \big( |\beta + vh|_{\sigma(j)} - |\beta|_{(j)}\big)}{h}
-    = \sum_{j \in \mathcal{B}_m} \lambda_j \sign(\beta + hv)_{\sigma(j)}v_{\sigma(j)}.
+    \sum_{j \in \mathcal{C}_m}\frac{\lambda_j \big( |\beta + vh|_{\sigma(j)} - |\beta|_{(j)}\big)}{h}
+    = \sum_{j \in \mathcal{C}_m} \lambda_j \sign(\beta + hv)_{\sigma(j)}v_{\sigma(j)}.
   \]
   Next, recall the construction of \(h_0\) and
   observe that \(\sign(\beta_j + hv_j) = \sign(\beta_j)\)
-  and \(\sigma(j) = (j)\) for all \(j \notin \mathcal{B}_m\) \mm{here there is an issue for me because, by the clustering effect, $()$ is not uniquely defined. since $v$ allows each component of $\beta + h v$ to move at different speed, we may, inside each cluster, end up with any arbitrary order (the limit on the magnitude of $h$ only imposes that vlaues from one cluster don't end up crossing another cluster )}\jw{I don't follow. You have an arbitrary ordering if $|\beta_i +hv_i|$ and $|\beta_j +hv_j|$ otherwise the ordering is defined by $\sigma$ as it determined by $\beta$ and $v$?}
+  and \(\sigma(j) = (j)\) for all \(j \notin \mathcal{C}_m\) \mm{here there is an issue for me because, by the clustering effect, $()$ is not uniquely defined. since $v$ allows each component of $\beta + h v$ to move at different speed, we may, inside each cluster, end up with any arbitrary order (the limit on the magnitude of $h$ only imposes that vlaues from one cluster don't end up crossing another cluster )}\jw{I don't follow. You have an arbitrary ordering if $|\beta_i +hv_i|$ and $|\beta_j +hv_j|$ otherwise the ordering is defined by $\sigma$ as it determined by $\beta$ and $v$?}
   whenever \(0 < h < h_0\).
   It follows that
   \[
-    \sum_{j \in \mathcal{B}_i} \frac{\lambda_j\big(|\beta + hv|_{\sigma(j)} - |\beta|_{(j)}\big)}{h}
-    = \sum_{j \in \mathcal{B}_i} \lambda_j\sign(\beta + vh)_{\sigma(j)}v_{\sigma(j)}.
+    \sum_{j \in \mathcal{C}_i} \frac{\lambda_j\big(|\beta + hv|_{\sigma(j)} - |\beta|_{(j)}\big)}{h}
+    = \sum_{j \in \mathcal{C}_i} \lambda_j\sign(\beta + vh)_{\sigma(j)}v_{\sigma(j)}.
   \]
   From this, we see that \eqref{eq:sl1-directional-derivative} reduces to
   \[
-    \lim_{h \searrow 0} \sum_i \sum_{j \in \mathcal{B}_i} \lambda_j\sign(\beta + vh)_{\sigma(j)}v_{\sigma(j)}
-    = \sum_i \sum_{j \in \mathcal{B}_i} \lambda_j\sign(\beta + vh_0)_{\sigma(j)}v_{\sigma(j)}.
+    \lim_{h \searrow 0} \sum_i \sum_{j \in \mathcal{C}_i} \lambda_j\sign(\beta + vh)_{\sigma(j)}v_{\sigma(j)}
+    = \sum_i \sum_{j \in \mathcal{C}_i} \lambda_j\sign(\beta + vh_0)_{\sigma(j)}v_{\sigma(j)}.
   \]
 \end{proof}
 

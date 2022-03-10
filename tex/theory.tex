@@ -1,4 +1,5 @@
-%!TEX root = ../slopecd.tex
+%!TEX root = ./slopecd.tex
+
 \section{Theory}\label{sec:theory}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Directional Derivatives}%
@@ -9,34 +10,31 @@
   Norm}
 
 \begin{theorem}
-  \label{thm:sl1-directional-derivative} Let \(h_0 \in \big(0, \min_{i,j \in
+  \label{thm:sl1-directional-derivative}
+  Let $v \in \bbR^p \setminus \{0\}$, \(h_0 \in \big(0, \min_{i,j \in
     \{i \mid \beta_i \neq 0\}}\big| |\beta_i| - |\beta_j| \big|/\max_k|v_k| \big]\) and
   define \(\sigma\) to be the permutation such that
   \[
     |\beta + h_0v|_{\sigma(1)} \geq |\beta + h_0v |_{\sigma(2)}
     \geq \cdots \geq |\beta + h_0v|_{\sigma(p)}.
   \]
+  \mm{I think we need to state that for any $h \leq h_0$, $\sigma$ is still a correct reordering for $\beta + h v$ (that we use at the last line of \eqref{eq:sl1-directional-derivative})}
   The directional derivative for the sorted \(\ell_1\) norm, \(J(\beta)\), is
   \[
     D_v J(\beta) =
-    \sum_i \sum_{j \in \mathcal{B}_i} \lambda_j v_{\sigma(j)}\sign(\beta_{\sigma(j)} + h_0v_{\sigma(j)})\]
+    \sum_{i=1}^m \sum_{j \in \mathcal{B}_i} \lambda_j v_{\sigma(j)}\sign(\beta_{\sigma(j)} + h_0v_{\sigma(j)})\]
   where
   \[
-    \mathcal{B}_i = \{j \mid |\beta_j| = c_i\},\qquad
+    \mathcal{B}_i = \{j : |\beta_j| = c_i\},\qquad
     c_1 > c_2 > \cdots > c_m \geq 0,
   \]
+  \mm{cosmit: I use : instead of | in sets to avoid confusion with following absolute value}
   such that \(m\) is the number of clusters.
-  \jl{We need something that doesn't define clusters multiple times.}
-  \mathurin{Good remark, I guess we could avoid naming the variable \(i\) since above we have \(i\) and \(j\) being both in \([p]\) while here \(i\) would in fact be in \([n_{clusters}/n_{groups}]\). \(g\) for groups, as used in group Lasso? "For a fixed \(\beta\), let \(G\) be the number of different values taken by \(\abs{\beta_j}\), i.e. the number of groups, and let \((\cB_g)_{g \in G}\) be a partition of \([p]\) such that \(\forall (j, j') \in \cB_g, \abs{\beta_j} = \abs{\beta_{j'}}\)}
-  \jl{Thanks, yes that would work.
-    I have tried something slightly different
-    here, however, which may be enough for us.
-  }
-
+  \mathurin{to be sure: it's what we called $\cC_i$ above ? I tend to prefer C for clusters}
 \end{theorem}
 \begin{proof}
   The directional derivative for the sorted \(\ell_1\) norm and a direction
-  \(v\) with \(\lVert v \rVert = 1\) is
+  \(v\) with \(\lVert v \rVert = 1\) \mm{is normalization needed?} is
   \begin{equation}
     \label{eq:sl1-directional-derivative}
     \begin{aligned}

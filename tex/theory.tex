@@ -23,6 +23,7 @@
   \[
     D_v J(\beta) =
     \sum_{i=1}^m \sum_{j \in \mathcal{B}_i} \lambda_j v_{\sigma(j)}\sign(\beta_{\sigma(j)} + h_0v_{\sigma(j)})\]
+  \mm{doesn't the definition of $h_0$ imply that $\beta_j + h_0 v_j$ has the sign of $\beta_j$?}
   where
   \[
     \mathcal{B}_i = \{j : |\beta_j| = c_i\},\qquad
@@ -34,7 +35,7 @@
 \end{theorem}
 \begin{proof}
   The directional derivative for the sorted \(\ell_1\) norm and a direction
-  \(v\) with \(\lVert v \rVert = 1\) \mm{is normalization needed?} is
+  \(v\) with \(\lVert v \rVert = 1\) \mm{is normalization needed?}\jw{No, but I think we should put in the definition of Theorem, as it no limitation?} is
   \begin{equation}
     \label{eq:sl1-directional-derivative}
     \begin{aligned}
@@ -51,7 +52,7 @@
   \]
   Next, recall the construction of \(h_0\) and
   observe that \(\sign(\beta_j + hv_j) = \sign(\beta_j)\)
-  and \(\sigma(j) = (j)\) for all \(j \notin \mathcal{B}_m\)
+  and \(\sigma(j) = (j)\) for all \(j \notin \mathcal{B}_m\) \mm{here there is an issue for me because, by the clustering effect, $()$ is not uniquely defined. since $v$ allows each component of $\beta + h v$ to move at different speed, we may, inside each cluster, end up with any arbitrary order (the limit on the magnitude of $h$ only imposes that vlaues from one cluster don't end up crossing another cluster )}\jw{I don't follow. You have an arbitrary ordering if $|\beta_i +hv_i|$ and $|\beta_j +hv_j|$ otherwise the ordering is defined by $\sigma$ as it determined by $\beta$ and $v$?}
   whenever \(0 < h < h_0\).
   It follows that
   \[

@@ -118,7 +118,7 @@ The optimality condition for this sub-problem is \(\boldsymbol{0} \in
     \begin{cases}
       \big[-\sum_{j=|C(0)|-|\mathcal{B}|}^{|C(0)|}\lambda^{C(0)}_j, \sum_{j=|C(0)|-|\mathcal{B}|}^{|C(0)|}\lambda^{C(0)}_j\big]                            & \text{if } \tilde\beta = 0           \\
       \big[\sum_{j=|\mathcal{C}_i| - |\mathcal{B}|}^{|\mathcal{C}_i|}\lambda^{\mathcal{C}_i}_j, \sum_{j=1}^{|\mathcal{B}|}\lambda^{\mathcal{C}_i}_j\big]   & \text{if } \tilde\beta = c_i \neq 0  \\
-      \big[-\sum_{j=1}^{|\mathcal{B}|}\lambda^{\mathcal{C}_i}_j, -\sum_{j=|\mathcal{C}_i| - |\mathcal{B}|}^{|\mathcal{C}_i|}\lambda^{\mathcal{C}_i}_j\big] & \text{if } \tilde\beta = -c_i \neq 0 \\
+      \big[-\sum_{j=1}^{|\mathcal{B}|}\lambda^{\mathcal{C}_i}_j, -\sum_{j=|\mathcal{C}_i| - |\mathcal{B}|}^{|\mathcal{C}_i|}\lambda^{\mathcal{B}}_j\big] & \text{if } \tilde\beta = -c_i \neq 0 \\
       \{\sign(\tilde\beta)\boldsymbol{1}^T\lambda^{C(\tilde\beta)}\}                                                                                       & \text{otherwise.
       }
       % \{\sign(\tilde\beta) S\big(C(\tilde\beta)\big)\}                                                                                                & \text{if } \tilde\beta \neq c_i \neq 0, \\
@@ -225,11 +225,10 @@ where
   \begin{cases}
     0                                                        & \text{if } |a| \leq \sum_{i=1}^{|\mathcal{B}|}\lambda^{C(0)}_i                                                                                                                      \\
     \sign(a)c_i                                              & \text{if } \sum_{j= |\mathcal{C}_i| - |\mathcal{B}|}^{|\mathcal{C}_i|} \lambda^{\mathcal{C}_i}_j \leq |a| - c_i \leq \sum_{j=1}^{|\mathcal{B}|}\lambda^{\mathcal{C}_i}_j \\
-    \sign(a)\big(|a| - \sum_{j \in C(a)}\lambda_{(j)^-}\big) & \text{otherwise.
+    \sign(a)\big(|a| - \sum_{j \in \mathcal{B}}\lambda_{(j)^-}\big) & \text{otherwise.
     }
   \end{cases}
 \end{equation}
-\JL{The third case cannot use \(C(a)\). We must think of something different.}
 To emphasize the connection between \(T\) and the soft-thresholding operator
 for the lasso, we call this operator the SLOPE-thresholding operator.
 In \cref{fig:slope-thresholding}, we visualize the operator.

@@ -41,7 +41,7 @@ def slope_threshold(x, lambdas, C, C_start, C_end, c, j):
     if np.abs(x) < zero_lambda_sum:
         return 0.0
 
-    lo = 0.0
+    lo = zero_lambda_sum
     hi = zero_lambda_sum
 
     # TODO(JL): This can and should be done much more efficiently, using
@@ -66,13 +66,14 @@ def slope_threshold(x, lambdas, C, C_start, C_end, c, j):
 
         if abs(x) > hi + c[k]:
             # we must be between clusters
-            return np.sign(x) * (np.abs(x) - hi)
-
-        if abs(x) > lo + c[k] and abs(x) < hi + c[k]:
+            # return np.sign(x) * (np.abs(x) - hi)
+            return x - np.sign(x)*hi
+        elif abs(x) >= lo + c[k]:
             # we are in a cluster
             return np.sign(x) * c[k]
 
-    return np.sign(x) * (np.abs(x) - lo)
+    # return np.sign(x) * (np.abs(x) - lo)
+    return x - np.sign(x)*lo
 
 
 np.random.seed(10)
@@ -80,7 +81,7 @@ n = 10
 p = 2
 
 X = np.random.rand(n, p)
-beta_true = np.array([-0.8, 0.8])
+beta_true = np.array([0.8, -0.8])
 y = X @ beta_true
 
 y = y - np.mean(y)
@@ -218,19 +219,16 @@ for it in range(maxit):
 
         c_old = c[j]
         B = list(set(range(p)) - set(A))
-        c_wo_j = np.delete(c, j)
 
         # s = np.sign(beta[A])
         s = np.sign(-g[A])
         s = np.ones(len(s)) if all(s == 0) else s
         H = s.T @ X[:, A].T @ X[:, A] @ s
-        x = (y - X[:, B] @ beta[B]).T @ X[:, A] @ s
-        # x = c[j] - r.T @ X[:, A] @ s / H
+        x = (y - X[:, B] @ beta[B]).T @ X[:, A] @ s / H
 
         # lo_sums, up_sums, sums = lambda_sums(lambdas, C, C_size, C_start, C_end, c, j)
 
-        beta_tilde = slope_threshold(x / H, lambdas / H, C, C_start, C_end, c, j) / len(A)
-        
+        beta_tilde = slope_threshold(x, lambdas/H, C, C_start, C_end, c, j)
         c[j] = np.abs(beta_tilde)
         beta[A] = beta_tilde * s
 
@@ -265,16 +263,14 @@ for i in range(20):
         primal = 0.5 * norm(r) ** 2 + np.sum(lambdas * np.sort(np.abs(betax))[::-1])
         dual = 0.5 * (norm(y) ** 2 - norm(y - theta) ** 2)
         gap = primal - dual
-        z[i][j] = primal
+        z[j][i] = gap
 
 plt.clf()
 plt.contour(beta1, beta2, z, levels=20)
 abline(1, 0)
 abline(-1, 0)
 plt.plot(beta_star[0], beta_star[1], color="red", marker="x", markersize=16)
-plt.plot(beta1s, beta2s, marker="o")
-plt.plot(beta1_start, beta2_start, marker="o", color="black")
-plt.plot(beta1_start, beta2_start, marker="o", color="black")
+plt.plot(beta1s, beta2s, marker="o", color="black")
 plt.show(block=False)
 
 # plt.clf()

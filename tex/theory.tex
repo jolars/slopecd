@@ -95,13 +95,13 @@ We have
              & = \frac{1}{2} \lVert y - X_{\bar{\mathcal{C}_k}} \beta_{\bar{\mathcal{C}_k}} - \big(X_{\mathcal{C}_k} s_{\mathcal{C}_k}\big)\tilde\beta  \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)|\tilde\beta|.
   \end{aligned}
 \]
-Now let \(\tilde y = X_{\bar{\mathcal{C}}_k} \beta_{\bar{\mathcal{C}_k}}\)
-such that \(y - \tilde y\) is the \emph{partial residual} and take the
+Now let \(\hat y = X_{\bar{\mathcal{C}}_k} \beta_{\bar{\mathcal{C}_k}}\), and $ \tilde x = X_{\mathcal{C}_k} s_{\mathcal{C}_k}$,
+such that \(\tilde y = y - \hat y\) is the \emph{partial residual} and take the
 derivate with respect to \(\tilde\beta\), yielding
 \begin{equation}
   \label{eq:cluster-grad}
   \partial_{\tilde\beta}
-  P(\beta) = (\tilde y - y)^T X_{\mathcal{C}_k} s_{\mathcal{C}_k} + s_{\mathcal{C}_k}^T X_{{\mathcal{C}_k}}^T X_{\mathcal{C}_k} s_{\mathcal{C}_k} \tilde\beta + \partial_{\tilde\beta}\Bigg(\bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)|\tilde\beta| + \sum_{j \notin \mathcal{C}_k}\lambda_{(j)^-}|\beta_k|\Bigg),
+  P(\beta) = \tilde y^T \tilde x + \tilde x^T \tilde x \tilde\beta + \partial_{\tilde\beta}\Bigg(\bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)|\tilde\beta| + \sum_{j \notin \mathcal{C}_k}\lambda_{(j)^-}|\beta_k|\Bigg),
 \end{equation}
 where the last term is the partial subdifferential of the sorted \(\ell_1\)
 norm.
@@ -207,14 +207,14 @@ the relative signs that really matter, right?}\jw{That is a really good point. D
   s_\mathcal{B} \odot
     T \left(
       \frac{
-        (y - \tilde y)^T X_{\mathcal{B}} s_{\mathcal{B}},
+       \tilde y^T \tilde x,
       }{
-        s_{\mathcal{B}}^T X_{\mathcal{B}}^T X_{\mathcal{B}} s_{\mathcal{B}}
+       \tilde x^T \tilde x
       } , 
       \frac{
         \lambda 
       }{
-        s_{\mathcal{B}}^T X_{\mathcal{B}}^T X_{\mathcal{B}} s_{\mathcal{B}}
+        \tilde x^T \tilde x
       } 
     \right)
 \]

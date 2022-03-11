@@ -95,7 +95,7 @@ We have
              & = \frac{1}{2} \lVert y - X_{\bar{\mathcal{C}_k}} \beta_{\bar{\mathcal{C}_k}} - \big(X_{\mathcal{C}_k} s_{\mathcal{C}_k}\big)\tilde\beta  \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)|\tilde\beta|.
   \end{aligned}
 \]
-Now let \(\tilde y = X_{\bar{\mathcal{C}_k}} \beta_{\bar{\mathcal{C}_k}}\)
+Now let \(\tilde y = X_{\bar{\mathcal{C}}_k} \beta_{\bar{\mathcal{C}_k}}\)
 such that \(y - \tilde y\) is the \emph{partial residual} and take the
 derivate with respect to \(\tilde\beta\), yielding
 \begin{equation}
@@ -112,7 +112,7 @@ The optimality condition for this sub-problem is \(\boldsymbol{0} \in
 \begin{theorem}
   \label{thm:cluster-subdifferential}
   The partial subdifferential for the sorted \(\ell_1\) norm with respect
-  to \(\tilde\beta\), \(\mathcal{B} \gets \mathcal{C}_k\) is
+  to \(\tilde\beta\), \(\mathcal{B} \gets \mathcal{C}_k\) \mm{$\cB = \cC_k$ ?} is
   \[
     \partial =
     \begin{cases}
@@ -128,15 +128,15 @@ The optimality condition for this sub-problem is \(\boldsymbol{0} \in
   \]
 \end{theorem}
 \begin{proof}
-  Let \(f(\tilde\beta) = |\tilde\beta|\sum_{j \in \mathcal{C}_k}\lambda_{(j)^-} + \sum_{j \notin \mathcal{C}_k} \lambda_{(j)^-}|\beta_j|\).
-  \(g\) is a subgradient of \(f\) at \(x\) if
+  Let \(f(\tilde\beta) = |\tilde\beta|\sum_{j \in \mathcal{C}_k}\lambda_{(j)^-} + \sum_{j \notin \mathcal{C}_k} \lambda_{(j)^-}|\beta_j|\).\mathurin{If $f$ is only a function of $\tilde \beta$, then the secodn term is constant, and since we are interested in subgradients, we should able to omit it?}
+  \(g\) \mm{$f/g$ > $u$ or $v$ for subgradient?} is a subgradient of \(f\) at \(x\) if
   \begin{equation}
     \label{eq:subgrad-ineq}
     |y|\sum_{j \in C(y)}\lambda_{(j)^-} + \sum_{j \notin C(y)}\lambda_{(j)^-}|\beta_j|
     \geq |x|\sum_{j \in C(x)} \lambda_{(j)^-} + \sum_{j \notin C(x)}\lambda_{(j)^-}|\beta_j| + g(y - x)
   \end{equation}
-  for all \(y \in \mathbb{R}\).
-  Without loss of generality, since \(f\) is convex, assume that we have
+  for all \(y \in \mathbb{R}\).\mm{notation conflict with $y \in \bbR^n$}
+  Without loss of generality, since \(f\) is convex \mathurin{here I did not understand the WLOG relationship with convexity}, assume that we have
   a vector \(\beta\) such that there are two clusters: one corresponding
   to \(\tilde\beta\), which we are optimizing over, and
   one additional cluster \(\mathcal{C}_q\) with corresponding

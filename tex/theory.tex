@@ -66,7 +66,7 @@
     = \sum_i \sum_{j \in \mathcal{C}_i} \lambda_j\sign(\beta + vh_0)_{\sigma(j)}v_{\sigma(j)}.
   \]
   \mathurin{Is this reformulation equivalent? (provided $c_m = 0$)}
-  \JL{Yes, but note that you still need \(h_0\) for the permutation.}
+  \JL{Yes, good point! But we still need \(h_0\) for the permutation.}
   \begin{equation*}
     D_v J(\beta) = \sum_{j \notin \cC_m} \lambda_j \sign (\beta_{\sigma(j)}) v_{\sigma(j)}
       +
@@ -151,12 +151,12 @@ The optimality condition for this sub-problem is \(\boldsymbol{0} \in
   At \(x = 0\), \eqref{eq:subgrad-ineq} reduces to
   \[
     |y|S\big(C(y)\big) + c_q S\big(\widebar{C(y)}\big)
-    \geq c_q(\mathcal{C}_1) + gy.
+    \geq c_q S(\mathcal{C}_1) + gy.
   \]
   Because \(f\) is convex, it is sufficient to consider \(|y| < c_q\),
   in which case \(C(y) = \mathcal{C}_1\) and hence
   \begin{equation}
-      |y|S(\mathcal{C}_2) + c_q S(\mathcal{C}_1) \geq c_q(\mathcal{C}_1) + gy \implies
+      |y|S(\mathcal{C}_2) + c_q S(\mathcal{C}_1) \geq c_q S(\mathcal{C}_1) + gy \implies
       |y|S(\mathcal{C}_2) \geq gy,
   \end{equation}
   which means that \(-S(\mathcal{C}_2) \leq g \leq S(\mathcal{C}_2)\).
@@ -205,17 +205,23 @@ the relative signs that really matter, right?}\jw{That is a really good point. D
 \[
   \beta_\mathcal{B} \gets
   s_\mathcal{B} \odot
-  \frac{
-    T \big(
-    (y - \tilde y)^T X_{\mathcal{B}} s_{\mathcal{B}}, \lambda\big)
-  }{
-    s_{\mathcal{B}}^T X_{\mathcal{B}}^T X_{\mathcal{B}} s_{\mathcal{B}}
-  }
+    T \left(
+      \frac{
+        (y - \tilde y)^T X_{\mathcal{B}} s_{\mathcal{B}},
+      }{
+        s_{\mathcal{B}}^T X_{\mathcal{B}}^T X_{\mathcal{B}} s_{\mathcal{B}}
+      } , 
+      \frac{
+        \lambda 
+      }{
+        s_{\mathcal{B}}^T X_{\mathcal{B}}^T X_{\mathcal{B}} s_{\mathcal{B}}
+      } 
+    \right)
 \]
 where
 \begin{equation}
   \label{eq:slope-thresholding}
-  T(a; \lambda) =
+  T(a, \lambda) =
   \begin{cases}
     0                                                        & \text{if } |a| \leq \sum_{i=1}^{|\mathcal{B}|}\lambda^{C(0)}_i                                                                                                                      \\
     \sign(a)c_i                                              & \text{if } \sum_{j= |\mathcal{C}_i| - |\mathcal{B}|}^{|\mathcal{C}_i|} \lambda^{\mathcal{C}_i}_j \leq |a| - c_i \leq \sum_{j=1}^{|\mathcal{B}|}\lambda^{\mathcal{C}_i}_j \\
@@ -223,6 +229,7 @@ where
     }
   \end{cases}
 \end{equation}
+\JL{The third case cannot use \(C(a)\). We must think of something different.}
 To emphasize the connection between \(T\) and the soft-thresholding operator
 for the lasso, we call this operator the SLOPE-thresholding operator.
 In \cref{fig:slope-thresholding}, we visualize the operator.

@@ -201,6 +201,7 @@ corresponding coefficient \(c_k\).
 Then the coordinate update for \(\beta_\mathcal{B}\) is\jl{This obviously
 does not work when \(s=0\). Can we just set \(s = 1\) here? It's just
 the relative signs that really matter, right?}\jw{That is a really good point. Do you think we can tie to the sign of the gradient instead?. We also will not move the zero cluster this way suspect. But it should work for any formation then sign of the gradient is the way I think?}
+\jl{Yes, I think you're right, in fact that's what I have in the code now.}
 \[
   \beta_\mathcal{B} \gets
   s_\mathcal{B} \odot

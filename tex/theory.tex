@@ -51,6 +51,9 @@
   Next, recall the construction of \(h_0\) and
   observe that \(\sign(\beta_j + hv_j) = \sign(\beta_j)\)
   and \(\sigma(j) = (j)\) for all \(j \notin \mathcal{C}_m\) \mm{here there is an issue for me because, by the clustering effect, $()$ is not uniquely defined. since $v$ allows each component of $\beta + h v$ to move at different speed, we may, inside each cluster, end up with any arbitrary order (the limit on the magnitude of $h$ only imposes that vlaues from one cluster don't end up crossing another cluster )}\jw{I don't follow. You have an arbitrary ordering if $|\beta_i +hv_i|$ and $|\beta_j +hv_j|$ otherwise the ordering is defined by $\sigma$ as it determined by $\beta$ and $v$?}
+  \mathurin{It's a small detail, but neither $\sigma$ nor $()$ are uniquely defined.
+  For me the above sentence says that for $h$ small enough and the non zero clusters, $\sigma$ does not depend on $v$. But if you take $\beta = (0, 10, 10, 20)$ and $hv = (0, 1, 0, 0)$ or $hv = (0, 0, 1, 0)$, they don't yield the same $\sigma$.
+  I'm thinking a rigorous formulation is: "$\sigma$ is a valid reordering for $\beta$"}
   whenever \(0 < h < h_0\).
   It follows that
   \[
@@ -62,6 +65,12 @@
     \lim_{h \searrow 0} \sum_i \sum_{j \in \mathcal{C}_i} \lambda_j\sign(\beta + vh)_{\sigma(j)}v_{\sigma(j)}
     = \sum_i \sum_{j \in \mathcal{C}_i} \lambda_j\sign(\beta + vh_0)_{\sigma(j)}v_{\sigma(j)}.
   \]
+  \mathurin{Is this reformulation equivalent? (provided $c_m = 0$)}
+  \begin{equation*}
+    D_v J(\beta) = \sum_{j \notin \cC_m} \lambda_j \sign (\beta_{\sigma(j)}) v_{\sigma(j)}
+      +
+    \sum_{j \in \cC_m} \lambda_j \sign (v_{\sigma(j)}) v_{\sigma(j)}
+  \end{equation*}
 \end{proof}
 
 \begin{remark}

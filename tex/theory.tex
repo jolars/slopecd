@@ -66,6 +66,7 @@
     = \sum_i \sum_{j \in \mathcal{C}_i} \lambda_j\sign(\beta + vh_0)_{\sigma(j)}v_{\sigma(j)}.
   \]
   \mathurin{Is this reformulation equivalent? (provided $c_m = 0$)}
+  \JL{Yes, good point! But we still need \(h_0\) for the permutation.}
   \begin{equation*}
     D_v J(\beta) = \sum_{j \notin \cC_m} \lambda_j \sign (\beta_{\sigma(j)}) v_{\sigma(j)}
       +
@@ -117,7 +118,7 @@ The optimality condition for this sub-problem is \(\boldsymbol{0} \in
     \begin{cases}
       \big[-\sum_{j=|C(0)|-|\mathcal{B}|}^{|C(0)|}\lambda^{C(0)}_j, \sum_{j=|C(0)|-|\mathcal{B}|}^{|C(0)|}\lambda^{C(0)}_j\big]                            & \text{if } \tilde\beta = 0           \\
       \big[\sum_{j=|\mathcal{C}_i| - |\mathcal{B}|}^{|\mathcal{C}_i|}\lambda^{\mathcal{C}_i}_j, \sum_{j=1}^{|\mathcal{B}|}\lambda^{\mathcal{C}_i}_j\big]   & \text{if } \tilde\beta = c_i \neq 0  \\
-      \big[-\sum_{j=1}^{|\mathcal{B}|}\lambda^{\mathcal{C}_i}_j, -\sum_{j=|\mathcal{C}_i| - |\mathcal{B}|}^{|\mathcal{C}_i|}\lambda^{\mathcal{C}_i}_j\big] & \text{if } \tilde\beta = -c_i \neq 0 \\
+      \big[-\sum_{j=1}^{|\mathcal{B}|}\lambda^{\mathcal{C}_i}_j, -\sum_{j=|\mathcal{C}_i| - |\mathcal{B}|}^{|\mathcal{C}_i|}\lambda^{\mathcal{B}}_j\big] & \text{if } \tilde\beta = -c_i \neq 0 \\
       \{\sign(\tilde\beta)\boldsymbol{1}^T\lambda^{C(\tilde\beta)}\}                                                                                       & \text{otherwise.
       }
       % \{\sign(\tilde\beta) S\big(C(\tilde\beta)\big)\}                                                                                                & \text{if } \tilde\beta \neq c_i \neq 0, \\
@@ -150,12 +151,12 @@ The optimality condition for this sub-problem is \(\boldsymbol{0} \in
   At \(x = 0\), \eqref{eq:subgrad-ineq} reduces to
   \[
     |y|S\big(C(y)\big) + c_q S\big(\widebar{C(y)}\big)
-    \geq c_q(\mathcal{C}_1) + gy.
+    \geq c_q S(\mathcal{C}_1) + gy.
   \]
   Because \(f\) is convex, it is sufficient to consider \(|y| < c_q\),
   in which case \(C(y) = \mathcal{C}_1\) and hence
   \begin{equation}
-      |y|S(\mathcal{C}_2) + c_q S(\mathcal{C}_1) \geq c_q(\mathcal{C}_1) + gy \implies
+      |y|S(\mathcal{C}_2) + c_q S(\mathcal{C}_1) \geq c_q S(\mathcal{C}_1) + gy \implies
       |y|S(\mathcal{C}_2) \geq gy,
   \end{equation}
   which means that \(-S(\mathcal{C}_2) \leq g \leq S(\mathcal{C}_2)\).
@@ -200,24 +201,31 @@ corresponding coefficient \(c_k\).
 Then the coordinate update for \(\beta_\mathcal{B}\) is\jl{This obviously
 does not work when \(s=0\). Can we just set \(s = 1\) here? It's just
 the relative signs that really matter, right?}\jw{That is a really good point. Do you think we can tie to the sign of the gradient instead?. We also will not move the zero cluster this way suspect. But it should work for any formation then sign of the gradient is the way I think?}
+\jl{Yes, I think you're right, in fact that's what I have in the code now.}
 \[
   \beta_\mathcal{B} \gets
   s_\mathcal{B} \odot
-  \frac{
-    T \big(
-    (y - \tilde y)^T X_{\mathcal{B}} s_{\mathcal{B}}, \lambda\big)
-  }{
-    s_{\mathcal{B}}^T X_{\mathcal{B}}^T X_{\mathcal{B}} s_{\mathcal{B}}
-  }
+    T \left(
+      \frac{
+        (y - \tilde y)^T X_{\mathcal{B}} s_{\mathcal{B}},
+      }{
+        s_{\mathcal{B}}^T X_{\mathcal{B}}^T X_{\mathcal{B}} s_{\mathcal{B}}
+      } , 
+      \frac{
+        \lambda 
+      }{
+        s_{\mathcal{B}}^T X_{\mathcal{B}}^T X_{\mathcal{B}} s_{\mathcal{B}}
+      } 
+    \right)
 \]
 where
 \begin{equation}
   \label{eq:slope-thresholding}
-  T(a; \lambda) =
+  T(a, \lambda) =
   \begin{cases}
     0                                                        & \text{if } |a| \leq \sum_{i=1}^{|\mathcal{B}|}\lambda^{C(0)}_i                                                                                                                      \\
     \sign(a)c_i                                              & \text{if } \sum_{j= |\mathcal{C}_i| - |\mathcal{B}|}^{|\mathcal{C}_i|} \lambda^{\mathcal{C}_i}_j \leq |a| - c_i \leq \sum_{j=1}^{|\mathcal{B}|}\lambda^{\mathcal{C}_i}_j \\
-    \sign(a)\big(|a| - \sum_{j \in C(a)}\lambda_{(j)^-}\big) & \text{otherwise.
+    \sign(a)\big(|a| - \sum_{j \in \mathcal{B}}\lambda_{(j)^-}\big) & \text{otherwise.
     }
   \end{cases}
 \end{equation}

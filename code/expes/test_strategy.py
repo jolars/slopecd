@@ -7,7 +7,7 @@ from slope.utils import dual_norm_slope, slope_threshold
 from slope.utils import get_clusters, prox_slope
 from slope.solvers import prox_grad
 
-X, y, _ = make_correlated_data(n_samples=100, n_features=40, random_state=0)
+X, y, _ = make_correlated_data(n_samples=100, n_features=400, random_state=0)
 randnorm = stats.norm(loc=0, scale=1)
 q = 0.5
 
@@ -89,7 +89,7 @@ for t in range(max_iter):
 
 
 beta_star, primals_star, gaps_star, theta_star = prox_grad(
-    X, y, alphas / n_samples, max_iter=1000, n_cd=0, verbose=False, tol=tol,
+    X, y, alphas, max_iter=1000, n_cd=0, verbose=True, tol=tol,
 )
 plt.semilogy(np.arange(len(gaps)), gaps, label='cd')
 plt.semilogy(np.arange(len(gaps_star)), gaps_star, label='pgd')

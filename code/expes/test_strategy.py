@@ -74,16 +74,16 @@ for t in range(max_iter):
             R[:] = y - X @ w
             g = X.T @ R
 
-        theta = R / n_samples
-        theta /= max(1, dual_norm_slope(X, theta, alphas))
-        dual = (norm(y) ** 2 - norm(y - theta * n_samples) ** 2) / \
-            (2 * n_samples)
-        primal = norm(R) ** 2 / (2 * n_samples) + \
-            np.sum(alphas * np.sort(np.abs(w))[::-1])
+    theta = R / n_samples
+    theta /= max(1, dual_norm_slope(X, theta, alphas))
+    dual = (norm(y) ** 2 - norm(y - theta * n_samples) ** 2) / \
+        (2 * n_samples)
+    primal = norm(R) ** 2 / (2 * n_samples) + \
+        np.sum(alphas * np.sort(np.abs(w))[::-1])
 
-        E.append(primal)
-        gap = primal - dual
-        gaps.append(gap)
+    E.append(primal)
+    gap = primal - dual
+    gaps.append(gap)
 
     print(f"Iter: {t + 1}, loss: {primal}, gap: {gap:.2e}")
     if gap < tol:

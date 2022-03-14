@@ -36,34 +36,32 @@ def prox_slope(w, alphas):
 
 
 def get_clusters(w):
-    unique, indices, counts = np.unique(
-        np.abs(w), return_inverse=True, return_counts=True
+    unique, counts = np.unique(
+        np.abs(w), return_inverse=False, return_counts=True
     )
+    cluster_indices = np.argsort(np.abs(w))[::-1]
+    cluster_ptr = np.cumsum(counts[::-1])
+    cluster_ptr = np.r_[0, cluster_ptr]
+    return cluster_indices, cluster_ptr, unique[::-1]
 
-    clusters = [[] for _ in range(len(unique))]
-    for i in range(len(indices)):
-        clusters[indices[i]].append(i)
-    return clusters[::-1], counts[::-1], indices[::-1], unique[::-1]
 
-
-def slope_threshold(x, lambdas, C, C_start, C_end, c, j):
-
-    A = C[j]
+@njit
+def slope_threshold(x, lambdas, cluster_indices, cluster_ptr, c, j):
+    A = cluster_indices[cluster_ptr[j]:cluster_ptr[j+1]]
     cluster_size = len(A)
 
     # zero_cluster_size = 0 if c[-1] != 0 else len(C[-1])
-
-    zero_lambda_sum = np.sum(lambdas[::-1][range(cluster_size)])
+    zero_lambda_sum = np.sum(
+        lambdas[::-1][np.arange(cluster_size)])
 
     if np.abs(x) < zero_lambda_sum:
         return 0.0
-
     lo = zero_lambda_sum
     hi = zero_lambda_sum
 
     # TODO(JL): This can and should be done much more efficiently, using
     # kind of binary search to find the right interval
-    for k in range(len(C)):
+    for k in range(len(c)):
         if k == j:
             continue
 
@@ -71,12 +69,12 @@ def slope_threshold(x, lambdas, C, C_start, C_end, c, j):
         mod = cluster_size if k > j else 0
 
         # check upper end of cluster
-        hi_start = C_start[k] - mod
-        hi_end = C_start[k] + cluster_size - mod
+        hi_start = cluster_ptr[k] - mod
+        hi_end = cluster_ptr[k] + cluster_size - mod
 
         # check lower end of cluster
-        lo_start = C_end[k] - mod
-        lo_end = C_end[k] + cluster_size - mod
+        lo_start = cluster_ptr[k+1] - mod
+        lo_end = cluster_ptr[k+1] + cluster_size - mod
 
         lo = sum(lambdas[lo_start:lo_end])
         hi = sum(lambdas[hi_start:hi_end])
@@ -91,4 +89,3 @@ def slope_threshold(x, lambdas, C, C_start, C_end, c, j):
 
     # return np.sign(x) * (np.abs(x) - lo)
     return x - np.sign(x)*lo
-

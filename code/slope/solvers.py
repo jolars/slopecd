@@ -61,17 +61,17 @@ def prox_grad(X, y, alphas, max_iter=100, tol=1e-10, n_cd=0, verbose=True):
 def block_cd_epoch(w, X, R, alphas, cluster_indices, cluster_ptr, c):
     n_samples = X.shape[0]
     for j in range(len(cluster_ptr)-1):
-        A = cluster_indices[cluster_ptr[j]:cluster_ptr[j+1]]
-        s = np.sign(w[A])
-        s = np.ones(len(s)) if np.all(s == 0) else s
-        sum_X = s.T @ X[:, A].T
+        cluster = cluster_indices[cluster_ptr[j]:cluster_ptr[j+1]]
+        sign_w = np.sign(w[cluster])
+        sign_w = np.ones(len(sign_w)) if np.all(sign_w == 0) else sign_w
+        sum_X = sign_w.T @ X[:, cluster].T
         L_j = sum_X @ sum_X.T / n_samples
-        old = np.abs(w[A][0])
+        old = np.abs(w[cluster][0])
         x = old + (sum_X @ R) / (L_j * n_samples)
         beta_tilde = slope_threshold(
             x, alphas/L_j, cluster_indices, cluster_ptr, c, j)
         c[j] = np.abs(beta_tilde)
-        w[A] = beta_tilde * s
+        w[cluster] = beta_tilde * sign_w
         R += (old - beta_tilde) * sum_X.T
 
 

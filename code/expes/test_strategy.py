@@ -5,9 +5,9 @@ from benchopt.datasets import make_correlated_data
 from numpy.linalg import norm
 from slope.utils import dual_norm_slope, slope_threshold
 from slope.utils import get_clusters, prox_slope
-from slope.solvers import prox_grad
+from slope.solvers import prox_grad, oracle_cd
 
-X, y, _ = make_correlated_data(n_samples=100, n_features=400, random_state=0)
+X, y, _ = make_correlated_data(n_samples=100, n_features=40, random_state=0)
 randnorm = stats.norm(loc=0, scale=1)
 q = 0.5
 
@@ -17,10 +17,10 @@ alphas_seq = randnorm.ppf(
 
 alpha_max = dual_norm_slope(X, y / len(y), alphas_seq)
 
-alphas = alpha_max * alphas_seq / 5
+alphas = alpha_max * alphas_seq / 100
 plt.close('all')
 
-max_iter = 250
+max_iter = 1000
 tol = 1e-12
 
 n_samples, n_features = X.shape
@@ -35,6 +35,7 @@ E.append(norm(y)**2 / (2 * n_samples))
 gaps.append(E[0])
 
 for t in range(max_iter):
+
     if t % 5 == 0:
         w = prox_slope(w + (X.T @ R) / (L * n_samples), alphas / L)
         R[:] = y - X @ w
@@ -65,6 +66,7 @@ for t in range(max_iter):
             L_j = s.T @ X[:, A].T @ X[:, A] @ s / n_samples
 
             x = np.abs(w[A][0]) + (s.T @ g[A]) / (L_j * n_samples)
+            # beta_tilde = ST
             beta_tilde = slope_threshold(
                 x, alphas/L_j, C, C_start, C_end, c, j)
             c[j] = np.abs(beta_tilde)
@@ -91,7 +93,12 @@ for t in range(max_iter):
 beta_star, primals_star, gaps_star, theta_star = prox_grad(
     X, y, alphas, max_iter=1000, n_cd=0, verbose=True, tol=tol,
 )
+beta_oracle, primals_oracle, gaps_oracle = oracle_cd(
+    X, y, alphas, max_iter=1000, verbose=True, tol=tol,
+)
 plt.semilogy(np.arange(len(gaps)), gaps, label='cd')
 plt.semilogy(np.arange(len(gaps_star)), gaps_star, label='pgd')
+plt.semilogy(np.arange(len(gaps_oracle)), gaps_oracle, label='oracle')
+
 plt.legend()
 plt.show()

@@ -89,21 +89,13 @@ def hybrid_cd(X, y, alphas, max_iter=1000, verbose=True,
     gaps.append(E[0])
 
     for t in range(max_iter):
+
         # This is experimental, it will need to be justified
         if t % 5 == 0:
             w = prox_slope(w + (X.T @ R) / (L * n_samples), alphas / L)
             R[:] = y - X @ w
-            theta = R / n_samples
-            theta /= max(1, dual_norm_slope(X, theta, alphas))
-            dual = (norm(y) ** 2 - norm(y - theta * n_samples) ** 2) / \
-                (2 * n_samples)
-            primal = norm(R) ** 2 / (2 * n_samples) + \
-                np.sum(alphas * np.sort(np.abs(w))[::-1])
-
-            E.append(primal)
-            gap = primal - dual
-            gaps.append(gap)
             cluster_indices, cluster_ptr, c = get_clusters(w)
+
         else:
             block_cd_epoch(w, X, R, alphas, cluster_indices, cluster_ptr, c)
 
@@ -163,8 +155,9 @@ def oracle_cd(X, y, alphas, max_iter, tol=1e-10, verbose=False):
     w_reduced = np.zeros(n_clusters)
     R = y.copy()
     lc = norm(X_reduced, axis=0)**2 / n_samples
-    E = []
-    gaps = []
+    E, gaps = [], []
+    E.append(norm(y)**2 / (2 * n_samples))
+    gaps.append(E[0])
 
     for it in range(max_iter):
         pure_cd_epoch(w_reduced, X_reduced, R, alphas_reduced, lc)

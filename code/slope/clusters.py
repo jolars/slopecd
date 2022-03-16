@@ -72,6 +72,7 @@ class Clusters:
 
     def merge(self, i, j):
         self.inds[i].extend(self.inds[j])
+        self.inds[i].sort()
         self.sizes[i] += self.sizes[j]
 
         del self.inds[j]

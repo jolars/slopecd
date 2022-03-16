@@ -1,14 +1,11 @@
-from bisect import bisect_left
-from itertools import combinations, product
-
 import matplotlib.pyplot as plt
 import numpy as np
-from benchopt.datasets import make_correlated_data
 from numpy.linalg import norm
 from scipy import stats
 
+from slope.clusters import Clusters
 from slope.solvers import oracle_cd, prox_grad
-from slope.utils import dual_norm_slope, prox_slope
+from slope.utils import dual_norm_slope
 
 
 def abline(slope, intercept):
@@ -18,62 +15,52 @@ def abline(slope, intercept):
     plt.plot(x_vals, y_vals, "--", color="grey")
 
 
-def get_clusters(w):
-    unique, indices, counts = np.unique(
-        np.abs(w), return_inverse=True, return_counts=True
-    )
+def slope_threshold(x, lambdas, clusters, j):
 
-    clusters = [[] for _ in range(len(unique))]
-    for i in range(len(indices)):
-        clusters[indices[i]].append(i)
-    return clusters[::-1], counts[::-1], indices[::-1], unique[::-1]
-
-
-def slope_threshold(x, lambdas, C, C_start, C_end, c, j):
-
-    A = C[j]
+    A = clusters.inds[j]
     cluster_size = len(A)
-
-    # zero_cluster_size = 0 if c[-1] != 0 else len(C[-1])
 
     zero_lambda_sum = np.sum(lambdas[::-1][range(cluster_size)])
 
     if np.abs(x) < zero_lambda_sum:
-        return 0.0
+        return 0.0, len(clusters.coefs) - 1
 
     lo = zero_lambda_sum
     hi = zero_lambda_sum
 
     # TODO(JL): This can and should be done much more efficiently, using
     # kind of binary search to find the right interval
-    for k in range(len(C)):
+
+    k = 0
+    mod = 0
+
+    for k in range(len(clusters.coefs)):
         if k == j:
             continue
 
-        # adjust C_start and C_end since we treat current cluster as variable
+        # adjust pointers if we are ahead of the cluster in order
         mod = cluster_size if k > j else 0
 
         # check upper end of cluster
-        hi_start = C_start[k] - mod
-        hi_end = C_start[k] + cluster_size - mod
+        hi_start = clusters.starts[k] - mod
+        hi_end = clusters.starts[k] + cluster_size - mod
 
         # check lower end of cluster
-        lo_start = C_end[k] - mod
-        lo_end = C_end[k] + cluster_size - mod
+        lo_start = clusters.ends[k] - mod
+        lo_end = clusters.ends[k] + cluster_size - mod
 
         lo = sum(lambdas[lo_start:lo_end])
         hi = sum(lambdas[hi_start:hi_end])
 
-        if abs(x) > hi + c[k]:
+        if abs(x) > hi + clusters.coefs[k]:
             # we must be between clusters
-            # return np.sign(x) * (np.abs(x) - hi)
-            return x - np.sign(x)*hi
-        elif abs(x) >= lo + c[k]:
+            return x - np.sign(x) * hi, k - mod
+        elif abs(x) >= lo + clusters.coefs[k]:
             # we are in a cluster
-            return np.sign(x) * c[k]
+            return np.sign(x) * clusters.coefs[k], k - mod
 
-    # return np.sign(x) * (np.abs(x) - lo)
-    return x - np.sign(x)*lo
+    # we are between clusters
+    return x - np.sign(x) * lo, k - mod
 
 
 np.random.seed(10)
@@ -81,10 +68,9 @@ n = 10
 p = 2
 
 X = np.random.rand(n, p)
-beta_true = np.array([0.8, -0.8])
-y = X @ beta_true
+beta_true = np.array([0.5, -0.8])
 
-y = y - np.mean(y)
+y = X @ beta_true
 
 randnorm = stats.norm(loc=0, scale=1)
 q = 0.8
@@ -93,14 +79,10 @@ lambdas = randnorm.ppf(1 - np.arange(1, p + 1) * q / (2 * p))
 lambda_max = dual_norm_slope(X, y, lambdas)
 lambdas = lambda_max * lambdas * 0.5
 
-max_it = 20
-
-beta = np.array([0.0, 0.7])
+beta = np.array([-0.1, 0])
 
 beta1_start = beta[0]
 beta2_start = beta[1]
-
-C, C_size, C_indices, c = get_clusters(beta)
 
 r = X @ beta - y
 g = X.T @ r
@@ -115,6 +97,8 @@ beta2s = []
 L = norm(X, ord=2) ** 2
 
 maxit = 10
+
+clusters = Clusters(beta)
 
 for it in range(maxit):
     j = 0
@@ -135,19 +119,14 @@ for it in range(maxit):
     duals.append(dual)
     gaps.append(gap)
 
-    C, C_size, C_indices, c = get_clusters(beta)
-    C_end = np.cumsum(C_size)
-    C_start = C_end - C_size
-    C_ord = np.arange(len(C))
-
-    while j < len(C):
+    while j < len(clusters.coefs):
         beta1s.append(beta[0])
         beta2s.append(beta[1])
 
-        A = C[j].copy()
-        lambdas_j = lambdas[C_start[j] : C_end[j]]
+        A = clusters.inds[j].copy()
+        lambdas_j = lambdas[clusters.starts[j] : clusters.ends[j]]
 
-        print(f"\tj: {j}, A: {A}, c_j: {c[j]:.2e}")
+        print(f"\tj: {j}, C: {clusters.inds[j]}, c_j: {clusters.coefs[j]:.2e}")
 
         grad_A = X[:, A].T @ r
 
@@ -159,8 +138,8 @@ for it in range(maxit):
 
         # check if clusters should split and if so how
         if len(A) > 1:
-            if np.any(c > 0):
-                h0 = 0.01 * np.min(np.diff(np.hstack((0, c))))
+            if any([c_i > 0 for c_i in clusters.coefs]):
+                h0 = 0.01 * np.min(np.diff(np.hstack((0, clusters.coefs))))
             else:
                 h0 = 0.01  # doesn't matter what we choose
 
@@ -169,6 +148,7 @@ for it in range(maxit):
 
             v_best = possible_directions[0]
             dir_deriv = 1e8
+            idx_best = np.ones(len(A))
 
             # search all directions for best direction
             for i in range(len(possible_directions)):
@@ -184,62 +164,26 @@ for it in range(maxit):
                 if d < dir_deriv:
                     dir_deriv = d
                     v_best = v.copy()
+                    idx_best = idx.copy()
 
-            new_clusters, _, _, _ = get_clusters(beta[A] + h0 * v_best)
-            new_cluster = new_clusters[0]
+            left_split = [A[i] for i in list(np.where(v_best)[0])]
 
-            if len(new_clusters) > 1:
-                # the cluster splits
-                C = C[0:j] + new_clusters + C[(j + 1) :]
+            clusters.split(j, left_split)
 
-                above = C_ord > C_ord[j]
-
-                C_ord[above] += 1
-                C_ord = np.r_[C_ord[range(j)], C_ord[j], C_ord[j] + 1, C_ord[j + 1 :]]
-                C_start = np.r_[
-                    C_start[range(j)],
-                    C_start[j],
-                    C_start[j] + len(new_cluster),
-                    C_start[(j + 1) :],
-                ]
-                C_end = np.r_[
-                    C_end[range(j)],
-                    C_start[j] + len(new_cluster),
-                    C_end[j],
-                    C_end[(j + 1) :],
-                ]
-                C_size = np.r_[
-                    C_size[range(j)],
-                    len(new_cluster),
-                    C_size[j] - len(new_cluster),
-                    C_size[(j + 1) :],
-                ]
-                c = np.r_[c[range(j)], c[j], c[j], c[j + 1 :]]
-                A = new_clusters[0]
-
-        c_old = c[j]
+        A = clusters.inds[j]
         B = list(set(range(p)) - set(A))
 
-        # s = np.sign(beta[A])
         s = np.sign(-g[A])
-        s = np.ones(len(s)) if all(s == 0) else s
         H = s.T @ X[:, A].T @ X[:, A] @ s
-        x = (y - X[:, B] @ beta[B]).T @ X[:, A] @ s / H
+        x = (y - X[:, B] @ beta[B]).T @ X[:, A] @ s
 
-        # lo_sums, up_sums, sums = lambda_sums(lambdas, C, C_size, C_start, C_end, c, j)
+        beta_tilde, new_ind = slope_threshold(x / H, lambdas / H, clusters, j)
 
-        beta_tilde = slope_threshold(x, lambdas/H, C, C_start, C_end, c, j)
-        c[j] = np.abs(beta_tilde)
+        clusters.update(j, new_ind, abs(beta_tilde))
+
         beta[A] = beta_tilde * s
 
-        # print(f"\t\tnew_c: {beta_tilde:.2e}")
-
         j += 1
-
-        C, C_size, C_indices, c = get_clusters(beta)
-        C_end = np.cumsum(C_size)
-        C_start = C_end - C_size
-        C_ord = np.arange(len(C))
 
         r = X @ beta - y
         g = X.T @ r

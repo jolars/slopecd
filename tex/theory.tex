@@ -294,3 +294,38 @@ checking all possible combinations of a cluster likely is expensive.
 We have
 to hope that's it's rare for multiple coefficients to leave a cluster in
 a new cluster.
+
+\subsection{Hybrid proximal coordinate descent strategy}
+
+\begin{algorithm}[tb]
+  \SetKwInOut{Init}{init}
+  \SetKwInOut{Input}{input}
+  \Input{
+      $X \in \mathbb{R}^{n\times p}, y\in \mathbb{R}^n, \beta, \lambda \in \mathbb{R}^p, 
+      \mathrm{\max\_{iter}} \in\mathbb{N}
+      $}
+  \caption{\texttt{Hybrid slopecd} (proposed)}\label{alg:sksparse}
+  \For{$t = 1, \ldots,  \mathrm{\max\_{iter}}$}{
+    \If{$t \, \mathrm{mod} \, 5 = 0$}{
+
+      $\beta \leftarrow \mathrm{prox}_{J / L}(\beta - \frac{1}{L}\nabla f(\beta))$
+
+      $C_1, \hdots, C_m \leftarrow \mathrm{get\_clusters}(\beta)$
+      }
+    \Else{
+      \For{$b = 1, \hdots, m$}{
+        $\mathcal{B} \leftarrow C_b$ 
+        
+        $s \leftarrow \mathrm{sign}(\beta_{\mathcal{B}})$
+
+        $L_b = (X_{:, \mathcal{B}}s)^\top  X_{:, \mathcal{B}}s$
+
+        $\tilde{\beta} = T(|\beta_{\mathcal{B}_1}| - \frac{1}{L_b} \nabla_\mathcal{B}f(\beta)^\top s, \frac{\lambda}{L_b})$
+
+        $\beta_\mathcal{B} \leftarrow \tilde{\beta} s$
+      }
+    }
+
+  }
+\Return{$\beta$}
+\end{algorithm}

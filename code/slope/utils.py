@@ -36,6 +36,7 @@ def prox_slope(w, alphas):
 
 
 def get_clusters(w):
+    # check if there is a cheaper way of doing this
     unique, counts = np.unique(
         np.abs(w), return_inverse=False, return_counts=True
     )

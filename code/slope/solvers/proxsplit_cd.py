@@ -144,12 +144,12 @@ def proxsplit_cd(X, y, lambdas, max_epochs=100, tol=1e-10, split_freq=1, verbose
             if len(C) > 1 and epoch % split_freq == 0:
                 # check if clusters should split and if so how
                 x = beta[C] - g
-                left_split = find_splits(x, lambdas_j)
-                
-                if len(left_split) < len(C):
-                    C = [C[i] for i in left_split]
+                split = find_splits(x, lambdas_j)
+
+                if len(split) < len(C):
+                    C = [C[i] for i in split]
                     clusters.split(j, C)
-                    g = g[left_split]
+                    g = g[split]
 
             s = -np.sign(g)
 

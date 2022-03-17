@@ -2,12 +2,6 @@ import numpy as np
 
 
 class Clusters:
-    inds = []
-    coefs = []
-    starts = []
-    ends = []
-    sizes = []
-
     def __init__(self, beta):
         unique, indices, self.sizes = np.unique(
             np.abs(beta), return_inverse=True, return_counts=True

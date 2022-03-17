@@ -24,6 +24,7 @@ def block_cd_epoch(w, X, R, alphas, cluster_indices, cluster_ptr, c):
         R += (old - beta_tilde) * sum_X
 
 
+@njit
 def block_cd_epoch_sparse(w, X_data, X_indices, X_indptr, R,
                           alphas, cluster_indices, cluster_ptr, c):
     n_samples = len(R)
@@ -43,6 +44,7 @@ def block_cd_epoch_sparse(w, X_data, X_indices, X_indptr, R,
         R += (old - beta_tilde) * sum_X
 
 
+@njit
 def compute_block_scalar_sparse(
         X_data, X_indices, X_indptr, v, cluster, n_samples):
     scal = np.zeros(n_samples)

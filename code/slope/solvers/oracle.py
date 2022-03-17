@@ -7,6 +7,7 @@ from slope.solvers import prox_grad
 from scipy import sparse
 
 
+@njit
 def compute_block_scalar_sparse(
         X_data, X_indices, X_indptr, v, cluster, n_samples):
     scal = np.zeros(n_samples)
@@ -27,6 +28,7 @@ def pure_cd_epoch(w, X, R, alphas, lc):
             R += (old - w[j]) * X[:, j]
 
 
+@njit
 def pure_cd_epoch_sparse(
         w, X_data, X_indices, X_indptr, R, alphas, cluster_indices,
         cluster_ptr, sign_w, c):

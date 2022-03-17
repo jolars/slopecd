@@ -3,11 +3,22 @@ from scipy import stats
 import matplotlib.pyplot as plt
 from benchopt.datasets import make_correlated_data
 from slope.utils import dual_norm_slope
-from slope.solvers import prox_grad, oracle_cd, hybrid_cd
+from slope.solvers import prox_grad
+from slope.solvers import hybrid_cd
+from slope.solvers import oracle_cd
 from slope.solvers.proxsplit_cd import proxsplit_cd
-import time
 
-X, y, _ = make_correlated_data(n_samples=100, n_features=1000, random_state=0)
+import time
+from libsvmdata import fetch_libsvm
+
+dataset = 'real-sim'
+if dataset == "simulated":
+    X, y, _ = make_correlated_data(
+        n_samples=100, n_features=40, random_state=0)
+    # X = csc_matrix(X)
+else:
+    X, y = fetch_libsvm(dataset)
+
 randnorm = stats.norm(loc=0, scale=1)
 q = 0.5
 
@@ -20,7 +31,7 @@ alpha_max = dual_norm_slope(X, y / len(y), alphas_seq)
 alphas = alpha_max * alphas_seq / 5
 plt.close('all')
 
-max_iter = 1000
+max_iter = 10000
 tol = 1e-10
 
 
@@ -40,10 +51,23 @@ beta_oracle, primals_oracle, gaps_oracle = oracle_cd(
 beta_cdsplit, primals_cdsplit, gaps_cdsplit, theta_cdsplit = proxsplit_cd(
     X, y, alphas, max_iter=max_iter, verbose=True, tol=tol, split_freq = 1
 )
+
+
 plt.semilogy(np.arange(len(gaps_cd)), gaps_cd, label='cd')
 plt.semilogy(np.arange(len(gaps_star)), gaps_star, label='pgd')
 plt.semilogy(np.arange(len(gaps_oracle)), gaps_oracle, label='oracle')
 plt.semilogy(np.arange(len(gaps_cdsplit)), gaps_cdsplit, label='cd_proxsplit')
 
 plt.legend()
-plt.show(block=False)
+plt.title(dataset)
+plt.show()
+
+
+plt.semilogy(
+    np.arange(len(gaps_cd)), primals_cd - primals_star[-1], label='cd')
+plt.semilogy(
+    np.arange(len(gaps_oracle)), primals_oracle - primals_star[-1],
+    label='oracle')
+
+plt.legend()
+plt.show()

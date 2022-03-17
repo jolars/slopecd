@@ -149,7 +149,7 @@ def proxsplit_cd(X, y, lambdas, max_epochs=100, tol=1e-10, split_freq=1, verbose
 
                 if sorted(split_ind) != C:
                     clusters.split(j, split_ind)
-                    A = clusters.inds[j]
+                    C = clusters.inds[j]
                     g = X[:, C].T @ r
 
             s = -np.sign(g)

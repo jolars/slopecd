@@ -91,35 +91,37 @@ def slope_threshold(x, lambdas, clusters, j):
     return x - np.sign(x) * lo, cluster_k
 
 
-def proxsplit_cd(X, y, lambdas, max_iter=100, tol=1e-10, split_freq = 1, verbose=False):
+def proxsplit_cd(X, y, lambdas, max_iter=100, tol=1e-10, split_freq=1, verbose=False):
     n, p = X.shape
 
     beta = np.zeros(p)
     theta = np.zeros(n)
+
+    lambdas *= n
 
     r = -y
     g = X.T @ r
 
     clusters = Clusters(beta)
 
-    L = norm(X, ord=2)**2 / n
-
     primals, duals, gaps = [], [], []
 
     for it in range(max_iter):
-        theta = -r / n
-        theta /= max(1, dual_norm_slope(X, theta, lambdas))
+        r = X @ beta - y
+        theta = -r / max(1, dual_norm_slope(X, r, lambdas))
 
-        pri = primal(r, beta, lambdas)
-        dua = dual(theta, y)
-        gap = pri - dua
+        primal = (
+            0.5 / n * norm(r) ** 2 + np.sum(lambdas * np.sort(np.abs(beta))[::-1]) / n
+        )
+        dual = 0.5 / n * (norm(y) ** 2 - norm(y - theta) ** 2)
+        gap = primal - dual
 
-        primals.append(pri)
-        duals.append(dua)
+        primals.append(primal)
+        duals.append(dual)
         gaps.append(gap)
 
         if verbose:
-            print(f"Iter: {it + 1}, loss: {pri}, gap: {gap:.2e}")
+            print(f"Iter: {it + 1}, loss: {primal}, gap: {gap:.2e}")
 
         if gap < tol:
             break
@@ -132,7 +134,7 @@ def proxsplit_cd(X, y, lambdas, max_iter=100, tol=1e-10, split_freq = 1, verbose
 
             # check if clusters should split and if so how
             if len(A) > 1 and it % split_freq == 0:
-                x = beta[A] - (X[:, A].T @ r) / (L * n)
+                x = beta[A] - X[:, A].T @ r
                 # if clusters.coefs[j] == 0:
                 #     # treat zero cluster differently, only split a single
                 #     # feature at a time
@@ -141,7 +143,7 @@ def proxsplit_cd(X, y, lambdas, max_iter=100, tol=1e-10, split_freq = 1, verbose
                 #         clusters.split(j, [A[ind]])
                 #         A = clusters.inds[j]
                 # else:
-                left_split = find_splits(x, lambdas_j / L)
+                left_split = find_splits(x, lambdas_j)
                 split_ind = [A[i] for i in left_split]
                 clusters.split(j, split_ind)
 
@@ -150,22 +152,18 @@ def proxsplit_cd(X, y, lambdas, max_iter=100, tol=1e-10, split_freq = 1, verbose
             s = np.sign(beta[A])
             s = np.ones(len(s)) if np.all(s == 0) else s
 
-            sum_X = s.T @ X[:, A].T
-            L_j = sum_X @ sum_X.T / n
-            c_old = clusters.coefs[j]
-            x = c_old - (sum_X @ r) / (L_j * n)
-            # H = s.T @ X[:, A].T @ X[:, A] @ s
-            # x = (y - X[:, B] @ beta[B]).T @ X[:, A] @ s
+            B = list(set(range(p)) - set(A))
 
-            beta_tilde, new_ind = slope_threshold(x, lambdas / L_j, clusters, j)
+            H = s.T @ X[:, A].T @ X[:, A] @ s
+            x = (y - X[:, B] @ beta[B]).T @ X[:, A] @ s
+
+            beta_tilde, new_ind = slope_threshold(x / H, lambdas / H, clusters, j)
 
             clusters.update(j, new_ind, abs(beta_tilde))
 
             beta[A] = beta_tilde * s
-            r += (abs(beta_tilde) - c_old) * sum_X.T
 
-            # r = X @ beta - y
-            # g = X.T @ r
+            r = X @ beta - y
 
             j += 1
 

@@ -157,7 +157,7 @@ def proxsplit_cd(X, y, lambdas, max_epochs=100, tol=1e-10, split_freq=1, verbose
             sum_X = X[:, C] @ s
             L_j = sum_X.T @ sum_X
             old = np.abs(beta[C][0])
-            x = old - (sum_X.T @ r) / L_j
+            x = old - sum_X.T @ r / L_j
 
             beta_tilde, new_ind = slope_threshold(x, lambdas / L_j, clusters, j)
 

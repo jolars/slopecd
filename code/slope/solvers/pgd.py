@@ -39,7 +39,7 @@ def do_cd_epochs_sparse(
                     R[X_indices[ind]] += diff * X_data[ind]
 
 
-def prox_grad(X, y, alphas, max_iter=100, tol=1e-10, n_cd=0, verbose=True):
+def prox_grad(X, y, alphas, max_epochs=100, tol=1e-10, n_cd=0, verbose=True):
     n_samples, n_features = X.shape
     R = y.copy()
     w = np.zeros(n_features)
@@ -55,7 +55,7 @@ def prox_grad(X, y, alphas, max_iter=100, tol=1e-10, n_cd=0, verbose=True):
     E, gaps = [], []
     E.append(norm(y)**2 / (2 * n_samples))
     gaps.append(E[0])
-    for t in range(max_iter):
+    for t in range(max_epochs):
         w = prox_slope(w + (X.T @ R) / (L * n_samples), alphas / L)
         R[:] = y - X @ w
         if n_cd > 0:
@@ -74,7 +74,7 @@ def prox_grad(X, y, alphas, max_iter=100, tol=1e-10, n_cd=0, verbose=True):
         gaps.append(gap)
 
         if verbose:
-            print(f"Iter: {t + 1}, loss: {primal}, gap: {gap:.2e}")
+            print(f"Epoch: {t + 1}, loss: {primal}, gap: {gap:.2e}")
         if gap < tol:
             break
     return w, E, gaps, theta

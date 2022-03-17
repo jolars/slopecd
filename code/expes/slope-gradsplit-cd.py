@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from benchopt.datasets import make_correlated_data
+from libsvmdata import fetch_libsvm
 from numba import njit
 from numpy.linalg import norm
 from scipy import stats
@@ -20,6 +22,7 @@ def abline(slope, intercept):
 # this is basically the simplified proximal operator, but simplified
 @njit
 def find_splits(x, lam):
+    x_sign = np.sign(x)
     x = np.abs(x)
     ord = np.flip(np.argsort(x))
     x = x[ord]
@@ -47,7 +50,17 @@ def find_splits(x, lam):
 
         k = k + 1
 
+
+    # for j in range(k):
+    #     d = max(w[j], 0.0)
+    #     for i in range(idx_i[j], idx_j[j] + 1):
+    #         x[i] = d
+
+    # x[ord] = x.copy()
+    # x *= x_sign
+
     return ord[idx_i[0] : (idx_j[0] + 1)]
+    # return x
 
 
 def slope_threshold(x, lambdas, clusters, j):
@@ -101,35 +114,41 @@ def slope_threshold(x, lambdas, clusters, j):
     # we are between clusters
     return x - np.sign(x) * lo, cluster_k
 
-
-np.random.seed(10)
 n = 100
-p = 400
+p = 500
 
-X = np.random.rand(n, p)
-beta_true = np.zeros(p)
+dataset = "simulated"
+if dataset == "simulated":
+    X, y, _ = make_correlated_data(n_samples=n, n_features=p, random_state=0)
+    # X = csc_matrix(X)
+else:
+    X, y = fetch_libsvm(dataset)
 
-y = X @ beta_true + np.random.rand(n)
+y = y - np.mean(y)
 
 randnorm = stats.norm(loc=0, scale=1)
-q = 0.1
+q = 0.5
+alphas_seq = randnorm.ppf(1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1]))
 
-lambdas = randnorm.ppf(1 - np.arange(1, p + 1) * q / (2 * p))
-lambda_max = dual_norm_slope(X, y, lambdas)
-lambdas = lambda_max * lambdas * 0.1
 
-beta = np.zeros(p)
+alpha_max = dual_norm_slope(X, y / len(y), alphas_seq)
 
-r = X @ beta - y
-g = X.T @ r
+lambdas = alpha_max * alphas_seq / 5
+
+lambdas *= n
 
 gaps = []
 primals = []
 duals = []
 
-L = norm(X, ord=2) ** 2
-
 maxit = 1000
+
+beta = np.zeros(p)
+r = X @ beta - y
+
+L = norm(X, ord=2) ** 2
+g = X.T @ r
+
 
 clusters = Clusters(beta)
 
@@ -139,11 +158,11 @@ for it in range(maxit):
     r = X @ beta - y
     theta = -r / max(1, dual_norm_slope(X, r, lambdas))
 
-    primal = 0.5 * norm(r) ** 2 + np.sum(lambdas * np.sort(np.abs(beta))[::-1])
-    dual = 0.5 * (norm(y) ** 2 - norm(y - theta) ** 2)
+    primal = norm(r) ** 2 / (n * 2) + np.sum(lambdas * np.sort(np.abs(beta))[::-1]) / n
+    dual = (norm(y) ** 2 - norm(y - theta) ** 2) / (n * 2)
     gap = primal - dual
 
-    print(f"Iter: {it + 1}")
+    print(f"Epoch: {it + 1}")
     print(f"\tloss: {primal:.2e}, gap: {gap:.2e}")
 
     primals.append(primal)
@@ -151,10 +170,8 @@ for it in range(maxit):
     gaps.append(gap)
 
     while j < len(clusters.coefs):
-        A = clusters.inds[j].copy()
+        A = clusters.inds[j]
         lambdas_j = lambdas[clusters.starts[j] : clusters.ends[j]]
-
-        grad_A = X[:, A].T @ r
 
         # check if clusters should split and if so how
         if len(A) > 1:
@@ -173,18 +190,19 @@ for it in range(maxit):
 
         B = list(set(range(p)) - set(A))
 
-        s = np.sign(beta[A])
-        s = np.ones(len(s)) if np.all(s == 0) else s
-        # s = -np.sign(g[A])
+        # s = np.sign(beta[A])
+        # s = np.ones(len(s)) if np.all(s == 0) else s
+        s = -np.sign(g[A])
 
         # sum_X = s.T @ X[:, A].T
-        # L_j = sum_X @ sum_X.T 
+        # L_j = sum_X @ sum_X.T
         # c_old = clusters.coefs[j]
         # x = c_old - (sum_X @ r) / (L_j)
+
         H = s.T @ X[:, A].T @ X[:, A] @ s
         x = (y - X[:, B] @ beta[B]).T @ X[:, A] @ s
 
-        beta_tilde, new_ind = slope_threshold(x /H, lambdas / H, clusters, j)
+        beta_tilde, new_ind = slope_threshold(x / H, lambdas / H, clusters, j)
 
         clusters.update(j, new_ind, abs(beta_tilde))
 
@@ -195,7 +213,7 @@ for it in range(maxit):
         # r_tmp -= (c_old - beta_tilde) * sum_X.T
 
         r = X @ beta - y
-        
+
         # if not np.allclose(r_tmp, r):
         #     raise ValueError("")
 
@@ -203,11 +221,11 @@ for it in range(maxit):
 
     r = X @ beta - y
 
-# beta_star, primals_star, gaps_star, theta_star = prox_grad(
-#     X, y, lambdas / n, max_iter=1000, n_cd=0, verbose=False
-# )
+beta_star, primals_star, gaps_star, theta_star = prox_grad(
+    X, y, lambdas / n, max_epoch=1000, n_cd=0, verbose=False
+)
 
-# plt.clf()
-# # plt.hlines(0, xmin=0, xmax=maxit, color="lightgrey")
-# plt.semilogy(np.arange(maxit), gaps)
-# plt.show(block=False)
+plt.clf()
+# plt.hlines(0, xmin=0, xmax=maxit, color="lightgrey")
+plt.semilogy(np.arange(maxit), gaps)
+plt.show(block=False)

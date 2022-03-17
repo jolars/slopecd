@@ -1,6 +1,7 @@
 import numpy as np
 from numba import njit
 from numpy.linalg import norm
+from random import sample
 
 from slope.clusters import Clusters
 from slope.utils import dual, dual_norm_slope, primal
@@ -91,7 +92,7 @@ def slope_threshold(x, lambdas, clusters, j):
     return x - np.sign(x) * lo, cluster_k
 
 
-def proxsplit_cd(X, y, lambdas, max_iter=100, tol=1e-10, split_freq=1, verbose=False):
+def proxsplit_cd(X, y, lambdas, max_epochs=100, tol=1e-10, split_freq=1, verbose=False):
     n, p = X.shape
 
     beta = np.zeros(p)
@@ -107,7 +108,11 @@ def proxsplit_cd(X, y, lambdas, max_iter=100, tol=1e-10, split_freq=1, verbose=F
     L = norm(X, ord=2)**2 
     primals, duals, gaps = [], [], []
 
-    for it in range(max_iter):
+    epoch = 0
+
+    features_seen = 0
+
+    while epoch < max_epochs:
         r = X @ beta - y
         theta = -r / max(1, dual_norm_slope(X, r, lambdas))
 
@@ -122,19 +127,20 @@ def proxsplit_cd(X, y, lambdas, max_iter=100, tol=1e-10, split_freq=1, verbose=F
         gaps.append(gap)
 
         if verbose:
-            print(f"Iter: {it + 1}, loss: {primal}, gap: {gap:.2e}")
+            print(f"Epoch: {epoch + 1}, loss: {primal}, gap: {gap:.2e}")
 
         if gap < tol:
             break
 
-        j = 0
+        # features_seen = 0
 
-        while j < len(clusters.coefs):
+        while features_seen < p:
+            j = sample(range(len(clusters.coefs)), 1)[0]
             A = clusters.inds[j]
             lambdas_j = lambdas[clusters.starts[j] : clusters.ends[j]]
 
             # check if clusters should split and if so how
-            if len(A) > 1 and it % split_freq == 0:
+            if len(A) > 1 and epoch % split_freq == 0:
                 x = beta[A] - X[:, A].T @ r / L
                 # if clusters.coefs[j] == 0:
                 #     # treat zero cluster differently, only split a single
@@ -168,6 +174,10 @@ def proxsplit_cd(X, y, lambdas, max_iter=100, tol=1e-10, split_freq=1, verbose=F
             r = X @ beta - y
             g = X.T @ r
 
-            j += 1
+            features_seen += len(A)
+
+        epoch += 1
+
+        features_seen -= p
 
     return beta, primals, gaps, theta

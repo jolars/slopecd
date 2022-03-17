@@ -22,13 +22,13 @@ plt.close('all')
 
 for n_cd in [0, 1, 5, 10]:
     w, E, gaps, theta = prox_grad(
-        X, y, alphas, max_iter=1000 // (n_cd + 1), n_cd=n_cd, verbose=1)
+        X, y, alphas, max_epochs=1000 // (n_cd + 1), n_cd=n_cd, verbose=1)
     print(gaps[0])
 
     plt.semilogy(np.arange(len(E)) * (1 + n_cd), gaps,
                  label=f'n_cd = {n_cd}')
 w, E, gaps, theta = hybrid(
-    X, y, alphas, max_iter=1000, verbose=1)
+    X, y, alphas, max_epochs=1000, verbose=1)
 plt.semilogy(np.arange(len(E)), gaps,
              label='Hybrid strategy')
 plt.legend()

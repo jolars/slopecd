@@ -31,25 +31,25 @@ alpha_max = dual_norm_slope(X, y / len(y), alphas_seq)
 alphas = alpha_max * alphas_seq / 5
 plt.close('all')
 
-max_iter = 10000
+max_epochs = 10000
 tol = 1e-10
 
 
 start_cd = time.time()
 beta_cd, primals_cd, gaps_cd = hybrid_cd(
-    X, y, alphas, max_iter=max_iter, verbose=True, tol=tol)
+    X, y, alphas, max_epochs=max_epochs, verbose=True, tol=tol)
 time_cd = time.time() - start_cd
 start_pgd = time.time()
 beta_star, primals_star, gaps_star, theta_star = prox_grad(
-    X, y, alphas, max_iter=max_iter, n_cd=0, verbose=True, tol=tol,
+    X, y, alphas, max_epochs=max_epochs, n_cd=0, verbose=True, tol=tol,
 )
 time_pgd = time.time() - start_pgd
 
 beta_oracle, primals_oracle, gaps_oracle = oracle_cd(
-    X, y, alphas, max_iter=max_iter, verbose=True, tol=tol,
+    X, y, alphas, max_epochs=max_epochs, verbose=True, tol=tol,
 )
 beta_cdsplit, primals_cdsplit, gaps_cdsplit, theta_cdsplit = proxsplit_cd(
-    X, y, alphas, max_iter=max_iter, verbose=True, tol=tol, split_freq = 1
+    X, y, alphas, max_epochs=max_epochs, verbose=True, tol=tol, split_freq = 1
 )
 
 

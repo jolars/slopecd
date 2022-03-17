@@ -104,6 +104,7 @@ def proxsplit_cd(X, y, lambdas, max_iter=100, tol=1e-10, split_freq=1, verbose=F
 
     clusters = Clusters(beta)
 
+    L = norm(X, ord=2)**2 
     primals, duals, gaps = [], [], []
 
     for it in range(max_iter):
@@ -134,7 +135,7 @@ def proxsplit_cd(X, y, lambdas, max_iter=100, tol=1e-10, split_freq=1, verbose=F
 
             # check if clusters should split and if so how
             if len(A) > 1 and it % split_freq == 0:
-                x = beta[A] - X[:, A].T @ r
+                x = beta[A] - X[:, A].T @ r / L
                 # if clusters.coefs[j] == 0:
                 #     # treat zero cluster differently, only split a single
                 #     # feature at a time
@@ -143,14 +144,15 @@ def proxsplit_cd(X, y, lambdas, max_iter=100, tol=1e-10, split_freq=1, verbose=F
                 #         clusters.split(j, [A[ind]])
                 #         A = clusters.inds[j]
                 # else:
-                left_split = find_splits(x, lambdas_j)
+                left_split = find_splits(x, lambdas_j / L)
                 split_ind = [A[i] for i in left_split]
                 clusters.split(j, split_ind)
 
                 A = clusters.inds[j]
 
-            s = np.sign(beta[A])
-            s = np.ones(len(s)) if np.all(s == 0) else s
+            # s = np.sign(beta[A])
+            # s = np.ones(len(s)) if np.all(s == 0) else s
+            s = -np.sign(g[A])
 
             B = list(set(range(p)) - set(A))
 
@@ -164,6 +166,7 @@ def proxsplit_cd(X, y, lambdas, max_iter=100, tol=1e-10, split_freq=1, verbose=F
             beta[A] = beta_tilde * s
 
             r = X @ beta - y
+            g = X.T @ r
 
             j += 1
 

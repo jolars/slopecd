@@ -5,7 +5,8 @@ from numpy.linalg import norm
 from scipy import stats
 
 from slope.clusters import Clusters
-from slope.solvers.solvers import oracle_cd, prox_grad
+from slope.solvers.oracle import oracle_cd
+from slope.solvers.pgd import prox_grad
 from slope.utils import dual_norm_slope
 
 
@@ -102,8 +103,8 @@ def slope_threshold(x, lambdas, clusters, j):
 
 
 np.random.seed(10)
-n = 20
-p = 50
+n = 100
+p = 400
 
 X = np.random.rand(n, p)
 beta_true = np.zeros(p)
@@ -158,31 +159,32 @@ for it in range(maxit):
         # check if clusters should split and if so how
         if len(A) > 1:
             x = beta[A] - X[:, A].T @ r
-            if clusters.coefs[j] == 0:
-                ind = np.argmax(np.abs(x))
-                if np.abs(x)[ind] > lambdas_j[0]:
-                    clusters.split(j, [A[ind]])
-                    A = clusters.inds[j]
-            else:
-                left_split = find_splits(x, lambdas_j)
-                split_ind = [A[i] for i in left_split]
-                clusters.split(j, split_ind)
+            # if clusters.coefs[j] == 0:
+            #     ind = np.argmax(np.abs(x))
+            #     if np.abs(x)[ind] > lambdas_j[0]:
+            #         clusters.split(j, [A[ind]])
+            #         A = clusters.inds[j]
+            # else:
+            left_split = find_splits(x, lambdas_j)
+            split_ind = [A[i] for i in left_split]
+            clusters.split(j, split_ind)
 
-                A = clusters.inds[j]
+            A = clusters.inds[j]
 
         B = list(set(range(p)) - set(A))
 
         s = np.sign(beta[A])
         s = np.ones(len(s)) if np.all(s == 0) else s
+        # s = -np.sign(g[A])
 
-        sum_X = s.T @ X[:, A].T
-        L_j = sum_X @ sum_X.T 
-        c_old = clusters.coefs[j]
-        x = c_old - (sum_X @ r) / (L_j)
-        # H = s.T @ X[:, A].T @ X[:, A] @ s
-        # x = (y - X[:, B] @ beta[B]).T @ X[:, A] @ s
+        # sum_X = s.T @ X[:, A].T
+        # L_j = sum_X @ sum_X.T 
+        # c_old = clusters.coefs[j]
+        # x = c_old - (sum_X @ r) / (L_j)
+        H = s.T @ X[:, A].T @ X[:, A] @ s
+        x = (y - X[:, B] @ beta[B]).T @ X[:, A] @ s
 
-        beta_tilde, new_ind = slope_threshold(x, lambdas / L_j, clusters, j)
+        beta_tilde, new_ind = slope_threshold(x /H, lambdas / H, clusters, j)
 
         clusters.update(j, new_ind, abs(beta_tilde))
 

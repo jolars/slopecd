@@ -1,10 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from numba import njit
 from numpy.linalg import norm
 from scipy import stats
 
 from slope.clusters import Clusters
-from slope.solvers import oracle_cd, prox_grad
+from slope.solvers.solvers import oracle_cd, prox_grad
 from slope.utils import dual_norm_slope
 
 
@@ -13,6 +14,39 @@ def abline(slope, intercept):
     x_vals = np.array(axes.get_xlim())
     y_vals = intercept + slope * x_vals
     plt.plot(x_vals, y_vals, "--", color="grey")
+
+
+# this is basically the simplified proximal operator, but simplified
+@njit
+def find_splits(x, lam):
+    x = np.abs(x)
+    ord = np.flip(np.argsort(x))
+    x = x[ord]
+
+    p = len(x)
+
+    s = np.empty(p)
+    w = np.empty(p)
+    idx_i = np.empty(p, np.int64)
+    idx_j = np.empty(p, np.int64)
+
+    k = 0
+
+    for i in range(p):
+        idx_i[k] = i
+        idx_j[k] = i
+        s[k] = x[i] - lam[i]
+        w[k] = s[k]
+
+        while (k > 0) and (w[k - 1] <= w[k]):
+            k = k - 1
+            idx_j[k] = i
+            s[k] += s[k + 1]
+            w[k] = s[k] / (i - idx_i[k] + 1)
+
+        k = k + 1
+
+    return ord[idx_i[0] : (idx_j[0] + 1)]
 
 
 def slope_threshold(x, lambdas, clusters, j):
@@ -52,37 +86,38 @@ def slope_threshold(x, lambdas, clusters, j):
         lo = sum(lambdas[lo_start:lo_end])
         hi = sum(lambdas[hi_start:hi_end])
 
+        cluster_k = k - 1 if k > j else k
+
         if abs(x) > hi + clusters.coefs[k]:
             # we must be between clusters
-            return x - np.sign(x) * hi, k - mod
+            return x - np.sign(x) * hi, cluster_k
         elif abs(x) >= lo + clusters.coefs[k]:
             # we are in a cluster
-            return np.sign(x) * clusters.coefs[k], k - mod
+            return np.sign(x) * clusters.coefs[k], cluster_k
+
+    cluster_k = k - 1 if k > j else k
 
     # we are between clusters
-    return x - np.sign(x) * lo, k - mod
+    return x - np.sign(x) * lo, cluster_k
 
 
 np.random.seed(10)
-n = 10
-p = 2
+n = 20
+p = 50
 
 X = np.random.rand(n, p)
-beta_true = np.array([0.5, -0.8])
+beta_true = np.zeros(p)
 
-y = X @ beta_true
+y = X @ beta_true + np.random.rand(n)
 
 randnorm = stats.norm(loc=0, scale=1)
-q = 0.8
+q = 0.1
 
 lambdas = randnorm.ppf(1 - np.arange(1, p + 1) * q / (2 * p))
 lambda_max = dual_norm_slope(X, y, lambdas)
-lambdas = lambda_max * lambdas * 0.5
+lambdas = lambda_max * lambdas * 0.1
 
-beta = np.array([0, 0])
-
-beta1_start = beta[0]
-beta2_start = beta[1]
+beta = np.zeros(p)
 
 r = X @ beta - y
 g = X.T @ r
@@ -91,20 +126,14 @@ gaps = []
 primals = []
 duals = []
 
-beta1s = []
-beta2s = []
-
 L = norm(X, ord=2) ** 2
 
-maxit = 10
+maxit = 1000
 
 clusters = Clusters(beta)
 
 for it in range(maxit):
     j = 0
-
-    print(f"Iter: {it + 1}")
-    print(f"\tbeta: {beta}")
 
     r = X @ beta - y
     theta = -r / max(1, dual_norm_slope(X, r, lambdas))
@@ -113,6 +142,7 @@ for it in range(maxit):
     dual = 0.5 * (norm(y) ** 2 - norm(y - theta) ** 2)
     gap = primal - dual
 
+    print(f"Iter: {it + 1}")
     print(f"\tloss: {primal:.2e}, gap: {gap:.2e}")
 
     primals.append(primal)
@@ -120,90 +150,66 @@ for it in range(maxit):
     gaps.append(gap)
 
     while j < len(clusters.coefs):
-        beta1s.append(beta[0])
-        beta2s.append(beta[1])
-
         A = clusters.inds[j].copy()
         lambdas_j = lambdas[clusters.starts[j] : clusters.ends[j]]
 
-        print(f"\tj: {j}, C: {clusters.inds[j]}, c_j: {clusters.coefs[j]:.2e}")
-
         grad_A = X[:, A].T @ r
-
-        # see if we need to split up the cluster
-        new_cluster = []
-        new_cluster_tmp = []
-        grad_sum = 0
-        lambda_sum = 0
 
         # check if clusters should split and if so how
         if len(A) > 1:
-            grad_order = np.argsort(np.abs(grad_A))
-            possible_split_index = -1
-            best_grad_sum = 0
-            for i, ind in enumerate(grad_order):
-                grad_sum += abs(grad_A[ind])
-                lambda_sum += lambdas_j[i]
-                if grad_sum >= lambda_sum and grad_sum >= best_grad_sum:
-                    possible_split_index = i
-                    best_grad_sum = grad_sum
-                    break
+            x = beta[A] - X[:, A].T @ r
+            if clusters.coefs[j] == 0:
+                ind = np.argmax(np.abs(x))
+                if np.abs(x)[ind] > lambdas_j[0]:
+                    clusters.split(j, [A[ind]])
+                    A = clusters.inds[j]
+            else:
+                left_split = find_splits(x, lambdas_j)
+                split_ind = [A[i] for i in left_split]
+                clusters.split(j, split_ind)
 
-            print(f"possible split: {possible_split_index}")
-            # left_split = [A[i] for i in list(np.where(v_best)[0])]
-            if possible_split_index >= 0:
-                left_split = grad_order[:(possible_split_index + 1)]
-                print(left_split)
-                clusters.split(j, left_split)
+                A = clusters.inds[j]
 
-        A = clusters.inds[j]
         B = list(set(range(p)) - set(A))
 
-        s = np.sign(-g[A])
-        H = s.T @ X[:, A].T @ X[:, A] @ s
-        x = (y - X[:, B] @ beta[B]).T @ X[:, A] @ s
+        s = np.sign(beta[A])
+        s = np.ones(len(s)) if np.all(s == 0) else s
 
-        beta_tilde, new_ind = slope_threshold(x / H, lambdas / H, clusters, j)
+        sum_X = s.T @ X[:, A].T
+        L_j = sum_X @ sum_X.T 
+        c_old = clusters.coefs[j]
+        x = c_old - (sum_X @ r) / (L_j)
+        # H = s.T @ X[:, A].T @ X[:, A] @ s
+        # x = (y - X[:, B] @ beta[B]).T @ X[:, A] @ s
+
+        beta_tilde, new_ind = slope_threshold(x, lambdas / L_j, clusters, j)
 
         clusters.update(j, new_ind, abs(beta_tilde))
 
         beta[A] = beta_tilde * s
 
+        r_tmp = r.copy()
+        r_tmp -= (beta_tilde - c_old) * sum_X.T
+
+        r_tmp2 = r.copy()
+        r_tmp2 -= np.abs(c_old - np.abs(beta_tilde)) * sum_X.T
+
         j += 1
 
         r = X @ beta - y
+        
+        if not np.allclose(r_tmp2, r):
+            raise ValueError("")
+
         g = X.T @ r
 
     r = X @ beta - y
 
-beta_star, primals_star, gaps_star, theta_star = prox_grad(
-    X, y, lambdas / n, max_iter=1000, n_cd=0, verbose=False
-)
-
-beta1 = np.linspace(-0.8, 0.8, 20)
-beta2 = np.linspace(-0.8, 0.8, 20)
-
-z = np.ndarray((20, 20))
-
-for i in range(20):
-    for j in range(20):
-        betax = np.array([beta1[i], beta2[j]])
-        r = X @ betax - y
-        theta = -r / max(1, dual_norm_slope(X, r, lambdas))
-        primal = 0.5 * norm(r) ** 2 + np.sum(lambdas * np.sort(np.abs(betax))[::-1])
-        dual = 0.5 * (norm(y) ** 2 - norm(y - theta) ** 2)
-        gap = primal - dual
-        z[j][i] = gap
-
-plt.clf()
-plt.contour(beta1, beta2, z, levels=20)
-abline(1, 0)
-abline(-1, 0)
-plt.plot(beta_star[0], beta_star[1], color="red", marker="x", markersize=16)
-plt.plot(beta1s, beta2s, marker="o", color="black")
-plt.show(block=False)
+# beta_star, primals_star, gaps_star, theta_star = prox_grad(
+#     X, y, lambdas / n, max_iter=1000, n_cd=0, verbose=False
+# )
 
 # plt.clf()
-# plt.hlines(0, xmin=0, xmax=maxit, color="lightgrey")
-# plt.plot(np.arange(maxit), gaps)
+# # plt.hlines(0, xmin=0, xmax=maxit, color="lightgrey")
+# plt.semilogy(np.arange(maxit), gaps)
 # plt.show(block=False)

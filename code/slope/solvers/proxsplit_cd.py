@@ -106,7 +106,6 @@ def proxsplit_cd(X, y, lambdas, max_epochs=100, tol=1e-10, split_freq=1, verbose
 
     clusters = Clusters(beta)
 
-    L = norm(X, ord=2) ** 2
     primals, duals, gaps = [], [], []
 
     epoch = 0

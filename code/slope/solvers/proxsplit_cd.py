@@ -1,7 +1,8 @@
+from random import sample
+
 import numpy as np
 from numba import njit
 from numpy.linalg import norm
-from random import sample
 
 from slope.clusters import Clusters
 from slope.utils import dual, dual_norm_slope, primal
@@ -105,7 +106,7 @@ def proxsplit_cd(X, y, lambdas, max_epochs=100, tol=1e-10, split_freq=1, verbose
 
     clusters = Clusters(beta)
 
-    L = norm(X, ord=2)**2 
+    L = norm(X, ord=2) ** 2
     primals, duals, gaps = [], [], []
 
     epoch = 0
@@ -139,40 +140,33 @@ def proxsplit_cd(X, y, lambdas, max_epochs=100, tol=1e-10, split_freq=1, verbose
             A = clusters.inds[j]
             lambdas_j = lambdas[clusters.starts[j] : clusters.ends[j]]
 
+            g = X[:, A].T @ r
+
             # check if clusters should split and if so how
             if len(A) > 1 and epoch % split_freq == 0:
-                x = beta[A] - X[:, A].T @ r / L
-                # if clusters.coefs[j] == 0:
-                #     # treat zero cluster differently, only split a single
-                #     # feature at a time
-                #     ind = np.argmax(np.abs(x))
-                #     if np.abs(x)[ind] > lambdas_j[0]:
-                #         clusters.split(j, [A[ind]])
-                #         A = clusters.inds[j]
-                # else:
-                left_split = find_splits(x, lambdas_j / L)
+                x = beta[A] - g
+                left_split = find_splits(x, lambdas_j)
                 split_ind = [A[i] for i in left_split]
-                clusters.split(j, split_ind)
 
-                A = clusters.inds[j]
+                if sorted(split_ind) != A:
+                    clusters.split(j, split_ind)
+                    A = clusters.inds[j]
+                    g = X[:, A].T @ r
 
-            # s = np.sign(beta[A])
-            # s = np.ones(len(s)) if np.all(s == 0) else s
-            s = -np.sign(g[A])
+            s = -np.sign(g)
 
-            B = list(set(range(p)) - set(A))
+            sum_X = X[:, A] @ s
+            L_j = sum_X.T @ sum_X
+            old = np.abs(beta[A][0])
+            x = old - (sum_X.T @ r) / L_j
 
-            H = s.T @ X[:, A].T @ X[:, A] @ s
-            x = (y - X[:, B] @ beta[B]).T @ X[:, A] @ s
-
-            beta_tilde, new_ind = slope_threshold(x / H, lambdas / H, clusters, j)
+            beta_tilde, new_ind = slope_threshold(x, lambdas / L_j, clusters, j)
 
             clusters.update(j, new_ind, abs(beta_tilde))
 
             beta[A] = beta_tilde * s
 
-            r = X @ beta - y
-            g = X.T @ r
+            r -= (old - beta_tilde) * sum_X
 
             features_seen += len(A)
 

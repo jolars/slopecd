@@ -136,38 +136,38 @@ def proxsplit_cd(X, y, lambdas, max_epochs=100, tol=1e-10, split_freq=1, verbose
 
         while features_seen < p:
             j = sample(range(len(clusters.coefs)), 1)[0]
-            A = clusters.inds[j]
+            C = clusters.inds[j]
             lambdas_j = lambdas[clusters.starts[j] : clusters.ends[j]]
 
-            g = X[:, A].T @ r
+            g = X[:, C].T @ r
 
             # check if clusters should split and if so how
-            if len(A) > 1 and epoch % split_freq == 0:
-                x = beta[A] - g
+            if len(C) > 1 and epoch % split_freq == 0:
+                x = beta[C] - g
                 left_split = find_splits(x, lambdas_j)
-                split_ind = [A[i] for i in left_split]
+                split_ind = [C[i] for i in left_split]
 
-                if sorted(split_ind) != A:
+                if sorted(split_ind) != C:
                     clusters.split(j, split_ind)
                     A = clusters.inds[j]
-                    g = X[:, A].T @ r
+                    g = X[:, C].T @ r
 
             s = -np.sign(g)
 
-            sum_X = X[:, A] @ s
+            sum_X = X[:, C] @ s
             L_j = sum_X.T @ sum_X
-            old = np.abs(beta[A][0])
+            old = np.abs(beta[C][0])
             x = old - (sum_X.T @ r) / L_j
 
             beta_tilde, new_ind = slope_threshold(x, lambdas / L_j, clusters, j)
 
             clusters.update(j, new_ind, abs(beta_tilde))
 
-            beta[A] = beta_tilde * s
+            beta[C] = beta_tilde * s
 
             r -= (old - beta_tilde) * sum_X
 
-            features_seen += len(A)
+            features_seen += len(C)
 
         epoch += 1
 

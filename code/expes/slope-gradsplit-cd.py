@@ -187,19 +187,15 @@ for it in range(maxit):
         clusters.update(j, new_ind, abs(beta_tilde))
 
         beta[A] = beta_tilde * s
-
-        r_tmp = r.copy()
-        r_tmp -= (beta_tilde - c_old) * sum_X.T
-
-        r_tmp2 = r.copy()
-        r_tmp2 -= np.abs(c_old - np.abs(beta_tilde)) * sum_X.T
-
         j += 1
+
+        # r_tmp = r.copy()
+        # r_tmp -= (c_old - beta_tilde) * sum_X.T
 
         r = X @ beta - y
         
-        if not np.allclose(r_tmp2, r):
-            raise ValueError("")
+        # if not np.allclose(r_tmp, r):
+        #     raise ValueError("")
 
         g = X.T @ r
 

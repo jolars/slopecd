@@ -99,10 +99,8 @@ def proxsplit_cd(X, y, lambdas, max_epochs=100, tol=1e-10, split_freq=1, verbose
     beta = np.zeros(p)
     theta = np.zeros(n)
 
-    lambdas *= n
-
     r = -y
-    g = X.T @ r
+    g = (X.T @ r) / n
 
     clusters = Clusters(beta)
 
@@ -114,12 +112,12 @@ def proxsplit_cd(X, y, lambdas, max_epochs=100, tol=1e-10, split_freq=1, verbose
 
     while epoch < max_epochs:
         r = X @ beta - y
-        theta = -r / max(1, dual_norm_slope(X, r, lambdas))
 
-        primal = (
-            0.5 / n * norm(r) ** 2 + np.sum(lambdas * np.sort(np.abs(beta))[::-1]) / n
-        )
-        dual = 0.5 / n * (norm(y) ** 2 - norm(y - theta) ** 2)
+        theta = -r / n
+        theta /= max(1, dual_norm_slope(X, theta, lambdas))
+
+        primal = (0.5 / n) * norm(r) ** 2 + np.sum(lambdas * np.sort(np.abs(beta))[::-1])
+        dual = (0.5 / n) * (norm(y) ** 2 - norm(y - theta * n) ** 2)
         gap = primal - dual
 
         primals.append(primal)
@@ -139,7 +137,7 @@ def proxsplit_cd(X, y, lambdas, max_epochs=100, tol=1e-10, split_freq=1, verbose
             c = clusters.coefs[j]
             lambdas_j = lambdas[clusters.starts[j] : clusters.ends[j]]
 
-            g = X[:, C].T @ r
+            g = (X[:, C].T @ r) / n
 
             if len(C) > 1 and epoch % split_freq == 0:
                 # check if clusters should split and if so how
@@ -154,7 +152,7 @@ def proxsplit_cd(X, y, lambdas, max_epochs=100, tol=1e-10, split_freq=1, verbose
             s = -np.sign(g)
 
             sum_X = X[:, C] @ s
-            L_j = sum_X.T @ sum_X
+            L_j = (sum_X.T @ sum_X) / n
             x = c - (s.T @ g) / L_j
 
             beta_tilde, new_ind = slope_threshold(x, lambdas / L_j, clusters, j)

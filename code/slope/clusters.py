@@ -2,12 +2,6 @@ import numpy as np
 
 
 class Clusters:
-    inds = []
-    coefs = []
-    starts = []
-    ends = []
-    sizes = []
-
     def __init__(self, beta):
         unique, indices, self.sizes = np.unique(
             np.abs(beta), return_inverse=True, return_counts=True
@@ -55,10 +49,8 @@ class Clusters:
                 + self.sizes[(i + 1) :]
             )
             self.coefs = self.coefs[0 : (i + 1)] + self.coefs[i:]
-            self.starts = self.starts[0 : (i + 1)] + self.starts[i:]
-            self.ends = self.ends[0 : (i + 1)] + self.ends[i:]
-            self.ends[i] = len(left_split)
-            self.starts[i + 1] = len(left_split)
+            self.ends = list(np.cumsum(self.sizes))
+            self.starts = [self.ends[k] - self.sizes[k] for k in range(len(self.sizes))]
 
     """Merge Two Clusters into One
 
@@ -74,6 +66,7 @@ class Clusters:
 
     def merge(self, i, j):
         self.inds[i].extend(self.inds[j])
+        self.inds[i].sort()
         self.sizes[i] += self.sizes[j]
 
         del self.inds[j]

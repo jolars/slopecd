@@ -4,6 +4,10 @@ from numpy.linalg import norm
 from slope.utils import dual_norm_slope, prox_slope
 from slope.utils import slope_threshold, get_clusters
 from scipy import sparse
+import line_profiler
+import atexit
+profile = line_profiler.LineProfiler()
+atexit.register(profile.print_stats)
 
 
 @njit
@@ -24,14 +28,15 @@ def block_cd_epoch(w, X, R, alphas, cluster_indices, cluster_ptr, c):
         R += (old - beta_tilde) * sum_X
 
 
-@njit
+@profile
 def block_cd_epoch_sparse(w, X_data, X_indices, X_indptr, R,
                           alphas, cluster_indices, cluster_ptr, c):
     n_samples = len(R)
     for j in range(len(cluster_ptr)-1):
         cluster = cluster_indices[cluster_ptr[j]:cluster_ptr[j+1]]
         sign_w = np.sign(w[cluster])
-        sign_w = np.ones(len(sign_w)) if np.all(sign_w == 0) else sign_w
+        if w[cluster][0] == 0:
+            sign_w = np.ones(len(sign_w))
         sum_X = compute_block_scalar_sparse(
             X_data, X_indices, X_indptr, sign_w, cluster, n_samples)
         L_j = sum_X.T @ sum_X / n_samples
@@ -44,7 +49,7 @@ def block_cd_epoch_sparse(w, X_data, X_indices, X_indptr, R,
         R += (old - beta_tilde) * sum_X
 
 
-@njit
+# @njit
 def compute_block_scalar_sparse(
         X_data, X_indices, X_indptr, v, cluster, n_samples):
     scal = np.zeros(n_samples)
@@ -52,7 +57,6 @@ def compute_block_scalar_sparse(
         start, end = X_indptr[j:j+2]
         for ind in range(start, end):
             scal[X_indices[ind]] += v[k] * X_data[ind]
-
     return scal
 
 
@@ -80,7 +84,6 @@ def hybrid_cd(X, y, alphas, max_iter=1000, verbose=True,
             w = prox_slope(w + (X.T @ R) / (L * n_samples), alphas / L)
             R[:] = y - X @ w
             cluster_indices, cluster_ptr, c = get_clusters(w)
-
         else:
             if is_X_sparse:
                 block_cd_epoch_sparse(

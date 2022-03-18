@@ -10,6 +10,7 @@ class SortedL1Norm:
     array
         lam
     """
+
     def __init__(self, lam):
         """Initalize penalty
 
@@ -83,6 +84,6 @@ class SortedL1Norm:
                 beta[i] = d
 
         beta[ord] = beta.copy()
-        beta *=  beta_sign
+        beta *= beta_sign
 
         return beta

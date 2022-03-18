@@ -24,7 +24,7 @@ plt.close('all')
 w, E, gaps, theta = prox_grad(X,
                               y,
                               alphas,
-                              max_iter=1000,
+                              max_epochs=1000,
                               n_cd=0,
                               verbose=False)
 

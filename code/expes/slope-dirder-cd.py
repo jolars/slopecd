@@ -103,8 +103,7 @@ clusters = Clusters(beta)
 for it in range(maxit):
     j = 0
 
-    print(f"Iter: {it + 1}")
-    print(f"\tbeta: {beta}")
+    print(f"Epoch: {it + 1}")
 
     r = X @ beta - y
     theta = -r / max(1, dual_norm_slope(X, r, lambdas))
@@ -191,7 +190,7 @@ for it in range(maxit):
     r = X @ beta - y
 
 beta_star, primals_star, gaps_star, theta_star = prox_grad(
-    X, y, lambdas / n, max_iter=1000, n_cd=0, verbose=False
+    X, y, lambdas / n, max_epochs=1000, n_cd=0, verbose=False
 )
 
 beta1 = np.linspace(-0.8, 0.8, 20)

@@ -60,7 +60,7 @@ def compute_block_scalar_sparse(
     return scal
 
 
-def hybrid_cd(X, y, alphas, max_iter=1000, verbose=True,
+def hybrid_cd(X, y, alphas, max_epochs=1000, verbose=True,
               tol=1e-3):
 
     is_X_sparse = sparse.issparse(X)
@@ -77,10 +77,10 @@ def hybrid_cd(X, y, alphas, max_iter=1000, verbose=True,
     E, gaps = [], []
     E.append(norm(y)**2 / (2 * n_samples))
     gaps.append(E[0])
-    for t in range(max_iter):
 
+    for epoch in range(max_epochs):
         # This is experimental, it will need to be justified
-        if t % 5 == 0:
+        if epoch % 5 == 0:
             w = prox_slope(w + (X.T @ R) / (L * n_samples), alphas / L)
             R[:] = y - X @ w
             cluster_indices, cluster_ptr, c = get_clusters(w)
@@ -105,7 +105,7 @@ def hybrid_cd(X, y, alphas, max_iter=1000, verbose=True,
         gaps.append(gap)
 
         if verbose:
-            print(f"Iter: {t + 1}, loss: {primal}, gap: {gap:.2e}")
+            print(f"Epoch: {epoch + 1}, loss: {primal}, gap: {gap:.2e}")
         if gap < tol:
             break
 

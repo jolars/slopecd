@@ -9,9 +9,11 @@ from scipy import sparse
 @njit
 def block_cd_epoch(w, X, R, alphas, cluster_indices, cluster_ptr, c):
     n_samples = X.shape[0]
-    for j in range(len(cluster_ptr)-1):
+    for j in range(len(c)):
+        if c[j] == 0:
+            continue
         cluster = cluster_indices[cluster_ptr[j]:cluster_ptr[j+1]]
-        sign_w = np.ones(len(cluster)) if c[j] == 0 else np.sign(w[cluster])
+        sign_w = np.sign(w[cluster])
         sum_X = X[:, cluster] @ sign_w
         L_j = sum_X.T @ sum_X / n_samples
         c_old = c[j]
@@ -28,9 +30,11 @@ def block_cd_epoch(w, X, R, alphas, cluster_indices, cluster_ptr, c):
 def block_cd_epoch_sparse(w, X_data, X_indices, X_indptr, R,
                           alphas, cluster_indices, cluster_ptr, c):
     n_samples = len(R)
-    for j in range(len(cluster_ptr)-1):
+    for j in range(len(c)):
+        if c[j] == 0:
+            continue
         cluster = cluster_indices[cluster_ptr[j]:cluster_ptr[j+1]]
-        sign_w = np.ones(len(cluster)) if c[j] == 0 else np.sign(w[cluster])
+        sign_w = np.sign(w[cluster])
         sum_X = compute_block_scalar_sparse(
             X_data, X_indices, X_indptr, sign_w, cluster, n_samples)
         L_j = sum_X.T @ sum_X / n_samples

@@ -1,4 +1,5 @@
 from random import sample
+from timeit import default_timer as timer
 
 import numpy as np
 from numba import njit
@@ -38,7 +39,7 @@ def find_splits(x, lam):
 
         k = k + 1
 
-    return ord[idx_i[0] : (idx_j[0] + 1)]
+    return ord[idx_i[0]: (idx_j[0] + 1)]
 
 
 def slope_threshold(x, lambdas, clusters, j):
@@ -102,9 +103,17 @@ def proxsplit_cd(X, y, lambdas, max_epochs=100, tol=1e-10, split_freq=1, verbose
     r = -y
     g = (X.T @ r) / n
 
+    times = []
+    time_start = timer()
+
     clusters = Clusters(beta)
 
     primals, duals, gaps = [], [], []
+
+    primals.append(norm(y) ** 2 / (2 * n))
+    duals.append(0)
+    gaps.append(primals[0])
+    times.append(timer() - time_start)
 
     epoch = 0
 
@@ -116,13 +125,16 @@ def proxsplit_cd(X, y, lambdas, max_epochs=100, tol=1e-10, split_freq=1, verbose
         theta = -r / n
         theta /= max(1, dual_norm_slope(X, theta, lambdas))
 
-        primal = (0.5 / n) * norm(r) ** 2 + np.sum(lambdas * np.sort(np.abs(beta))[::-1])
+        primal = (0.5 / n) * norm(r) ** 2 + np.sum(
+            lambdas * np.sort(np.abs(beta))[::-1]
+        )
         dual = (0.5 / n) * (norm(y) ** 2 - norm(y - theta * n) ** 2)
         gap = primal - dual
 
         primals.append(primal)
         duals.append(dual)
         gaps.append(gap)
+        times.append(timer() - time_start)
 
         if verbose:
             print(f"Epoch: {epoch + 1}, loss: {primal}, gap: {gap:.2e}")
@@ -135,7 +147,7 @@ def proxsplit_cd(X, y, lambdas, max_epochs=100, tol=1e-10, split_freq=1, verbose
 
             C = clusters.inds[j]
             c = clusters.coefs[j]
-            lambdas_j = lambdas[clusters.starts[j] : clusters.ends[j]]
+            lambdas_j = lambdas[clusters.starts[j]: clusters.ends[j]]
 
             g = (X[:, C].T @ r) / n
 
@@ -155,7 +167,8 @@ def proxsplit_cd(X, y, lambdas, max_epochs=100, tol=1e-10, split_freq=1, verbose
             L_j = (sum_X.T @ sum_X) / n
             x = c - (s.T @ g) / L_j
 
-            beta_tilde, new_ind = slope_threshold(x, lambdas / L_j, clusters, j)
+            beta_tilde, new_ind = slope_threshold(
+                x, lambdas / L_j, clusters, j)
 
             clusters.update(j, new_ind, abs(beta_tilde))
 
@@ -169,4 +182,4 @@ def proxsplit_cd(X, y, lambdas, max_epochs=100, tol=1e-10, split_freq=1, verbose
 
         features_seen -= p
 
-    return beta, primals, gaps, theta
+    return beta, primals, gaps, theta, times

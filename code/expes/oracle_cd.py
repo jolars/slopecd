@@ -21,13 +21,14 @@ alpha_max = dual_norm_slope(X, y / len(y), alphas_seq)
 alphas = alpha_max * alphas_seq / 5
 plt.close('all')
 
-w, E, gaps, theta = prox_grad(X,
-                              y,
-                              alphas,
-                              max_epochs=1000,
-                              verbose=False)
+w, E, gaps, times_pgd = prox_grad(X,
+                                  y,
+                                  alphas,
+                                  max_epochs=1000,
+                                  verbose=False)
 
-w_oracle, E_oracle, gaps_oracle = oracle_cd(X, y, alphas, 1000, tol=1e-10)
+w_oracle, E_oracle, gaps_oracle, times_oracle = oracle_cd(
+    X, y, alphas, 1000, tol=1e-10)
 
 E_min = min(np.min(E), np.min(E_oracle))
 

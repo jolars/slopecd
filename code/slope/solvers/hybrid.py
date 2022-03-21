@@ -6,6 +6,43 @@ from slope.utils import slope_threshold, get_clusters
 from scipy import sparse
 
 
+# @njit
+def compute_X_reduced(
+        sign_w, X_data, X_indices, X_indptr, cluster_indices, cluster_ptr, c):
+    X_data_reduced = list()
+    X_indices_reduced = list()
+    X_indptr_reduced = list()
+    X_indptr_reduced.append(0)
+
+    for j in range(len(c)):
+        cluster = cluster_indices[cluster_ptr[j]:cluster_ptr[j+1]]
+        for k, j in enumerate(cluster):
+            start, end = X_indptr[j:j+2]
+            pt_reduced = X_indptr_reduced[-1]
+            count = 0
+            if k == 0:
+                for ind in range(start, end):
+                    X_data_reduced.append(X_data[ind])
+                    X_indices_reduced.append(X_indices[ind])
+                    count += 1
+            else:
+                for ind in range(start, end):
+                    if X_indices[ind] == X_indices_reduced[pt_reduced]:
+                        X_indices_reduced[pt_reduced] += X_data[ind] * sign_w[j]
+                    elif X_indices_reduced[pt_reduced] > X_indices[ind]:
+                        X_data_reduced.insert(pt_reduced, X_data[ind])
+                        X_indices_reduced.insert(pt_reduced, X_indices[ind])
+                    pt_reduced += 1
+                    if X_indices_reduced[-1] < X_indices[ind]:
+                        X_data_reduced.append(X_data[ind])
+                        X_indices_reduced.append(X_indices[ind])        
+                    
+        X_indptr_reduced.append(X_indptr_reduced[-1] + count)
+
+    return np.array(X_data_reduced), np.array(X_indices_reduced), \
+        np.array(X_indptr_reduced)
+
+
 @njit
 def block_cd_epoch(w, X, R, alphas, cluster_indices, cluster_ptr, c):
     n_samples = X.shape[0]
@@ -16,7 +53,7 @@ def block_cd_epoch(w, X, R, alphas, cluster_indices, cluster_ptr, c):
         sign_w = np.sign(w[cluster])
         sum_X = X[:, cluster] @ sign_w
         L_j = sum_X.T @ sum_X / n_samples
-        c_old = abs(c[j])
+        c_old = c[j]
         x = c_old + (sum_X.T @ R) / (L_j * n_samples)
         beta_tilde = slope_threshold(
             x, alphas/L_j, cluster_indices, cluster_ptr, c, j)
@@ -38,7 +75,7 @@ def block_cd_epoch_sparse(w, X_data, X_indices, X_indptr, R,
         sum_X = compute_block_scalar_sparse(
             X_data, X_indices, X_indptr, sign_w, cluster, n_samples)
         L_j = sum_X.T @ sum_X / n_samples
-        c_old = abs(c[j])
+        c_old = c[j]
         x = c_old + (sum_X.T @ R) / (L_j * n_samples)
         beta_tilde = slope_threshold(
             x, alphas/L_j, cluster_indices, cluster_ptr, c, j)
@@ -83,7 +120,11 @@ def hybrid_cd(X, y, alphas, max_epochs=1000, verbose=True,
             w = prox_slope(w + (X.T @ R) / (L * n_samples), alphas / L)
             R[:] = y - X @ w
             cluster_indices, cluster_ptr, c = get_clusters(w)
-
+            X_data_reduced, X_indices_reduced, X_indptr_reduced = \
+                compute_X_reduced(
+                    np.sign(w), X.data, X.indices, X.indptr, cluster_indices,
+                    cluster_ptr, c)
+            import ipdb; ipdb.set_trace()
         else:
             if is_X_sparse:
                 block_cd_epoch_sparse(

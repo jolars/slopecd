@@ -25,7 +25,6 @@ w, E, gaps, theta = prox_grad(X,
                               y,
                               alphas,
                               max_epochs=1000,
-                              n_cd=0,
                               verbose=False)
 
 w_oracle, E_oracle, gaps_oracle = oracle_cd(X, y, alphas, 1000, tol=1e-10)

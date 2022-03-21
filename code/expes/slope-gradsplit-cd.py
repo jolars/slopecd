@@ -50,7 +50,6 @@ def find_splits(x, lam):
 
         k = k + 1
 
-
     # for j in range(k):
     #     d = max(w[j], 0.0)
     #     for i in range(idx_i[j], idx_j[j] + 1):
@@ -59,7 +58,7 @@ def find_splits(x, lam):
     # x[ord] = x.copy()
     # x *= x_sign
 
-    return ord[idx_i[0] : (idx_j[0] + 1)]
+    return ord[idx_i[0]: (idx_j[0] + 1)]
     # return x
 
 
@@ -114,6 +113,7 @@ def slope_threshold(x, lambdas, clusters, j):
     # we are between clusters
     return x - np.sign(x) * lo, cluster_k
 
+
 n = 100
 p = 500
 
@@ -128,7 +128,8 @@ y = y - np.mean(y)
 
 randnorm = stats.norm(loc=0, scale=1)
 q = 0.5
-alphas_seq = randnorm.ppf(1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1]))
+alphas_seq = randnorm.ppf(
+    1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1]))
 
 
 alpha_max = dual_norm_slope(X, y / len(y), alphas_seq)
@@ -158,7 +159,8 @@ for it in range(maxit):
     r = X @ beta - y
     theta = -r / max(1, dual_norm_slope(X, r, lambdas))
 
-    primal = norm(r) ** 2 / (n * 2) + np.sum(lambdas * np.sort(np.abs(beta))[::-1]) / n
+    primal = norm(r) ** 2 / (n * 2) + np.sum(lambdas *
+                                             np.sort(np.abs(beta))[::-1]) / n
     dual = (norm(y) ** 2 - norm(y - theta) ** 2) / (n * 2)
     gap = primal - dual
 
@@ -171,7 +173,7 @@ for it in range(maxit):
 
     while j < len(clusters.coefs):
         A = clusters.inds[j]
-        lambdas_j = lambdas[clusters.starts[j] : clusters.ends[j]]
+        lambdas_j = lambdas[clusters.starts[j]: clusters.ends[j]]
 
         # check if clusters should split and if so how
         if len(A) > 1:
@@ -222,7 +224,7 @@ for it in range(maxit):
     r = X @ beta - y
 
 beta_star, primals_star, gaps_star, theta_star = prox_grad(
-    X, y, lambdas / n, max_epoch=1000, n_cd=0, verbose=False
+    X, y, lambdas / n, max_epoch=1000, verbose=False
 )
 
 plt.clf()

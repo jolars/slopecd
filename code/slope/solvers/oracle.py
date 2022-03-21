@@ -49,7 +49,7 @@ def pure_cd_epoch_sparse(
 def oracle_cd(X, y, alphas, max_epochs, tol=1e-10, verbose=False):
     """Oracle CD: get solution clusters and run CD on collapsed design."""
     n_samples, n_features = X.shape
-    w_star = prox_grad(X, y, alphas, max_epochs=10000, tol=1e-10, n_cd=0)[0]
+    w_star = prox_grad(X, y, alphas, max_epochs=10000, tol=1e-10)[0]
     clusters, cluster_ptr, unique = get_clusters(w_star)
     n_clusters = len(cluster_ptr) - 1
     is_X_sparse = sparse.issparse(X)

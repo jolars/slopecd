@@ -49,9 +49,8 @@ def prox_grad(
                     c = coefs / coefs.sum()
                     w_acc = np.sum(last_K_w[:-1] * c[:, None],
                                    axis=0)
-                    p_obj = norm(R) ** 2 / (2 * n_samples) + \
+                    p_obj = norm(y - X @ w_new) ** 2 / (2 * n_samples) + \
                         np.sum(alphas * np.sort(np.abs(w_new))[::-1])
-                    # R_acc = y - X @ w_acc
                     p_obj_acc = norm(y - X @ w_acc) ** 2 / (2 * n_samples) + \
                         np.sum(alphas * np.sort(np.abs(w_acc))[::-1])
                     if p_obj_acc < p_obj:

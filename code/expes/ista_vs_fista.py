@@ -28,7 +28,7 @@ alphas_seq = randnorm.ppf(
 
 alpha_max = dual_norm_slope(X, y / len(y), alphas_seq)
 
-lambdas = alpha_max * alphas_seq / 10
+lambdas = alpha_max * alphas_seq / 20
 
 plt.close('all')
 plt.figure()

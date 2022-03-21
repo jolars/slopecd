@@ -11,10 +11,11 @@ cm = get_cmap('tab10')
 
 n = 200
 p = 600
+rho = 0.2
 
 dataset = "simulated"
 if dataset == "simulated":
-    X, y, _ = make_correlated_data(n_samples=n, n_features=p, random_state=0,rho=0.5)
+    X, y, _ = make_correlated_data(n_samples=n, n_features=p, random_state=0, rho=rho)
 else:
     X, y = fetch_libsvm(dataset)
 

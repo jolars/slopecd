@@ -35,15 +35,15 @@ plt.figure()
 
 max_epochs = 20_000
 
-w_ista, E_ista, gaps_ista, _ = prox_grad(
+w_ista, E_ista, gaps_ista, _, time_ista = prox_grad(
     X, y, lambdas, fista=False, verbose=True, gap_freq=10,
     max_epochs=max_epochs)
 
-_, E_anderson, gaps_anderson, _ = prox_grad(
+_, E_anderson, gaps_anderson, _, time_anderson = prox_grad(
     X, y, lambdas, fista=False, anderson=True, verbose=True, gap_freq=10,
     max_epochs=max_epochs)
 
-w_fista, E_fista, gaps_fista, _ = prox_grad(
+w_fista, E_fista, gaps_fista, _, time_fista = prox_grad(
     X, y, lambdas, fista=True, verbose=True, gap_freq=10,
     max_epochs=max_epochs)
 

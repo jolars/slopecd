@@ -1,10 +1,12 @@
+from timeit import default_timer as timer
+
 import numpy as np
 from numba import njit
 from numpy.linalg import norm
-from slope.utils import ST, dual_norm_slope
-from slope.utils import get_clusters
-from slope.solvers import prox_grad
 from scipy import sparse
+
+from slope.solvers import prox_grad
+from slope.utils import ST, dual_norm_slope, get_clusters
 
 
 @njit
@@ -73,6 +75,11 @@ def oracle_cd(X, y, alphas, max_epochs, tol=1e-10, verbose=False):
     w = np.zeros(n_features)
     w_reduced = np.zeros(n_clusters)
     R = y.copy()
+
+    time = []
+    time_start = timer()
+    time.append(timer() - time_start)
+
     lc = norm(X_reduced, axis=0)**2 / n_samples
     E, gaps = [], []
     E.append(norm(y)**2 / (2 * n_samples))
@@ -99,10 +106,11 @@ def oracle_cd(X, y, alphas, max_epochs, tol=1e-10, verbose=False):
         E.append(primal)
         gap = primal - dual
         gaps.append(gap)
+        time.append(timer() - time_start)
 
         if verbose:
             print(f"Epoch: {epoch + 1}, loss: {primal}, gap: {gap:.2e}")
         if gap < tol:
             break
 
-    return w, E, gaps
+    return w, E, gaps, time

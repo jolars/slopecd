@@ -123,7 +123,7 @@ for it in range(maxit):
         beta2s.append(beta[1])
 
         A = clusters.inds[j].copy()
-        lambdas_j = lambdas[clusters.starts[j] : clusters.ends[j]]
+        lambdas_j = lambdas[clusters.starts[j]: clusters.ends[j]]
 
         print(f"\tj: {j}, C: {clusters.inds[j]}, c_j: {clusters.coefs[j]:.2e}")
 
@@ -190,7 +190,7 @@ for it in range(maxit):
     r = X @ beta - y
 
 beta_star, primals_star, gaps_star, theta_star = prox_grad(
-    X, y, lambdas / n, max_epochs=1000, n_cd=0, verbose=False
+    X, y, lambdas / n, max_epochs=1000, verbose=False
 )
 
 beta1 = np.linspace(-0.8, 0.8, 20)
@@ -203,7 +203,8 @@ for i in range(20):
         betax = np.array([beta1[i], beta2[j]])
         r = X @ betax - y
         theta = -r / max(1, dual_norm_slope(X, r, lambdas))
-        primal = 0.5 * norm(r) ** 2 + np.sum(lambdas * np.sort(np.abs(betax))[::-1])
+        primal = 0.5 * norm(r) ** 2 + np.sum(lambdas *
+                                             np.sort(np.abs(betax))[::-1])
         dual = 0.5 * (norm(y) ** 2 - norm(y - theta) ** 2)
         gap = primal - dual
         z[j][i] = gap

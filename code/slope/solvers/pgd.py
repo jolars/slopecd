@@ -1,42 +1,7 @@
 import numpy as np
-from numba import njit
 from numpy.linalg import norm
-from slope.utils import ST, dual_norm_slope, prox_slope
+from slope.utils import dual_norm_slope, prox_slope
 from scipy import sparse
-
-
-# @njit
-# def do_cd_epochs(n_cd, w, X, R, alphas, lc):
-#     n_samples = len(R)
-#     for _ in range(n_cd):
-#         # do CD epochs pretending coefs order is fixed
-#         order = np.argsort(np.abs(w))[::-1]
-#         for idx, j in enumerate(order):  # update from big to small
-#             old = w[j]
-#             w[j] = ST(w[j] + X[:, j] @ R / (lc[j] * n_samples),
-#                       alphas[idx] / lc[j])
-#             if w[j] != old:
-#                 R += (old - w[j]) * X[:, j]
-
-
-# def do_cd_epochs_sparse(
-#         n_cd, w, X_data, X_indices, X_indptr, R, alphas, lc):
-#     n_samples = len(R)
-#     for _ in range(n_cd):
-#         # do CD epochs pretending coefs order is fixed
-#         order = np.argsort(np.abs(w))[::-1]
-#         for idx, j in enumerate(order):  # update from big to small
-#             old = w[j]
-#             scal = 0.
-#             start, end = X_indptr[j:j+2]
-#             for ind in range(start, end):
-#                 scal += X_data[ind] * R[X_indices[ind]]
-#             w[j] = ST(w[j] + scal / (lc[j] * n_samples),
-#                       alphas[idx] / lc[j])
-#             diff = old - w[j]
-#             if diff != 0:
-#                 for ind in range(start, end):
-#                     R[X_indices[ind]] += diff * X_data[ind]
 
 
 def prox_grad(

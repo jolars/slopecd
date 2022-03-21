@@ -82,8 +82,6 @@ def prox_grad(
                     if verbose:
                         print("----------Linalg error")
 
-
-
         if fista:
             t_new = (1 + np.sqrt(1 + 4 * t ** 2)) / 2
             z = w_new + (t - 1) / t_new * (w_new - w)

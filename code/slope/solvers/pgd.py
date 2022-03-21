@@ -7,6 +7,8 @@ from scipy import sparse
 def prox_grad(
         X, y, alphas, fista=False, max_epochs=100, tol=1e-10, gap_freq=1,
         anderson=False, verbose=True):
+    if anderson and fista:
+        raise ValueError("anderson=True cannot be combined with fista=True")
     n_samples, n_features = X.shape
     R = y.copy()
     w = np.zeros(n_features)

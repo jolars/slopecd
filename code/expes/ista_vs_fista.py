@@ -9,12 +9,12 @@ from slope.solvers import prox_grad
 from slope.utils import dual_norm_slope
 cm = get_cmap('tab10')
 
-n = 500
-p = 1000
+n = 200
+p = 600
 
 dataset = "simulated"
 if dataset == "simulated":
-    X, y, _ = make_correlated_data(n_samples=n, n_features=p, random_state=0)
+    X, y, _ = make_correlated_data(n_samples=n, n_features=p, random_state=0,rho=0.5)
 else:
     X, y = fetch_libsvm(dataset)
 
@@ -34,29 +34,37 @@ plt.close('all')
 plt.figure()
 
 max_epochs = 20_000
+tol = 1e-8
 
 w_ista, E_ista, gaps_ista, _ = prox_grad(
     X, y, lambdas, fista=False, verbose=True, gap_freq=10,
-    max_epochs=max_epochs)
+    max_epochs=max_epochs, tol=tol)
 
 _, E_anderson, gaps_anderson, _ = prox_grad(
     X, y, lambdas, fista=False, anderson=True, verbose=True, gap_freq=10,
-    max_epochs=max_epochs)
+    max_epochs=max_epochs, tol=tol)
+
+_, E_fista_ls, gaps_fista_ls, _ = prox_grad(
+    X, y, lambdas, fista=True, verbose=True, gap_freq=10,
+    max_epochs=max_epochs, line_search=True, tol=tol)
 
 w_fista, E_fista, gaps_fista, _ = prox_grad(
     X, y, lambdas, fista=True, verbose=True, gap_freq=10,
-    max_epochs=max_epochs)
-
+    max_epochs=max_epochs, tol=tol)
 
 E_ista = np.array(E_ista)
 E_fista = np.array(E_fista)
-p_star = min(np.min(E_ista), np.min(E_fista))
+E_fista_ls = np.array(E_fista_ls)
+p_star = min(np.min(E_ista), np.min(E_fista), np.min(E_fista_ls))
+p_star = min(np.min(E_fista), np.min(E_fista_ls))
 plt.semilogy(E_ista - p_star, c=cm(0), label='primal subopt PGD')
 plt.semilogy(E_fista - p_star, c=cm(1), label='primal subopt APGD')
-plt.semilogy(E_anderson - p_star, c=cm(2), label='primal subopt PGD Anderson')
+plt.semilogy(E_fista_ls - p_star, c=cm(2), label='primal subopt APGD+LS')
+plt.semilogy(E_anderson - p_star, c=cm(3), label='primal subopt PGD Anderson')
 
 plt.semilogy(gaps_ista, c=cm(0), linestyle='--', label='gap PGD')
 plt.semilogy(gaps_fista, c=cm(1), linestyle='--', label='gap APGD')
-plt.semilogy(gaps_anderson, c=cm(2), linestyle='--', label='gap PGD Anderson')
+plt.semilogy(gaps_fista_ls, c=cm(2), linestyle='--', label='gap APGD+LS')
+plt.semilogy(gaps_anderson, c=cm(3), linestyle='--', label='gap PGD Anderson')
 plt.legend()
 plt.show(block=False)

@@ -6,7 +6,7 @@ from scipy import sparse
 
 def prox_grad(
         X, y, alphas, fista=False, max_epochs=100, tol=1e-10, gap_freq=1,
-        anderson=False, verbose=True):
+        anderson=False, line_search=False, verbose=True):
     if anderson and fista:
         raise ValueError("anderson=True cannot be combined with fista=True")
     n_samples, n_features = X.shape
@@ -22,17 +22,38 @@ def prox_grad(
         last_K_w = np.zeros([K + 1, n_features])
         U = np.zeros([K, n_features])
 
-    if sparse.issparse(X):
-        L = sparse.linalg.svds(X, k=1)[1][0] ** 2 / n_samples
-    else:
-        L = norm(X, ord=2)**2 / n_samples
+    L = 1.0
+
+    if not line_search:
+        if sparse.issparse(X):
+            L = sparse.linalg.svds(X, k=1)[1][0] ** 2 / n_samples
+        else:
+            L = norm(X, ord=2)**2 / n_samples
+
+    # Line search parameter
+    eta = 2.0
 
     E, gaps = [], []
     E.append(norm(y)**2 / (2 * n_samples))
     gaps.append(E[0])
     for it in range(max_epochs):
         R[:] = y - X @ z
-        w_new = prox_slope(z + (X.T @ R) / (L * n_samples), alphas / L)
+        grad = -(X.T @ R) / n_samples
+
+        if line_search:
+            f_old = norm(X @ z - y) ** 2 / (2 * n_samples) 
+            while True:
+                w_new = prox_slope(z - grad / L, alphas / L)
+                f = norm(X @ w_new - y) ** 2 / (2 * n_samples)
+                d = w_new - z
+                q = f_old + np.dot(d, grad) + 0.5 * L * norm(d)**2
+                if q >= f * (1 - 1e-12):
+                    break
+                else:
+                    L *= eta
+        else:
+            w_new = prox_slope(z - grad / L, alphas / L)
+
         if anderson:
             # TODO multiple improvements possible here
             if it < K + 1:
@@ -61,10 +82,12 @@ def prox_grad(
                     if verbose:
                         print("----------Linalg error")
 
+
+
         if fista:
             t_new = (1 + np.sqrt(1 + 4 * t ** 2)) / 2
             z = w_new + (t - 1) / t_new * (w_new - w)
-            w = w_new
+            w = w_new.copy()
             t = t_new
         else:
             w = w_new

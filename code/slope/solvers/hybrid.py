@@ -1,9 +1,11 @@
+from timeit import default_timer as timer
+
 import numpy as np
 from numba import njit
 from numpy.linalg import norm
-from slope.utils import dual_norm_slope, prox_slope
-from slope.utils import slope_threshold, get_clusters
 from scipy import sparse
+
+from slope.utils import dual_norm_slope, get_clusters, prox_slope, slope_threshold
 
 
 @njit
@@ -16,7 +18,7 @@ def block_cd_epoch(w, X, R, alphas, cluster_indices, cluster_ptr, c):
         sign_w = np.sign(w[cluster])
         sum_X = X[:, cluster] @ sign_w
         L_j = sum_X.T @ sum_X / n_samples
-        c_old = c[j]
+        c_old = abs(c[j])
         x = c_old + (sum_X.T @ R) / (L_j * n_samples)
         beta_tilde = slope_threshold(
             x, alphas/L_j, cluster_indices, cluster_ptr, c, j)
@@ -38,7 +40,7 @@ def block_cd_epoch_sparse(w, X_data, X_indices, X_indptr, R,
         sum_X = compute_block_scalar_sparse(
             X_data, X_indices, X_indptr, sign_w, cluster, n_samples)
         L_j = sum_X.T @ sum_X / n_samples
-        c_old = c[j]
+        c_old = abs(c[j])
         x = c_old + (sum_X.T @ R) / (L_j * n_samples)
         beta_tilde = slope_threshold(
             x, alphas/L_j, cluster_indices, cluster_ptr, c, j)
@@ -67,6 +69,10 @@ def hybrid_cd(X, y, alphas, max_epochs=1000, verbose=True,
     R = y.copy()
     w = np.zeros(n_features)
     theta = np.zeros(n_samples)
+
+    times = []
+    time_start = timer()
+    times.append(timer() - time_start)
 
     if is_X_sparse:
         L = sparse.linalg.svds(X, k=1)[1][0] ** 2
@@ -103,10 +109,11 @@ def hybrid_cd(X, y, alphas, max_epochs=1000, verbose=True,
         E.append(primal)
         gap = primal - dual
         gaps.append(gap)
+        times.append(timer() - time_start)
 
         if verbose:
             print(f"Epoch: {epoch + 1}, loss: {primal}, gap: {gap:.2e}")
         if gap < tol:
             break
 
-    return w, E, gaps
+    return w, E, gaps, times

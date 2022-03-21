@@ -1,7 +1,10 @@
+from timeit import default_timer as timer
+
 import numpy as np
 from numpy.linalg import norm
-from slope.utils import dual_norm_slope, prox_slope
 from scipy import sparse
+
+from slope.utils import dual_norm_slope, prox_slope
 
 
 def prox_grad(
@@ -21,6 +24,10 @@ def prox_grad(
         K = 5
         last_K_w = np.zeros([K + 1, n_features])
         U = np.zeros([K, n_features])
+
+    times = []
+    time_start = timer()
+    times.append(timer() - time_start)
 
     L = 1.0
 
@@ -104,9 +111,10 @@ def prox_grad(
             E.append(primal)
             gap = primal - dual
             gaps.append(gap)
+            times.append(timer() - time_start)
 
             if verbose:
                 print(f"Epoch: {it + 1}, loss: {primal}, gap: {gap:.2e}")
             if gap < tol:
                 break
-    return w, E, gaps, theta
+    return w, E, gaps, times

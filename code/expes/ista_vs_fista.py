@@ -37,11 +37,11 @@ plt.figure()
 max_epochs = 20_000
 tol = 1e-8
 
-w_ista, E_ista, gaps_ista, _ = prox_grad(
+w_ista, E_ista, gaps_ista, times_ista = prox_grad(
     X, y, lambdas, fista=False, verbose=True, gap_freq=10,
     max_epochs=max_epochs, tol=tol)
 
-_, E_anderson, gaps_anderson, _ = prox_grad(
+_, E_anderson, gaps_anderson, times_anderson = prox_grad(
     X, y, lambdas, fista=False, anderson=True, verbose=True, gap_freq=10,
     max_epochs=max_epochs, tol=tol)
 
@@ -49,7 +49,7 @@ _, E_fista_ls, gaps_fista_ls, _ = prox_grad(
     X, y, lambdas, fista=True, verbose=True, gap_freq=10,
     max_epochs=max_epochs, line_search=True, tol=tol)
 
-w_fista, E_fista, gaps_fista, _ = prox_grad(
+w_fista, E_fista, gaps_fista, times_fista = prox_grad(
     X, y, lambdas, fista=True, verbose=True, gap_freq=10,
     max_epochs=max_epochs, tol=tol)
 

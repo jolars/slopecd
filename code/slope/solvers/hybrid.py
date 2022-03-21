@@ -16,7 +16,7 @@ def block_cd_epoch(w, X, R, alphas, cluster_indices, cluster_ptr, c):
         sign_w = np.sign(w[cluster])
         sum_X = X[:, cluster] @ sign_w
         L_j = sum_X.T @ sum_X / n_samples
-        c_old = c[j]
+        c_old = abs(c[j])
         x = c_old + (sum_X.T @ R) / (L_j * n_samples)
         beta_tilde = slope_threshold(
             x, alphas/L_j, cluster_indices, cluster_ptr, c, j)
@@ -38,7 +38,7 @@ def block_cd_epoch_sparse(w, X_data, X_indices, X_indptr, R,
         sum_X = compute_block_scalar_sparse(
             X_data, X_indices, X_indptr, sign_w, cluster, n_samples)
         L_j = sum_X.T @ sum_X / n_samples
-        c_old = c[j]
+        c_old = abs(c[j])
         x = c_old + (sum_X.T @ R) / (L_j * n_samples)
         beta_tilde = slope_threshold(
             x, alphas/L_j, cluster_indices, cluster_ptr, c, j)

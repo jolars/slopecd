@@ -9,8 +9,8 @@ from slope.solvers import prox_grad
 from slope.utils import dual_norm_slope
 cm = get_cmap('tab10')
 
-n = 100
-p = 500
+n = 500
+p = 1000
 
 dataset = "simulated"
 if dataset == "simulated":
@@ -28,7 +28,7 @@ alphas_seq = randnorm.ppf(
 
 alpha_max = dual_norm_slope(X, y / len(y), alphas_seq)
 
-lambdas = alpha_max * alphas_seq / 50
+lambdas = alpha_max * alphas_seq / 10
 
 plt.close('all')
 plt.figure()
@@ -39,6 +39,10 @@ w_ista, E_ista, gaps_ista, _ = prox_grad(
     X, y, lambdas, fista=False, verbose=True, gap_freq=10,
     max_epochs=max_epochs)
 
+_, E_anderson, gaps_anderson, _ = prox_grad(
+    X, y, lambdas, fista=False, anderson=True, verbose=True, gap_freq=10,
+    max_epochs=max_epochs)
+
 w_fista, E_fista, gaps_fista, _ = prox_grad(
     X, y, lambdas, fista=True, verbose=True, gap_freq=10,
     max_epochs=max_epochs)
@@ -47,11 +51,12 @@ w_fista, E_fista, gaps_fista, _ = prox_grad(
 E_ista = np.array(E_ista)
 E_fista = np.array(E_fista)
 p_star = min(np.min(E_ista), np.min(E_fista))
-plt.figure()
 plt.semilogy(E_ista - p_star, c=cm(0), label='primal subopt PGD')
 plt.semilogy(E_fista - p_star, c=cm(1), label='primal subopt APGD')
+plt.semilogy(E_anderson - p_star, c=cm(2), label='primal subopt PGD Anderson')
 
 plt.semilogy(gaps_ista, c=cm(0), linestyle='--', label='gap PGD')
 plt.semilogy(gaps_fista, c=cm(1), linestyle='--', label='gap APGD')
+plt.semilogy(gaps_anderson, c=cm(2), linestyle='--', label='gap PGD Anderson')
 plt.legend()
 plt.show(block=False)

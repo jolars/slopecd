@@ -1,5 +1,4 @@
 import unittest
-from parameterized import parameterized
 
 import numpy as np
 from scipy import stats
@@ -32,7 +31,7 @@ class TestPenalty(unittest.TestCase):
 class TestPGDSolvers(unittest.TestCase):
     def test_convergence(self):
         X, y, _ = make_correlated_data(
-            n_samples=30, n_features=100, random_state=0)
+            n_samples=30, n_features=70, random_state=0)
 
         randnorm = stats.norm(loc=0, scale=1)
         q = 0.5
@@ -44,7 +43,9 @@ class TestPGDSolvers(unittest.TestCase):
 
         for fista in [False, True]:
             tol = 1e-10
-            w, E, gaps, _ = prox_grad(X, y, alphas, fista=fista)
+            w, E, gaps, _ = prox_grad(
+                X, y, alphas, fista=fista, max_epochs=15_000, gap_freq=10,
+                verbose=False)
             with self.subTest():
                 self.assertGreater(tol, gaps[-1])
 

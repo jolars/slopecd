@@ -25,9 +25,9 @@ def prox_grad(
         last_K_w = np.zeros([K + 1, n_features])
         U = np.zeros([K, n_features])
 
-    time = []
+    times = []
     time_start = timer()
-    time.append(timer() - time_start)
+    times.append(timer() - time_start)
 
     if sparse.issparse(X):
         L = sparse.linalg.svds(X, k=1)[1][0] ** 2 / n_samples
@@ -90,10 +90,10 @@ def prox_grad(
             E.append(primal)
             gap = primal - dual
             gaps.append(gap)
-            time.append(timer() - time_start)
+            times.append(timer() - time_start)
 
             if verbose:
                 print(f"Epoch: {it + 1}, loss: {primal}, gap: {gap:.2e}")
             if gap < tol:
                 break
-    return w, E, gaps, theta, time
+    return w, E, gaps, times

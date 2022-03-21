@@ -70,9 +70,9 @@ def hybrid_cd(X, y, alphas, max_epochs=1000, verbose=True,
     w = np.zeros(n_features)
     theta = np.zeros(n_samples)
 
-    time = []
+    times = []
     time_start = timer()
-    time.append(timer() - time_start)
+    times.append(timer() - time_start)
 
     if is_X_sparse:
         L = sparse.linalg.svds(X, k=1)[1][0] ** 2
@@ -109,11 +109,11 @@ def hybrid_cd(X, y, alphas, max_epochs=1000, verbose=True,
         E.append(primal)
         gap = primal - dual
         gaps.append(gap)
-        time.append(timer() - time_start)
+        times.append(timer() - time_start)
 
         if verbose:
             print(f"Epoch: {epoch + 1}, loss: {primal}, gap: {gap:.2e}")
         if gap < tol:
             break
 
-    return w, E, gaps, time
+    return w, E, gaps, times

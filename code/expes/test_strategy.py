@@ -37,7 +37,7 @@ tol = 1e-10
 
 beta_cd, primals_cd, gaps_cd, time_cd = hybrid_cd(
     X, y, alphas, max_epochs=max_epochs, verbose=True, tol=tol)
-beta_pgd, primals_pgd, gaps_pgd, theta_pgd, time_pgd = prox_grad(
+beta_pgd, primals_pgd, gaps_pgd, time_pgd = prox_grad(
     X, y, alphas, max_epochs=max_epochs, verbose=True, tol=tol, fista=True
 )
 beta_oracle, primals_oracle, gaps_oracle, time_oracle = oracle_cd(
@@ -84,4 +84,3 @@ plt.xlabel("Time (s)")
 plt.legend()
 plt.title(dataset)
 plt.show(block=False)
-

@@ -76,9 +76,9 @@ def oracle_cd(X, y, alphas, max_epochs, tol=1e-10, verbose=False):
     w_reduced = np.zeros(n_clusters)
     R = y.copy()
 
-    time = []
+    times = []
     time_start = timer()
-    time.append(timer() - time_start)
+    times.append(timer() - time_start)
 
     lc = norm(X_reduced, axis=0)**2 / n_samples
     E, gaps = [], []
@@ -106,11 +106,11 @@ def oracle_cd(X, y, alphas, max_epochs, tol=1e-10, verbose=False):
         E.append(primal)
         gap = primal - dual
         gaps.append(gap)
-        time.append(timer() - time_start)
+        times.append(timer() - time_start)
 
         if verbose:
             print(f"Epoch: {epoch + 1}, loss: {primal}, gap: {gap:.2e}")
         if gap < tol:
             break
 
-    return w, E, gaps, time
+    return w, E, gaps, times

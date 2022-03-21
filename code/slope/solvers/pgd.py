@@ -39,11 +39,16 @@ from scipy import sparse
 #                     R[X_indices[ind]] += diff * X_data[ind]
 
 
-def prox_grad(X, y, alphas, max_epochs=100, tol=1e-10, verbose=True):
+def prox_grad(
+        X, y, alphas, fista=False, max_epochs=100, tol=1e-10, gap_freq=1,
+        verbose=True):
     n_samples, n_features = X.shape
     R = y.copy()
     w = np.zeros(n_features)
     theta = np.zeros(n_samples)
+    # FISTA parameters:
+    z = w.copy()
+    t = 1
 
     if sparse.issparse(X):
         L = sparse.linalg.svds(X, k=1)[1][0] ** 2 / n_samples
@@ -53,24 +58,35 @@ def prox_grad(X, y, alphas, max_epochs=100, tol=1e-10, verbose=True):
     E, gaps = [], []
     E.append(norm(y)**2 / (2 * n_samples))
     gaps.append(E[0])
-    for t in range(max_epochs):
-        w = prox_slope(w + (X.T @ R) / (L * n_samples), alphas / L)
-        R[:] = y - X @ w
+    for it in range(max_epochs):
+        R[:] = y - X @ z
+        w_new = prox_slope(z + (X.T @ R) / (L * n_samples), alphas / L)
 
-        theta = R / n_samples
-        theta /= max(1, dual_norm_slope(X, theta, alphas))
+        if fista:
+            t_new = (1 + np.sqrt(1 + 4 * t ** 2)) / 2
+            z = w_new + (t - 1) / t_new * (w_new - w)
+            w = w_new
+            t = t_new
+        else:
+            w = w_new
+            z = w
 
-        dual = (norm(y) ** 2 - norm(y - theta * n_samples) ** 2) / \
-            (2 * n_samples)
-        primal = norm(R) ** 2 / (2 * n_samples) + \
-            np.sum(alphas * np.sort(np.abs(w))[::-1])
+        if it % gap_freq == 0:
+            R[:] = y - X @ w
+            theta = R / n_samples
+            theta /= max(1, dual_norm_slope(X, theta, alphas))
 
-        E.append(primal)
-        gap = primal - dual
-        gaps.append(gap)
+            dual = (norm(y) ** 2 - norm(y - theta * n_samples) ** 2) / \
+                (2 * n_samples)
+            primal = norm(R) ** 2 / (2 * n_samples) + \
+                np.sum(alphas * np.sort(np.abs(w))[::-1])
 
-        if verbose:
-            print(f"Epoch: {t + 1}, loss: {primal}, gap: {gap:.2e}")
-        if gap < tol:
-            break
+            E.append(primal)
+            gap = primal - dual
+            gaps.append(gap)
+
+            if verbose:
+                print(f"Epoch: {it + 1}, loss: {primal}, gap: {gap:.2e}")
+            if gap < tol:
+                break
     return w, E, gaps, theta

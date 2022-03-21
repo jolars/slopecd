@@ -48,7 +48,7 @@ def prox_grad(
         grad = -(X.T @ R) / n_samples
 
         if line_search:
-            f_old = norm(X @ z - y) ** 2 / (2 * n_samples) 
+            f_old = norm(R) ** 2 / (2 * n_samples) 
             while True:
                 w_new = prox_slope(z - grad / L, alphas / L)
                 f = norm(X @ w_new - y) ** 2 / (2 * n_samples)

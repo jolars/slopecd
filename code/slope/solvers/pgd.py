@@ -9,9 +9,11 @@ from slope.utils import dual_norm_slope, prox_slope
 
 def prox_grad(
         X, y, alphas, fista=False, max_epochs=100, tol=1e-10, gap_freq=1,
-        anderson=False, line_search=False, verbose=True):
+        anderson=False, line_search=False, barzilai=False, verbose=True):
     if anderson and fista:
         raise ValueError("anderson=True cannot be combined with fista=True")
+    if barzilai and not line_search:
+        raise ValueError("Cannot use Barzilai rule without linesearch.")
     n_samples, n_features = X.shape
     R = y.copy()
     w = np.zeros(n_features)
@@ -45,21 +47,30 @@ def prox_grad(
     gaps.append(E[0])
     for it in range(max_epochs):
         R[:] = y - X @ z
+        if it > 0:
+            grad_old = grad
         grad = -(X.T @ R) / n_samples
 
         if line_search:
+            print(f"iter {it}")
+            # Barzilai-Borwein rule:
             L = 1
+            if barzilai and it > 0:
+                delta_w = w - w_old
+                delta_grad = grad - grad_old
+                L = np.abs(delta_w @ delta_grad) / norm(delta_w) ** 2
+                print("BB guess:", L)
             f_old = norm(R) ** 2 / (2 * n_samples)
             while True:
                 w_new = prox_slope(z - grad / L, alphas / L)
                 f = norm(X @ w_new - y) ** 2 / (2 * n_samples)
                 d = w_new - z
-                q = f_old + np.dot(d, grad) + 0.5 * L * norm(d)**2
+                q = f_old + d @ grad + 0.5 * L * norm(d)**2
                 if q >= f * (1 - 1e-12):
                     break
                 else:
                     L *= eta
-            print("it", it, L)
+            print("L taken:", L)
         else:
             w_new = prox_slope(z - grad / L, alphas / L)
 
@@ -90,7 +101,7 @@ def prox_grad(
                 except np.linalg.LinAlgError:
                     if verbose:
                         print("----------Linalg error")
-
+        w_old = w
         if fista:
             t_new = (1 + np.sqrt(1 + 4 * t ** 2)) / 2
             z = w_new + (t - 1) / t_new * (w_new - w)

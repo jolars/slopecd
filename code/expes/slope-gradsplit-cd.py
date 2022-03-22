@@ -1,3 +1,5 @@
+from random import sample
+
 import matplotlib.pyplot as plt
 import numpy as np
 from benchopt.datasets import make_correlated_data
@@ -58,7 +60,7 @@ def find_splits(x, lam):
     # x[ord] = x.copy()
     # x *= x_sign
 
-    return ord[idx_i[0]: (idx_j[0] + 1)]
+    return ord[idx_i[0] : (idx_j[0] + 1)]
     # return x
 
 
@@ -128,106 +130,110 @@ y = y - np.mean(y)
 
 randnorm = stats.norm(loc=0, scale=1)
 q = 0.5
-alphas_seq = randnorm.ppf(
-    1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1]))
+alphas_seq = randnorm.ppf(1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1]))
+
+max_epochs = 1000
+tol = 1e-10
+split_freq = 1
+verbose = True
 
 
 alpha_max = dual_norm_slope(X, y / len(y), alphas_seq)
 
 lambdas = alpha_max * alphas_seq / 5
 
-lambdas *= n
-
-gaps = []
-primals = []
-duals = []
-
-maxit = 1000
+n, p = X.shape
 
 beta = np.zeros(p)
-r = X @ beta - y
+theta = np.zeros(n)
 
-L = norm(X, ord=2) ** 2
-g = X.T @ r
-
+r = -y
+g = (X.T @ r) / n
 
 clusters = Clusters(beta)
 
-for it in range(maxit):
-    j = 0
+L = norm(X, ord=2) ** 2 / n
 
+primals, duals, gaps = [], [], []
+
+epoch = 0
+
+features_seen = 0
+
+
+# w = prox_slope(w + (X.T @ R) / (L * n_samples), alphas / L)
+# R[:] = y - X @ w
+
+while epoch < max_epochs:
     r = X @ beta - y
-    theta = -r / max(1, dual_norm_slope(X, r, lambdas))
 
-    primal = norm(r) ** 2 / (n * 2) + np.sum(lambdas *
-                                             np.sort(np.abs(beta))[::-1]) / n
-    dual = (norm(y) ** 2 - norm(y - theta) ** 2) / (n * 2)
+    theta = -r / n
+    theta /= max(1, dual_norm_slope(X, theta, lambdas))
+
+    primal = (0.5 / n) * norm(r) ** 2 + np.sum(
+        lambdas * np.sort(np.abs(beta))[::-1]
+    )
+    dual = (0.5 / n) * (norm(y) ** 2 - norm(y - theta * n) ** 2)
     gap = primal - dual
 
-    print(f"Epoch: {it + 1}")
-    print(f"\tloss: {primal:.2e}, gap: {gap:.2e}")
+    if gap < tol:
+        break
 
     primals.append(primal)
     duals.append(dual)
     gaps.append(gap)
 
-    while j < len(clusters.coefs):
-        A = clusters.inds[j]
-        lambdas_j = lambdas[clusters.starts[j]: clusters.ends[j]]
+    if verbose:
+        print(f"Epoch: {epoch + 1}, loss: {primal}, gap: {gap:.2e}")
 
-        # check if clusters should split and if so how
-        if len(A) > 1:
-            x = beta[A] - X[:, A].T @ r
-            # if clusters.coefs[j] == 0:
-            #     ind = np.argmax(np.abs(x))
-            #     if np.abs(x)[ind] > lambdas_j[0]:
-            #         clusters.split(j, [A[ind]])
-            #         A = clusters.inds[j]
-            # else:
-            left_split = find_splits(x, lambdas_j)
-            split_ind = [A[i] for i in left_split]
-            clusters.split(j, split_ind)
+    while features_seen < p:
+        j = sample(range(len(clusters.coefs)), 1)[0]
 
-            A = clusters.inds[j]
+        C = clusters.inds[j]
+        c = clusters.coefs[j]
+        lambdas_j = lambdas[clusters.starts[j] : clusters.ends[j]]
 
-        B = list(set(range(p)) - set(A))
+        g = (X[:, C].T @ r) / n
 
-        # s = np.sign(beta[A])
-        # s = np.ones(len(s)) if np.all(s == 0) else s
-        s = -np.sign(g[A])
+        if len(C) > 1 and epoch % split_freq == 0:
+            # check if clusters should split and if so how
+            x = beta[C] - g / L
+            split = find_splits(x, lambdas_j / L)
 
-        # sum_X = s.T @ X[:, A].T
-        # L_j = sum_X @ sum_X.T
-        # c_old = clusters.coefs[j]
-        # x = c_old - (sum_X @ r) / (L_j)
+            if len(split) < len(C):
+                C = [C[i] for i in split]
+                clusters.split(j, C)
+                g = g[split]
 
-        H = s.T @ X[:, A].T @ X[:, A] @ s
-        x = (y - X[:, B] @ beta[B]).T @ X[:, A] @ s
+        C = clusters.inds[j]
+        c = clusters.coefs[j]
 
-        beta_tilde, new_ind = slope_threshold(x / H, lambdas / H, clusters, j)
+        s = -np.sign(g)
+
+        sum_X = X[:, C] @ s
+        L_j = (sum_X.T @ sum_X) / n
+        x = c - (s.T @ g) / L_j
+
+        beta_tilde, new_ind = slope_threshold(x, lambdas / L_j, clusters, j)
 
         clusters.update(j, new_ind, abs(beta_tilde))
 
-        beta[A] = beta_tilde * s
-        j += 1
+        beta[C] = beta_tilde * s
 
-        # r_tmp = r.copy()
-        # r_tmp -= (c_old - beta_tilde) * sum_X.T
-
+        # r -= (c - beta_tilde) * sum_X
         r = X @ beta - y
 
-        # if not np.allclose(r_tmp, r):
-        #     raise ValueError("")
+        features_seen += len(C)
 
-        g = X.T @ r
+    epoch += 1
 
-    r = X @ beta - y
+    features_seen -= p
 
 beta_star, primals_star, gaps_star, theta_star = prox_grad(
-    X, y, lambdas / n, max_epoch=1000, verbose=False
+    X, y, lambdas / n, max_epochs=1000, verbose=False
 )
 
 plt.clf()
 # plt.hlines(0, xmin=0, xmax=maxit, color="lightgrey")
-plt.semilogy(np.arange(maxit), gaps)
+plt.semilogy(np.arange(len(gaps)), gaps)
 plt.show(block=False)

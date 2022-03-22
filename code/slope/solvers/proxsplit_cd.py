@@ -6,7 +6,7 @@ from numba import njit
 from numpy.linalg import norm
 
 from slope.clusters import Clusters
-from slope.utils import dual, dual_norm_slope, primal
+from slope.utils import dual, dual_norm_slope, primal, prox_slope
 
 
 # thi is basically the proximal operator with a few steps removed
@@ -106,7 +106,7 @@ def proxsplit_cd(X, y, lambdas, max_epochs=100, tol=1e-10, split_freq=1, verbose
     times = []
     time_start = timer()
 
-    clusters = Clusters(beta)
+    L = norm(X, ord=2)**2 / n
 
     primals, duals, gaps = [], [], []
 
@@ -118,6 +118,8 @@ def proxsplit_cd(X, y, lambdas, max_epochs=100, tol=1e-10, split_freq=1, verbose
     epoch = 0
 
     features_seen = 0
+
+    clusters = Clusters(beta)
 
     while epoch < max_epochs:
         r = X @ beta - y
@@ -153,8 +155,8 @@ def proxsplit_cd(X, y, lambdas, max_epochs=100, tol=1e-10, split_freq=1, verbose
 
             if len(C) > 1 and epoch % split_freq == 0:
                 # check if clusters should split and if so how
-                x = beta[C] - g
-                split = find_splits(x, lambdas_j)
+                x = beta[C] - g / L
+                split = find_splits(x, lambdas_j / L)
 
                 if len(split) < len(C):
                     C = [C[i] for i in split]
@@ -175,6 +177,7 @@ def proxsplit_cd(X, y, lambdas, max_epochs=100, tol=1e-10, split_freq=1, verbose
             beta[C] = beta_tilde * s
 
             r -= (c - beta_tilde) * sum_X
+            # r = X @ beta - y
 
             features_seen += len(C)
 

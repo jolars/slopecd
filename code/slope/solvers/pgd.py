@@ -9,7 +9,7 @@ from slope.utils import dual_norm_slope, prox_slope
 
 def prox_grad(
         X, y, alphas, fista=False, max_epochs=100, tol=1e-10, gap_freq=1,
-        anderson=False, line_search=False, barzilai=False, verbose=True):
+        anderson=False, line_search=False, barzilai=False, ls_type=1, verbose=True):
     if anderson and fista:
         raise ValueError("anderson=True cannot be combined with fista=True")
     if barzilai and not line_search:
@@ -52,25 +52,51 @@ def prox_grad(
         grad = -(X.T @ R) / n_samples
 
         if line_search:
-            print(f"iter {it}")
+            # print(f"iter {it}")
             # Barzilai-Borwein rule:
-            L = 1
+            # L = 1
+            if ls_type == 1:
+                L *= 0.9
+            elif ls_type == 2:
+                L = 1.0
+
             if barzilai and it > 0:
                 delta_w = w - w_old
                 delta_grad = grad - grad_old
                 L = np.abs(delta_w @ delta_grad) / norm(delta_w) ** 2
-                print("BB guess:", L)
+                # print("BB guess:", L)
             f_old = norm(R) ** 2 / (2 * n_samples)
+
+            condition = 0
+
             while True:
                 w_new = prox_slope(z - grad / L, alphas / L)
                 f = norm(X @ w_new - y) ** 2 / (2 * n_samples)
                 d = w_new - z
                 q = f_old + d @ grad + 0.5 * L * norm(d)**2
-                if q >= f * (1 - 1e-12):
-                    break
+
+                if ls_type == 3:
+                    if q >= f * (1 - 1e-12):
+                        if condition == 0:
+                            condition = 1
+                        elif condition == 2:
+                            break
+
+                        L *= 0.9
+                    else:
+                        if condition == 0:
+                            condition = 2
+                        elif condition == 1:
+                            break
+
+                        L *= eta
                 else:
-                    L *= eta
-            print("L taken:", L)
+                    if q >= f * (1 - 1e-12):
+                        break
+                    else:
+                        L *= eta
+
+            # print("L taken:", L)
         else:
             w_new = prox_slope(z - grad / L, alphas / L)
 

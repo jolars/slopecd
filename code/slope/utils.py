@@ -93,13 +93,13 @@ def slope_threshold(x, lambdas, cluster_indices, cluster_ptr, c, j):
         lo = sum(lambdas[lo_start:lo_end])
         hi = sum(lambdas[hi_start:hi_end])
 
-        if abs(x) > hi + c[k]:
+        if abs(x) > hi + abs(c[k]):
             # we must be between clusters
             # return np.sign(x) * (np.abs(x) - hi)
-            return x - np.sign(x) * hi
-        elif abs(x) >= lo + c[k]:
+            return x - np.sign(x)*hi
+        elif abs(x) >= lo + abs(c[k]):
             # we are in a cluster
-            return np.sign(x) * c[k]
+            return np.sign(x) * abs(c[k])
 
     # return np.sign(x) * (np.abs(x) - lo)
     return x - np.sign(x) * lo

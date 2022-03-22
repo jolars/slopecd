@@ -191,7 +191,7 @@ for it in range(maxit):
 
     r = X @ beta - y
 
-beta_star, primals_star, gaps_star, theta_star = prox_grad(
+beta_star, primals_star, gaps_star, _ = prox_grad(
     X, y, lambdas / n, max_epochs=1000, verbose=False
 )
 

@@ -36,7 +36,7 @@ def prox_grad(
             L = sparse.linalg.svds(X, k=1)[1][0] ** 2 / n_samples
         else:
             L = norm(X, ord=2)**2 / n_samples
-
+    print("init L", L)
     # Line search parameter
     eta = 2.0
 
@@ -48,7 +48,8 @@ def prox_grad(
         grad = -(X.T @ R) / n_samples
 
         if line_search:
-            f_old = norm(R) ** 2 / (2 * n_samples) 
+            L = 1
+            f_old = norm(R) ** 2 / (2 * n_samples)
             while True:
                 w_new = prox_slope(z - grad / L, alphas / L)
                 f = norm(X @ w_new - y) ** 2 / (2 * n_samples)
@@ -58,6 +59,7 @@ def prox_grad(
                     break
                 else:
                     L *= eta
+            print("it", it, L)
         else:
             w_new = prox_slope(z - grad / L, alphas / L)
 
@@ -117,4 +119,4 @@ def prox_grad(
                 print(f"Epoch: {it + 1}, loss: {primal}, gap: {gap:.2e}")
             if gap < tol:
                 break
-    return w, E, gaps, times
+    return w, np.array(E), np.array(gaps), np.array(times)

@@ -6,7 +6,7 @@ from numba import njit
 from numpy.linalg import norm
 
 from slope.clusters import Clusters
-from slope.utils import dual, dual_norm_slope, primal
+from slope.utils import dual_norm_slope
 
 
 # thi is basically the proximal operator with a few steps removed

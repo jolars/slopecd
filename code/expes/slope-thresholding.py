@@ -100,8 +100,8 @@ for a in a_list:
 
         res.extend([np.sign(a) * c_wo_i[k]])
     else:
-        l = len(l_sums) - bisect_left(l_sums[::-1], np.abs(a))
-        res.extend([np.sign(a) * (np.abs(a) - sums[l])])
+        ll = len(l_sums) - bisect_left(l_sums[::-1], np.abs(a))
+        res.extend([np.sign(a) * (np.abs(a) - sums[ll])])
 
 plt.rcParams['text.usetex'] = True
 

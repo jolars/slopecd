@@ -1,10 +1,12 @@
+from itertools import product
+
 import matplotlib.pyplot as plt
 import numpy as np
 from numpy.linalg import norm
 from scipy import stats
 
 from slope.clusters import Clusters
-from slope.solvers import oracle_cd, prox_grad
+from slope.solvers import prox_grad
 from slope.utils import dual_norm_slope
 
 

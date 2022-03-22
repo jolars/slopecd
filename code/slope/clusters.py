@@ -15,12 +15,13 @@ class Clusters:
 
         self.sizes = list(self.sizes[::-1])
         self.ends = list(np.cumsum(self.sizes))
-        self.starts = [self.ends[i] - self.sizes[i] for i in range(len(self.sizes))]
+        self.starts = [self.ends[i] - self.sizes[i]
+                       for i in range(len(self.sizes))]
 
     """Split a Cluster into Two Clusters
 
     Split the cluster i into two clusters such that the ith cluster becomes
-    the cluster given by `left_split` and the (`i + 1`)th cluster the 
+    the cluster given by `left_split` and the (`i + 1`)th cluster the
     set difference between the current cluster `i` and `left_split`.
 
     Parameters
@@ -29,7 +30,7 @@ class Clusters:
         The cluster to be split
     left_split: list[int]
         The coefficients of cluster `i` to break off into a new cluster
-        
+
     """
 
     def split(self, i, left_split):
@@ -40,17 +41,19 @@ class Clusters:
 
         if len(right_split) > 0:
             self.inds = (
-                self.inds[0:i] + [left_split] + [right_split] + self.inds[(i + 1) :]
+                self.inds[0:i] + [left_split] +
+                [right_split] + self.inds[(i + 1):]
             )
             self.sizes = (
                 self.sizes[0:i]
                 + [len(left_split)]
                 + [len(right_split)]
-                + self.sizes[(i + 1) :]
+                + self.sizes[(i + 1):]
             )
-            self.coefs = self.coefs[0 : (i + 1)] + self.coefs[i:]
+            self.coefs = self.coefs[0: (i + 1)] + self.coefs[i:]
             self.ends = list(np.cumsum(self.sizes))
-            self.starts = [self.ends[k] - self.sizes[k] for k in range(len(self.sizes))]
+            self.starts = [self.ends[k] - self.sizes[k]
+                           for k in range(len(self.sizes))]
 
     """Merge Two Clusters into One
 
@@ -76,7 +79,8 @@ class Clusters:
         del self.ends[j]
 
         self.ends = list(np.cumsum(self.sizes))
-        self.starts = [self.ends[k] - self.sizes[k] for k in range(len(self.sizes))]
+        self.starts = [self.ends[k] - self.sizes[k]
+                       for k in range(len(self.sizes))]
 
     """Reorder a Cluster
 
@@ -100,7 +104,8 @@ class Clusters:
         del self.coefs[j]
 
         self.ends = list(np.cumsum(self.sizes))
-        self.starts = [self.ends[k] - self.sizes[k] for k in range(len(self.sizes))]
+        self.starts = [self.ends[k] - self.sizes[k]
+                       for k in range(len(self.sizes))]
 
     """Update Coefficient for a Cluster
 

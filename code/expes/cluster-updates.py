@@ -96,7 +96,7 @@ for k, z in enumerate(c_vals):
         z * norm(X[:, A] @ s[A])**2
 
     tmp = 0.5 * norm(y - X[:, B] @ beta[B] - z * X[:, A] @ s[A])**2 + \
-          np.sum(np.sort(np.abs(beta))[::-1] * lambdas)
+        np.sum(np.sort(np.abs(beta))[::-1] * lambdas)
     obj.append(tmp)
     obj_cs.append(z)
 

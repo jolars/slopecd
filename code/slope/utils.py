@@ -21,9 +21,11 @@ def primal(residual, beta, lambdas):
         lambdas * np.sort(np.abs(beta))[::-1]
     )
 
+
 def dual(theta, y):
     n = len(y)
-    return  (norm(y) ** 2 - norm(y - theta * n) ** 2) / (2 * n)
+    return (norm(y) ** 2 - norm(y - theta * n) ** 2) / (2 * n)
+
 
 def dual_norm_slope(X, theta, alphas):
     """Dual slope norm of X.T @ theta"""
@@ -59,7 +61,7 @@ def get_clusters(w):
 
 @njit
 def slope_threshold(x, lambdas, cluster_indices, cluster_ptr, c, j):
-    A = cluster_indices[cluster_ptr[j]:cluster_ptr[j+1]]
+    A = cluster_indices[cluster_ptr[j]:cluster_ptr[j + 1]]
     cluster_size = len(A)
 
     # zero_cluster_size = 0 if c[-1] != 0 else len(C[-1])
@@ -85,8 +87,8 @@ def slope_threshold(x, lambdas, cluster_indices, cluster_ptr, c, j):
         hi_end = cluster_ptr[k] + cluster_size - mod
 
         # check lower end of cluster
-        lo_start = cluster_ptr[k+1] - mod
-        lo_end = cluster_ptr[k+1] + cluster_size - mod
+        lo_start = cluster_ptr[k + 1] - mod
+        lo_end = cluster_ptr[k + 1] + cluster_size - mod
 
         lo = sum(lambdas[lo_start:lo_end])
         hi = sum(lambdas[hi_start:hi_end])
@@ -94,10 +96,10 @@ def slope_threshold(x, lambdas, cluster_indices, cluster_ptr, c, j):
         if abs(x) > hi + c[k]:
             # we must be between clusters
             # return np.sign(x) * (np.abs(x) - hi)
-            return x - np.sign(x)*hi
+            return x - np.sign(x) * hi
         elif abs(x) >= lo + c[k]:
             # we are in a cluster
             return np.sign(x) * c[k]
 
     # return np.sign(x) * (np.abs(x) - lo)
-    return x - np.sign(x)*lo
+    return x - np.sign(x) * lo

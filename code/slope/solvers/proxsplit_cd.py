@@ -5,7 +5,7 @@ from numba import njit
 from numpy.linalg import norm
 
 from slope.clusters import Clusters
-from slope.utils import dual, dual_norm_slope, primal
+from slope.utils import dual_norm_slope
 
 
 # thi is basically the proximal operator with a few steps removed
@@ -38,7 +38,7 @@ def find_splits(x, lam):
 
         k = k + 1
 
-    return ord[idx_i[0] : (idx_j[0] + 1)]
+    return ord[idx_i[0]: (idx_j[0] + 1)]
 
 
 def slope_threshold(x, lambdas, clusters, j):
@@ -116,7 +116,8 @@ def proxsplit_cd(X, y, lambdas, max_epochs=100, tol=1e-10, split_freq=1, verbose
         theta = -r / n
         theta /= max(1, dual_norm_slope(X, theta, lambdas))
 
-        primal = (0.5 / n) * norm(r) ** 2 + np.sum(lambdas * np.sort(np.abs(beta))[::-1])
+        primal = (0.5 / n) * norm(r) ** 2 + \
+            np.sum(lambdas * np.sort(np.abs(beta))[::-1])
         dual = (0.5 / n) * (norm(y) ** 2 - norm(y - theta * n) ** 2)
         gap = primal - dual
 
@@ -135,7 +136,7 @@ def proxsplit_cd(X, y, lambdas, max_epochs=100, tol=1e-10, split_freq=1, verbose
 
             C = clusters.inds[j]
             c = clusters.coefs[j]
-            lambdas_j = lambdas[clusters.starts[j] : clusters.ends[j]]
+            lambdas_j = lambdas[clusters.starts[j]: clusters.ends[j]]
 
             g = (X[:, C].T @ r) / n
 
@@ -155,7 +156,8 @@ def proxsplit_cd(X, y, lambdas, max_epochs=100, tol=1e-10, split_freq=1, verbose
             L_j = (sum_X.T @ sum_X) / n
             x = c - (s.T @ g) / L_j
 
-            beta_tilde, new_ind = slope_threshold(x, lambdas / L_j, clusters, j)
+            beta_tilde, new_ind = slope_threshold(
+                x, lambdas / L_j, clusters, j)
 
             clusters.update(j, new_ind, abs(beta_tilde))
 

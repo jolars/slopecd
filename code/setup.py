@@ -7,6 +7,7 @@ LICENSE = 'BSD (3-clause)'
 VERSION = version
 
 setup(name='slope',
-      install_requires=['numpy>=1.12', 'scikit-learn>=1.0'],
+      install_requires=[
+          'numpy>=1.12', 'scikit-learn>=1.0', 'benchopt', 'numba'],
       license=LICENSE,
       packages=find_packages())

@@ -22,4 +22,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install code/
     - name: Test with unittest
-      run: python -m unittest code/tests/tests.py
+      run: |
+        cd code
+        python -m unittest code/tests/tests.py

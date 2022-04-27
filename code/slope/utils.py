@@ -1,7 +1,6 @@
 import numpy as np
 from numba import njit
 from numpy.linalg import norm
-
 from sklearn.isotonic import isotonic_regression
 
 
@@ -103,3 +102,52 @@ def slope_threshold(x, lambdas, cluster_indices, cluster_ptr, c, j):
 
     # return np.sign(x) * (np.abs(x) - lo)
     return x - np.sign(x) * lo
+
+
+@njit
+def slope_threshold_opti(x, lambdas, cluster_indices, cluster_ptr, c, j):
+    cluster_size = cluster_ptr[j+1] - cluster_ptr[j]
+    zero_lambda_sum = np.sum(lambdas[::-1][0:cluster_size])
+
+    if abs(x) < zero_lambda_sum:
+        return 0.0
+
+    # check which direction we need to search
+    up_direction = sum(
+        lambdas[cluster_ptr[j]:cluster_ptr[j+1]]) > np.abs(x) - np.abs(c[j])
+
+    if up_direction:
+        idx_c = np.arange(j+1, len(c))
+        start = cluster_size
+        end = 0
+    else:
+        if j == 0:
+            idx_c = np.array([0])
+        else:
+            idx_c = np.arange(0, j)
+        start = 0
+        end = cluster_size
+
+    # check upper end of cluste
+    hi_start = cluster_ptr[idx_c[0]] - start
+    hi_end = cluster_ptr[idx_c[0]] + end
+    hi = sum(lambdas[hi_start:hi_end])
+
+    for k in idx_c:
+
+        # check lower end of cluster
+        lo_start = cluster_ptr[k+1] - start
+        lo_end = cluster_ptr[k+1] + end
+        lo = sum(lambdas[lo_start:lo_end])
+
+        if abs(x) > hi + abs(c[k]):
+            # we must be between clusters
+            return x - np.sign(x)*hi
+
+        elif abs(x) >= lo + abs(c[k]):
+            # we are in a cluster
+            return np.sign(x) * abs(c[k])
+
+        # replace lower interval by higher before next iteration
+        hi = lo
+    return x - np.sign(x)*lo

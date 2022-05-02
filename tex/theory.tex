@@ -229,6 +229,16 @@ where
     }
   \end{cases}
 \end{equation}
+\begin{equation}
+  \label{eq:slope-thresholding}
+  T(a, \lambda,k,\tilde \beta, \mathcal{C}) =
+  \begin{cases}
+    0                                                        & \text{if } |a| \leq \sum_{i=1}^{|\mathcal{C}_k|}\lambda^{C_0}_i                                                                                                                      \\
+    \sign(a)|\tilde \beta_i|                                              & \text{if } \sum_{j= |\mathcal{C}_i| - |\mathcal{C}_k|}^{|\mathcal{C}_i|} \lambda^{\mathcal{C}_i}_j \leq |a| - |\tilde \beta_i| \leq \sum_{j=1}^{|\mathcal{C}_k|}\lambda^{\mathcal{C}_i}_j \\
+    \sign(a)\big(|a| - \sum_{j \in \mathcal{C}_k}\lambda_{(j)^-}\big) & \text{otherwise.
+    }
+  \end{cases}
+\end{equation}
 To emphasize the connection between \(T\) and the soft-thresholding operator
 for the lasso, we call this operator the SLOPE-thresholding operator.
 In \cref{fig:slope-thresholding}, we visualize the operator.

@@ -36,11 +36,6 @@ def get_clusters(beta):
     c_ptr[: n_c + 1] = np.hstack((np.array([0.0]), counts_cumsum))
     c[:n_c] = c_tmp[::-1]
 
-    # make sure sub-sequences are ordered (not necessary, but maybe helpful
-    # for indexing)
-    for i in range(len(c_tmp)):
-        c_ind[c_ptr[i] : c_ptr[i + 1]].sort()
-
     return c, c_ptr, c_ind, n_c
 
 
@@ -54,24 +49,21 @@ def merge_clusters(c, c_ptr, c_ind, n_c, ind_from, ind_to):
         # update c
         c[ind_from : n_c - 1] = c[ind_from + 1 : n_c]
 
-        next_ind = ind_to if ind_to < ind_from else ind_to - 1
-
         # update c_ind
-        if abs(ind_to - ind_from) == 1:
-            # with adjacent clusters, we only need to sort the indices
-            next_ind = min(ind_to, ind_from)
-        elif ind_to < ind_from:
-            a = c_ptr[ind_to + 1]
-            b = c_ptr[ind_from + 1]
+        if abs(ind_to - ind_from) != 1:
+            # with adjacent clusters, we don't need to modify indices
+            if ind_to < ind_from:
+                a = c_ptr[ind_to + 1]
+                b = c_ptr[ind_from + 1]
 
-            c_ind[a + size_from : b] = c_ind[a : b - size_from]
-            c_ind[a : a + size_from] = c_ind_from
-        elif ind_to > ind_from:
-            a = c_ptr[ind_from]
-            b = c_ptr[ind_to + 1]
+                c_ind[a + size_from : b] = c_ind[a : b - size_from]
+                c_ind[a : a + size_from] = c_ind_from
+            elif ind_to > ind_from:
+                a = c_ptr[ind_from]
+                b = c_ptr[ind_to + 1]
 
-            c_ind[a : b - size_from] = c_ind[a + size_from : b]
-            c_ind[b - size_from : b] = c_ind_from
+                c_ind[a : b - size_from] = c_ind[a + size_from : b]
+                c_ind[b - size_from : b] = c_ind_from
 
         # update c_ptr
         if ind_to < ind_from:
@@ -80,8 +72,6 @@ def merge_clusters(c, c_ptr, c_ind, n_c, ind_from, ind_to):
         elif ind_to > ind_from:
             c_ptr[ind_from + 1 : ind_to + 1] -= size_from
             c_ptr[ind_from + 1 : n_c] = c_ptr[ind_from + 2 : n_c + 1]
-
-        c_ind[c_ptr[next_ind] : c_ptr[next_ind + 1]].sort()
 
         n_c -= 1
 
@@ -133,6 +123,6 @@ def update_cluster(c, c_ptr, c_ind, n_c, new_coef, ind_old, ind_new):
             reorder_cluster(c, c_ptr, c_ind, new_coef, ind_old, ind_new)
         else:
             # same position as before, just update the coefficient
-            c[ind_old] = abs(new_coef)
+            c[ind_old] = new_coef
 
     return n_c

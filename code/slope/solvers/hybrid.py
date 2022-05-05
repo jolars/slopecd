@@ -37,7 +37,6 @@ def block_cd_epoch(
         else:
             c[j] = beta_tilde
 
-
 @njit
 def block_cd_epoch_sparse(
     w,
@@ -72,7 +71,7 @@ def block_cd_epoch_sparse(
         if cluster_updates:
             ind_old = j
             n_c = update_cluster(
-                c, cluster_ptr, cluster_indices, n_c, abs(beta_tilde), ind_old, ind_new
+                c, cluster_ptr, cluster_indices, n_c, beta_tilde, ind_old, ind_new
             )
         else:
             c[j] = beta_tilde

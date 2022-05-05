@@ -19,4 +19,5 @@ jobs:
       - name: Lint with flake
         run: |
           pip install flake8
-          flake8 code/ --exclude="code/expes/*" --max-line-length=88 --ignore=W503,W504,E226
+          cd code
+          flake8

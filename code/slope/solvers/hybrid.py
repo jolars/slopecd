@@ -1,4 +1,4 @@
-from timeit import dgapefault_timer as timer
+from timeit import default_timer as timer
 
 import numpy as np
 from numba import njit

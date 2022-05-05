@@ -59,7 +59,7 @@ def get_clusters(w):
 
 
 @njit
-def slope_threshold(x, lambdas, cluster_indices, cluster_ptr, c, j):
+def slope_threshold(x, lambdas, cluster_indices, cluster_ptr, c, n_c, j):
     A = cluster_indices[cluster_ptr[j]:cluster_ptr[j + 1]]
     cluster_size = len(A)
 
@@ -68,13 +68,17 @@ def slope_threshold(x, lambdas, cluster_indices, cluster_ptr, c, j):
         lambdas[::-1][np.arange(cluster_size)])
 
     if np.abs(x) < zero_lambda_sum:
-        return 0.0
+        return 0.0, n_c - 1
+
     lo = zero_lambda_sum
     hi = zero_lambda_sum
 
+    k = 0
+    mod = 0
+
     # TODO(JL): This can and should be done much more efficiently, using
     # kind of binary search to find the right interval
-    for k in range(len(c)):
+    for k in range(n_c):
         if k == j:
             continue
 
@@ -92,32 +96,36 @@ def slope_threshold(x, lambdas, cluster_indices, cluster_ptr, c, j):
         lo = sum(lambdas[lo_start:lo_end])
         hi = sum(lambdas[hi_start:hi_end])
 
+        new_cluster_ind = k - 1 if k > j else k
+
         if abs(x) > hi + abs(c[k]):
             # we must be between clusters
             # return np.sign(x) * (np.abs(x) - hi)
-            return x - np.sign(x)*hi
+            return x - np.sign(x)*hi, new_cluster_ind
         elif abs(x) >= lo + abs(c[k]):
             # we are in a cluster
-            return np.sign(x) * abs(c[k])
+            return np.sign(x) * abs(c[k]), new_cluster_ind
+
+    new_cluster_ind = k - 1 if k > j else k
 
     # return np.sign(x) * (np.abs(x) - lo)
-    return x - np.sign(x) * lo
+    return x - np.sign(x) * lo, new_cluster_ind
 
 
 @njit
-def slope_threshold_opti(x, lambdas, cluster_indices, cluster_ptr, c, j):
+def slope_threshold_opti(x, lambdas, cluster_indices, cluster_ptr, c, n_c, j):
     cluster_size = cluster_ptr[j+1] - cluster_ptr[j]
     zero_lambda_sum = np.sum(lambdas[::-1][0:cluster_size])
 
     if abs(x) < zero_lambda_sum:
-        return 0.0
+        return 0.0, n_c - 1
 
     # check which direction we need to search
     up_direction = sum(
         lambdas[cluster_ptr[j]:cluster_ptr[j+1]]) > np.abs(x) - np.abs(c[j])
 
     if up_direction:
-        idx_c = np.arange(j+1, len(c))
+        idx_c = np.arange(j+1, n_c)
         start = cluster_size
         end = 0
     else:
@@ -133,21 +141,27 @@ def slope_threshold_opti(x, lambdas, cluster_indices, cluster_ptr, c, j):
     hi_end = cluster_ptr[idx_c[0]] + end
     hi = sum(lambdas[hi_start:hi_end])
 
+    k = 0
+
     for k in idx_c:
 
         # check lower end of cluster
         lo_start = cluster_ptr[k+1] - start
         lo_end = cluster_ptr[k+1] + end
         lo = sum(lambdas[lo_start:lo_end])
+        new_cluster_ind = k - 1 if up_direction else k + 1
 
         if abs(x) > hi + abs(c[k]):
             # we must be between clusters
-            return x - np.sign(x)*hi
+            return x - np.sign(x)*hi, new_cluster_ind
 
         elif abs(x) >= lo + abs(c[k]):
             # we are in a cluster
-            return np.sign(x) * abs(c[k])
+            return np.sign(x) * abs(c[k]), new_cluster_ind
 
         # replace lower interval by higher before next iteration
         hi = lo
-    return x - np.sign(x)*lo
+
+    new_cluster_ind = k - 1 if up_direction else k + 1
+
+    return x - np.sign(x) * lo, new_cluster_ind

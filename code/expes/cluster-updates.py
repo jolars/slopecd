@@ -12,13 +12,11 @@ from slope.utils import dual_norm_slope
 rho = 0.9
 n = 100
 p = 5000
-dataset = "simulated"
+reg = 0.5
 
-if dataset == "simulated":
-    X, y, _ = make_correlated_data(n_samples=n, n_features=p, random_state=0, rho=rho)
-    # X = csc_matrix(X)
-else:
-    X, y = fetch_libsvm(dataset)
+X, y, _ = make_correlated_data(n_samples=n, n_features=p, random_state=0, rho=rho)
+
+n, p = X.shape
 
 randnorm = stats.norm(loc=0, scale=1)
 q = 0.5
@@ -27,7 +25,7 @@ alphas_seq = randnorm.ppf(1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1]
 
 alpha_max = dual_norm_slope(X, y / len(y), alphas_seq)
 
-alphas = alpha_max * alphas_seq * 0.5
+alphas = alpha_max * alphas_seq * reg
 max_epochs = 500
 tol = 1e-10
 n_it = 20
@@ -81,6 +79,5 @@ plt.fill_betweenx(gaps_cd_updates, lo, up, alpha=0.2)
 plt.ylabel("duality gap")
 plt.xlabel("Time (s)")
 plt.legend()
-plt.title(f"dataset={dataset}, n={n}, p={p}, rho={rho}")
+plt.title(f"simulated data, n={n}, p={p}, rho={rho}")
 plt.show(block=False)
-

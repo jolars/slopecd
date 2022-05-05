@@ -103,15 +103,15 @@ def reorder_cluster(c, c_ptr, c_ind, new_coef, ind_old, ind_new):
 
     # update c_ind
     if ind_new < ind_old:
-        l = c_ptr[ind_new]
-        r = c_ptr[ind_old]
-        c_ind[l + w : r + w] = c_ind[l:r]
-        c_ind[l : l + w] = cluster
+        a = c_ptr[ind_new]
+        b = c_ptr[ind_old]
+        c_ind[a + w : b + w] = c_ind[a:b]
+        c_ind[a : a + w] = cluster
     elif ind_new > ind_old:
-        l = c_ptr[ind_old + 1]
-        r = c_ptr[ind_new + 1]
-        c_ind[l - w : r - w] = c_ind[l:r]
-        c_ind[r - w : r] = cluster
+        a = c_ptr[ind_old + 1]
+        b = c_ptr[ind_new + 1]
+        c_ind[a - w : b - w] = c_ind[a:b]
+        c_ind[b - w : b] = cluster
 
     # update c_ptr
     if ind_new < ind_old:

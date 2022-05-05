@@ -64,8 +64,6 @@ class TestClusterUpdates(unittest.TestCase):
 
             # beta = np.array([2.0, 1.5, 2.0, 0.2])
 
-            p = len(beta)
-
             c, c_ptr, c_ind, n_c = get_clusters(beta)
 
             ind_old = rng.integers(0, n_c)

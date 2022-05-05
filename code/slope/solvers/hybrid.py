@@ -5,13 +5,16 @@ from numba import njit
 from numpy.linalg import norm
 from scipy import sparse
 
-from slope.utils import dual_norm_slope, get_clusters, prox_slope, slope_threshold
+from slope.clusters import get_clusters, update_cluster
+from slope.utils import dual_norm_slope, prox_slope, slope_threshold
 
 
 @njit
-def block_cd_epoch(w, X, R, alphas, cluster_indices, cluster_ptr, c):
+def block_cd_epoch(
+    w, X, R, alphas, cluster_indices, cluster_ptr, c, n_c, do_cluster_updates
+):
     n_samples = X.shape[0]
-    for j in range(len(c)):
+    for j in range(n_c):
         if c[j] == 0:
             continue
         cluster = cluster_indices[cluster_ptr[j]:cluster_ptr[j+1]]
@@ -20,19 +23,37 @@ def block_cd_epoch(w, X, R, alphas, cluster_indices, cluster_ptr, c):
         L_j = sum_X.T @ sum_X / n_samples
         c_old = abs(c[j])
         x = c_old + (sum_X.T @ R) / (L_j * n_samples)
-        beta_tilde = slope_threshold(
-            x, alphas/L_j, cluster_indices, cluster_ptr, c, j)
-        c[j] = beta_tilde
+        beta_tilde, ind_new = slope_threshold(
+            x, alphas/L_j, cluster_indices, cluster_ptr, c, n_c, j)
         w[cluster] = beta_tilde * sign_w
         if c_old != beta_tilde:
             R += (c_old - beta_tilde) * sum_X
 
+        if do_cluster_updates:
+            ind_old = j
+            n_c = update_cluster(
+                c, cluster_ptr, cluster_indices, n_c, abs(beta_tilde), ind_old, ind_new
+            )
+        else:
+            c[j] = beta_tilde
+
 
 @njit
-def block_cd_epoch_sparse(w, X_data, X_indices, X_indptr, R,
-                          alphas, cluster_indices, cluster_ptr, c):
+def block_cd_epoch_sparse(
+    w,
+    X_data,
+    X_indices,
+    X_indptr,
+    R,
+    alphas,
+    cluster_indices,
+    cluster_ptr,
+    c,
+    n_c,
+    cluster_updates,
+):
     n_samples = len(R)
-    for j in range(len(c)):
+    for j in range(n_c):
         if c[j] == 0:
             continue
         cluster = cluster_indices[cluster_ptr[j]:cluster_ptr[j+1]]
@@ -42,12 +63,19 @@ def block_cd_epoch_sparse(w, X_data, X_indices, X_indptr, R,
         L_j = sum_X.T @ sum_X / n_samples
         c_old = abs(c[j])
         x = c_old + (sum_X.T @ R) / (L_j * n_samples)
-        beta_tilde = slope_threshold(
-            x, alphas/L_j, cluster_indices, cluster_ptr, c, j)
-        c[j] = beta_tilde
+        beta_tilde, ind_new = slope_threshold(
+            x, alphas/L_j, cluster_indices, cluster_ptr, c, n_c, j)
         w[cluster] = beta_tilde * sign_w
         if c_old != beta_tilde:
             R += (c_old - beta_tilde) * sum_X
+
+        if cluster_updates:
+            ind_old = j
+            n_c = update_cluster(
+                c, cluster_ptr, cluster_indices, n_c, beta_tilde, ind_old, ind_new
+            )
+        else:
+            c[j] = beta_tilde
 
 
 @njit
@@ -61,8 +89,9 @@ def compute_block_scalar_sparse(
     return scal
 
 
-def hybrid_cd(X, y, alphas, max_epochs=1000, verbose=True,
-              tol=1e-3):
+def hybrid_cd(
+    X, y, alphas, max_epochs=1000, cluster_updates=False, verbose=True, tol=1e-3
+):
 
     is_X_sparse = sparse.issparse(X)
     n_samples, n_features = X.shape
@@ -83,21 +112,42 @@ def hybrid_cd(X, y, alphas, max_epochs=1000, verbose=True,
     E.append(norm(y)**2 / (2 * n_samples))
     gaps.append(E[0])
 
+    c, cluster_ptr, cluster_indices, n_c = get_clusters(w)
+
     for epoch in range(max_epochs):
         # This is experimental, it will need to be justified
         if epoch % 5 == 0:
             w = prox_slope(w + (X.T @ R) / (L * n_samples), alphas / L)
             R[:] = y - X @ w
-            cluster_indices, cluster_ptr, c = get_clusters(w)
+            c, cluster_ptr, cluster_indices, n_c = get_clusters(w)
 
         else:
             if is_X_sparse:
                 block_cd_epoch_sparse(
-                    w, X.data, X.indices, X.indptr, R,
-                    alphas, cluster_indices, cluster_ptr, c)
+                    w,
+                    X.data,
+                    X.indices,
+                    X.indptr,
+                    R,
+                    alphas,
+                    cluster_indices,
+                    cluster_ptr,
+                    c,
+                    n_c,
+                    cluster_updates,
+                )
             else:
                 block_cd_epoch(
-                    w, X, R, alphas, cluster_indices, cluster_ptr, c)
+                    w,
+                    X,
+                    R,
+                    alphas,
+                    cluster_indices,
+                    cluster_ptr,
+                    c,
+                    n_c,
+                    cluster_updates,
+                )
 
         theta = R / n_samples
         theta /= max(1, dual_norm_slope(X, theta, alphas))

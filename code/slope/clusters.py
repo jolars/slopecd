@@ -1,126 +1,138 @@
 import numpy as np
+from numba import jit, njit
 
 
-class Clusters:
-    def __init__(self, beta):
-        unique, indices, self.sizes = np.unique(
-            np.abs(beta), return_inverse=True, return_counts=True
-        )
-        self.inds = [[] for _ in range(len(unique))]
-        for i in range(len(indices)):
-            self.inds[indices[i]].append(i)
+# numba implementation of np.unique(., return_counts=True) from
+# https://github.com/numba/numba/pull/2959
+@njit
+def unique_counts(x):
+    x = np.sort(x.ravel())
+    mask = np.empty(x.shape, dtype=np.bool_)
+    mask[:1] = True
+    mask[1:] = x[1:] != x[:-1]
 
-        self.inds = self.inds[::-1]
-        self.coefs = list(unique[::-1])
+    unique = x[mask]
 
-        self.sizes = list(self.sizes[::-1])
-        self.ends = list(np.cumsum(self.sizes))
-        self.starts = [self.ends[i] - self.sizes[i] for i in range(len(self.sizes))]
-    """Split a Cluster into Two Clusters
+    idx = np.nonzero(mask)[0]
+    idx = np.append(idx, mask.size)
 
-    Split the cluster i into two clusters such that the ith cluster becomes
-    the cluster given by `left_split` and the (`i + 1`)th cluster the
-    set difference between the current cluster `i` and `left_split`.
+    counts = np.diff(idx)
 
-    Parameters
-    ----------
-    i : int
-        The cluster to be split
-    left_split: list[int]
-        The coefficients of cluster `i` to break off into a new cluster
+    return unique, counts
 
-    """
 
-    def split(self, i, left_split):
-        if set(left_split).isdisjoint(set(self.inds[i])):
-            raise ValueError("left_split is not a subset of the cluster")
+@njit
+def get_clusters(beta):
+    p = len(beta)
 
-        right_split = list(set(self.inds[i]) - set(left_split))
+    c_ptr = np.empty(p + 1, dtype=np.int64)
+    c = np.empty(p)
 
-        if len(right_split) > 0:
-            self.inds = (
-                self.inds[0:i] + [left_split] + [right_split] + self.inds[(i + 1):]
-            )
-            self.sizes = (
-                self.sizes[0:i]
-                + [len(left_split)]
-                + [len(right_split)]
-                + self.sizes[(i + 1):]
-            )
-            self.coefs = self.coefs[0: (i + 1)] + self.coefs[i:]
-            self.ends = list(np.cumsum(self.sizes))
-            self.starts = [self.ends[k] - self.sizes[k] for k in range(len(self.sizes))]
+    # c_tmp, counts = np.unique(np.abs(beta), return_counts=True)
+    c_tmp, counts = unique_counts(np.abs(beta))
+    n_c = len(c_tmp)
+    c_ind = np.argsort(np.abs(beta))[::-1]
+    counts_cumsum = np.cumsum(counts[::-1])
+    c_ptr[: n_c + 1] = np.hstack((np.array([0.0]), counts_cumsum))
+    c[:n_c] = c_tmp[::-1]
 
-    """Merge Two Clusters into One
+    # make sure sub-sequences are ordered (not necessary, but maybe helpful
+    # for indexing)
+    for i in range(len(c_tmp)):
+        c_ind[c_ptr[i] : c_ptr[i + 1]].sort()
 
-    Merge cluster `j` into cluster `i`.
+    return c, c_ptr, c_ind, n_c
 
-    Parameters
-    ----------
-    i : int
-        The cluster to merge into
-    j : int
-        The cluster to merge
-    """
 
-    def merge(self, i, j):
-        self.inds[i].extend(self.inds[j])
-        self.inds[i].sort()
-        self.sizes[i] += self.sizes[j]
+@njit
+def merge_clusters(c, c_ptr, c_ind, n_c, ind_from, ind_to):
+    size_from = c_ptr[ind_from + 1] - c_ptr[ind_from]
 
-        del self.inds[j]
-        del self.sizes[j]
-        del self.coefs[j]
-        del self.starts[j]
-        del self.ends[j]
+    c_ind_from = c_ind[c_ptr[ind_from] : c_ptr[ind_from + 1]].copy()
 
-        self.ends = list(np.cumsum(self.sizes))
-        self.starts = [self.ends[k] - self.sizes[k] for k in range(len(self.sizes))]
+    if ind_from != ind_to:
+        # update c
+        c[ind_from : n_c - 1] = c[ind_from + 1 : n_c]
 
-    """Reorder a Cluster
+        next_ind = ind_to if ind_to < ind_from else ind_to - 1
 
-    Move the cluster at position `i` to position `j`.
+        # update c_ind
+        if abs(ind_to - ind_from) == 1:
+            # with adjacent clusters, we only need to sort the indices
+            next_ind = min(ind_to, ind_from)
+        elif ind_to < ind_from:
+            a = c_ptr[ind_to + 1]
+            b = c_ptr[ind_from + 1]
 
-    Parameters
-    ----------
-    i : int
-        New cluster position
-    j : int
-        Old cluster position
-    coef_new: float
-        New coefficient for the cluster
-    """
+            c_ind[a + size_from : b] = c_ind[a : b - size_from]
+            c_ind[a : a + size_from] = c_ind_from
+        elif ind_to > ind_from:
+            a = c_ptr[ind_from]
+            b = c_ptr[ind_to + 1]
 
-    def reorder(self, i, j, coef_new):
-        self.coefs.insert(i, coef_new)
-        self.inds.insert(i, self.inds.pop(j))
-        self.sizes.insert(i, self.sizes.pop(j))
+            c_ind[a : b - size_from] = c_ind[a + size_from : b]
+            c_ind[b - size_from : b] = c_ind_from
 
-        del self.coefs[j]
+        # update c_ptr
+        if ind_to < ind_from:
+            c_ptr[ind_to + 1 : ind_from] += size_from
+            c_ptr[ind_from:n_c] = c_ptr[ind_from + 1 : n_c + 1]
+        elif ind_to > ind_from:
+            c_ptr[ind_from + 1 : ind_to + 1] -= size_from
+            c_ptr[ind_from + 1 : n_c] = c_ptr[ind_from + 2 : n_c + 1]
 
-        self.ends = list(np.cumsum(self.sizes))
-        self.starts = [self.ends[k] - self.sizes[k] for k in range(len(self.sizes))]
+        c_ind[c_ptr[next_ind] : c_ptr[next_ind + 1]].sort()
 
-    """Update Coefficient for a Cluster
+        n_c -= 1
 
-    Update the coefficient for cluster `i` and reorder the clusters
-    accordingly, possibly merging clusters.
+    return n_c
 
-    Parameters
-    ----------
-    i : int
-        The cluster to be updated
-    new_coef: float
-        The new coefficient for the cluster
-    """
 
-    def update(self, ind_old, ind_new, coef_new):
-        if ind_old == ind_new:
-            # same cluster order, only update the coefficient
-            self.coefs[ind_new] = coef_new
-        elif self.coefs[ind_new] == coef_new:
-            # merge with another cluster
-            self.merge(ind_new, ind_old)
+@njit
+def reorder_cluster(c, c_ptr, c_ind, new_coef, ind_old, ind_new):
+    cluster = c_ind[c_ptr[ind_old] : c_ptr[ind_old + 1]].copy()
+    w = len(cluster)
+
+    # update c
+    if ind_new < ind_old:
+        c[ind_new + 1 : ind_old + 1] = c[ind_new:ind_old]
+    elif ind_new > ind_old:
+        c[ind_old:ind_new] = c[ind_old + 1 : ind_new + 1]
+
+    c[ind_new] = abs(new_coef)
+
+    # update c_ind
+    if ind_new < ind_old:
+        l = c_ptr[ind_new]
+        r = c_ptr[ind_old]
+        c_ind[l + w : r + w] = c_ind[l:r]
+        c_ind[l : l + w] = cluster
+    elif ind_new > ind_old:
+        l = c_ptr[ind_old + 1]
+        r = c_ptr[ind_new + 1]
+        c_ind[l - w : r - w] = c_ind[l:r]
+        c_ind[r - w : r] = cluster
+
+    # update c_ptr
+    if ind_new < ind_old:
+        c_ptr[ind_new + 1 : ind_old + 1] = c_ptr[ind_new:ind_old] + w
+        c_ptr[ind_new + 1] = c_ptr[ind_new] + w
+    elif ind_new > ind_old:
+        c_ptr[ind_old:ind_new] = c_ptr[ind_old + 1 : ind_new + 1] - w
+        c_ptr[ind_new] = c_ptr[ind_new + 1] - w
+
+
+@njit
+def update_cluster(c, c_ptr, c_ind, n_c, new_coef, ind_old, ind_new):
+    old_coef = c[ind_old]
+
+    if abs(new_coef) != abs(old_coef):
+        if abs(new_coef) == c[ind_new]:
+            n_c = merge_clusters(c, c_ptr, c_ind, n_c, ind_old, ind_new)
+        elif ind_old != ind_new:
+            reorder_cluster(c, c_ptr, c_ind, new_coef, ind_old, ind_new)
         else:
-            # change position (reorder) cluster
-            self.reorder(ind_new, ind_old, coef_new)
+            # same position as before, just update the coefficient
+            c[ind_old] = abs(new_coef)
+
+    return n_c

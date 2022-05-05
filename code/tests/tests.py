@@ -86,7 +86,11 @@ class TestClusterUpdates(unittest.TestCase):
             self.assertEqual(n_c, n_c_true)
             np.testing.assert_array_equal(c_true[:n_c_true], c[:n_c])
             np.testing.assert_array_equal(c_ptr[: n_c + 1], c_ptr_true[: n_c_true + 1])
-            np.testing.assert_array_equal(c_ind, c_ind_true)
+
+            for i in range(n_c):
+                a = np.sort(c_ind[c_ptr[i] : c_ptr[i + 1]])
+                b = np.sort(c_ind_true[c_ptr_true[i] : c_ptr_true[i + 1]])
+                np.testing.assert_array_equal(a, b)
 
 
 if __name__ == "__main__":

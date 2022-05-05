@@ -37,6 +37,7 @@ def block_cd_epoch(
         else:
             c[j] = beta_tilde
 
+
 @njit
 def block_cd_epoch_sparse(
     w,

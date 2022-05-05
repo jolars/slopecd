@@ -1,5 +1,5 @@
 import numpy as np
-from numba import jit, njit
+from numba import njit
 
 
 # numba implementation of np.unique(., return_counts=True) from

@@ -140,23 +140,22 @@ def slope_threshold_opti(x, lambdas, cluster_indices, cluster_ptr, c, n_c, j):
     hi_start = cluster_ptr[idx_c[0]] - start
     hi_end = cluster_ptr[idx_c[0]] + end
     hi = sum(lambdas[hi_start:hi_end])
-
-    k = 0
-
+    
     for k in idx_c:
 
         # check lower end of cluster
         lo_start = cluster_ptr[k+1] - start
         lo_end = cluster_ptr[k+1] + end
         lo = sum(lambdas[lo_start:lo_end])
-        new_cluster_ind = k - 1 if up_direction else k + 1
 
         if abs(x) > hi + abs(c[k]):
             # we must be between clusters
+            new_cluster_ind = k - 1 if up_direction else k
             return x - np.sign(x)*hi, new_cluster_ind
 
         elif abs(x) >= lo + abs(c[k]):
             # we are in a cluster
+            new_cluster_ind = k
             return np.sign(x) * abs(c[k]), new_cluster_ind
 
         # replace lower interval by higher before next iteration

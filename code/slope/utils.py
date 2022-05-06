@@ -59,7 +59,7 @@ def get_clusters(w):
 
 
 @njit
-def slope_threshold(x, lambdas, cluster_indices, cluster_ptr, c, n_c, j):
+def slope_threshold(x, lambdas, cluster_ptr, c, n_c, j):
     cluster_size = cluster_ptr[j+1] - cluster_ptr[j]
     zero_lambda_sum = np.sum(lambdas[::-1][0:cluster_size])
 

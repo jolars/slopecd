@@ -39,6 +39,7 @@ def block_cd_epoch(
 
     return n_c
 
+
 @njit
 def block_cd_epoch_sparse(
     w,

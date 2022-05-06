@@ -86,7 +86,7 @@ def slope_threshold(x, lambdas, cluster_ptr, c, n_c, j):
     hi_start = cluster_ptr[idx_c[0]] - start
     hi_end = cluster_ptr[idx_c[0]] + end
     hi = sum(lambdas[hi_start:hi_end])
-    
+
     for k in idx_c:
 
         # check lower end of cluster

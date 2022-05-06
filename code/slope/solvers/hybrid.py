@@ -11,7 +11,7 @@ from slope.utils import dual_norm_slope, prox_slope, slope_threshold
 
 @njit
 def block_cd_epoch(
-    w, X, R, alphas, cluster_indices, cluster_ptr, c, n_c, do_cluster_updates
+    w, X, R, alphas, cluster_indices, cluster_ptr, c, n_c, cluster_updates
 ):
     n_samples = X.shape[0]
     for j in range(n_c):
@@ -23,19 +23,21 @@ def block_cd_epoch(
         L_j = sum_X.T @ sum_X / n_samples
         c_old = abs(c[j])
         x = c_old + (sum_X.T @ R) / (L_j * n_samples)
-        beta_tilde, ind_new = slope_threshold(
-            x, alphas/L_j, cluster_indices, cluster_ptr, c, n_c, j)
+        beta_tilde, ind_new = slope_threshold(x, alphas/L_j, cluster_ptr, c, n_c, j)
+
         w[cluster] = beta_tilde * sign_w
         if c_old != beta_tilde:
             R += (c_old - beta_tilde) * sum_X
 
-        if do_cluster_updates:
+        if cluster_updates:
             ind_old = j
             n_c = update_cluster(
                 c, cluster_ptr, cluster_indices, n_c, abs(beta_tilde), ind_old, ind_new
             )
         else:
             c[j] = beta_tilde
+
+    return n_c
 
 
 @njit
@@ -50,7 +52,7 @@ def block_cd_epoch_sparse(
     cluster_ptr,
     c,
     n_c,
-    cluster_updates,
+    cluster_updates
 ):
     n_samples = len(R)
     for j in range(n_c):
@@ -63,8 +65,7 @@ def block_cd_epoch_sparse(
         L_j = sum_X.T @ sum_X / n_samples
         c_old = abs(c[j])
         x = c_old + (sum_X.T @ R) / (L_j * n_samples)
-        beta_tilde, ind_new = slope_threshold(
-            x, alphas/L_j, cluster_indices, cluster_ptr, c, n_c, j)
+        beta_tilde, ind_new = slope_threshold(x, alphas/L_j, cluster_ptr, c, n_c, j)
         w[cluster] = beta_tilde * sign_w
         if c_old != beta_tilde:
             R += (c_old - beta_tilde) * sum_X
@@ -76,6 +77,8 @@ def block_cd_epoch_sparse(
             )
         else:
             c[j] = beta_tilde
+
+    return n_c
 
 
 @njit
@@ -90,9 +93,14 @@ def compute_block_scalar_sparse(
 
 
 def hybrid_cd(
-    X, y, alphas, max_epochs=1000, cluster_updates=False, verbose=True, tol=1e-3
+    X,
+    y,
+    alphas,
+    max_epochs=1000,
+    cluster_updates=False,
+    verbose=True,
+    tol=1e-3,
 ):
-
     is_X_sparse = sparse.issparse(X)
     n_samples, n_features = X.shape
     R = y.copy()
@@ -120,10 +128,9 @@ def hybrid_cd(
             w = prox_slope(w + (X.T @ R) / (L * n_samples), alphas / L)
             R[:] = y - X @ w
             c, cluster_ptr, cluster_indices, n_c = get_clusters(w)
-
         else:
             if is_X_sparse:
-                block_cd_epoch_sparse(
+                n_c = block_cd_epoch_sparse(
                     w,
                     X.data,
                     X.indices,
@@ -137,7 +144,7 @@ def hybrid_cd(
                     cluster_updates,
                 )
             else:
-                block_cd_epoch(
+                n_c = block_cd_epoch(
                     w,
                     X,
                     R,

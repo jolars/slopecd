@@ -123,6 +123,6 @@ def update_cluster(c, c_ptr, c_ind, n_c, new_coef, ind_old, ind_new):
             reorder_cluster(c, c_ptr, c_ind, new_coef, ind_old, ind_new)
         else:
             # same position as before, just update the coefficient
-            c[ind_old] = new_coef
+            c[ind_old] = abs(new_coef)
 
     return n_c

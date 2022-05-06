@@ -98,6 +98,7 @@ def hybrid_cd(
     alphas,
     max_epochs=1000,
     cluster_updates=False,
+    pgd_freq=5,
     verbose=True,
     tol=1e-3,
 ):
@@ -124,7 +125,7 @@ def hybrid_cd(
 
     for epoch in range(max_epochs):
         # This is experimental, it will need to be justified
-        if epoch % 5 == 0:
+        if epoch % pgd_freq == 0:
             w = prox_slope(w + (X.T @ R) / (L * n_samples), alphas / L)
             R[:] = y - X @ w
             c, cluster_ptr, cluster_indices, n_c = get_clusters(w)

@@ -6,7 +6,7 @@ from numpy.linalg import norm
 from scipy import sparse
 
 from slope.clusters import get_clusters, update_cluster
-from slope.utils import dual_norm_slope, prox_slope, slope_threshold_opti
+from slope.utils import dual_norm_slope, prox_slope, slope_threshold
 
 
 @njit
@@ -23,7 +23,7 @@ def block_cd_epoch(
         L_j = sum_X.T @ sum_X / n_samples
         c_old = abs(c[j])
         x = c_old + (sum_X.T @ R) / (L_j * n_samples)
-        beta_tilde, ind_new = slope_threshold_opti(
+        beta_tilde, ind_new = slope_threshold(
             x, alphas/L_j, cluster_indices, cluster_ptr, c, n_c, j)
 
         w[cluster] = beta_tilde * sign_w
@@ -65,8 +65,7 @@ def block_cd_epoch_sparse(
         L_j = sum_X.T @ sum_X / n_samples
         c_old = abs(c[j])
         x = c_old + (sum_X.T @ R) / (L_j * n_samples)
-        beta_tilde, ind_new = slope_threshold_opti(
-            x, alphas/L_j, cluster_indices, cluster_ptr, c, n_c, j)
+        beta_tilde, ind_new = slope_threshold(x, alphas/L_j, cluster_indices, cluster_ptr, c, n_c, j)
         w[cluster] = beta_tilde * sign_w
         if c_old != beta_tilde:
             R += (c_old - beta_tilde) * sum_X

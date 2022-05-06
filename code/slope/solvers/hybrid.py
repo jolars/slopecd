@@ -98,6 +98,9 @@ def hybrid_cd(
     alphas,
     max_epochs=1000,
     cluster_updates=False,
+    adaptive=False,
+    adaptive_tol=1e-4,
+    adaptive_patience=3,
     pgd_freq=5,
     verbose=True,
     tol=1e-3,
@@ -123,13 +126,22 @@ def hybrid_cd(
 
     c, cluster_ptr, cluster_indices, n_c = get_clusters(w)
 
+    current_patience = adaptive_patience
+    old_gap = gaps[0]
+    pgd_epoch = True
+
     for epoch in range(max_epochs):
         # This is experimental, it will need to be justified
-        if epoch % pgd_freq == 0:
+        if (not adaptive and epoch % pgd_freq == 0) or (
+            adaptive and (current_patience < 1 or epoch == 0)
+        ):
+            pgd_epoch = True
             w = prox_slope(w + (X.T @ R) / (L * n_samples), alphas / L)
             R[:] = y - X @ w
             c, cluster_ptr, cluster_indices, n_c = get_clusters(w)
+            current_patience = adaptive_patience
         else:
+            pgd_epoch = False
             if is_X_sparse:
                 n_c = block_cd_epoch_sparse(
                     w,
@@ -168,6 +180,14 @@ def hybrid_cd(
         gap = primal - dual
         gaps.append(gap)
         times.append(timer() - time_start)
+
+        if adaptive and not pgd_epoch:
+            if (old_gap - gap) / old_gap < adaptive_tol:
+                current_patience -= 1
+            else:
+                current_patience = adaptive_patience
+
+        old_gap = gap
 
         if verbose:
             print(f"Epoch: {epoch + 1}, loss: {primal}, gap: {gap:.2e}")

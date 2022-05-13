@@ -85,40 +85,41 @@
 \subsection{Coordinate Updates}%
 \label{sec:coordinate-updates}
 
-Assume that we want to compute the coordinate update for the \(k\)th cluster
-\(\mathcal{C}_k\) under the constraint that \(\sign(\beta) = s\) and
-\(|\beta_j| = |\tilde \beta|\) for all \(j \in \mathcal{C}_k\).
-We have
+We will now consider the variable $\tilde \beta_k$ which equals the magnitude of\(k\)th cluster, i.e. $|\beta_j|=\tilde \beta_k$ for all $j \in \mathcal{C}_k$.
+We will now derive the method how to update the parameters in the coordinate that corresponds to keeping the clusters fixed, which is equivalent to minimizing $P(\beta)$ over $\tilde \beta_k$.
+Evaluating the objective function at $\beta$ we have
 \[
   \begin{aligned}
     P(\beta) & =  \frac{1}{2} \lVert y - X\beta\rVert_2^2 + J(\beta)                                                                                                                                                                                                                                   \\
-             & = \frac{1}{2} \lVert y - X_{\bar{\mathcal{C}_k}} \beta_{\bar{\mathcal{C}_k}} - \big(X_{\mathcal{C}_k} s_{\mathcal{C}_k}\big)\tilde\beta  \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)|\tilde\beta|.
+             & = \frac{1}{2} \lVert y - X_{\bar{\mathcal{C}_k}} \beta_{\bar{\mathcal{C}_k}} - \big(X_{\mathcal{C}_k} s_{\mathcal{C}_k}\big)\tilde\beta_k  \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)|\tilde\beta_k|,
   \end{aligned}
 \]
+where $s=sign(\beta)$
 Now let \(\tilde y = X_{\bar{\mathcal{C}}_k} \beta_{\bar{\mathcal{C}_k}}\), and $ \tilde x = X_{\mathcal{C}_k} s_{\mathcal{C}_k}$,
-such that \(y - \tilde y\) is the \emph{partial residual} and take the
-derivate with respect to \(\tilde\beta\), yielding
+such that \(\tilde r= y - \tilde y\) is the \emph{partial residual} and take the
+derivate with respect to \(\tilde\beta_k\), yielding
 \begin{equation}
   \label{eq:cluster-grad}
-  \partial_{\tilde\beta}
-  P(\beta) = (y - \tilde y)^T \tilde x + \tilde x^T \tilde x \tilde\beta + \partial_{\tilde\beta}\Bigg(\bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)|\tilde\beta| + \sum_{j \notin \mathcal{C}_k}\lambda_{(j)^-}|\beta_k|\Bigg),
+  \partial_{\tilde\beta_k}
+  P(\beta) = \tilde r^T \tilde x + \tilde x^T \tilde x \tilde\beta_k + \partial_{\tilde\beta_k}\Bigg(\bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)|\tilde\beta_k| + \sum_{j \notin \mathcal{C}_k}\lambda_{(j)^-}|\beta_j|\Bigg),
 \end{equation}
 where the last term is the partial subdifferential of the sorted \(\ell_1\)
 norm.
-The optimality condition for this sub-problem is \(\boldsymbol{0} \in
-\partial_{\tilde \beta} P(\beta).
+The optimality condition for the sub-problem is \(\boldsymbol{0} \in
+\partial_{\tilde \beta} P(\beta). 
 \)
-
+We will now derive the  a closed form expression for the subdifferential
+of the sorted $\ell_1$ norm
 \begin{theorem}
   \label{thm:cluster-subdifferential}
   The partial subdifferential for the sorted \(\ell_1\) norm with respect
-  to \(\tilde\beta\), \(\mathcal{B} \gets \mathcal{C}_k\) \mm{$\cB = \cC_k$ ?} is
+  to \(\tilde\beta_k\), is
   \[
-    \partial =
+    \partial_{\tilde \beta_k}  J(\beta)       =
     \begin{cases}
-      \big[-\sum_{j=|C(0)|-|\mathcal{B}|}^{|C(0)|}\lambda^{C(0)}_j, \sum_{j=|C(0)|-|\mathcal{B}|}^{|C(0)|}\lambda^{C(0)}_j\big]                            & \text{if } \tilde\beta = 0           \\
-      \big[\sum_{j=|\mathcal{C}_i| - |\mathcal{B}|}^{|\mathcal{C}_i|}\lambda^{\mathcal{C}_i}_j, \sum_{j=1}^{|\mathcal{B}|}\lambda^{\mathcal{C}_i}_j\big]   & \text{if } \tilde\beta = c_i \neq 0  \\
-      \big[-\sum_{j=1}^{|\mathcal{B}|}\lambda^{\mathcal{C}_i}_j, -\sum_{j=|\mathcal{C}_i| - |\mathcal{B}|}^{|\mathcal{C}_i|}\lambda^{\mathcal{B}}_j\big] & \text{if } \tilde\beta = -c_i \neq 0 \\
+      \big[-\sum_{j=1}^{|C(0)|}\lambda^{C(0)}_j, \sum_{j=1}^{|C(0)|}\lambda^{C(0)}_j\big]                            & \text{if } \tilde\beta = 0           \\
+      \big[\sum_{j=|\mathcal{C}_i| - |\mathcal{C}_k|+1}^{|\mathcal{C}_i|}\lambda^{\mathcal{C}_i}_j, \sum_{j=1}^{|\mathcal{C}_k|}\lambda^{\mathcal{C}_i}_j\big]   & \text{if } \tilde\beta = c_i \neq 0  \\
+      \big[-\sum_{j=1}^{|\mathcal{C}_k|}\lambda^{\mathcal{C}_i}_j, -\sum_{j=|\mathcal{C}_i| - |\mathcal{C}_k|+1}^{|\mathcal{C}_i|}\lambda^{\mathcal{C}_k}_j\big] & \text{if } \tilde\beta = -c_i \neq 0 \\
       \{\sign(\tilde\beta)\boldsymbol{1}^T\lambda^{C(\tilde\beta)}\}                                                                                       & \text{otherwise.
       }
       % \{\sign(\tilde\beta) S\big(C(\tilde\beta)\big)\}                                                                                                & \text{if } \tilde\beta \neq c_i \neq 0, \\
@@ -127,15 +128,23 @@ The optimality condition for this sub-problem is \(\boldsymbol{0} \in
     \end{cases}
   \]
 \end{theorem}
-\begin{proof}
-  Let \(f(\tilde\beta) = |\tilde\beta|\sum_{j \in \mathcal{C}_k}\lambda_{(j)^-} + \sum_{j \notin \mathcal{C}_k} \lambda_{(j)^-}|\beta_j|\).\mathurin{If $f$ is only a function of $\tilde \beta$, then the secodn term is constant, and since we are interested in subgradients, we should able to omit it?}
-  \(g\) \mm{$f/g$ > $u$ or $v$ for subgradient?} is a subgradient of \(f\) at \(x\) if
+\begin{proof} 
+Consider a fixed $\beta$ and set $\beta_{\mathcal{C}_k}= s_{\mathcal{C}_k}x$.
+Now let us consider the function  \(f(x) = |x|\sum_{j \in \mathcal{C}_k}\lambda^x_{(j)^-} + \sum_{j \notin \mathcal{C}_k} \lambda^x_{(j)^-}|\beta_j|\), where the ordering of $\lambda^x$ is with respect to the vector
+$$
+\beta(x)_k = \begin{cases}
+  |x|, & \mbox{$k \in \mathcal{C}_k$}, \\
+  |\beta_k|, & \mbox{otherwise}.
+\end{cases}
+$$
+.\mathurin{If $f$ is only a function of $\tilde \beta$, then the second term is constant, and since we are interested in subgradients, we should able to omit it?}
+  \(g\in \mathbb{R} \) \mm{$f/g$ > $u$ or $v$ for subgradient?} is a subgradient of \(f\) at \(x\) if
   \begin{equation}
     \label{eq:subgrad-ineq}
-    |y|\sum_{j \in C(y)}\lambda_{(j)^-} + \sum_{j \notin C(y)}\lambda_{(j)^-}|\beta_j|
-    \geq |x|\sum_{j \in C(x)} \lambda_{(j)^-} + \sum_{j \notin C(x)}\lambda_{(j)^-}|\beta_j| + g(y - x)
+    f(x^*)=|x^*|\sum_{j \in C_k}\lambda^{x^*}_{(j)^-} + \sum_{j \notin C(x^*)}\lambda ^{x^*}_{(j)^-}|\beta_j|
+    \geq f(x)+ g(x^* - x)=|x|\sum_{j \in C_k} \lambda^x_{(j)^-} + \sum_{j \notin C_k}\lambda_{(j)^-}|\beta^x_j| + g(x^* - x)
   \end{equation}
-  for all \(y \in \mathbb{R}\).\mm{notation conflict with $y \in \bbR^n$}
+  for all \(x^* \in \mathbb{R}\).
   Without loss of generality, since \(f\) is convex \mathurin{here I did not understand the WLOG relationship with convexity}, assume that we have
   a vector \(\beta\) such that there are two clusters: one corresponding
   to \(\tilde\beta\), which we are optimizing over, and
@@ -204,10 +213,10 @@ the relative signs that really matter, right?}\jw{That is a really good point. D
 \jl{Yes, I think you're right, in fact that's what I have in the code now.}
 \[
   \beta_\mathcal{B} \gets
-  s_\mathcal{B} \odot
+  s_\mathcal{B} 
     T \left(
       \frac{
-       (y - \tilde y)^T \tilde x,
+       \tilde r^T \tilde x,
       }{
        \tilde x^T \tilde x
       } , 
@@ -215,26 +224,18 @@ the relative signs that really matter, right?}\jw{That is a really good point. D
         \lambda 
       }{
         \tilde x^T \tilde x
-      } 
+      } ,
+      \tilde \beta, \mathcal{C}
     \right)
 \]
 where
-\begin{equation}
-  \label{eq:slope-thresholding}
-  T(a, \lambda) =
-  \begin{cases}
-    0                                                        & \text{if } |a| \leq \sum_{i=1}^{|\mathcal{B}|}\lambda^{C(0)}_i                                                                                                                      \\
-    \sign(a)c_i                                              & \text{if } \sum_{j= |\mathcal{C}_i| - |\mathcal{B}|}^{|\mathcal{C}_i|} \lambda^{\mathcal{C}_i}_j \leq |a| - c_i \leq \sum_{j=1}^{|\mathcal{B}|}\lambda^{\mathcal{C}_i}_j \\
-    \sign(a)\big(|a| - \sum_{j \in \mathcal{B}}\lambda_{(j)^-}\big) & \text{otherwise.
-    }
-  \end{cases}
-\end{equation}
+
 \begin{equation}
   \label{eq:slope-thresholding}
   T(a, \lambda,k,\tilde \beta, \mathcal{C}) =
   \begin{cases}
     0                                                        & \text{if } |a| \leq \sum_{i=1}^{|\mathcal{C}_k|}\lambda^{C_0}_i                                                                                                                      \\
-    \sign(a)|\tilde \beta_i|                                              & \text{if } \sum_{j= |\mathcal{C}_i| - |\mathcal{C}_k|}^{|\mathcal{C}_i|} \lambda^{\mathcal{C}_i}_j \leq |a| - |\tilde \beta_i| \leq \sum_{j=1}^{|\mathcal{C}_k|}\lambda^{\mathcal{C}_i}_j \\
+    \sign(a)|\tilde \beta_i|                                              & \text{if } \sum_{j= |\mathcal{C}_i| - |\mathcal{C}_k| + 1}^{|\mathcal{C}_i|} \lambda^{\mathcal{C}_i}_j \leq |a| - |\tilde \beta_i| \leq \sum_{j=1}^{|\mathcal{C}_k|}\lambda^{\mathcal{C}_i}_j \\
     \sign(a)\big(|a| - \sum_{j \in \mathcal{C}_k}\lambda_{(j)^-}\big) & \text{otherwise.
     }
   \end{cases}

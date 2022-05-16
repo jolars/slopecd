@@ -94,9 +94,20 @@ Evaluating the objective function at $\beta$ we have
              & = \frac{1}{2} \lVert y - X_{\bar{\mathcal{C}_k}} \beta_{\bar{\mathcal{C}_k}} - \big(X_{\mathcal{C}_k} s_{\mathcal{C}_k}\big)\tilde\beta_k  \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)|\tilde\beta_k|,
   \end{aligned}
 \]
-where $s=sign(\beta)$
-Now let \(\tilde y = X_{\bar{\mathcal{C}}_k} \beta_{\bar{\mathcal{C}_k}}\), and $ \tilde x = X_{\mathcal{C}_k} s_{\mathcal{C}_k}$,
-such that \(\tilde r= y - \tilde y\) is the \emph{partial residual} and take the
+where $s=sign(\beta)$. We can consider this as sub problem trying to min the one dimensional function\[
+  \begin{aligned}
+    P(\tilde \beta_k)   & = \frac{1}{2} \lVert r_k - \tilde x_k \tilde \beta_k \beta_{\bar{\mathcal{C}_k}} - \big(X_{\mathcal{C}_k} \beta_{\mathcal{C}_k}\big)c_k  \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^- }\bigg) |\tilde \beta_k|,
+  \end{aligned}
+\]
+where \(\tilde y_k = X_{\bar{\mathcal{C}}_k} \beta_{\bar{\mathcal{C}_k}}\), $ \tilde x_k = X_{\mathcal{C}_k} s_{\mathcal{C}_k}$,
+and \(\tilde r_k= y - \tilde y_k\) is the \emph{partial residual}. An alternative formulation (with identical solution) is to minize
+\[
+  \begin{aligned}
+    P(c_k)   & = \frac{1}{2} \lVert y - X_{\bar{\mathcal{C}_k}} \beta_{\bar{\mathcal{C}_k}} - \big(X_{\mathcal{C}_k} \beta_{\mathcal{C}_k}\big)c_k  \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + |c_k|\bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^- }|\beta_j|\bigg),
+  \end{aligned}
+\]
+and $\beta_k := c_k\beta_k$.
+Now take
 derivate with respect to \(\tilde\beta_k\), yielding
 \begin{equation}
   \label{eq:cluster-grad}
@@ -142,7 +153,7 @@ $$
   \begin{equation}
     \label{eq:subgrad-ineq}
     f(x^*)=|x^*|\sum_{j \in C_k}\lambda^{x^*}_{(j)^-} + \sum_{j \notin C(x^*)}\lambda ^{x^*}_{(j)^-}|\beta_j|
-    \geq f(x)+ g(x^* - x)=|x|\sum_{j \in C_k} \lambda^x_{(j)^-} + \sum_{j \notin C_k}\lambda_{(j)^-}|\beta^x_j| + g(x^* - x)
+    \geq f(x)+ g(x^* - x)=|x|\sum_{j \in C_k} \lambda^x_{(j)^-} + \sum_{j \notin C_k}\lambda^x_{(j)^-}|\beta^x_j| + g(x^* - x)
   \end{equation}
   for all \(x^* \in \mathbb{R}\).
   Without loss of generality, since \(f\) is convex \mathurin{here I did not understand the WLOG relationship with convexity}, assume that we have

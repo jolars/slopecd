@@ -31,24 +31,13 @@ tol = 1e-8
 n_it = 1
 verbose = False
 cluster_updates = True
+pgd_freq = 5
 
 beta, primals, gaps, time = hybrid_cd(
     X,
     y,
     alphas,
     adaptive=False,
-    max_epochs=max_epochs,
-    pgd_freq=5,
-    verbose=verbose,
-    tol=tol,
-    cluster_updates=cluster_updates,
-)
-_, primals_10, gaps_10, time = hybrid_cd(
-    X,
-    y,
-    alphas,
-    adaptive=False,
-    pgd_freq=10,
     max_epochs=max_epochs,
     verbose=verbose,
     tol=tol,
@@ -59,8 +48,6 @@ beta_ada, primals_ada, gaps_ada, time_ada = hybrid_cd(
     y,
     alphas,
     adaptive=True,
-    adaptive_tol = 1e-3,
-    adaptive_patience = 2,
     max_epochs=max_epochs,
     verbose=verbose,
     tol=tol,
@@ -70,7 +57,6 @@ beta_ada, primals_ada, gaps_ada, time_ada = hybrid_cd(
 plt.clf()
 
 plt.semilogy(gaps, label="cd_freq5")
-# plt.semilogy(gaps_10, label="cd_freq10")
 plt.semilogy(gaps_ada, label="cd_adaptive")
 
 plt.ylabel("duality gap")

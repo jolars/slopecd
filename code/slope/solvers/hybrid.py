@@ -137,7 +137,6 @@ def hybrid_cd(
                 pgd_freq = 2 * pgd_freq
 
             n_c_old = n_c
-                
         else:
             if is_X_sparse:
                 n_c = block_cd_epoch_sparse(

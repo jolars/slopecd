@@ -71,7 +71,7 @@ def slope_threshold(x, lambdas, cluster_ptr, c, n_c, j):
         lambdas[cluster_ptr[j]:cluster_ptr[j+1]]) > np.abs(x) - np.abs(c[j])
 
     if up_direction:
-        idx_c = np.arange(j+1, n_c)
+        idx_c = np.arange(j+1, n_c+1)
         start = cluster_size
         end = 0
     else:

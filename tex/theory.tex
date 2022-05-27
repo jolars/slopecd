@@ -276,7 +276,7 @@ In \cref{fig:slope-thresholding}, we visualize the operator.
 
   \If{\(t \bmod m = 0\)}{
 
-  \(\beta \leftarrow \operatorname{prox}_{J / L}(\beta - \frac{1}{L}\nabla f(\beta))\)
+    \(\beta \leftarrow \operatorname{prox}_{J / L}(\beta - \frac{1}{L}\nabla f(\beta))\) \label{alg:hybrid-istastep}
 
   % \(C_1, \hdots, C_m \leftarrow \mathtt{get\_clusters}(\beta)\)
   }
@@ -320,3 +320,22 @@ In \cref{fig:slope-thresholding}, we visualize the operator.
   }
   \Return{\(\beta\)}
 \end{algorithm}
+
+\begin{theorem}
+  Iterates of \cref{alg:hybrid} converge towards \(\beta^*\).
+\end{theorem}
+\begin{proof}
+  First note that convergence properties of proximal gradient descent on convex
+  problems such as SLOPE are well-established
+  \parencite{beck2009,daubechies2004}, which certifies that updates via
+  \cref{alg:hybrid-istastep} make progress towards \(\beta^*\).
+
+  Next note that the objectives of \eqref{eq:slope-problem} and
+  \eqref{eq:subproblem} are equal and that \eqref{eq:subproblem} can be seen
+  viewed as a version of \eqref{eq:slope-problem} with added linear constraints
+  that is also convex. And, finally, because the coordinate updates of
+  \cref{alg:hybrid} minimize the sub-problem, we in the worst case make no
+  progress and therefore have guaranteed converge rate no less than \(1/m\)
+  of that of proximal gradient descent.
+\end{proof}
+

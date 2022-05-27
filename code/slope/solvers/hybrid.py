@@ -11,18 +11,27 @@ from slope.utils import dual_norm_slope, prox_slope, slope_threshold
 
 @njit
 def block_cd_epoch(
-    w, X, R, alphas, cluster_indices, cluster_ptr, c, n_c, cluster_updates
+    w,
+    X,
+    R,
+    alphas,
+    cluster_indices,
+    cluster_ptr,
+    c,
+    n_c,
+    cluster_updates,
+    update_zero_cluster,
 ):
     n_samples = X.shape[0]
 
     j = 0
     while j < n_c:
-        if c[j] == 0:
+        if c[j] == 0 and not update_zero_cluster:
             j += 1
             continue
 
         cluster = cluster_indices[cluster_ptr[j]:cluster_ptr[j+1]]
-        sign_w = np.sign(w[cluster])
+        sign_w = np.sign(w[cluster]) if c[j] != 0 else np.ones(len(cluster))
         sum_X = X[:, cluster] @ sign_w
         L_j = sum_X.T @ sum_X / n_samples
         c_old = abs(c[j])
@@ -58,18 +67,19 @@ def block_cd_epoch_sparse(
     cluster_ptr,
     c,
     n_c,
-    cluster_updates
+    cluster_updates,
+    update_zero_cluster
 ):
     n_samples = len(R)
 
     j = 0
     while j < n_c:
-        if c[j] == 0:
+        if c[j] == 0 and not update_zero_cluster:
             j += 1
             continue
 
         cluster = cluster_indices[cluster_ptr[j]:cluster_ptr[j+1]]
-        sign_w = np.sign(w[cluster])
+        sign_w = np.sign(w[cluster]) if c[j] != 0 else np.ones(len(cluster))
         sum_X = compute_block_scalar_sparse(
             X_data, X_indices, X_indptr, sign_w, cluster, n_samples)
         L_j = sum_X.T @ sum_X / n_samples
@@ -110,6 +120,7 @@ def hybrid_cd(
     alphas,
     max_epochs=1000,
     cluster_updates=False,
+    update_zero_cluster=False,
     verbose=True,
     tol=1e-3,
 ):
@@ -154,6 +165,7 @@ def hybrid_cd(
                     c,
                     n_c,
                     cluster_updates,
+                    update_zero_cluster
                 )
             else:
                 n_c = block_cd_epoch(
@@ -166,6 +178,7 @@ def hybrid_cd(
                     c,
                     n_c,
                     cluster_updates,
+                    update_zero_cluster
                 )
 
         theta = R / n_samples

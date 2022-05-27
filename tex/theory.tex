@@ -256,61 +256,6 @@ In \cref{fig:slope-thresholding}, we visualize the operator.
   \label{fig:slope-thresholding}
 \end{figure}
 
-\subsection{Algorithms}
-
-Here are some possible algorithms.
-
-\subsubsection{Using Gradient 1}
-
-\begin{enumerate}
-  \item Initialize \(\beta\) to zero.
-  \item For each cluster,
-        \begin{itemize}
-          \item Check if the predictor with the largest correlation leaves the
-                cluster, if not check if the two largest leave the cluster etc.
-          \item If any predictors leave the cluster, compute the coordinate
-                update for these predictors.
-          \item If the cluster stays intact and does not correspond to the
-                zero cluster, update the coefficient (common coordinate) for that
-                cluster.
-        \end{itemize}
-\end{enumerate}
-
-This algorithm does not seem to work.
-
-\subsubsection{Using Gradient 2}
-
-\begin{enumerate}
-  \item Initialize \(\beta\) to zero.
-  \item For each cluster,
-        \begin{itemize}
-          \item Compute the cluster-wise coordinate update.
-          \item Every \(k\)th iteration, use the gradient to see if the cluster
-            could split and, if so, compute the update for the new split.
-            If the split improves the objective over the cluster-wise update,
-            stick with the split, otherwise keep the cluster intact.
-        \end{itemize}
-\end{enumerate}
-
-\subsubsection{Using Directional Derivative}
-
-\begin{enumerate}
-  \item Initialize \(\beta\) to zero.
-  \item For each cluster,
-        \begin{itemize}
-          \item Compute directional derivative for all (some?) possible 
-                directions and split cluster using this information.
-          \item Compute the coordinate update for this cluster.
-        \end{itemize}
-\end{enumerate}
-
-It is hopefully sufficient to only check if the coefficient with the
-largest gradient splits from the cluster for most of the iterations since
-checking all possible combinations of a cluster likely is expensive.
-We have
-to hope that's it's rare for multiple coefficients to leave a cluster in
-a new cluster.
-
 \subsection{Hybrid proximal coordinate descent strategy}
 
 \begin{algorithm}[tb]

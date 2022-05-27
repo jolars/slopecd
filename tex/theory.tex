@@ -11,19 +11,19 @@
 
 \begin{theorem}
   \label{thm:sl1-directional-derivative}
-  Let $v \in \bbR^p \setminus \{0\}$, \(h_0 \in \big(0, \min_{i,j \in
+  Let \(v \in \bbR^p \setminus \{0\}\), \(h_0 \in \big(0, \min_{i,j \in
     \{i : \beta_i \neq 0\}}\big| |\beta_i| - |\beta_j| \big|/\max_k|v_k| \big]\) and
   define \(\sigma\) to be the permutation such that
   \[
     |\beta + h_0v|_{\sigma(1)} \geq |\beta + h_0v |_{\sigma(2)}
     \geq \cdots \geq |\beta + h_0v|_{\sigma(p)}.
   \]
-  \mm{I think we need to state that for any $h \leq h_0$, $\sigma$ is still a correct reordering for $\beta + h v$ (that we use at the last line of \eqref{eq:sl1-directional-derivative})}
+  \mm{I think we need to state that for any \(h \leq h_0\), \(\sigma\) is still a correct reordering for \(\beta + h v\) (that we use at the last line of \eqref{eq:sl1-directional-derivative})}
   The directional derivative for the sorted \(\ell_1\) norm, \(J(\beta)\), is
   \[
     D_v J(\beta) =
     \sum_{i=1}^m \sum_{j \in \mathcal{C}_i} \lambda_j v_{\sigma(j)}\sign(\beta_{\sigma(j)} + h_0v_{\sigma(j)})\]
-  \mm{doesn't the definition of $h_0$ imply that $\beta_j + h_0 v_j$ has the sign of $\beta_j$?}
+  \mm{doesn't the definition of \(h_0\) imply that \(\beta_j + h_0 v_j\) has the sign of \(\beta_j\)?}
   \jl{Not when \(\beta = 0\), since then the sign is determined solely by \(v\).}
   where
   \[
@@ -50,10 +50,10 @@
   \]
   Next, recall the construction of \(h_0\) and
   observe that \(\sign(\beta_j + hv_j) = \sign(\beta_j)\)
-  and \(\sigma(j) = (j)\) for all \(j \notin \mathcal{C}_m\) \mm{here there is an issue for me because, by the clustering effect, $()$ is not uniquely defined. since $v$ allows each component of $\beta + h v$ to move at different speed, we may, inside each cluster, end up with any arbitrary order (the limit on the magnitude of $h$ only imposes that vlaues from one cluster don't end up crossing another cluster )}\jw{I don't follow. You have an arbitrary ordering if $|\beta_i +hv_i|$ and $|\beta_j +hv_j|$ otherwise the ordering is defined by $\sigma$ as it determined by $\beta$ and $v$?}
-  \mathurin{It's a small detail, but neither $\sigma$ nor $()$ are uniquely defined.
-  For me the above sentence says that for $h$ small enough and the non zero clusters, $\sigma$ does not depend on $v$. But if you take $\beta = (0, 10, 10, 20)$ and $hv = (0, 1, 0, 0)$ or $hv = (0, 0, 1, 0)$, they don't yield the same $\sigma$.
-  I'm thinking a rigorous formulation is: "$\sigma$ is a valid reordering for $\beta$"}
+  and \(\sigma(j) = (j)\) for all \(j \notin \mathcal{C}_m\) \mm{here there is an issue for me because, by the clustering effect, \(()\) is not uniquely defined. since \(v\) allows each component of \(\beta + h v\) to move at different speed, we may, inside each cluster, end up with any arbitrary order (the limit on the magnitude of \(h\) only imposes that vlaues from one cluster don't end up crossing another cluster )}\jw{I don't follow. You have an arbitrary ordering if \(|\beta_i +hv_i|\) and \(|\beta_j +hv_j|\) otherwise the ordering is defined by \(\sigma\) as it determined by \(\beta\) and \(v\)?}
+  \mathurin{It's a small detail, but neither \(\sigma\) nor \(()\) are uniquely defined.
+    For me the above sentence says that for \(h\) small enough and the non zero clusters, \(\sigma\) does not depend on \(v\). But if you take \(\beta = (0, 10, 10, 20)\) and \(hv = (0, 1, 0, 0)\) or \(hv = (0, 0, 1, 0)\), they don't yield the same \(\sigma\).
+    I'm thinking a rigorous formulation is: "\(\sigma\) is a valid reordering for \(\beta\)"}
   whenever \(0 < h < h_0\).
   It follows that
   \[
@@ -65,11 +65,11 @@
     \lim_{h \searrow 0} \sum_i \sum_{j \in \mathcal{C}_i} \lambda_j\sign(\beta + vh)_{\sigma(j)}v_{\sigma(j)}
     = \sum_i \sum_{j \in \mathcal{C}_i} \lambda_j\sign(\beta + vh_0)_{\sigma(j)}v_{\sigma(j)}.
   \]
-  \mathurin{Is this reformulation equivalent? (provided $c_m = 0$)}
+  \mathurin{Is this reformulation equivalent? (provided \(c_m = 0\))}
   \JL{Yes, good point! But we still need \(h_0\) for the permutation.}
   \begin{equation*}
     D_v J(\beta) = \sum_{j \notin \cC_m} \lambda_j \sign (\beta_{\sigma(j)}) v_{\sigma(j)}
-      +
+    +
     \sum_{j \in \cC_m} \lambda_j \sign (v_{\sigma(j)}) v_{\sigma(j)}
   \end{equation*}
 \end{proof}
@@ -85,28 +85,28 @@
 \subsection{Coordinate Updates}%
 \label{sec:coordinate-updates}
 
-We will now consider the variable $\tilde \beta_k$ which equals the magnitude of\(k\)th cluster, i.e. $|\beta_j|=\tilde \beta_k$ for all $j \in \mathcal{C}_k$.
-We will now derive the method how to update the parameters in the coordinate that corresponds to keeping the clusters fixed, which is equivalent to minimizing $P(\beta)$ over $\tilde \beta_k$.
-Evaluating the objective function at $\beta$ we have
+We will now consider the variable \(\tilde \beta_k\) which equals the magnitude of\(k\)th cluster, i.e. \(|\beta_j|=\tilde \beta_k\) for all \(j \in \mathcal{C}_k\).
+We will now derive the method how to update the parameters in the coordinate that corresponds to keeping the clusters fixed, which is equivalent to minimizing \(P(\beta)\) over \(\tilde \beta_k\).
+Evaluating the objective function at \(\beta\) we have
 \[
   \begin{aligned}
-    P(\beta) & =  \frac{1}{2} \lVert y - X\beta\rVert_2^2 + J(\beta)                                                                                                                                                                                                                                   \\
+    P(\beta) & =  \frac{1}{2} \lVert y - X\beta\rVert_2^2 + J(\beta)                                                                                                                                                                                                                                       \\
              & = \frac{1}{2} \lVert y - X_{\bar{\mathcal{C}_k}} \beta_{\bar{\mathcal{C}_k}} - \big(X_{\mathcal{C}_k} s_{\mathcal{C}_k}\big)\tilde\beta_k  \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)|\tilde\beta_k|,
   \end{aligned}
 \]
-where $s=sign(\beta)$. We can consider this as sub problem trying to min the one dimensional function\[
+where \(s=sign(\beta)\). We can consider this as sub problem trying to min the one dimensional function\[
   \begin{aligned}
-    P(\tilde \beta_k)   & = \frac{1}{2} \lVert r_k - \tilde x_k \tilde \beta_k \beta_{\bar{\mathcal{C}_k}} - \big(X_{\mathcal{C}_k} \beta_{\mathcal{C}_k}\big)c_k  \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^- }\bigg) |\tilde \beta_k|,
+    P(\tilde \beta_k) & = \frac{1}{2} \lVert r_k - \tilde x_k \tilde \beta_k \beta_{\bar{\mathcal{C}_k}} - \big(X_{\mathcal{C}_k} \beta_{\mathcal{C}_k}\big)c_k  \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^- }\bigg) |\tilde \beta_k|,
   \end{aligned}
 \]
-where \(\tilde y_k = X_{\bar{\mathcal{C}}_k} \beta_{\bar{\mathcal{C}_k}}\), $ \tilde x_k = X_{\mathcal{C}_k} s_{\mathcal{C}_k}$,
+where \(\tilde y_k = X_{\bar{\mathcal{C}}_k} \beta_{\bar{\mathcal{C}_k}}\), \( \tilde x_k = X_{\mathcal{C}_k} s_{\mathcal{C}_k}\),
 and \(\tilde r_k= y - \tilde y_k\) is the \emph{partial residual}. An alternative formulation (with identical solution) is to minize
 \[
   \begin{aligned}
-    P(c_k)   & = \frac{1}{2} \lVert y - X_{\bar{\mathcal{C}_k}} \beta_{\bar{\mathcal{C}_k}} - \big(X_{\mathcal{C}_k} \beta_{\mathcal{C}_k}\big)c_k  \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + |c_k|\bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^- }|\beta_j|\bigg),
+    P(c_k) & = \frac{1}{2} \lVert y - X_{\bar{\mathcal{C}_k}} \beta_{\bar{\mathcal{C}_k}} - \big(X_{\mathcal{C}_k} \beta_{\mathcal{C}_k}\big)c_k  \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + |c_k|\bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^- }|\beta_j|\bigg),
   \end{aligned}
 \]
-and $\beta_k := c_k\beta_k$.
+and \(\beta_k := c_k\beta_k\).
 Now take
 derivate with respect to \(\tilde\beta_k\), yielding
 \begin{equation}
@@ -117,10 +117,10 @@ derivate with respect to \(\tilde\beta_k\), yielding
 where the last term is the partial subdifferential of the sorted \(\ell_1\)
 norm.
 The optimality condition for the sub-problem is \(\boldsymbol{0} \in
-\partial_{\tilde \beta} P(\beta). 
+\partial_{\tilde \beta} P(\beta).
 \)
 We will now derive the  a closed form expression for the subdifferential
-of the sorted $\ell_1$ norm
+of the sorted \(\ell_1\) norm
 \begin{theorem}
   \label{thm:cluster-subdifferential}
   The partial subdifferential for the sorted \(\ell_1\) norm with respect
@@ -128,10 +128,10 @@ of the sorted $\ell_1$ norm
   \[
     \partial_{\tilde \beta_k}  J(\beta)       =
     \begin{cases}
-      \big[-\sum_{j=1}^{|C(0)|}\lambda^{C(0)}_j, \sum_{j=1}^{|C(0)|}\lambda^{C(0)}_j\big]                            & \text{if } \tilde\beta = 0           \\
+      \big[-\sum_{j=1}^{|C(0)|}\lambda^{C(0)}_j, \sum_{j=1}^{|C(0)|}\lambda^{C(0)}_j\big]                                                                        & \text{if } \tilde\beta = 0           \\
       \big[\sum_{j=|\mathcal{C}_i| - |\mathcal{C}_k|+1}^{|\mathcal{C}_i|}\lambda^{\mathcal{C}_i}_j, \sum_{j=1}^{|\mathcal{C}_k|}\lambda^{\mathcal{C}_i}_j\big]   & \text{if } \tilde\beta = c_i \neq 0  \\
       \big[-\sum_{j=1}^{|\mathcal{C}_k|}\lambda^{\mathcal{C}_i}_j, -\sum_{j=|\mathcal{C}_i| - |\mathcal{C}_k|+1}^{|\mathcal{C}_i|}\lambda^{\mathcal{C}_k}_j\big] & \text{if } \tilde\beta = -c_i \neq 0 \\
-      \{\sign(\tilde\beta)\boldsymbol{1}^T\lambda^{C(\tilde\beta)}\}                                                                                       & \text{otherwise.
+      \{\sign(\tilde\beta)\boldsymbol{1}^T\lambda^{C(\tilde\beta)}\}                                                                                             & \text{otherwise.
       }
       % \{\sign(\tilde\beta) S\big(C(\tilde\beta)\big)\}                                                                                                & \text{if } \tilde\beta \neq c_i \neq 0, \\
       % [-S(\mathcal{C}_m), S(\mathcal{C}_m)]                                                                                                           & \text{if } \tilde\beta = 0,             \\
@@ -139,17 +139,17 @@ of the sorted $\ell_1$ norm
     \end{cases}
   \]
 \end{theorem}
-\begin{proof} 
-Consider a fixed $\beta$ and set $\beta_{\mathcal{C}_k}= s_{\mathcal{C}_k}x$.
-Now let us consider the function  \(f(x) = |x|\sum_{j \in \mathcal{C}_k}\lambda^x_{(j)^-} + \sum_{j \notin \mathcal{C}_k} \lambda^x_{(j)^-}|\beta_j|\), where the ordering of $\lambda^x$ is with respect to the vector
-$$
-\beta(x)_k = \begin{cases}
-  |x|, & \mbox{$k \in \mathcal{C}_k$}, \\
-  |\beta_k|, & \mbox{otherwise}.
-\end{cases}
-$$
-.\mathurin{If $f$ is only a function of $\tilde \beta$, then the second term is constant, and since we are interested in subgradients, we should able to omit it?} \jonas{I added the notation so that it is clear that ordering of the $\lambda$ depends on $x$, hence we can not remove the second component.}
-  \(g\in \mathbb{R} \) \mm{$f/g$ > $u$ or $v$ for subgradient?} is a subgradient of \(f\) at \(x\) if
+\begin{proof}
+  Consider a fixed \(\beta\) and set \(\beta_{\mathcal{C}_k}= s_{\mathcal{C}_k}x\).
+  Now let us consider the function  \(f(x) = |x|\sum_{j \in \mathcal{C}_k}\lambda^x_{(j)^-} + \sum_{j \notin \mathcal{C}_k} \lambda^x_{(j)^-}|\beta_j|\), where the ordering of \(\lambda^x\) is with respect to the vector
+  \[
+    \beta(x)_k = \begin{cases}
+      |x|,       & \mbox{\(k \in \mathcal{C}_k\)}, \\
+      |\beta_k|, & \mbox{otherwise}.
+    \end{cases}
+  \]
+  .\mathurin{If \(f\) is only a function of \(\tilde \beta\), then the second term is constant, and since we are interested in subgradients, we should able to omit it?} \jonas{I added the notation so that it is clear that ordering of the \(\lambda\) depends on \(x\), hence we can not remove the second component.}
+  \(g\in \mathbb{R} \) \mm{\(f/g\) > \(u\) or \(v\) for subgradient?} is a subgradient of \(f\) at \(x\) if
   \begin{equation}
     \label{eq:subgrad-ineq}
     f(x^*)=|x^*|\sum_{j \in C_k}\lambda^{x^*}_{(j)^-} + \sum_{j \notin C(x^*)}\lambda ^{x^*}_{(j)^-}|\beta_j|
@@ -176,8 +176,8 @@ $$
   Because \(f\) is convex, it is sufficient to consider \(|y| < c_q\),
   in which case \(C(y) = \mathcal{C}_1\) and hence
   \begin{equation}
-      |y|S(\mathcal{C}_2) + c_q S(\mathcal{C}_1) \geq c_q S(\mathcal{C}_1) + gy \implies
-      |y|S(\mathcal{C}_2) \geq gy,
+    |y|S(\mathcal{C}_2) + c_q S(\mathcal{C}_1) \geq c_q S(\mathcal{C}_1) + gy \implies
+    |y|S(\mathcal{C}_2) \geq gy,
   \end{equation}
   which means that \(-S(\mathcal{C}_2) \leq g \leq S(\mathcal{C}_2)\).
 
@@ -219,19 +219,19 @@ The objective and subgradient for the cluster-wise problem are shown in
 Let \(\mathcal{B}\) be a cluster initialized to \(\mathcal{C}_k\), with
 corresponding coefficient \(c_k\).
 Then the coordinate update for \(\beta_\mathcal{B}\) is\jl{This obviously
-does not work when \(s=0\). Can we just set \(s = 1\) here? It's just
-the relative signs that really matter, right?}\jw{That is a really good point. Do you think we can tie to the sign of the gradient instead?. We also will not move the zero cluster this way suspect. But it should work for any formation then sign of the gradient is the way I think?}
+  does not work when \(s=0\). Can we just set \(s = 1\) here? It's just
+  the relative signs that really matter, right?}\jw{That is a really good point. Do you think we can tie to the sign of the gradient instead?. We also will not move the zero cluster this way suspect. But it should work for any formation then sign of the gradient is the way I think?}
 \jl{Yes, I think you're right, in fact that's what I have in the code now.}
 \[
   \beta_\mathcal{B} \gets
-  s_\mathcal{B} 
-    T \left(
-      \frac{\tilde r^T \tilde x}{\tilde x^T \tilde x}, 
-      \frac{\lambda}{\tilde x^T \tilde x},
-      k,
-      \tilde \beta,
-      \mathcal{C}
-    \right)
+  s_\mathcal{B}
+  T \left(
+  \frac{\tilde r^T \tilde x}{\tilde x^T \tilde x},
+  \frac{\lambda}{\tilde x^T \tilde x},
+  k,
+  \tilde \beta,
+  \mathcal{C}
+  \right)
 \]
 where
 
@@ -239,8 +239,8 @@ where
   \label{eq:slope-thresholding}
   T(a, \lambda,k,\tilde \beta, \mathcal{C}) =
   \begin{cases}
-    0                                                        & \text{if } |a| \leq \sum_{i=1}^{|\mathcal{C}_k|}\lambda^{C_0}_i                                                                                                                      \\
-    \sign(a)|\tilde \beta_i|                                              & \text{if } \sum_{j= |\mathcal{C}_i| - |\mathcal{C}_k| + 1}^{|\mathcal{C}_i|} \lambda^{\mathcal{C}_i}_j \leq |a| - |\tilde \beta_i| \leq \sum_{j=1}^{|\mathcal{C}_k|}\lambda^{\mathcal{C}_i}_j \\
+    0                                                                 & \text{if } |a| \leq \sum_{i=1}^{|\mathcal{C}_k|}\lambda^{C_0}_i                                                                                                                               \\
+    \sign(a)|\tilde \beta_i|                                          & \text{if } \sum_{j= |\mathcal{C}_i| - |\mathcal{C}_k| + 1}^{|\mathcal{C}_i|} \lambda^{\mathcal{C}_i}_j \leq |a| - |\tilde \beta_i| \leq \sum_{j=1}^{|\mathcal{C}_k|}\lambda^{\mathcal{C}_i}_j \\
     \sign(a)\big(|a| - \sum_{j \in \mathcal{C}_k}\lambda_{(j)^-}\big) & \text{otherwise.
     }
   \end{cases}
@@ -299,14 +299,14 @@ In \cref{fig:slope-thresholding}, we visualize the operator.
         \(\tilde r_k \gets y - \tilde y_k\)
 
         \(
-          \beta_{\mathcal{C}_k} \gets 
-          s T \left(
-            \frac{\tilde r^T_k \tilde x_k, }{ \tilde x_k^T \tilde x_k},
-            \frac{\lambda}{ \tilde x_k^T \tilde x_k},
-            k,
-            \tilde \beta,
-            \mathcal{C}
-          \right)
+        \beta_{\mathcal{C}_k} \gets
+        s T \left(
+        \frac{\tilde r^T_k \tilde x_k, }{ \tilde x_k^T \tilde x_k},
+        \frac{\lambda}{ \tilde x_k^T \tilde x_k},
+        k,
+        \tilde \beta,
+        \mathcal{C}
+        \right)
         \)
         \Comment{\(\mathcal{C}\) is updated at this step.}
 

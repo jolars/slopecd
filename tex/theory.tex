@@ -226,17 +226,11 @@ the relative signs that really matter, right?}\jw{That is a really good point. D
   \beta_\mathcal{B} \gets
   s_\mathcal{B} 
     T \left(
-      \frac{
-       \tilde r^T \tilde x,
-      }{
-       \tilde x^T \tilde x
-      } , 
-      \frac{
-        \lambda 
-      }{
-        \tilde x^T \tilde x
-      } ,
-      \tilde \beta, \mathcal{C}
+      \frac{\tilde r^T \tilde x}{\tilde x^T \tilde x}, 
+      \frac{\lambda}{\tilde x^T \tilde x},
+      k,
+      \tilde \beta,
+      \mathcal{C}
     \right)
 \]
 where
@@ -322,32 +316,60 @@ a new cluster.
 \begin{algorithm}[tb]
   \SetKwInOut{Init}{init}
   \SetKwInOut{Input}{input}
+  \caption{%
+    Hybrid coordinate descent and proximal gradient descent algorithm
+    for SLOPE\label{alg:hybrid}}
   \Input{
-      $X \in \mathbb{R}^{n\times p}, y\in \mathbb{R}^n, \beta\in \mathbb{R}^p, \lambda \in \mathbb{R}_{>0}^p, 
-      \mathrm{\max\_{iter}} \in\mathbb{N}
-      $}
-  \caption{\texttt{Hybrid slopecd} (proposed)}\label{alg:sksparse}
-  \For{$t = 1, \ldots,  \mathrm{\max\_{iter}}$}{
-    \If{$t \, \mathrm{mod} \, 5 = 0$}{
+    \(X \in \mathbb{R}^{n\times p}, y\in \mathbb{R}^n, \beta\in \mathbb{R}^p, \lambda \in \{\mathbb{R}^p : \lambda_1 \geq \lambda_2 \geq \cdots > 0\}\), \(m \in \mathbb{N}\)}
 
-      $\beta \leftarrow \mathrm{prox}_{J / L}(\beta - \frac{1}{L}\nabla f(\beta))$
+  \Init{\(t \gets 0\), \(\beta \gets 0\), \(L \gets \lVert X \rVert_2^2\)}
 
-      $C_1, \hdots, C_m \leftarrow \mathrm{get\_clusters}(\beta)$
+  \Repeat{convergence}{
+  \(t \gets t + 1\)
+
+  \If{\(t \bmod m = 0\)}{
+
+  \(\beta \leftarrow \operatorname{prox}_{J / L}(\beta - \frac{1}{L}\nabla f(\beta))\)
+
+  % \(C_1, \hdots, C_m \leftarrow \mathtt{get\_clusters}(\beta)\)
+  }
+  \Else{
+    \(k \gets 0\)
+
+    \While{\(k \leq \lvert \mathcal{C} \rvert\)}{
+      \(k \gets k + 1\)
+
+      \(s \leftarrow \mathrm{sign}(\beta_{\mathcal{C}_k})\)
+
+      \If{\(s \neq 0\)}{
+        % \(L_k \gets (X_{:, \mathcal{C}_k}s)^\top  X_{:, \mathcal{C}_k}s\)
+
+        % \(\tilde{\beta} \gets T(|\beta_{\mathcal{C}_k}| - \frac{1}{L_k} \nabla_{\mathcal{C}_k}f(\beta)^\top s, \frac{\lambda}{L_k})\)
+
+        % \(\beta_{\mathcal{C}_k} \leftarrow \tilde{\beta} s\)
+        \(\tilde x_k \gets X_{\mathcal{C}_k}s\)
+
+        \(\tilde y_k \gets X_{\widebar{\mathcal{C}}_k}\beta_{\widebar{\mathcal{C}}_k}\)
+
+        \(\tilde r_k \gets y - \tilde y_k\)
+
+        \(
+          \beta_{\mathcal{C}_k} \gets 
+          s T \left(
+            \frac{\tilde r^T_k \tilde x_k, }{ \tilde x_k^T \tilde x_k},
+            \frac{\lambda}{ \tilde x_k^T \tilde x_k},
+            k,
+            \tilde \beta,
+            \mathcal{C}
+          \right)
+        \)
+        \Comment{\(\mathcal{C}\) is updated at this step.}
+
       }
-    \Else{
-      \For{$b = 1, \hdots, m$}{
-        $\mathcal{B} \leftarrow C_b$ 
-        
-        $s \leftarrow \mathrm{sign}(\beta_{\mathcal{B}})$
 
-        $L_b = (X_{:, \mathcal{B}}s)^\top  X_{:, \mathcal{B}}s$
-
-        $\tilde{\beta} = T(|\beta_{\mathcal{B}_1}| - \frac{1}{L_b} \nabla_\mathcal{B}f(\beta)^\top s, \frac{\lambda}{L_b})$
-
-        $\beta_\mathcal{B} \leftarrow \tilde{\beta} s$
-      }
     }
+  }
 
   }
-\Return{$\beta$}
+  \Return{\(\beta\)}
 \end{algorithm}

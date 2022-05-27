@@ -14,9 +14,13 @@ def block_cd_epoch(
     w, X, R, alphas, cluster_indices, cluster_ptr, c, n_c, cluster_updates
 ):
     n_samples = X.shape[0]
-    for j in range(n_c):
+
+    j = 0
+    while j < n_c:
         if c[j] == 0:
+            j += 1
             continue
+
         cluster = cluster_indices[cluster_ptr[j]:cluster_ptr[j+1]]
         sign_w = np.sign(w[cluster])
         sum_X = X[:, cluster] @ sign_w
@@ -37,6 +41,8 @@ def block_cd_epoch(
         else:
             c[j] = beta_tilde
 
+        j += 1
+
     return n_c
 
 
@@ -55,9 +61,13 @@ def block_cd_epoch_sparse(
     cluster_updates
 ):
     n_samples = len(R)
-    for j in range(n_c):
+
+    j = 0
+    while j < n_c:
         if c[j] == 0:
+            j += 1
             continue
+
         cluster = cluster_indices[cluster_ptr[j]:cluster_ptr[j+1]]
         sign_w = np.sign(w[cluster])
         sum_X = compute_block_scalar_sparse(
@@ -77,6 +87,8 @@ def block_cd_epoch_sparse(
             )
         else:
             c[j] = beta_tilde
+
+        j += 1
 
     return n_c
 

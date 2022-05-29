@@ -8,13 +8,23 @@ from slope.utils import dual_norm_slope, prox_slope
 
 
 def prox_grad(
-        X, y, alphas, fista=False, max_epochs=100, tol=1e-10, gap_freq=1,
-        anderson=False, verbose=True):
+    X,
+    y,
+    alphas,
+    fit_intercept=True,
+    fista=False,
+    max_epochs=100,
+    tol=1e-10,
+    gap_freq=1,
+    anderson=False,
+    verbose=True,
+):
     if anderson and fista:
         raise ValueError("anderson=True cannot be combined with fista=True")
     n_samples, n_features = X.shape
     R = y.copy()
     w = np.zeros(n_features)
+    intercept = 0.0
     theta = np.zeros(n_samples)
     # FISTA parameters:
     z = w.copy()
@@ -38,8 +48,10 @@ def prox_grad(
     E.append(norm(y)**2 / (2 * n_samples))
     gaps.append(E[0])
     for it in range(max_epochs):
-        R[:] = y - X @ z
+        R[:] = y - X @ z - intercept
         w_new = prox_slope(z + (X.T @ R) / (L * n_samples), alphas / L)
+        if fit_intercept:
+            intercept += np.sum(R) / (L * n_samples)
         if anderson:
             # TODO multiple improvements possible here
             if it < K + 1:
@@ -78,7 +90,7 @@ def prox_grad(
             z = w
 
         if it % gap_freq == 0:
-            R[:] = y - X @ w
+            R[:] = y - X @ w - intercept
             theta = R / n_samples
             theta /= max(1, dual_norm_slope(X, theta, alphas))
 
@@ -96,4 +108,4 @@ def prox_grad(
                 print(f"Epoch: {it + 1}, loss: {primal}, gap: {gap:.2e}")
             if gap < tol:
                 break
-    return w, E, gaps, times
+    return w, intercept, E, gaps, times

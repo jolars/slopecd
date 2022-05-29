@@ -11,7 +11,17 @@ from slope.utils import dual_norm_slope, prox_slope, slope_threshold
 
 @njit
 def block_cd_epoch(
-    w, X, R, alphas, cluster_indices, cluster_ptr, c, n_c, cluster_updates
+    w,
+    intercept,
+    X,
+    R,
+    alphas,
+    cluster_indices,
+    cluster_ptr,
+    c,
+    n_c,
+    fit_intercept,
+    cluster_updates,
 ):
     n_samples = X.shape[0]
 
@@ -42,13 +52,27 @@ def block_cd_epoch(
             c[j] = beta_tilde
 
         j += 1
+        
+    if fit_intercept:
+        intercept_old = intercept
+        # intercept = (np.sum(Xbeta_delta) + np.sum(R)) / n_samples
+        for i in range(10):
+            grad = np.sum(-R)
+            print(grad)
+            hess = float(n_samples)
+            delta = -grad / hess
+            # if intercept != intercept_old:
+                # R += intercept_old - intercept
+            R -= delta
+            intercept += delta
 
-    return n_c
+    return intercept, n_c
 
 
 @njit
 def block_cd_epoch_sparse(
     w,
+    intercept,
     X_data,
     X_indices,
     X_indptr,
@@ -58,6 +82,7 @@ def block_cd_epoch_sparse(
     cluster_ptr,
     c,
     n_c,
+    fit_intercept,
     cluster_updates
 ):
     n_samples = len(R)
@@ -90,8 +115,13 @@ def block_cd_epoch_sparse(
 
         j += 1
 
-    return n_c
+    if fit_intercept:
+        intercept_old = intercept
+        intercept = np.sum(R) / n_samples
+        if intercept != intercept_old:
+            R += intercept_old - intercept
 
+    return intercept, n_c
 
 @njit
 def compute_block_scalar_sparse(
@@ -108,6 +138,7 @@ def hybrid_cd(
     X,
     y,
     alphas,
+    fit_intercept=True,
     max_epochs=1000,
     cluster_updates=False,
     verbose=True,
@@ -117,6 +148,7 @@ def hybrid_cd(
     n_samples, n_features = X.shape
     R = y.copy()
     w = np.zeros(n_features)
+    intercept = 0.0
     theta = np.zeros(n_samples)
 
     times = []
@@ -138,12 +170,15 @@ def hybrid_cd(
         # This is experimental, it will need to be justified
         if epoch % 5 == 0:
             w = prox_slope(w + (X.T @ R) / (L * n_samples), alphas / L)
-            R[:] = y - X @ w
+            if fit_intercept:
+                intercept = intercept + np.sum(R) / (L * n_samples)
+            R[:] = y - X @ w - intercept
             c, cluster_ptr, cluster_indices, n_c = get_clusters(w)
         else:
             if is_X_sparse:
-                n_c = block_cd_epoch_sparse(
+                intercept, n_c = block_cd_epoch_sparse(
                     w,
+                    intercept,
                     X.data,
                     X.indices,
                     X.indptr,
@@ -153,11 +188,13 @@ def hybrid_cd(
                     cluster_ptr,
                     c,
                     n_c,
+                    fit_intercept,
                     cluster_updates,
                 )
             else:
-                n_c = block_cd_epoch(
+                intercept, n_c = block_cd_epoch(
                     w,
+                    intercept,
                     X,
                     R,
                     alphas,
@@ -165,6 +202,7 @@ def hybrid_cd(
                     cluster_ptr,
                     c,
                     n_c,
+                    fit_intercept,
                     cluster_updates,
                 )
 
@@ -185,4 +223,4 @@ def hybrid_cd(
         if gap < tol:
             break
 
-    return w, E, gaps, times
+    return w, intercept, E, gaps, times

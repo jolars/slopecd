@@ -11,7 +11,7 @@ from slope.utils import dual_norm_slope
 
 # from slope.solvers.proxsplit_cd import proxsplit_cd
 
-random_state=5
+random_state=6
 
 X, y, _ = make_correlated_data(n_samples=100, n_features=10, rho=0.9, random_state=random_state)
 
@@ -25,7 +25,7 @@ alpha_max = dual_norm_slope(X, y / len(y), alphas_seq)
 
 alphas = alpha_max * alphas_seq / 5
 
-max_epochs = 100
+max_epochs = 10
 tol = 1e-4
 
 # y = y - np.mean(y)

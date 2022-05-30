@@ -6,8 +6,13 @@ from numpy.linalg import norm
 from scipy import sparse
 
 from slope.clusters import get_clusters, update_cluster
-from slope.utils import dual_norm_slope, prox_slope, slope_threshold, slope_threshold_old
-
+from slope.utils import (
+    dual_norm_slope,
+    prox_slope,
+    slope_threshold,
+    slope_threshold_new,
+    slope_threshold_old,
+)
 
 # @njit
 def block_cd_epoch(
@@ -29,22 +34,26 @@ def block_cd_epoch(
         x = c_old + (sum_X.T @ R) / (L_j * n_samples)
         beta_tilde, ind_new = slope_threshold(x, alphas/L_j, cluster_ptr, c, n_c, j)
         beta_tilde_old, ind_new_old = slope_threshold_old(x, alphas/L_j, cluster_indices, cluster_ptr, c, n_c, j)
+        beta_tilde_new, ind_new_new = slope_threshold_new(x, alphas/L_j, cluster_ptr, c, n_c, j)
 
-        if beta_tilde != beta_tilde_old or ind_new != ind_new_old:
+        if ind_new_old != ind_new_new or beta_tilde_old != beta_tilde_new:
             print("j: ", j)
             print("cluster_indices: ", cluster_indices)
             print("c: ", c[range(n_c)])
             print("c[j]: ", c[j])
             print("x:", x)
-            print("beta_tilde: ", beta_tilde, ", beta_tilde_old:", beta_tilde_old)
+            print("beta_tilde: ", beta_tilde, ", beta_tilde_old:", beta_tilde_old, ", beta_tilde_new: ", beta_tilde_new)
             print("ind_old: ", j)
-            print("ind_new: ", ind_new, ", ind_new_old: ", ind_new_old)
+            print("ind_new: ", ind_new, ", ind_new_old: ", ind_new_old, ", ind_new_new", ind_new_new)
             # print(f"ind_new: {ind_new}, ind_new_old: {ind_new_old}")
             # raise ValueError
 
         if use_old_thresholder:
             beta_tilde = beta_tilde_old
             ind_new = ind_new_old
+        else:
+            beta_tilde = beta_tilde_new
+            ind_new = ind_new_new
 
         w[cluster] = beta_tilde * sign_w
         if c_old != beta_tilde:

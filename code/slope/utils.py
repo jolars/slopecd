@@ -165,7 +165,7 @@ def slope_threshold(x, lambdas, cluster_ptr, c, n_c, j):
 
         elif abs(x) >= lo + abs(c[k]):
             # we are in a cluster
-            new_cluster_ind = k - 1 if up_direction else k
+            new_cluster_ind = k
             return np.sign(x) * abs(c[k]), new_cluster_ind
 
         # replace lower interval by higher before next iteration

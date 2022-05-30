@@ -6,12 +6,12 @@ from numpy.linalg import norm
 from scipy import sparse
 
 from slope.clusters import get_clusters, update_cluster
-from slope.utils import dual_norm_slope, prox_slope, slope_threshold
+from slope.utils import dual_norm_slope, prox_slope, slope_threshold, slope_threshold_old
 
 
-@njit
+# @njit
 def block_cd_epoch(
-    w, X, R, alphas, cluster_indices, cluster_ptr, c, n_c, cluster_updates
+    w, X, R, alphas, cluster_indices, cluster_ptr, c, n_c, cluster_updates, use_old_thresholder
 ):
     n_samples = X.shape[0]
 
@@ -28,6 +28,23 @@ def block_cd_epoch(
         c_old = abs(c[j])
         x = c_old + (sum_X.T @ R) / (L_j * n_samples)
         beta_tilde, ind_new = slope_threshold(x, alphas/L_j, cluster_ptr, c, n_c, j)
+        beta_tilde_old, ind_new_old = slope_threshold_old(x, alphas/L_j, cluster_indices, cluster_ptr, c, n_c, j)
+
+        if beta_tilde != beta_tilde_old or ind_new != ind_new_old:
+            print("j: ", j)
+            print("cluster_indices: ", cluster_indices)
+            print("c: ", c[range(n_c)])
+            print("c[j]: ", c[j])
+            print("x:", x)
+            print("beta_tilde: ", beta_tilde, ", beta_tilde_old:", beta_tilde_old)
+            print("ind_old: ", j)
+            print("ind_new: ", ind_new, ", ind_new_old: ", ind_new_old)
+            # print(f"ind_new: {ind_new}, ind_new_old: {ind_new_old}")
+            # raise ValueError
+
+        if use_old_thresholder:
+            beta_tilde = beta_tilde_old
+            ind_new = ind_new_old
 
         w[cluster] = beta_tilde * sign_w
         if c_old != beta_tilde:
@@ -46,7 +63,7 @@ def block_cd_epoch(
     return n_c
 
 
-@njit
+# @njit
 def block_cd_epoch_sparse(
     w,
     X_data,
@@ -58,7 +75,8 @@ def block_cd_epoch_sparse(
     cluster_ptr,
     c,
     n_c,
-    cluster_updates
+    cluster_updates,
+    use_old_thresholder
 ):
     n_samples = len(R)
 
@@ -93,7 +111,7 @@ def block_cd_epoch_sparse(
     return n_c
 
 
-@njit
+# @njit
 def compute_block_scalar_sparse(
         X_data, X_indices, X_indptr, v, cluster, n_samples):
     scal = np.zeros(n_samples)
@@ -110,6 +128,7 @@ def hybrid_cd(
     alphas,
     max_epochs=1000,
     cluster_updates=False,
+    use_old_thresholder=False,
     verbose=True,
     tol=1e-3,
 ):
@@ -154,6 +173,7 @@ def hybrid_cd(
                     c,
                     n_c,
                     cluster_updates,
+                    use_old_thresholder
                 )
             else:
                 n_c = block_cd_epoch(
@@ -166,6 +186,7 @@ def hybrid_cd(
                     c,
                     n_c,
                     cluster_updates,
+                    use_old_thresholder
                 )
 
         theta = R / n_samples

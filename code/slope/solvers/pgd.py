@@ -40,9 +40,22 @@ def prox_grad(
     times.append(timer() - time_start)
 
     if sparse.issparse(X):
-        L = sparse.linalg.svds(X, k=1)[1][0] ** 2 / n_samples
+        if fit_intercept:
+            # TODO: consider if it's possible to avoid creating this
+            # temporary design matrix with a column of ones
+            ones_col = sparse.csc_array(np.ones((n_samples, 1)))
+            decomp = sparse.linalg.svds(sparse.hstack((ones_col, X)), k=1)
+        else:
+            decomp = sparse.linalg.svds(X, k=1)
+
+        L = decomp[1][0] ** 2 / n_samples
     else:
-        L = norm(X, ord=2)**2 / n_samples
+        if fit_intercept:
+            spectral_norm = norm(np.hstack((np.ones((n_samples, 1)), X)), ord=2)
+        else:
+            spectral_norm = norm(X, ord=2)
+
+        L = spectral_norm ** 2 / n_samples
 
     E, gaps = [], []
     E.append(norm(y)**2 / (2 * n_samples))

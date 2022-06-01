@@ -121,7 +121,7 @@ def hybrid_cd(
     alphas,
     max_epochs=1000,
     cluster_updates=False,
-    use_old_thresholder=False,
+    use_old_thresholder=True,
     verbose=True,
     tol=1e-3,
 ):

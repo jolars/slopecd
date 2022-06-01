@@ -121,4 +121,4 @@ def oracle_cd(
         if gap < tol:
             break
 
-    return w, E, gaps, times
+    return w, intercept, E, gaps, times

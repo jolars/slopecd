@@ -57,72 +57,67 @@ def get_clusters(w):
     cluster_ptr = np.r_[0, cluster_ptr]
     return cluster_indices, cluster_ptr, unique[::-1]
 
+@njit
 def slope_threshold_new(x, lambdas, cluster_ptr, c, n_c, j):
     cluster_size = cluster_ptr[j + 1] - cluster_ptr[j]
-    zero_lambda_sum = np.sum(lambdas[::-1][0:cluster_size])
 
-    if abs(x) < zero_lambda_sum:
-        return 0.0, n_c - 1
+    abs_x = abs(x)
+    sign_x = np.sign(x)
 
     # check which direction we need to search
-    # up_direction = sum(
-    #     lambdas[cluster_ptr[j]:cluster_ptr[j+1]]) > np.abs(x) - np.abs(c[j])
-    up_direction = np.abs(x) - sum(
+    up_direction = abs_x - sum(
         lambdas[cluster_ptr[j] : cluster_ptr[j + 1]]
     ) > np.abs(c[j])
 
     if up_direction:
-        print("up")
-        lo = sum(lambdas[cluster_ptr[j + 1] - cluster_size : cluster_ptr[j + 1]])
+        start = cluster_ptr[j + 1]
+        lo = sum(lambdas[start : start + cluster_size])
 
-        for k in range(j - 1, 0, -1):
-            hi_start = cluster_ptr[k] - cluster_size
-            hi_end = cluster_ptr[k]
-            hi = sum(lambdas[hi_start:hi_end])
+        for k in range(j, -1, -1):
+            start = cluster_ptr[k]
+            hi = sum(lambdas[start : start + cluster_size])
 
-            if abs(x) < lo + abs(c[k]):
-                print("between clusters")
+            abs_c_k = abs(c[k])
+
+            if abs_x < lo + abs_c_k:
                 # we must be between clusters
-                return x - np.sign(x) * lo, k + 1
+                return x - sign_x * lo, k + 1
 
-            elif abs(x) <= hi + abs(c[k]):
-                print("in cluster")
+            elif abs_x <= hi + abs_c_k:
                 # we are in a cluster
-                return np.sign(x) * abs(c[k]), k
+                return sign_x * abs_c_k, k
 
             # replace lower interval by higher before next iteration
-            if k != 0:
-                lo = hi
+            lo = hi
 
-        print("outside cluster")
-
-        return x - np.sign(x) * lo, 0
+        return x - sign_x * lo, 0
     else:
-        print("down")
-        hi = sum(lambdas[cluster_ptr[j] : cluster_ptr[j] + cluster_size])
-        for k in range(j + 1, n_c):
-            lo_start = cluster_ptr[k]
-            lo_end = cluster_ptr[k] + cluster_size
-            lo = sum(lambdas[lo_start:lo_end])
+        end = cluster_ptr[j + 1]
+        hi = sum(lambdas[end - cluster_size : end])
 
-            if abs(x) > hi + abs(c[k - 1]):
-                print(f"between clusters, lo: {lo}, hi: {hi}")
+        for k in range(j + 1, n_c):
+            end = cluster_ptr[k + 1]
+            lo = sum(lambdas[end - cluster_size : end])
+
+            abs_c_k = abs(c[k])
+
+            if abs_x > hi + abs_c_k:
                 # we must be between clusters
-                # return np.sign(x) * (np.abs(x) - hi)
-                return x - np.sign(x) * hi, k - 1
-            elif abs(x) >= lo + abs(c[k]):
-                print(f"in cluster, lo: {lo}, hi: {hi}")
+                return x - sign_x * hi, k - 1
+            elif abs_x >= lo + abs_c_k:
                 # we are in a cluster
-                return np.sign(x) * abs(c[k]), k - 1
+                return sign_x * abs_c_k, k
 
             hi = lo
 
-        print("outside cluster")
+        if abs_x > hi:
+            return x - sign_x * hi, n_c - 1
+        else:
+            # in zero cluster
+            return 0.0, n_c - 1
 
-        return x - np.sign(x) * hi, n_c - 1
 
-
-# @njit
+@njit
 def slope_threshold(x, lambdas, cluster_ptr, c, n_c, j):
     cluster_size = cluster_ptr[j+1] - cluster_ptr[j]
     zero_lambda_sum = np.sum(lambdas[::-1][0:cluster_size])
@@ -175,59 +170,3 @@ def slope_threshold(x, lambdas, cluster_ptr, c, n_c, j):
 
     return x - np.sign(x) * lo, new_cluster_ind
 
-# @njit
-def slope_threshold_old(x, lambdas, cluster_indices, cluster_ptr, c, n_c, j):
-    A = cluster_indices[cluster_ptr[j]:cluster_ptr[j + 1]]
-    cluster_size = len(A)
-
-    # zero_cluster_size = 0 if c[-1] != 0 else len(C[-1])
-    zero_lambda_sum = np.sum(
-        lambdas[::-1][np.arange(cluster_size)])
-
-    if np.abs(x) < zero_lambda_sum:
-        return 0.0, n_c - 1
-
-    lo = zero_lambda_sum
-    hi = zero_lambda_sum
-
-    k = 0
-    mod = 0
-
-    # TODO(JL): This can and should be done much more efficiently, using
-    # kind of binary search to find the right interval
-    for k in range(n_c):
-        if k == j:
-            continue
-
-        # adjust C_start and C_end since we treat current cluster as variable
-        mod = cluster_size if k > j else 0
-
-        # check upper end of cluster
-        hi_start = cluster_ptr[k] - mod
-        hi_end = cluster_ptr[k] + cluster_size - mod
-
-        # check lower end of cluster
-        lo_start = cluster_ptr[k + 1] - mod
-        lo_end = cluster_ptr[k + 1] + cluster_size - mod
-
-        lo = sum(lambdas[lo_start:lo_end])
-        hi = sum(lambdas[hi_start:hi_end])
-
-        new_cluster_ind = k - 1 if k > j else k
-
-        if abs(x) > hi + abs(c[k]):
-            print(f"real: between clusters, lo: {lo}, hi: {hi}")
-            # we must be between clusters
-            # return np.sign(x) * (np.abs(x) - hi)
-            return x - np.sign(x) * hi, new_cluster_ind
-        elif abs(x) >= lo + abs(c[k]):
-            print(f"real: in cluster, lo: {lo}, hi: {hi}")
-            # we are in a cluster
-            return np.sign(x) * abs(c[k]), new_cluster_ind
-
-    print("real: outside cluster")
-
-    new_cluster_ind = k - 1 if k > j else k
-
-    # return np.sign(x) * (np.abs(x) - lo)
-    return x - np.sign(x) * lo, new_cluster_ind

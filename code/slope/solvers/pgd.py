@@ -12,24 +12,19 @@ def prox_grad(
     y,
     alphas,
     acceleration="none",
-    bb_step_size=False,
     line_search=False,
     gap_freq=1,
     max_epochs=100,
     tol=1e-10,
     verbose=True,
 ):
-    if acceleration not in ["none", "anderson", "fista"]:
+    if acceleration not in ["none", "anderson", "fista", "bb"]:
         raise ValueError(
             "`acceleration` must be one of 'none', 'anderson', and 'fista'"
         )
 
-    if bb_step_size and not line_search:
+    if acceleration == "bb" and not line_search:
         raise ValueError("cannot use Barzilai rule without line search")
-
-    # TODO: I think there are methods that make this possible, right?
-    if bb_step_size and acceleration == "fista":
-        raise ValueError("cannot use Barzilai rule with FISTA")
 
     n_samples, n_features = X.shape
     R = y.copy()
@@ -72,12 +67,12 @@ def prox_grad(
     gaps.append(E[0])
     for it in range(max_epochs):
         R[:] = y - X @ z
-        if it > 0 and bb_step_size:
+        if it > 0 and acceleration == "bb":
             grad_old = grad
         grad = -(X.T @ R) / n_samples
 
         if line_search:
-            if bb_step_size and it > 0:
+            if acceleration == "bb" and it > 0:
                 delta_w = w - w_old
                 delta_grad = grad - grad_old
 
@@ -88,7 +83,7 @@ def prox_grad(
 
                 bb = bb2 if bb1 < gamma * bb2 else bb1 - bb2 / gamma
                 L = 1.0 / bb if bb > 0 else 1.0 / prev_bb
-            else:
+            elif acceleration != "bb":
                 L *= 0.9
 
             f_old = norm(R) ** 2 / (2 * n_samples)

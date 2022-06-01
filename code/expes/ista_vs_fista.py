@@ -45,7 +45,7 @@ _, E_ista_lsbb, gaps_ista_lsbb, times_ista_lsbb = prox_grad(
     X,
     y,
     lambdas,
-    bb_step_size=True,
+    acceleration="bb",
     line_search=True,
     verbose=True,
     gap_freq=10,
@@ -80,6 +80,7 @@ _, E_fista, gaps_fista, times_fista = prox_grad(
     y,
     lambdas,
     acceleration="fista",
+    line_search=False,
     verbose=True,
     gap_freq=gap_freq,
     max_epochs=max_epochs,
@@ -110,7 +111,9 @@ plt.semilogy(
     times_anderson, E_anderson - p_star, c=cm(6), label="primal subopt PGD Anderson"
 )
 plt.semilogy(times_fista, E_fista - p_star, c=cm(7), label="primal subopt FISTA")
-plt.semilogy(times_fista_ls, E_fista_ls - p_star, c=cm(8), label="primal subopt FISTA+LS")
+plt.semilogy(
+    times_fista_ls, E_fista_ls - p_star, c=cm(8), label="primal subopt FISTA+LS"
+)
 
 # plt.semilogy(times_ista, gaps_ista, c=cm(0), linestyle='--', label='gap PGD')
 # plt.semilogy(gaps_fista, c=cm(1), linestyle='--', label='gap APGD')

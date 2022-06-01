@@ -40,17 +40,29 @@ class TestPGDSolvers(unittest.TestCase):
         alphas_seq = randnorm.ppf(
             1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1])
         )
-        alpha_max = dual_norm_slope(X, y / len(y), alphas_seq)
-
-        alphas = alpha_max * alphas_seq / 50
-
         for fista in [False, True]:
-            tol = 1e-10
-            w, E, gaps, _ = prox_grad(
-                X, y, alphas, fista=fista, max_epochs=15_000, gap_freq=10, verbose=False
-            )
-            with self.subTest():
-                self.assertGreater(tol, gaps[-1])
+            for fit_intercept in [False, True]:
+                alpha_max = dual_norm_slope(
+                    X,
+                    (y - np.mean(y)*fit_intercept) / len(y),
+                    alphas_seq
+                )
+
+                alphas = alpha_max * alphas_seq / 50
+
+                tol = 1e-10
+                w, intercept, E, gaps, _ = prox_grad(
+                    X,
+                    y,
+                    alphas,
+                    fista=fista,
+                    fit_intercept=fit_intercept,
+                    max_epochs=25_000,
+                    gap_freq=10,
+                    verbose=False,
+                )
+                with self.subTest():
+                    self.assertGreater(tol, gaps[-1])
 
 
 class TestClusterUpdates(unittest.TestCase):

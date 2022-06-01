@@ -100,6 +100,7 @@ def block_cd_epoch_sparse(
 
     return n_c
 
+
 @njit
 def compute_block_scalar_sparse(
         X_data, X_indices, X_indptr, v, cluster, n_samples):
@@ -191,7 +192,7 @@ def hybrid_cd(
                     n_c,
                     cluster_updates,
                 )
-        
+
             if fit_intercept:
                 intercept_update = np.sum(R) / n_samples
                 R -= intercept_update

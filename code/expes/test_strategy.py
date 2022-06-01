@@ -18,6 +18,8 @@ if dataset == "simulated":
 else:
     X, y = fetch_libsvm(dataset)
 
+fit_intercept=True
+
 randnorm = stats.norm(loc=0, scale=1)
 q = 0.5
 
@@ -25,7 +27,7 @@ alphas_seq = randnorm.ppf(
     1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1]))
 
 
-alpha_max = dual_norm_slope(X, y / len(y), alphas_seq)
+alpha_max = dual_norm_slope(X, (y - fit_intercept*np.mean(y)) / len(y), alphas_seq)
 
 alphas = alpha_max * alphas_seq / 5
 plt.close('all')

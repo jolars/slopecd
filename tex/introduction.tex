@@ -2,6 +2,10 @@
 \section{Introduction}\label{sec:introduction}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+In this paper we present a novel conjugate gradient algorithm for solving the 
+Sorted L-One Penalized Estimation (SLOPE) problem. The sorted L-one norm is an increasing popular regularization term, this since it has several appealing properties: It has shown to control FDR [CANDES ANNALS], it can cluster coefficients [Bogdan]. However, compared to more established regularization terms like the $l1$ or $l2$ norm (lasso and ridge) the sorted L-one norm the available solvers solvers are much solver, see Figure x. This has limits the applicability of the SLOPE norm, for real world applications. Often one wants to solve the problem many times to tune hyper-parameters by cross validation.   In this article we address this problem for convex differentiable loss functions, which again can be seen in Figure x. 
+
+We will now describe the target problem in more detail.
 For a fixed non-increasing and non-negative sequence \(\lambda\), the
 Sorted L-One Penalized Estimation (SLOPE) problem~\cite{bogdan2013,bogdan2015}
 is defined as
@@ -19,3 +23,9 @@ is the \emph{sorted \(\ell_1\) norm}, defined such that
 \[
   |\beta_{(1)}| \geq |\beta_{(2)}| \geq \cdots \geq |\beta_{(p)}|.
 \]
+The resulting solution $\hat{\beta}$ has the property that it can cluster the coefficients over the magnitude, a cluster can be formulated as $\mathcal{C}= \{j: |\beta_j|=c\}$ for some $c$. 
+
+
+
+For many convex problem CG or modifications (Nestrov acc) are the state of the art solver. For SLOPE it is not as obvious how to apply the CG since the problem is non-separable. 
+We propose a hybrid algorithm that takes CG s

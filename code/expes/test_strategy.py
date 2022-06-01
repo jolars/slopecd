@@ -6,7 +6,6 @@ from slope.utils import dual_norm_slope
 from slope.solvers import prox_grad
 from slope.solvers import hybrid_cd
 from slope.solvers import oracle_cd
-from slope.solvers.proxsplit_cd import proxsplit_cd
 
 import time
 from libsvmdata import fetch_libsvm
@@ -43,17 +42,13 @@ beta_pgd, primals_pgd, gaps_pgd, time_pgd = prox_grad(
 beta_oracle, primals_oracle, gaps_oracle, time_oracle = oracle_cd(
     X, y, alphas, max_epochs=max_epochs, verbose=True, tol=tol,
 )
-beta_cdsplit, primals_cdsplit, gaps_cdsplit, theta_cdsplit, time_cdsplit = proxsplit_cd(
-    X, y, alphas, max_epochs=max_epochs, verbose=True, tol=tol, split_freq=1
-)
 
 # Duality gap vs epoch
 plt.clf()
 
-plt.semilogy(np.arange(len(gaps_cd)), gaps_cd, label='cd')
-plt.semilogy(np.arange(len(gaps_pgd)), gaps_pgd, label='pgd')
-plt.semilogy(np.arange(len(gaps_oracle)), gaps_oracle, label='oracle')
-plt.semilogy(np.arange(len(gaps_cdsplit)), gaps_cdsplit, label='cd_proxsplit')
+plt.semilogy(gaps_cd, label='cd')
+plt.semilogy(gaps_pgd, label='pgd')
+plt.semilogy(gaps_oracle, label='oracle')
 
 plt.legend()
 plt.title(dataset)
@@ -77,7 +72,6 @@ plt.clf()
 plt.semilogy(time_cd, gaps_cd, label='cd')
 plt.semilogy(time_pgd, gaps_pgd, label='pgd')
 plt.semilogy(time_oracle, gaps_oracle, label='oracle')
-plt.semilogy(time_cdsplit, gaps_cdsplit, label='cd_proxsplit')
 
 plt.ylabel("duality gap")
 plt.xlabel("Time (s)")

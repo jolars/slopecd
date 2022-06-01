@@ -48,7 +48,9 @@ def pure_cd_epoch_sparse(
         R += (old - beta_tilde) * sum_X
 
 
-def oracle_cd(X, y, alphas, max_epochs, tol=1e-10, verbose=False):
+def oracle_cd(
+    X, y, alphas, fit_intercept=True, max_epochs=10_000, tol=1e-10, verbose=False
+):
     """Oracle CD: get solution clusters and run CD on collapsed design."""
     n_samples, n_features = X.shape
     w_star = prox_grad(X, y, alphas, max_epochs=10000, tol=1e-10)[0]
@@ -74,6 +76,7 @@ def oracle_cd(X, y, alphas, max_epochs, tol=1e-10, verbose=False):
     # run CD on it:
     w = np.zeros(n_features)
     w_reduced = np.zeros(n_clusters)
+    intercept = 0.0
     R = y.copy()
 
     times = []
@@ -95,6 +98,11 @@ def oracle_cd(X, y, alphas, max_epochs, tol=1e-10, verbose=False):
             for j in range(n_clusters):
                 cluster = clusters[cluster_ptr[j]:cluster_ptr[j+1]]
                 w[cluster] = w_reduced[j] * np.sign(w_star[cluster])
+
+        if fit_intercept:
+            intercept_update = np.sum(R) / n_samples
+            R -= intercept_update
+            intercept += intercept_update
 
         theta = R / n_samples
         theta /= max(1, dual_norm_slope(X, theta, alphas))

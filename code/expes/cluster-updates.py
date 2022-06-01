@@ -1,153 +1,83 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from numpy.linalg import norm
+import pandas as pd
+from benchopt.datasets import make_correlated_data
+from libsvmdata import fetch_libsvm
 from scipy import stats
+from scipy.sparse import csc_matrix
 
+from slope.solvers import hybrid_cd
 from slope.utils import dual_norm_slope
 
+rho = 0.9
+n = 100
+p = 5000
+reg = 0.5
 
-def get_clusters(w):
-    unique, indices, counts = np.unique(np.abs(w),
-                                        return_inverse=True,
-                                        return_counts=True)
+X, y, _ = make_correlated_data(n_samples=n, n_features=p, random_state=0, rho=rho)
 
-    clusters = [[] for _ in range(len(unique))]
-    for i in range(len(indices)):
-        clusters[indices[i]].append(i)
-    return clusters[::-1], counts[::-1], indices[::-1], unique[::-1]
-
-
-np.random.seed(10)
-
-n = 10
-p = 4
-
-X = np.random.rand(n, p)
-beta = np.random.rand(p)
-y = X @ beta + np.random.rand(n)
+n, p = X.shape
 
 randnorm = stats.norm(loc=0, scale=1)
-q = 0.8
+q = 0.5
 
-lambdas = randnorm.ppf(1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1]))
-lambda_max = dual_norm_slope(X, y / len(y), lambdas)
-lambdas = lambda_max * lambdas * 0.5
+alphas_seq = randnorm.ppf(1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1]))
 
-beta = np.array([0.5, -0.5, 0.3, 0.7])
+alpha_max = dual_norm_slope(X, y / len(y), alphas_seq)
 
-C, C_size, c_indices, c = get_clusters(beta)
-C = np.array(C)
-C_size = np.array(C_size)
+alphas = alpha_max * alphas_seq * reg
+max_epochs = 500
+tol = 1e-10
+n_it = 20
+verbose = False
 
-s = np.sign(beta)
+times_cd = np.empty((n_it, max_epochs))
+times_cd_updates = np.empty((n_it, max_epochs))
 
-n_vals = 100
-c_vals = np.linspace(-0.8, 0.8, num=n_vals)
-c_vals = np.sort(np.concatenate((c, -c, [0], c_vals)))
+min_epoch = max_epochs
 
-cs = []
-grad = []
-obj = []
-obj_cs = []
+plt.clf()
 
-i = 1
+gaps_cd = []
+gaps_cd_updates = []
 
-for k, z in enumerate(c_vals):
-    z_in_c = abs(z) == abs(c)
-    z_in_c[i] = False
+for i in range(n_it):
+    beta_cd, primals_cd, gaps_cd, time_cd = hybrid_cd(
+        X, y, alphas, max_epochs=max_epochs, verbose=verbose, tol=tol
+    )
+    beta_cd_updates, primals_cd_updates, gaps_cd_updates, time_cd_updates = hybrid_cd(
+        X,
+        y,
+        alphas,
+        max_epochs=max_epochs,
+        verbose=verbose,
+        tol=tol,
+        cluster_updates=True,
+    )
+    times_cd[i, : len(time_cd)] = time_cd
+    times_cd_updates[i, : len(time_cd_updates)] = time_cd_updates
+    min_epoch = min(min_epoch, len(time_cd))
+    min_epoch = min(min_epoch, len(time_cd_updates))
 
-    Ci = C[i]
+times_cd = times_cd[:, :min_epoch]
+times_cd_updates = times_cd_updates[:, :min_epoch]
+time_cd = np.mean(times_cd, axis=0)
+time_cd_updates = np.mean(times_cd_updates, axis=0)
 
-    z_sign = np.sign(z)
-    c[i] = np.abs(z)
+gaps_cd = gaps_cd[:min_epoch]
+gaps_cd_updates = gaps_cd_updates[:min_epoch]
 
-    ord = np.argsort(c)[::-1]
+plt.clf()
 
-    if any(z_in_c):
-        j = np.where(z_in_c)[0][0]
-        if ord[i] > ord[j]:
-            if z_sign == -1:
-                ord[i], ord[j] = ord[j], ord[i]
+plt.semilogy(time_cd, gaps_cd, label="cd")
+plt.semilogy(time_cd_updates, gaps_cd_updates, label="cd_updates")
+lo, up = stats.bootstrap((times_cd,), np.mean, axis=-2).confidence_interval
+plt.fill_betweenx(gaps_cd, lo, up, alpha=0.2)
+lo, up = stats.bootstrap((times_cd_updates,), np.mean, axis=-2).confidence_interval
+plt.fill_betweenx(gaps_cd_updates, lo, up, alpha=0.2)
 
-        if ord[i] < ord[j]:
-            if z_sign == 1:
-                ord[i], ord[j] = ord[j], ord[i]
-
-    C = C[ord]
-    c = c[ord]
-    C_size = C_size[ord]
-    beta[Ci] = s[Ci] * z
-
-    # new index for cluster
-    i = ord[i]
-
-    z_sign = np.sign(z)
-
-    A = np.zeros(len(beta), dtype=bool)
-
-    A[Ci] = True
-    B = ~A
-
-    csum = np.concatenate(([0], np.cumsum(C_size)))
-
-    lam = lambdas[range(csum[i], csum[i + 1])]
-
-    g = -y.T @ X[:, A] @ s[A] + (X[:, B] @ beta[B]).T @ X[:, A] @ s[A] + \
-        z * norm(X[:, A] @ s[A])**2
-
-    tmp = 0.5 * norm(y - X[:, B] @ beta[B] - z * X[:, A] @ s[A])**2 + \
-          np.sum(np.sort(np.abs(beta))[::-1] * lambdas)
-    obj.append(tmp)
-    obj_cs.append(z)
-
-    if z == 0:
-        grad.append(g - np.sum(lam))
-        grad.append(g + np.sum(lam))
-        cs.append(z)
-        cs.append(z)
-    elif any(z_in_c):
-        if z_sign == 1:
-            next_lam = lambdas[range(csum[i] - 1, csum[i + 1] - 1)]
-        else:
-            next_lam = lambdas[range(csum[i] + 1, csum[i + 1] + 1)]
-
-        grad.append(g + z_sign * np.sum(lam))
-        grad.append(g + z_sign * np.sum(next_lam))
-        cs.append(z)
-        cs.append(z)
-    else:
-        grad.append(g + z_sign * np.sum(lam))
-        cs.append(z)
-
-# plt.clf()
-
-plt.rcParams['text.usetex'] = True
-
-fig, axs = plt.subplots(1, 2, sharex=True, sharey=False, figsize=(6.1, 3.1))
-
-c_out = np.delete(c, i)
-tmp = np.hstack((-c_out, 0, c_out))
-
-axs[0].vlines(tmp,
-              ymin=min(grad),
-              ymax=max(grad),
-              linestyles="dotted",
-              color="black")
-axs[0].hlines(0, xmin=min(cs), xmax=max(cs), color="lightgrey")
-axs[0].plot(cs, grad, color="black")
-axs[0].set_ylabel("$\\frac{\\partial}{\\partial_z} P(\\beta)$")
-axs[0].set_xlabel("$z$")
-
-axs[1].vlines(tmp,
-              ymin=min(obj),
-              ymax=max(obj),
-              linestyles="dotted",
-              color="black")
-axs[1].plot(obj_cs, obj, color="black")
-axs[1].set_ylabel("$P(\\beta)$")
-axs[1].set_xlabel("$z$")
-
-plt.tight_layout()
-plt.savefig("../figures/clusterupdate-grad-obj.pdf",
-            bbox_inches="tight",
-            pad_inches=0.01)
+plt.ylabel("duality gap")
+plt.xlabel("Time (s)")
+plt.legend()
+plt.title(f"simulated data, n={n}, p={p}, rho={rho}")
+plt.show(block=False)

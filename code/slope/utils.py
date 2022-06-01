@@ -1,7 +1,6 @@
 import numpy as np
 from numba import njit
 from numpy.linalg import norm
-
 from sklearn.isotonic import isotonic_regression
 
 
@@ -21,9 +20,11 @@ def primal(residual, beta, lambdas):
         lambdas * np.sort(np.abs(beta))[::-1]
     )
 
+
 def dual(theta, y):
     n = len(y)
-    return  (norm(y) ** 2 - norm(y - theta * n) ** 2) / (2 * n)
+    return (norm(y) ** 2 - norm(y - theta * n) ** 2) / (2 * n)
+
 
 def dual_norm_slope(X, theta, alphas):
     """Dual slope norm of X.T @ theta"""
@@ -58,46 +59,54 @@ def get_clusters(w):
 
 
 @njit
-def slope_threshold(x, lambdas, cluster_indices, cluster_ptr, c, j):
-    A = cluster_indices[cluster_ptr[j]:cluster_ptr[j+1]]
-    cluster_size = len(A)
+def slope_threshold(x, lambdas, cluster_ptr, c, n_c, j):
+    cluster_size = cluster_ptr[j+1] - cluster_ptr[j]
+    zero_lambda_sum = np.sum(lambdas[::-1][0:cluster_size])
 
-    # zero_cluster_size = 0 if c[-1] != 0 else len(C[-1])
-    zero_lambda_sum = np.sum(
-        lambdas[::-1][np.arange(cluster_size)])
+    if abs(x) < zero_lambda_sum:
+        return 0.0, n_c - 1
 
-    if np.abs(x) < zero_lambda_sum:
-        return 0.0
-    lo = zero_lambda_sum
-    hi = zero_lambda_sum
+    # check which direction we need to search
+    up_direction = sum(
+        lambdas[cluster_ptr[j]:cluster_ptr[j+1]]) > np.abs(x) - np.abs(c[j])
 
-    # TODO(JL): This can and should be done much more efficiently, using
-    # kind of binary search to find the right interval
-    for k in range(len(c)):
-        if k == j:
-            continue
+    if up_direction:
+        idx_c = np.arange(j+1, n_c+1)
+        start = cluster_size
+        end = 0
+    else:
+        if j == 0:
+            idx_c = np.array([0])
+        else:
+            idx_c = np.arange(0, j)
+        start = 0
+        end = cluster_size
 
-        # adjust C_start and C_end since we treat current cluster as variable
-        mod = cluster_size if k > j else 0
+    # check upper end of cluste
+    hi_start = cluster_ptr[idx_c[0]] - start
+    hi_end = cluster_ptr[idx_c[0]] + end
+    hi = sum(lambdas[hi_start:hi_end])
 
-        # check upper end of cluster
-        hi_start = cluster_ptr[k] - mod
-        hi_end = cluster_ptr[k] + cluster_size - mod
+    for k in idx_c:
 
         # check lower end of cluster
-        lo_start = cluster_ptr[k+1] - mod
-        lo_end = cluster_ptr[k+1] + cluster_size - mod
-
+        lo_start = cluster_ptr[k+1] - start
+        lo_end = cluster_ptr[k+1] + end
         lo = sum(lambdas[lo_start:lo_end])
-        hi = sum(lambdas[hi_start:hi_end])
 
         if abs(x) > hi + abs(c[k]):
             # we must be between clusters
-            # return np.sign(x) * (np.abs(x) - hi)
-            return x - np.sign(x)*hi
+            new_cluster_ind = k - 1 if up_direction else k
+            return x - np.sign(x)*hi, new_cluster_ind
+
         elif abs(x) >= lo + abs(c[k]):
             # we are in a cluster
-            return np.sign(x) * abs(c[k])
+            new_cluster_ind = k
+            return np.sign(x) * abs(c[k]), new_cluster_ind
 
-    # return np.sign(x) * (np.abs(x) - lo)
-    return x - np.sign(x)*lo
+        # replace lower interval by higher before next iteration
+        hi = lo
+
+    new_cluster_ind = k - 1 if up_direction else k + 1
+
+    return x - np.sign(x) * lo, new_cluster_ind

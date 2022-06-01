@@ -44,10 +44,16 @@ class TestPGDSolvers(unittest.TestCase):
 
         alphas = alpha_max * alphas_seq / 50
 
-        for fista in [False, True]:
+        for acceleration in ["none", "fista"]:
             tol = 1e-10
             w, E, gaps, _ = prox_grad(
-                X, y, alphas, fista=fista, max_epochs=15_000, gap_freq=10, verbose=False
+                X,
+                y,
+                alphas,
+                acceleration=acceleration,
+                max_epochs=15_000,
+                gap_freq=10,
+                verbose=False,
             )
             with self.subTest():
                 self.assertGreater(tol, gaps[-1])

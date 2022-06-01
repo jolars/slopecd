@@ -35,6 +35,7 @@ def prox_grad(
     R = y.copy()
     w = np.zeros(n_features)
     theta = np.zeros(n_samples)
+    grad = np.empty(n_features)
 
     # FISTA parameters
     z = w.copy()
@@ -43,6 +44,8 @@ def prox_grad(
     # BB parameters
     gamma = 2.0
     prev_bb = 1.0
+    w_old = w
+    grad_old = grad
 
     if acceleration == "anderson":
         K = 5

@@ -57,6 +57,7 @@ def get_clusters(w):
     cluster_ptr = np.r_[0, cluster_ptr]
     return cluster_indices, cluster_ptr, unique[::-1]
 
+
 @njit
 def slope_threshold_new(x, lambdas, cluster_ptr, c, n_c, j):
     cluster_size = cluster_ptr[j + 1] - cluster_ptr[j]
@@ -169,4 +170,3 @@ def slope_threshold(x, lambdas, cluster_ptr, c, n_c, j):
     new_cluster_ind = k - 1 if up_direction else k + 1
 
     return x - np.sign(x) * lo, new_cluster_ind
-

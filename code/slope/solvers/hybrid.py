@@ -12,11 +12,12 @@ from slope.utils import (
     slope_threshold,
     slope_threshold_new,
 )
-    
+
 
 @njit
 def block_cd_epoch(
-    w, X, R, alphas, cluster_indices, cluster_ptr, c, n_c, cluster_updates, use_old_thresholder
+    w, X, R, alphas, cluster_indices, cluster_ptr, c, n_c,
+    cluster_updates, use_old_thresholder
 ):
     n_samples = X.shape[0]
 
@@ -33,7 +34,8 @@ def block_cd_epoch(
         c_old = abs(c[j])
         x = c_old + (sum_X.T @ R) / (L_j * n_samples)
         beta_tilde, ind_new = slope_threshold(x, alphas/L_j, cluster_ptr, c, n_c, j)
-        beta_tilde_new, ind_new_new = slope_threshold_new(x, alphas/L_j, cluster_ptr, c, n_c, j)
+        beta_tilde_new, ind_new_new = slope_threshold_new(
+            x, alphas/L_j, cluster_ptr, c, n_c, j)
 
         if not use_old_thresholder:
             beta_tilde = beta_tilde_new

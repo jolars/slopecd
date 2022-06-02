@@ -11,7 +11,7 @@ def prox_grad(
     X,
     y,
     alphas,
-    acceleration="none",
+    acceleration=None,
     line_search=False,
     gap_freq=1,
     max_epochs=100,
@@ -19,9 +19,9 @@ def prox_grad(
     tol=1e-10,
     verbose=True,
 ):
-    if acceleration not in ["none", "anderson", "fista", "bb"]:
+    if acceleration not in [None, "anderson", "fista", "bb"]:
         raise ValueError(
-            "`acceleration` must be one of 'none', 'anderson', and 'fista'"
+            "`acceleration` must be one of None, 'anderson', and 'fista'"
         )
 
     if acceleration == "bb" and not line_search:

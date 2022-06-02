@@ -124,16 +124,13 @@ def hybrid_cd(
     use_old_thresholder=True,
     verbose=True,
     tol=1e-3,
+    pgd_freq=5
 ):
     is_X_sparse = sparse.issparse(X)
     n_samples, n_features = X.shape
     R = y.copy()
     w = np.zeros(n_features)
     theta = np.zeros(n_samples)
-
-    times = []
-    time_start = timer()
-    times.append(timer() - time_start)
 
     if is_X_sparse:
         L = sparse.linalg.svds(X, k=1)[1][0] ** 2
@@ -143,12 +140,13 @@ def hybrid_cd(
     E, gaps = [], []
     E.append(norm(y)**2 / (2 * n_samples))
     gaps.append(E[0])
-
-    c, cluster_ptr, cluster_indices, n_c = get_clusters(w)
+    times = []
+    time_start = timer()
+    times.append(timer() - time_start)
 
     for epoch in range(max_epochs):
         # This is experimental, it will need to be justified
-        if epoch % 5 == 0:
+        if epoch % pgd_freq == 0:
             w = prox_slope(w + (X.T @ R) / (L * n_samples), alphas / L)
             R[:] = y - X @ w
             c, cluster_ptr, cluster_indices, n_c = get_clusters(w)

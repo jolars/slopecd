@@ -15,6 +15,7 @@ def prox_grad(
     line_search=False,
     gap_freq=1,
     max_epochs=100,
+    max_time=np.Inf,
     tol=1e-10,
     verbose=True,
 ):
@@ -140,7 +141,9 @@ def prox_grad(
             w = w_new
             z = w
 
-        if it % gap_freq == 0:
+        times_up = timer() - time_start > max_time
+
+        if it % gap_freq == 0 or times_up:
             R[:] = y - X @ w
             theta = R / n_samples
             theta /= max(1, dual_norm_slope(X, theta, alphas))
@@ -157,7 +160,7 @@ def prox_grad(
 
             if verbose:
                 print(f"Epoch: {it + 1}, loss: {primal}, gap: {gap:.2e}")
-            if gap < tol:
+            if gap < tol or times_up:
                 break
 
     return w, np.array(E), np.array(gaps), np.array(times)

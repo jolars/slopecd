@@ -6,23 +6,36 @@ from numpy.linalg import norm
 from scipy import sparse
 
 from slope.clusters import get_clusters, update_cluster
-from slope.utils import dual_norm_slope, prox_slope, slope_threshold
+from slope.utils import (
+    dual_norm_slope,
+    prox_slope,
+    slope_threshold
+)
 
 
 @njit
 def block_cd_epoch(
-    w, X, R, alphas, cluster_indices, cluster_ptr, c, n_c, cluster_updates
+    w,
+    X,
+    R,
+    alphas,
+    cluster_indices,
+    cluster_ptr,
+    c,
+    n_c,
+    cluster_updates,
+    update_zero_cluster,
 ):
     n_samples = X.shape[0]
 
     j = 0
     while j < n_c:
-        if c[j] == 0:
+        if c[j] == 0 and not update_zero_cluster:
             j += 1
             continue
 
         cluster = cluster_indices[cluster_ptr[j]:cluster_ptr[j+1]]
-        sign_w = np.sign(w[cluster])
+        sign_w = np.sign(w[cluster]) if c[j] != 0 else np.ones(len(cluster))
         sum_X = X[:, cluster] @ sign_w
         L_j = sum_X.T @ sum_X / n_samples
         c_old = abs(c[j])
@@ -58,18 +71,19 @@ def block_cd_epoch_sparse(
     cluster_ptr,
     c,
     n_c,
-    cluster_updates
+    cluster_updates,
+    update_zero_cluster
 ):
     n_samples = len(R)
 
     j = 0
     while j < n_c:
-        if c[j] == 0:
+        if c[j] == 0 and not update_zero_cluster:
             j += 1
             continue
 
         cluster = cluster_indices[cluster_ptr[j]:cluster_ptr[j+1]]
-        sign_w = np.sign(w[cluster])
+        sign_w = np.sign(w[cluster]) if c[j] != 0 else np.ones(len(cluster))
         sum_X = compute_block_scalar_sparse(
             X_data, X_indices, X_indptr, sign_w, cluster, n_samples)
         L_j = sum_X.T @ sum_X / n_samples
@@ -109,19 +123,18 @@ def hybrid_cd(
     y,
     alphas,
     max_epochs=1000,
+    max_time=np.Inf,
     cluster_updates=False,
+    update_zero_cluster=False,
     verbose=True,
     tol=1e-3,
+    pgd_freq=5
 ):
     is_X_sparse = sparse.issparse(X)
     n_samples, n_features = X.shape
     R = y.copy()
     w = np.zeros(n_features)
     theta = np.zeros(n_samples)
-
-    times = []
-    time_start = timer()
-    times.append(timer() - time_start)
 
     if is_X_sparse:
         L = sparse.linalg.svds(X, k=1)[1][0] ** 2
@@ -131,12 +144,13 @@ def hybrid_cd(
     E, gaps = [], []
     E.append(norm(y)**2 / (2 * n_samples))
     gaps.append(E[0])
-
-    c, cluster_ptr, cluster_indices, n_c = get_clusters(w)
+    times = []
+    time_start = timer()
+    times.append(timer() - time_start)
 
     for epoch in range(max_epochs):
         # This is experimental, it will need to be justified
-        if epoch % 5 == 0:
+        if epoch % pgd_freq == 0:
             w = prox_slope(w + (X.T @ R) / (L * n_samples), alphas / L)
             R[:] = y - X @ w
             c, cluster_ptr, cluster_indices, n_c = get_clusters(w)
@@ -154,6 +168,7 @@ def hybrid_cd(
                     c,
                     n_c,
                     cluster_updates,
+                    update_zero_cluster
                 )
             else:
                 n_c = block_cd_epoch(
@@ -166,6 +181,7 @@ def hybrid_cd(
                     c,
                     n_c,
                     cluster_updates,
+                    update_zero_cluster
                 )
 
         theta = R / n_samples
@@ -180,9 +196,11 @@ def hybrid_cd(
         gaps.append(gap)
         times.append(timer() - time_start)
 
+        times_up = timer() - time_start > max_time
+
         if verbose:
             print(f"Epoch: {epoch + 1}, loss: {primal}, gap: {gap:.2e}")
-        if gap < tol:
+        if gap < tol or times_up:
             break
 
     return w, E, gaps, times

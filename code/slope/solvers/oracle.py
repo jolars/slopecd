@@ -48,10 +48,12 @@ def pure_cd_epoch_sparse(
         R += (old - beta_tilde) * sum_X
 
 
-def oracle_cd(X, y, alphas, max_epochs, tol=1e-10, verbose=False):
+def oracle_cd(X, y, alphas, max_epochs, tol=1e-10, max_time=np.Inf, verbose=False,
+              w_star=None):
     """Oracle CD: get solution clusters and run CD on collapsed design."""
     n_samples, n_features = X.shape
-    w_star = prox_grad(X, y, alphas, max_epochs=10000, tol=1e-10)[0]
+    if w_star is None:
+        w_star = prox_grad(X, y, alphas, max_epochs=10000, tol=1e-10)[0]
     clusters, cluster_ptr, unique = get_clusters(w_star)
     n_clusters = len(cluster_ptr) - 1
     is_X_sparse = sparse.issparse(X)
@@ -108,9 +110,11 @@ def oracle_cd(X, y, alphas, max_epochs, tol=1e-10, verbose=False):
         gaps.append(gap)
         times.append(timer() - time_start)
 
+        times_up = timer() - time_start > max_time
+
         if verbose:
             print(f"Epoch: {epoch + 1}, loss: {primal}, gap: {gap:.2e}")
-        if gap < tol:
+        if gap < tol or times_up:
             break
 
     return w, E, gaps, times

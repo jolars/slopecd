@@ -21,7 +21,7 @@ def prox_grad(
 ):
     if acceleration not in [None, "anderson", "fista", "bb"]:
         raise ValueError(
-            "`acceleration` must be one of None, 'anderson', and 'fista'"
+            "`acceleration` must be one of None, 'anderson', 'bb', and 'fista'"
         )
 
     if acceleration == "bb" and not line_search:

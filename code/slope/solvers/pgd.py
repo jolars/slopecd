@@ -24,7 +24,7 @@ def prox_grad(
         )
 
     if acceleration == "bb" and not line_search:
-        raise ValueError("cannot use Barzilai rule without line search")
+        raise ValueError("cannot use Barzilai-Borwein  rule with `line_search=False`")
 
     n_samples, n_features = X.shape
     R = y.copy()

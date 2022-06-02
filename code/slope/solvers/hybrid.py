@@ -123,7 +123,7 @@ def hybrid_cd(
     y,
     alphas,
     max_epochs=1000,
-    max_time=np.Inf,
+    max_time=np.inf,
     cluster_updates=False,
     update_zero_cluster=False,
     verbose=True,

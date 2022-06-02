@@ -14,7 +14,7 @@ def prox_grad(
     fista=False,
     max_epochs=100,
     tol=1e-10,
-    max_time=np.Inf,
+    max_time=np.inf,
     gap_freq=1,
     anderson=False,
     verbose=True,

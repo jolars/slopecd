@@ -6,7 +6,11 @@ from numpy.linalg import norm
 from scipy import sparse
 
 from slope.clusters import get_clusters, update_cluster
-from slope.utils import dual_norm_slope, prox_slope, slope_threshold
+from slope.utils import (
+    dual_norm_slope,
+    prox_slope,
+    slope_threshold
+)
 
 
 @njit

@@ -8,8 +8,17 @@ from slope.utils import dual_norm_slope, prox_slope
 
 
 def prox_grad(
-        X, y, alphas, fista=False, max_epochs=100, tol=1e-10, gap_freq=1,
-        anderson=False, verbose=True):
+    X,
+    y,
+    alphas,
+    fista=False,
+    max_epochs=100,
+    tol=1e-10,
+    max_time=np.Inf,
+    gap_freq=1,
+    anderson=False,
+    verbose=True,
+):
     if anderson and fista:
         raise ValueError("anderson=True cannot be combined with fista=True")
     n_samples, n_features = X.shape
@@ -77,7 +86,9 @@ def prox_grad(
             w = w_new
             z = w
 
-        if it % gap_freq == 0:
+        times_up = timer() - time_start > max_time
+
+        if it % gap_freq == 0 or times_up:
             R[:] = y - X @ w
             theta = R / n_samples
             theta /= max(1, dual_norm_slope(X, theta, alphas))
@@ -94,6 +105,7 @@ def prox_grad(
 
             if verbose:
                 print(f"Epoch: {it + 1}, loss: {primal}, gap: {gap:.2e}")
-            if gap < tol:
+            if gap < tol or times_up:
                 break
+
     return w, E, gaps, times

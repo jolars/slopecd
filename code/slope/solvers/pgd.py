@@ -77,7 +77,7 @@ def prox_grad(
                 delta_grad = grad - grad_old
 
                 # BB step size safe-guarding
-                delta_w_grad_dot = np.dot(delta_w, delta_grad)
+                delta_w_grad_dot = delta_w @ delta_grad
                 bb1 = (norm(delta_w) ** 2) / delta_w_grad_dot
                 bb2 = delta_w_grad_dot / (norm(delta_grad) ** 2)
 

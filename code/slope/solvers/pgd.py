@@ -25,7 +25,7 @@ def prox_grad(
         )
 
     if acceleration == "bb" and not line_search:
-        raise ValueError("cannot use Barzilai rule without line search")
+        raise ValueError("cannot use Barzilai-Borwein  rule with `line_search=False`")
 
     n_samples, n_features = X.shape
     R = y.copy()
@@ -78,7 +78,7 @@ def prox_grad(
                 delta_grad = grad - grad_old
 
                 # BB step size safe-guarding
-                delta_w_grad_dot = np.dot(delta_w, delta_grad)
+                delta_w_grad_dot = delta_w @ delta_grad
                 bb1 = (norm(delta_w) ** 2) / delta_w_grad_dot
                 bb2 = delta_w_grad_dot / (norm(delta_grad) ** 2)
 

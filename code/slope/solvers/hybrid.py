@@ -114,6 +114,7 @@ def hybrid_cd(
     y,
     alphas,
     max_epochs=1000,
+    max_time=np.Inf,
     cluster_updates=False,
     use_old_thresholder=True,
     verbose=True,
@@ -184,9 +185,11 @@ def hybrid_cd(
         gaps.append(gap)
         times.append(timer() - time_start)
 
+        times_up = timer() - time_start > max_time
+
         if verbose:
             print(f"Epoch: {epoch + 1}, loss: {primal}, gap: {gap:.2e}")
-        if gap < tol:
+        if gap < tol or times_up:
             break
 
     return w, E, gaps, times

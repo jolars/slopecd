@@ -4,11 +4,11 @@ from benchopt.datasets import make_correlated_data
 from libsvmdata import fetch_libsvm
 from scipy import stats
 
-from slope.solvers import admm, hybrid_cd, prox_grad
+from slope.solvers import admm, hybrid_cd, prox_grad, oracle_cd
 from slope.utils import dual_norm_slope
 
-n = 100
-p = 400
+n = 500
+p = 100
 
 dataset = "simulated"
 if dataset == "simulated":
@@ -52,16 +52,9 @@ beta_admm, _, primals_admm, gaps_admm, time_admm = admm(
     tol=tol,
     fit_intercept=False,
 )
-beta_oracle, _, primals_oracle, gaps_oracle, time_oracle = admm(
-    X,
-    y,
-    alphas,
-    rho=1,
-    adaptive_rho=True,
-    max_epochs=max_epochs,
-    verbose=True,
-    tol=tol,
-    fit_intercept=False,
+
+beta_oracle, primals_oracle, gaps_oracle, time_oracle = oracle_cd(
+    X, y, alphas, max_epochs=max_epochs, verbose=True, tol=tol
 )
 
 # Duality gap vs epoch

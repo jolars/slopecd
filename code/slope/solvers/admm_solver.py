@@ -125,10 +125,12 @@ def admm(
         if it % gap_freq == 0 or times_up:
             r[:] = y - X @ w
             theta = r / n
-            theta /= max(1, dual_norm_slope(X[:,fit_intercept:], theta, lambdas))
+            theta /= max(1, dual_norm_slope(X[:, fit_intercept:], theta, lambdas))
 
             dual = (y_norm_2 - norm(y - theta * n) ** 2) / (2 * n)
-            primal = norm(r) ** 2 / (2 * n) + np.sum(lambdas * np.sort(np.abs(w[fit_intercept:]))[::-1])
+            primal = norm(r) ** 2 / (2 * n) + np.sum(
+                lambdas * np.sort(np.abs(w[fit_intercept:]))[::-1]
+            )
 
             primals.append(primal)
             gap = primal - dual

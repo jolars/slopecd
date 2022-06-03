@@ -30,7 +30,7 @@ max_time = 120
 tol = 1e-6
 
 beta_cd, primals_cd, gaps_cd, time_cd = hybrid_cd(
-    X, y, alphas, max_epochs=max_epochs, verbose=True, tol=tol, line_search=False,max_time=max_time
+    X, y, alphas, max_epochs=max_epochs, verbose=True, tol=tol, max_time=max_time
 )
 beta_pgd, primals_pgd, gaps_pgd, time_pgd = prox_grad(
     X, y, alphas, max_epochs=max_epochs, verbose=True, tol=tol, max_time=max_time,

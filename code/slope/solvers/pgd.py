@@ -15,7 +15,7 @@ def prox_grad(
     line_search=False,
     gap_freq=1,
     max_epochs=100,
-    max_time=np.Inf,
+    max_time=np.inf,
     tol=1e-10,
     verbose=True,
 ):

@@ -2,22 +2,8 @@
 \section{Introduction}\label{sec:introduction}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-In this paper we present a novel algorithm for solving the Sorted L-One
-Penalized Estimation (SLOPE) problem. The sorted L-one norm is an increasing
-popular regularization term, this since it has several appealing properties: It
-has shown to control FDR [CANDES ANNALS], it can cluster coefficients [Bogdan].
-However, compared to more established regularization terms like the \(l1\) or
-\(l2\) norm (lasso and ridge) the sorted L-one norm the available solvers
-solvers are much solver, see Figure x. This has limits the applicability of the
-SLOPE norm, for real world applications. Often one wants to solve the problem
-many times to tune hyper-parameters by cross validation.   In this article we
-address this problem for convex differentiable loss functions, which again can
-be seen in Figure x.
-
-We will now describe the target problem in more detail.
-For a fixed non-increasing and non-negative sequence \(\lambda\), the
-Sorted L-One Penalized Estimation (SLOPE) problem~\cite{bogdan2013,bogdan2015}
-is defined as
+In this paper we present a novel numerical algorithm for Sorted L-One Penalized
+Estimation (SLOPE)~\cite{bogdan2013, bogdan2015}, defined as
 \begin{equation}
   \label{eq:slope-problem}
   \operatorname{minimize}_{\beta \in \mathbb{R}^p}
@@ -25,17 +11,58 @@ is defined as
 \end{equation}
 where we take \(L\) to be smooth and twice differentiable and
 \begin{equation}
-  \label{eq:sortedl-l1-norm}
+  \label{eq:sorted-l1-norm}
   J(\beta) = \sum_{j=1}^p \lambda_j|\beta_{(j)}|
 \end{equation}
 is the \emph{sorted \(\ell_1\) norm}, defined such that
 \[
-  |\beta_{(1)}| \geq |\beta_{(2)}| \geq \cdots \geq |\beta_{(p)}|.
+  |\beta_{(1)}| \geq |\beta_{(2)}| \geq \cdots \geq |\beta_{(p)}|,
 \]
-The resulting solution \(\hat{\beta}\) has the property that it can cluster the
-coefficients over the magnitude, a cluster can be formulated as \(\mathcal{C}=
-\{j: |\beta_j|=c\}\) for some \(c\).
+and \(\lambda\) is a fixed non-increasing and non-negative sequence.
 
-For many convex problem CG or modifications (Nestrov acc) are the state of the
-art solver. For SLOPE it is not as obvious how to apply the CG since the
-problem is non-separable. We propose a hybrid algorithm that takes CG s
+SLOPE is a sparse regression method that has become increasingly popular due to
+several appealing properties, such as its ability to control false discovery
+rate~\cite{bogdan2015, kos2020}, cluster coefficients~\cite{figueiredo2016,
+schneider2020a}, and recover sparsity and ordering patterns in the
+solution~\cite{bogdan2022}. Unlike other competing regularization methods such
+as MCP~\cite{zhang2010} and SCAD~\cite{fan2001}, SLOPE is also a convex
+problem~\cite{bogdan2015}.
+
+In spite of the availability of predictor screening rules~\cite{elvira2022,
+larsson2020c}, which help speed up SLOPE in the high-dimensional regime,
+current state-of-the-art algorithms for SLOPE perform poorly in comparison to
+those of other, more estabilished, penalization methods such as the lasso
+(\(\ell_1\)-norm regularization) and ridge regression (\(\ell_2\)-norm
+regularization). As a small illustration of this issue, we compared the
+speed at which the SLOPE and glmnet packages fit a complete regularization
+path for the bcTCGA data set. SLOPE takes x seconds to fit the full path,
+whilst glmnet requires only y seconds.
+
+This lackluster performance has hampered the applicability of SLOPE to many
+real-world applications, particularly because users often need to solve SLOPE
+repeatedly when tuning hyper-parameters for SLOPE, for instance in
+cross-validation, or when fitting SLOPE as part of Adaptive Bayesian
+SLOPE~\cite{jiang2022}.
+
+A major reason for why algorithms for solving other regression models with
+non-differentiable penalties, such as the lasso, MCP, and SCAD, enjoy better
+performance is that they minimize their objectives using coordinate
+descent~\cite{breheny2011, friedman2010} rather than proximal gradient descent
+algorithms such as Fast Iterative Thresholding (FISTA)~\cite{beck2009} and the
+alternating direction method of multipliers method (ADMM)~\cite{boyd2010},
+which are both used in the current version of the SLOPE package.
+\jl{Add benchopt reference.}
+
+Applying coordinate descent to SLOPE is, however, not quite straightforward
+because convergence guarantees for coordinate descent require the
+objective to be separable, which, as we can see from \eqref{eq:sorted-l1-norm}
+is not the case for SLOPE. 
+
+% The resulting solution \(\hat{\beta}\) has the property that it can cluster the
+% coefficients by their magnitudes, such that \(\mathcal{C}=
+% \{j: |\beta_j|=c\}\) for some \(c\).
+
+In this article we address this problem by introducing a new, highly effective
+algorithm for SLOPE based on a hybrid proximal gradient and coordinate descent
+scheme. Our method features convergence guarantees and reduces the time
+required to fit SLOPE by orders of magnitude in our empirical experiments.

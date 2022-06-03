@@ -44,8 +44,9 @@ class TestPGDSolvers(unittest.TestCase):
 
         alphas = alpha_max * alphas_seq / 50
 
-        for acceleration in ["none", "fista"]:
-            tol = 1e-10
+        for acceleration in [None, "fista", "anderson", "bb"]:
+            tol = 1e-8
+            line_search = acceleration == "bb"
             w, E, gaps, _ = prox_grad(
                 X,
                 y,
@@ -53,6 +54,8 @@ class TestPGDSolvers(unittest.TestCase):
                 acceleration=acceleration,
                 max_epochs=15_000,
                 gap_freq=10,
+                tol=tol,
+                line_search=line_search,
                 verbose=False,
             )
             with self.subTest():

@@ -32,9 +32,12 @@ breheny_datasets = [
 
 base_url = "https://s3.amazonaws.com/pbreheny-data-sets/"
 
+
 def fetch_breheny(dataset: str):
     if dataset not in breheny_datasets:
-        raise ValueError(f"{dataset} is not among available options: {breheny_datasets}")
+        raise ValueError(
+            f"{dataset} is not among available options: {breheny_datasets}"
+        )
 
     base_dir = appdirs.user_cache_dir("slopecd")
 
@@ -59,9 +62,9 @@ def fetch_breheny(dataset: str):
 
     return X, y
 
+
 def get_data(dataset: str):
     if dataset in breheny_datasets:
         return fetch_breheny(dataset)
     else:
         return fetch_libsvm(dataset)
-    

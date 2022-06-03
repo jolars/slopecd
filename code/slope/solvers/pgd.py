@@ -78,13 +78,14 @@ def prox_grad(
                 delta_grad = grad - grad_old
 
                 # BB step size safe-guarding
-                delta_w_grad_dot = delta_w @ delta_grad
-                bb1 = (norm(delta_w) ** 2) / delta_w_grad_dot
-                bb2 = delta_w_grad_dot / (norm(delta_grad) ** 2)
+                if np.any(delta_w != 0) and np.any(delta_grad != 0):
+                    delta_w_grad_dot = delta_w @ delta_grad
+                    bb1 = (norm(delta_w) ** 2) / delta_w_grad_dot
+                    bb2 = delta_w_grad_dot / (norm(delta_grad) ** 2)
 
-                bb = bb2 if bb1 < gamma * bb2 else bb1 - bb2 / gamma
-                L = 1.0 / bb if bb > 0 else 1.0 / prev_bb
-                prev_bb = bb
+                    bb = bb2 if bb1 < gamma * bb2 else bb1 - bb2 / gamma
+                    L = 1.0 / bb if bb > 0 else 1.0 / prev_bb
+                    prev_bb = bb
             elif acceleration not in ["bb", "anderson"]:
                 L *= 0.9
 

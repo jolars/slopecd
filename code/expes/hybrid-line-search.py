@@ -31,17 +31,6 @@ tol = 1e-6
 beta_cd_ls, primals_cd_ls, gaps_cd_ls, time_cd_ls = hybrid_cd(
     X, y, alphas, max_epochs=max_epochs, verbose=True, tol=tol, line_search=True, max_time=max_time
 )
-beta_cd_bb, primals_cd_bb, gaps_cd_bb, time_cd_bb = hybrid_cd(
-    X,
-    y,
-    alphas,
-    max_epochs=max_epochs,
-    verbose=True,
-    tol=tol,
-    line_search=True,
-    use_bb=True,
-    max_time=max_time
-)
 
 beta_cd, primals_cd, gaps_cd, time_cd = hybrid_cd(
     X, y, alphas, max_epochs=max_epochs, verbose=True, tol=tol, line_search=False,max_time=max_time
@@ -51,7 +40,6 @@ plt.clf()
 
 plt.semilogy(time_cd, gaps_cd, label="cd")
 plt.semilogy(time_cd_ls, gaps_cd_ls, label="cd_ls")
-plt.semilogy(time_cd_bb, gaps_cd_bb, label="cd_bb")
 
 plt.legend()
 plt.title(f"{dataset}, reg: {reg}, q: {q}")

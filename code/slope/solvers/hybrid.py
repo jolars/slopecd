@@ -127,7 +127,6 @@ def hybrid_cd(
     cluster_updates=False,
     update_zero_cluster=False,
     line_search=True,
-    use_bb=True,
     verbose=True,
     tol=1e-3,
     pgd_freq=5
@@ -155,34 +154,15 @@ def hybrid_cd(
     # line search parameter
     eta = 2.0
 
-    # BB parameters
-    gamma = 2.0
-    prev_bb = 1.0
-    w_old = w
-    grad_old = grad
-
     E, gaps = [], []
     E.append(norm(y)**2 / (2 * n_samples))
     gaps.append(E[0])
     for epoch in range(max_epochs):
         if epoch % pgd_freq == 0:
-            if epoch > 0 and use_bb:
-                grad_old = grad.copy()
             grad = -(X.T @ R) / n_samples
             if line_search:
                 f_old = norm(R) ** 2 / (2 * n_samples)
-                if use_bb and epoch > 0:
-                    delta_w = w - w_old
-                    delta_grad = grad - grad_old
-
-                    # BB step size safe-guarding
-                    delta_w_grad_dot = delta_w @ delta_grad
-                    bb1 = (norm(delta_w) ** 2) / delta_w_grad_dot
-                    bb2 = delta_w_grad_dot / (norm(delta_grad) ** 2)
-
-                    bb = bb2 if bb1 < gamma * bb2 else bb1 - bb2 / gamma
-                    L = 1.0 / bb if bb > 0 else 1.0 / prev_bb
-                    prev_bb = bb
+                L *= 0.9
 
                 w_old = w.copy()
 

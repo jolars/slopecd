@@ -84,6 +84,7 @@ def prox_grad(
 
                 bb = bb2 if bb1 < gamma * bb2 else bb1 - bb2 / gamma
                 L = 1.0 / bb if bb > 0 else 1.0 / prev_bb
+                prev_bb = bb
             elif acceleration not in ["bb", "anderson"]:
                 L *= 0.9
 

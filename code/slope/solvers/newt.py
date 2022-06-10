@@ -2,13 +2,13 @@ from timeit import default_timer as timer
 
 import numpy as np
 from benchopt.datasets.simulated import make_correlated_data
-from numpy.random import default_rng 
+from numpy.random import default_rng
 from scipy import sparse, stats
 from scipy.linalg import inv, norm, solve
 from scipy.optimize import minimize
 
-from slope.utils import dual_norm_slope, prox_slope
 from slope.solvers import prox_grad
+from slope.utils import dual_norm_slope, prox_slope
 
 
 def permutation_matrix(x):
@@ -25,17 +25,21 @@ def permutation_matrix(x):
     return pi
 
 
-def jacobian(w, B, lambdas):
+def jacobian(w, pi, B, lambdas):
     n = len(w)
 
-    # optimal dual multiplier vector
-    z = solve(B @ B.T, B @ (w - lambdas - prox_slope(w, lambdas)))
+    x = pi @ prox_slope(w, lambdas)
+    z = solve(B @ B.T, B @ (w - lambdas - x))
 
-    z_supp = np.where(z != 0)[0]
+    # z_supp = np.where(z != 0)[0]
+    # Bx_supp = np.where(B @ x == 0)
 
-    B_z = B[z_supp, :]
+    # supp = np.where(B @ x == 0)[0]
+    supp = np.where(z != 0)[0]
 
-    P = np.eye(n) - B_z.T @ solve(B_z @ B_z.T, B_z)
+    B_s = B[supp, :]
+
+    P = np.eye(n) - B_s.T @ solve(B_s @ B_s.T, B_s)
 
     return P
 
@@ -44,7 +48,7 @@ def jacobian(w, B, lambdas):
 
 # minimize_u (1 / sigma) * kappa_star(u) + 0.5 * ||u-x||^2
 # def find_phi(x, b):
-     
+
 
 def L(y, x, A, b, sigma, phi):
     return 0.5 * norm(b) ** 2 + b @ y - (0.5 / sigma) * norm(x) ** 2 + sigma * phi
@@ -76,14 +80,14 @@ q = 0.2
 lambdas_seq = randnorm.ppf(1 - np.arange(1, n + 1) * q / (2 * n))
 lambda_max = dual_norm_slope(A, b, lambdas_seq)
 
-lambdas = lambda_max * lambdas_seq / 20
+lambdas = lambda_max * lambdas_seq / 100
 
 sigma = 1
 mu = 0.25
 eta = 0.5
 delta = 0.5
 tau = 0.5
-alpha = 1
+alpha = 0.01
 
 m, n = A.shape
 
@@ -111,12 +115,11 @@ for epoch in range(max_epochs):
     # step 1
     for j in range(100):
         # step 1a, compute the newton direction
-        tmp = (1 / sigma) * x - A.T @ b
+        w = x / sigma - (A.T @ y)
 
-        pi = permutation_matrix(tmp)  # pi @ x == np.sort(np.abs(x))[::-1]
-
-        # optimal dual multiplier vector
-        P = jacobian(pi @ tmp, B, lambdas)
+        # construct M
+        pi = permutation_matrix(w)  # pi @ x == np.sort(np.abs(x))[::-1]
+        P = jacobian(pi @ w, pi, B, lambdas)
         M = solve(pi, P) @ P
 
         V = np.eye(m) + sigma * (A @ M @ A.T)
@@ -140,19 +143,20 @@ for epoch in range(max_epochs):
     x = prox_slope(x - sigma * (A.T @ y), sigma * lambdas)
 
     # step 3, update sigma
-    # TODO: we don't actually know how to do this
-    sigma *= 1.1
+    # TODO: it's not actually clear from the paper how to do this
+    sigma *= 2
 
     times_up = timer() - time_start > max_time
 
     if epoch % gap_freq == 0 or times_up:
         r[:] = b - A @ x
-        theta = r
-        theta /= max(1, dual_norm_slope(A, theta, lambdas))
+        theta = r / m
+        theta /= max(1, dual_norm_slope(A, theta, lambdas / m))
 
-        # dual = 0.5 * (norm(b) ** 2 - norm(b - theta) ** 2)
-        dual = 0.5 * norm(b) ** 2 + theta @ y
-        primal = 0.5 * norm(r) ** 2 + np.sum(lambdas * np.sort(np.abs(x))[::-1])
+        primal = (0.5 / m) * norm(r) ** 2 + np.sum(
+            (lambdas / m) * np.sort(np.abs(x))[::-1]
+        )
+        dual = (0.5 / m) * (norm(b) ** 2 - norm(b - theta * m) ** 2)
 
         primals.append(primal)
         gap = primal - dual
@@ -164,11 +168,6 @@ for epoch in range(max_epochs):
         if gap < tol or times_up:
             break
 
-w_pgd, primals_pgd, gaps_pgd, _ = prox_grad(
-    A,
-    b,
-    lambdas / m,
-    max_epochs = max_epochs
-)
+w_pgd, primals_pgd, gaps_pgd, _ = prox_grad(A, b, lambdas / m, max_epochs=max_epochs)
 
 # return x, primals, gaps, times

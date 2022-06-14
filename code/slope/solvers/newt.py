@@ -31,19 +31,19 @@ def psi(y, x, A, b, lambdas, sigma):
 
     # TODO(jolars): not at all sure what epsilon and lambdas should be here
     # epsilon = np.sum(np.abs(ATy))
-    x_tilde = x / sigma - ATy
+    w = x - sigma * ATy
     # u = sorted_l1_proj(x_tilde, lambdas / sigma, epsilon / sigma)
-    u = (1 / sigma) * (sigma * x_tilde - prox_slope(sigma * x_tilde, lambdas * sigma))
+    u = (1 / sigma) * (w - prox_slope(w, lambdas * sigma))
 
-    phi = 0.5 * norm(u - x_tilde) ** 2
+    phi = 0.5 * norm(u - w / sigma) ** 2
 
-    return 0.5 * norm(b) ** 2 + b @ y - (0.5 / sigma) * norm(x) ** 2 + sigma * phi
+    return 0.5 * norm(y) ** 2 + b @ y - (0.5 / sigma) * norm(x) ** 2 + sigma * phi
 
 
 rng = default_rng(9)
 
 m = 100
-n = 2
+n = 500
 
 A = rng.standard_normal((m, n))
 b = rng.standard_normal(m)
@@ -54,19 +54,24 @@ q = 0.3
 lambdas_seq = randnorm.ppf(1 - np.arange(1, n + 1) * q / (2 * n))
 lambda_max = dual_norm_slope(A, b, lambdas_seq)
 
-lambdas = lambda_max * lambdas_seq / 50
+lambdas = lambda_max * lambdas_seq / 5
 
 # step size
 sigma = 1
 
 # line search parameters
-mu = 0.25
+mu = 0.2
 delta = 0.5
 beta = 2
 
 # CG parameters
 eta = 0.5
 tau = 0.5
+
+# step 1 update parameters
+epsilon_k = 1e-3
+delta_k = 1e-3
+delta_prime_k = 1e-3
 
 m, n = A.shape
 
@@ -78,7 +83,7 @@ y = rng.standard_normal(m)
 theta = np.zeros(m)
 
 max_epochs = 100
-max_inner_it = 100
+max_inner_it = 1000
 gap_freq = 1
 max_time = np.inf
 tol = 1e-8
@@ -93,8 +98,14 @@ verbose = False
 
 B = np.eye(n) - np.eye(n, k=1)
 
+x_diff_norm = 0
+
 for epoch in range(max_epochs):
     # step 1
+    delta_prime_k *= 0.5
+    epsilon_k *= 0.9
+    delta_k *= 0.9
+
     for j in range(max_inner_it):
         # step 1a, compute the newton direction
         x_tilde = x / sigma - (A.T @ y)
@@ -133,6 +144,15 @@ for epoch in range(max_epochs):
         if norm(V @ d + nabla_psi) > min(eta, norm(nabla_psi) ** (1 + tau)):
             raise ValueError("this should not happen")
 
+        # check for convergence
+        norm_nabla_psi = norm(nabla_psi)
+
+        if norm_nabla_psi <= epsilon_k / np.sqrt(sigma) or (
+            norm_nabla_psi <= (delta_k / np.sqrt(sigma)) * x_diff_norm
+            and norm_nabla_psi <= (delta_prime_k / sigma) * x_diff_norm
+        ):
+            break
+
         if verbose:
             print("P\n", P)
             print("M\n", M)
@@ -161,7 +181,9 @@ for epoch in range(max_epochs):
         y = y + alpha * d
 
     # step 2, update x
+    x_old = x.copy()
     x = prox_slope(x - sigma * (A.T @ y), sigma * lambdas)
+    x_diff_norm = norm(x - x_old)
 
     # step 3, update sigma
     # TODO(jolars): The paper says nothing about how sigma is updated except

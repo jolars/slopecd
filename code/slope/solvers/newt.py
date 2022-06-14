@@ -25,16 +25,20 @@ def permutation_matrix(x):
 
     return pi
 
+
 def psi(y, x, A, b, lambdas, sigma):
     ATy = A.T @ y
 
     # TODO(jolars): not at all sure what epsilon and lambdas should be here
-    epsilon = np.sum(np.abs(ATy))
+    # epsilon = np.sum(np.abs(ATy))
     x_tilde = x / sigma - ATy
-    u = sorted_l1_proj(x_tilde, lambdas / sigma, epsilon / sigma)
+    # u = sorted_l1_proj(x_tilde, lambdas / sigma, epsilon / sigma)
+    u = (1 / sigma) * (sigma * x_tilde - prox_slope(sigma * x_tilde, lambdas * sigma))
+
     phi = 0.5 * norm(u - x_tilde) ** 2
 
     return 0.5 * norm(b) ** 2 + b @ y - (0.5 / sigma) * norm(x) ** 2 + sigma * phi
+
 
 rng = default_rng(9)
 
@@ -126,7 +130,7 @@ for epoch in range(max_epochs):
 
         d = solve(V, -nabla_psi)
 
-        if norm(V @ d + nabla_psi) > min(eta, norm(nabla_psi)**(1 + tau)):
+        if norm(V @ d + nabla_psi) > min(eta, norm(nabla_psi) ** (1 + tau)):
             raise ValueError("this should not happen")
 
         if verbose:
@@ -140,7 +144,7 @@ for epoch in range(max_epochs):
         mj = 0
 
         while True:
-            alpha = delta ** mj
+            alpha = delta**mj
 
             lhs = psi(y + alpha * d, x, A, b, lambdas, sigma)
             rhs = psi(y, x, A, b, lambdas, sigma) + mu * alpha * nabla_psi @ d

@@ -48,7 +48,7 @@ def pure_cd_epoch_sparse(
         R += (old - beta_tilde) * sum_X
 
 
-def oracle_cd(X, y, alphas, max_epochs, tol=1e-10, max_time=np.Inf, verbose=False,
+def oracle_cd(X, y, alphas, max_epochs, tol=1e-10, max_time=np.inf, verbose=False,
               w_star=None):
     """Oracle CD: get solution clusters and run CD on collapsed design."""
     n_samples, n_features = X.shape

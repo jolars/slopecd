@@ -260,6 +260,18 @@ In \cref{fig:slope-thresholding}, we visualize the operator.
 
 \subsection{Hybrid proximal coordinate descent strategy}
 
+We propose an iterative solver that alternates between proximal gradient step and proximal coordinate descent.
+Since the regularization term for SLOPE is not separable, applying PCD does not guarantee convergence (show example where CD gets stuck).
+However, \cite{dupuis2021} showed that once the clusters are known, the subdifferential of $J$ can be written as the cartesian product of the subdifferential of $J$ restricted to the clusters. 
+Hence, if one knew the clusters, PCD updates could be applied on each cluster. 
+
+The notion of clusters for SLOPE extends the notion of sparsity coming from the LASSO. 
+Identification of the sparsity pattern throughout the iterative algorithm have largely been studied. 
+Talk about Partly Smooth functions, related Manifold and that support transpose to cluster for SLOPE regularization. DO the maths. 
+
+Then identification of this underlying structure occurs when applying PGD. 
+Hence the idea to alternate, PGD and PCD step to take advantage of the speed of PCD and ensure convergence via the identification of the right structure with PGD steps. 
+
 \begin{algorithm}[tb]
   \SetKwInOut{Init}{init}
   \SetKwInOut{Input}{input}

@@ -1,17 +1,5 @@
 [build-system]
-requires = [
-  "setuptools >= 42",
-  "wheel",
-  "pybind11 >= 2.8.0",
-  "requests",
-  "importlib-metadata",
-  "benchopt",
-  "libsvmdata",
-  "numba",
-  "numpy >= 1.12",
-  "scikit-learn >= 1.0",
-  "scipy",
-]
+requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [tool.isort]

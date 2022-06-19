@@ -16,7 +16,6 @@ x = np.array([5, 2.0, 1.0])
 lambdas = np.array([2.5, 1.0, 1.0])
 epsilon = 10
 
-slope.sorted_l1_proj(x, lambdas, epsilon)
 # z = project_to_OWL_ball(z - opts.gamma *(AtA*z - Atb), w, epsilon, 'false');
 
 # cm = get_cmap("tab10")

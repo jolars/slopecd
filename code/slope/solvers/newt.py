@@ -8,6 +8,7 @@ from scipy import sparse, stats
 from scipy.linalg import inv, norm, solve
 from scipy.optimize import minimize
 from scipy.sparse.linalg import spsolve
+import slope.permutation as slopep
 
 from slope.solvers import prox_grad
 from slope.utils import dual_norm_slope, prox_slope
@@ -70,8 +71,9 @@ def compute_direction(x, sigma, A, y, lambdas, cg_param):
     ord = np.argsort(np.abs(x_tilde))[::-1]
 
     x_lambda = np.abs(prox_slope(x_tilde, sigma)[ord])
-    z = spsolve(B @ B.T, B @ (np.abs(x_tilde[ord]) - lambdas - x_lambda))
-
+    #fix to precompute
+    #z = spsolve(B @ B.T, B @ (np.abs(x_tilde[ord]) - lambdas - x_lambda))
+    z =  slopep.BBT_inv_B(np.abs(x_tilde[ord]) - lambdas - x_lambda )
     if debug:
         print(f"x_tilde: {x_tilde}")
         print(f"x_lambda: {x_lambda}")
@@ -301,6 +303,36 @@ def newton_solver(A,
 
     return x, gaps, primals
 
+def problem1():
+    rng = default_rng(9)
+    
+    m = 100
+    n = 10
+    
+    A = rng.standard_normal((m, n))
+    b = rng.standard_normal(m)
+    
+    # generate lambdas
+    randnorm = stats.norm(loc=0, scale=1)
+    q = 0.3
+    lambdas_seq = randnorm.ppf(1 - np.arange(1, n + 1) * q / (2 * n))
+    lambda_max = dual_norm_slope(A, b, lambdas_seq)
+    
+    lambdas = lambda_max * lambdas_seq / 5
+    
+    
+    
+    
+
+    
+    
+    
+    
+    x = newton_solver(A,
+                      b,
+                      lambdas)
+    
+    return x
 
 if __name__ =="__main__":         
     rng = default_rng(9)

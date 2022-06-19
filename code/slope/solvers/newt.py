@@ -216,9 +216,7 @@ for epoch in range(max_epochs):
         crit_B1 = norm_nabla_psi <= (delta_k / np.sqrt(sigma)) * x_diff_norm
         crit_B2 = norm_nabla_psi <= (delta_prime_k / sigma) * x_diff_norm
 
-        if epoch == 0 and crit_A:
-            break
-        elif crit_A and crit_B1 and crit_B2:
+        if crit_A and crit_B1 and crit_B2:
             break
 
         if j == max_inner_it - 1:

@@ -43,7 +43,7 @@ class TestBfunctions(unittest.TestCase):
         n  = x.shape[0]
         B = sparse.eye(n, format="csc") - sparse.eye(n, k=1, format="csc")
         BT = B.T
-        np.allclose(x, slopep.BTinv(BT @ x))
+        np.testing.assert_array_almost_equal(x, slopep.BTinv(BT @ x))
         
     def test_BInv(self):
         n = 10
@@ -51,7 +51,7 @@ class TestBfunctions(unittest.TestCase):
         x = rng.standard_normal(n)
         n  = x.shape[0]
         B = sparse.eye(n, format="csc") - sparse.eye(n, k=1, format="csc")
-        np.allclose(x, slopep.Binv(B @ x))
+        np.testing.assert_array_almost_equal(x, slopep.Binv(B @ x))
         
     def test_B(self):
         
@@ -60,7 +60,7 @@ class TestBfunctions(unittest.TestCase):
         x = rng.standard_normal(n)
         n  = x.shape[0]
         B = sparse.eye(n, format="csc") - sparse.eye(n, k=1, format="csc")
-        np.allclose(slopep.B(x), slopep.Binv(B @ x)) 
+        np.testing.assert_array_almost_equal(slopep.B(x), B @ x) 
         
     def test_BBT_inv_B(self):
         n = 10
@@ -68,7 +68,7 @@ class TestBfunctions(unittest.TestCase):
         x = rng.standard_normal(n)
         n  = x.shape[0]
         B = sparse.eye(n, format="csc") - sparse.eye(n, k=1, format="csc")
-        np.allclose( slopep.BBT_inv_B(x), spsolve(B @ B.T, B @ x ))
+        np.testing.assert_array_almost_equal(slopep.BBT_inv_B(x), spsolve(B @ B.T, B @ x ))
 
 if __name__ == "__main__":
     unittest.main()

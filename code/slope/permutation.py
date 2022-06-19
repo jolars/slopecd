@@ -47,4 +47,4 @@ def B(x):
 #Bt^-1B^-1
 # returns (BBt) ^-1 B x
 def BBT_inv_B(x):
-    return( Binv(BTinv(B(x))))
+    return( BTinv(x))

@@ -7,6 +7,18 @@ import numpy as np
 
 
 
+
+
+def nonzero_sign(x):
+    n = len(x)
+    out = np.empty(n)
+
+    for i in range(n):
+        s = np.sign(x[i])
+        out[i] = s if s != 0 else 0
+
+    return out
+
 def permutation_matrix(x):
     n = len(x)
 
@@ -20,15 +32,26 @@ def permutation_matrix(x):
 
     return sparse.csc_array(pi)
 
-def nonzero_sign(x):
+#build the signedpermutation object
+def build_pi(x):
+    
     n = len(x)
-    out = np.empty(n)
+    pi_list  = np.empty((n,2),dtype=np.int64)
+    piT_list = np.empty((n,2),dtype=np.int64)
+    signs = nonzero_sign(x)
+    order = np.argsort(np.abs(x))[::-1]
+    
+    for j, ord_j in enumerate(order):
+        pi_list[j, 0] = ord_j
+        pi_list[j, 1] = signs[ord_j]
+        piT_list[ord_j,0] = j
+        piT_list[ord_j, 1] = signs[ord_j]
 
-    for i in range(n):
-        s = np.sign(x[i])
-        out[i] = s if s != 0 else 0
-
-    return out
+    return pi_list, piT_list
+    
+# multiplaction of signed permuation
+def pix(x, pi_list):
+    return(x[pi_list[:,0]]*pi_list[:,1])
 
 # inverse of the matrix B.T
 def BTinv(x):

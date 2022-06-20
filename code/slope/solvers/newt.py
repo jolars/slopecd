@@ -15,29 +15,74 @@ from slope.utils import dual_norm_slope, prox_slope
 from slope.clusters import get_clusters
 
 
-def nonzero_sign(x):
-    n = len(x)
-    out = np.empty(n)
 
-    for i in range(n):
-        s = np.sign(x[i])
-        out[i] = s if s != 0 else 0
+# build the approximate Hessian
+def build_AMAT_old(x_tilde, 
+               sigma, 
+               lambdas,
+               A):
+    
+    B = sparse.eye(x_tilde.shape[0], format="csc") - sparse.eye(x_tilde.shape[0], k=1, format="csc")
+    pi = slopep.permutation_matrix(x_tilde)  # pi @ x == np.sort(np.abs(x))[::-1]
+    ord = np.argsort(np.abs(x_tilde))[::-1]
+    x_lambda = np.abs(prox_slope(x_tilde, sigma)[ord])
+    
+    z =  slopep.BBT_inv_B(np.abs(x_tilde[ord]) - lambdas - x_lambda )
+    
+    
+    z_supp = np.where(z != 0)[0]
+    I_x_lambda = np.where(B @ x_lambda == 0)[0]
+    
+        
+    Gamma = np.intersect1d(z_supp, I_x_lambda)
 
-    return out
+    B_Gamma = B[Gamma, :]
 
+    P = sparse.eye(n, format="csc") - B_Gamma.T @ spsolve(
+        B_Gamma @ B_Gamma.T, B_Gamma
+    )
 
-def permutation_matrix(x):
-    n = len(x)
+    M = pi.T @ P @ pi
 
-    signs = nonzero_sign(x)
-    order = np.argsort(np.abs(x))[::-1]
+    V = sigma * (A @ M @ A.T)
+    
+    return(V)
 
-    pi = sparse.lil_matrix((n, n), dtype=int)
-
-    for j, ord_j in enumerate(order):
-        pi[j, ord_j] = signs[ord_j]
-
-    return sparse.csc_array(pi)
+def build_AMAT(x_tilde, 
+               sigma, 
+               lambdas,
+               A):
+    
+    ord = np.argsort(np.abs(x_tilde))[::-1]
+    x_lambda = np.abs(prox_slope(x_tilde, sigma)[ord])
+    
+    z =  slopep.BBT_inv_B(np.abs(x_tilde[ord]) - lambdas - x_lambda )
+    
+    
+    z_supp = np.where(z != 0)[0]
+    I_x_lambda = np.where( slopep.B(x_lambda) == 0)[0]
+    
+        
+    Gamma = np.intersect1d(z_supp, I_x_lambda)
+    GammaC = np.setdiff1d(np.arange(x_tilde.shape[0]), Gamma)
+    
+    start = 0
+    nC = GammaC.shape[0]
+    VW = np.zeros((m, nC))
+    start = 0
+    nC = GammaC.shape[0]
+    VW = np.zeros((m, nC))
+    pi_list, piT_list = slopep.build_pi(x_tilde)
+    for i in range(nC):
+        ind = np.arange(start, GammaC[i]+1)
+        for j in ind:
+            VW[:, i] += pi_list[j, 1] * A[:, pi_list[j, 0]]
+        if(ind.shape[0] > 1):
+            VW[:, i] /= np.sqrt(ind.shape[0])
+        start = GammaC[i] + 1  
+    
+    VW *= np.sqrt(sigma)
+    return(VW @ VW.T)
 
 
 def psi(y, x, A, b, lambdas, sigma):
@@ -53,87 +98,51 @@ def psi(y, x, A, b, lambdas, sigma):
 
     return 0.5 * norm(y) ** 2 + b @ y - (0.5 / sigma) * norm(x) ** 2 + sigma * phi
 
+def psi2(y, x, ATy, b, lambdas, sigma):
 
-def compute_direction(x, sigma, A, y, lambdas, cg_param):
+    # TODO(jolars): not at all sure what epsilon and lambdas should be here
+    # epsilon = np.sum(np.abs(ATy))
+    w = x - sigma * ATy
+    # u = sorted_l1_proj(x_tilde, lambdas / sigma, epsilon / sigma)
+    u = (1 / sigma) * (w - prox_slope(w, lambdas * sigma))
+
+    phi = 0.5 * norm(u - w / sigma) ** 2
+
+    return 0.5 * norm(y) ** 2 + b @ y - (0.5 / sigma) * norm(x) ** 2 + sigma * phi
+
+
+def compute_direction(x, sigma, A, y, ATy, lambdas, cg_param):
     
     
-    debug = False
+    x_tilde = x / sigma - ATy
     
-    B = sparse.eye(n, format="csc") - sparse.eye(n, k=1, format="csc")
-    # step 1a, compute the newton direction
-    x_tilde = x / sigma - (A.T @ y)
-
-    # construct M
-    pi = permutation_matrix(x_tilde)  # pi @ x == np.sort(np.abs(x))[::-1]
-
-    # construct Jacobian
-    # P = jacobian(pi @ w, pi, B, lambdas)
-    ord = np.argsort(np.abs(x_tilde))[::-1]
-
-    x_lambda = np.abs(prox_slope(x_tilde, sigma)[ord])
-    #fix to precompute
-    #z = spsolve(B @ B.T, B @ (np.abs(x_tilde[ord]) - lambdas - x_lambda))
-    z =  slopep.BBT_inv_B(np.abs(x_tilde[ord]) - lambdas - x_lambda )
-    if debug:
-        print(f"x_tilde: {x_tilde}")
-        print(f"x_lambda: {x_lambda}")
-        print(f"z: {z}")
-
-    z_supp = np.where(z != 0)[0]
-    I_x_lambda = np.where(B @ x_lambda == 0)[0]
-
-    Gamma = np.intersect1d(z_supp, I_x_lambda)
-
-    B_Gamma = B[Gamma, :]
-
-    P = sparse.eye(n, format="csc") - B_Gamma.T @ spsolve(
-        B_Gamma @ B_Gamma.T, B_Gamma
-    )
-
-    # # alternate way of constructing P
-    # c, c_ptr, c_ind, N = get_clusters(x_tilde)
-    # H_list = []
-    # for i in range(N):
-    #     N_i = c_ptr[i + 1] - c_ptr[i]
-    #     H_i = np.ones((N_i, N_i), dtype=int) if c[i] != 0 else sparse.csc_matrix((N_i, N_i), dtype=int)
-    #     H_list.append(H_i)
-
-    # H = sparse.block_diag(H_list, format="csc")
-        
-    # # a = 
-    # V1 = A @ (pi[a, :].T)
-
-    M = pi.T @ P @ pi
-
-    V = sigma * (A @ M @ A.T)
+    V =  build_AMAT(x_tilde, 
+                   sigma, 
+                   lambdas,
+                   A)
+   
     np.fill_diagonal(V, V.diagonal() + 1.0)
 
-    nabla_psi = y + b - A @ prox_slope(x - sigma * (A.T @ y), sigma * lambdas)
+    nabla_psi = y + b - A @ prox_slope(x - sigma * ATy, sigma * lambdas)
 
     d = solve(V, -nabla_psi)
 
     if norm(V @ d + nabla_psi) > min(cg_param['eta'], norm(nabla_psi) ** (1 + cg_param['tau'])):
         warnings.warn("Solver did not work")
 
-    if debug:
-        print("P\n", P)
-        print("M\n", M)
-        print("d\n", d)
-        print("nabla_psi\n", nabla_psi)
-        print("norm(nabla_psi)\n", norm(nabla_psi))
 
     return d, nabla_psi
 
 
-def line_search(y, d, x, A, b, lambdas, sigma, nabla_psi, line_search_param): 
+def line_search(y, d, x, A, ATy, ATd, b, lambdas, sigma, nabla_psi, line_search_param): 
     # step 1b, line search
     mj = 0
     
-    psi0 = psi(y, x, A, b, lambdas, sigma)
+    psi0 = psi2(y, x, ATy, b, lambdas, sigma)
     while True:
         alpha = line_search_param['delta']**mj
     
-        lhs = psi(y + alpha * d, x, A, b, lambdas, sigma)
+        lhs = psi2(y + alpha * d, x, ATy + alpha * ATd, b, lambdas, sigma)
         rhs = psi0 + line_search_param['mu'] * alpha * nabla_psi @ d
     
     
@@ -168,6 +177,7 @@ def inner_step(A,
                b,
                x,
                y,
+               ATy,
                lambdas,
                x_old,
                local_param,
@@ -175,15 +185,16 @@ def inner_step(A,
                cg_param):
 
     sigma = local_param['sigma']
-    d, nabla_psi = compute_direction(x, sigma, A, y, lambdas,cg_param)
-    alpha = line_search(y, d, x, A, b, lambdas, sigma, nabla_psi, line_search_param)
+    d, nabla_psi = compute_direction(x, sigma, A, y,ATy, lambdas,cg_param)
+    ATd = A.T @ d
+    alpha = line_search(y, d, x, A, ATy, ATd, b, lambdas, sigma, nabla_psi, line_search_param)
     
     # step 1c, update y
-    y = y + alpha * d
-    
+    y += alpha * d
+    ATy += alpha * ATd
     
     # step 2, update x
-    x = prox_slope(x - sigma * (A.T @ y), sigma * lambdas)
+    x = prox_slope(x - sigma * ATy, sigma * lambdas)
     
     # check for convergence
     x_diff_norm = norm(x - x_old)
@@ -196,7 +207,7 @@ def inner_step(A,
                                  sigma,
                                  local_param['delta'],
                                  local_param['delta_prime'])
-    return converged, x, y
+    return converged, x, y, ATy
 
 
 def newton_solver(A,
@@ -244,6 +255,7 @@ def newton_solver(A,
     
     
     
+    ATy = A.T @ y
     for epoch in range(max_epochs):
         # step 1
         local_param['delta_prime'] *= 0.9
@@ -251,13 +263,14 @@ def newton_solver(A,
         local_param['delta']       *= 0.9
     
         x_old = x.copy()
-    
+        
         for j in range(max_inner_it):
             
-            converged, x, y =  inner_step(A,
+            converged, x, y, ATy =  inner_step(A,
                                           b,
                                           x,
                                           y,
+                                          ATy,
                                           lambdas,
                                           x_old,
                                           local_param,

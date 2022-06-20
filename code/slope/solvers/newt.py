@@ -59,10 +59,9 @@ def build_AMAT(x_tilde, sigma, lambdas, A):
     start = 0
     nC = GammaC.shape[0]
     VW = np.zeros((m, nC))
-    start = 0
-    nC = GammaC.shape[0]
-    VW = np.zeros((m, nC))
+
     pi_list, piT_list = slopep.build_pi(x_tilde)
+
     for i in range(nC):
         ind = np.arange(start, GammaC[i] + 1)
         for j in ind:

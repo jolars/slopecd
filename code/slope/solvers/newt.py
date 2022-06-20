@@ -126,11 +126,11 @@ def line_search(y, d, x, A, ATy, ATd, b, lambdas, sigma, nabla_psi, line_search_
     mj = 0
 
     psi0 = psi2(y, x, ATy, b, lambdas, sigma)
+    nabla_psi_d = nabla_psi @ d
     while True:
         alpha = line_search_param["delta"] ** mj
-
         lhs = psi2(y + alpha * d, x, ATy + alpha * ATd, b, lambdas, sigma)
-        rhs = psi0 + line_search_param["mu"] * alpha * nabla_psi @ d
+        rhs = psi0 + line_search_param["mu"] * alpha * nabla_psi_d
 
         if lhs <= rhs:
             break
@@ -145,10 +145,9 @@ def check_convegence(x_diff_norm, nabla_psi, epsilon_k, sigma, delta_k, delta_pr
     # check for convergence
     norm_nabla_psi = norm(nabla_psi)
 
-    crit_A = norm_nabla_psi <= epsilon_k / np.sqrt(sigma)
+    crit_A  = norm_nabla_psi <= epsilon_k / np.sqrt(sigma)
     crit_B1 = norm_nabla_psi <= (delta_k / np.sqrt(sigma)) * x_diff_norm
     crit_B2 = norm_nabla_psi <= (delta_prime_k / sigma) * x_diff_norm
-
     if crit_A and crit_B1 and crit_B2:
         return True
 
@@ -160,10 +159,10 @@ def inner_step(
 ):
 
     sigma = local_param["sigma"]
-    d, nabla_psi = compute_direction(x, sigma, A, y, ATy, lambdas, cg_param)
+    d, nabla_psi = compute_direction(x_old, sigma, A, y, ATy, lambdas, cg_param)
     ATd = A.T @ d
     alpha = line_search(
-        y, d, x, A, ATy, ATd, b, lambdas, sigma, nabla_psi, line_search_param
+        y, d, x_old, A, ATy, ATd, b, lambdas, sigma, nabla_psi, line_search_param
     )
 
     # step 1c, update y
@@ -171,11 +170,10 @@ def inner_step(
     ATy += alpha * ATd
 
     # step 2, update x
-    x = prox_slope(x - sigma * ATy, sigma * lambdas)
+    x = prox_slope(x_old - sigma * ATy, sigma * lambdas)
 
     # check for convergence
     x_diff_norm = norm(x - x_old)
-
     converged = check_convegence(
         x_diff_norm,
         nabla_psi,
@@ -193,7 +191,7 @@ def newton_solver(
     lambdas,
     x=None,
     y=None,
-    optim_param={"max_epochs": 100, "max_inner_it": 10000, "tol": 1e-8, "gap_freq": 1},
+    optim_param={"max_epochs": 100, "max_inner_it": 10000, "tol": 1e-6, "gap_freq": 1},
     line_search_param={"mu": 0.2, "delta": 0.5, "beta": 2},
     cg_param={"eta": 1e-4, "tau": 0.5},
     verbose=True,
@@ -209,7 +207,7 @@ def newton_solver(
     max_inner_it = optim_param["max_inner_it"]
 
     # step 1 update parameters
-    local_param = {"epsilon": 0.1, "delta": 0.1, "delta_prime": 0.1, "sigma": 1}
+    local_param = {"epsilon": 1, "delta": 1, "delta_prime": 1, "sigma": 0.5}
 
     r = b.copy()
     theta = np.zeros(m)
@@ -220,9 +218,9 @@ def newton_solver(
     ATy = A.T @ y
     for epoch in range(max_epochs):
         # step 1
-        local_param["delta_prime"] *= 0.9
+        local_param["delta_prime"] *= 0.999
         local_param["epsilon"] *= 0.9
-        local_param["delta"] *= 0.9
+        local_param["delta"] *= 0.999
 
         x_old = x.copy()
 
@@ -231,7 +229,7 @@ def newton_solver(
             converged, x, y, ATy = inner_step(
                 A,
                 b,
-                x,
+                x_old,
                 y,
                 ATy,
                 lambdas,
@@ -240,7 +238,6 @@ def newton_solver(
                 line_search_param,
                 cg_param,
             )
-
             if converged:
                 break
 
@@ -260,13 +257,13 @@ def newton_solver(
             theta = r / m
             theta /= max(1, dual_norm_slope(A, theta, lambdas / m))
 
-            primal = (0.5 / m) * norm(r) ** 2 + np.sum(
-                (lambdas / m) * np.sort(np.abs(x))[::-1]
+            primal = (0.5 ) * norm(r) ** 2 + np.sum(
+                (lambdas ) * np.sort(np.abs(x))[::-1]
             )
-            dual = (0.5 / m) * (norm(b) ** 2 - norm(b - theta * m) ** 2)
+            dual = (0.5 ) * (norm(b) ** 2 - norm(b - theta * m) ** 2)
 
             primals.append(primal)
-            gap = primal - dual
+            gap = (primal - dual)/max(1,primal)
             gaps.append(gap)
             # times.append(timer() - time_start)
 
@@ -282,8 +279,8 @@ def newton_solver(
 def problem1():
     rng = default_rng(9)
 
-    m = 100
-    n = 10
+    m = 70
+    n = 70
 
     A = rng.standard_normal((m, n))
     b = rng.standard_normal(m)
@@ -302,10 +299,10 @@ def problem1():
 
 
 if __name__ == "__main__":
-    rng = default_rng(9)
+    rng = default_rng()
 
     m = 100
-    n = 10
+    n = 100
 
     A = rng.standard_normal((m, n))
     b = rng.standard_normal(m)

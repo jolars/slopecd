@@ -58,7 +58,11 @@ def build_W(x_tilde, sigma, lambdas, A):
 
     start = 0
     nC = GammaC.shape[0]
-    VW = np.zeros((m, nC))
+
+    if sparse.issparse(A):
+        VW = sparse.lil_matrix((m, nC), dtype=float)
+    else:
+        VW = np.zeros((m, nC))
 
     pi_list, piT_list = slopep.build_pi(x_tilde)
 
@@ -69,6 +73,11 @@ def build_W(x_tilde, sigma, lambdas, A):
         if ind.shape[0] > 1:
             VW[:, i] /= np.sqrt(ind.shape[0])
         start = GammaC[i] + 1
+
+    if sparse.issparse(A):
+        # NOTE: Use CSR here because transpose later on causes it to become CSC,
+        # which is what we really want.
+        VW = sparse.csr_matrix(VW)
 
     return np.sqrt(sigma) * VW
 
@@ -100,7 +109,7 @@ def psi2(y, x, ATy, b, lambdas, sigma):
     return 0.5 * norm(y) ** 2 + b @ y - (0.5 / sigma) * norm(x) ** 2 + sigma * phi
 
 
-def compute_direction(x, sigma, A, y, ATy, lambdas, cg_param):
+def compute_direction(x, sigma, A, y, ATy, lambdas, cg_param, method="auto"):
 
     x_tilde = x / sigma - ATy
 
@@ -110,27 +119,45 @@ def compute_direction(x, sigma, A, y, ATy, lambdas, cg_param):
 
     m, r1_plus_r2 = W.shape
 
-    if r1_plus_r2 <= 100 * m:
+    if method == "auto":
+        if r1_plus_r2 <= 100 * m:
+            method = "woodbury"
+        elif m > 10_000 and m / r1_plus_r2 > 0.1:
+            method = "cg"
+        else:
+            method = "standrad"
+
+    if method == "woodbury":
         # Use Woodbury factorization solve
         WTW = W.T @ W
-        np.fill_diagonal(WTW, WTW.diagonal() + 1)
+        if sparse.issparse(A):
+            V_inv = sparse.eye(m, format="csc") - W @ spsolve(
+                sparse.eye(r1_plus_r2, format="csc") + WTW, W.T
+            )
+        else:
+            np.fill_diagonal(WTW, WTW.diagonal() + 1)
+            V_inv = -(W @ solve(WTW, W.T))
+            np.fill_diagonal(V_inv, V_inv.diagonal() + 1)
 
-        tmp = W @ solve(WTW, W.T)
-        np.fill_diagonal(tmp, tmp.diagonal() - 1)
-
-        d = tmp @ nabla_psi
-    elif m > 10_000 and m / r1_plus_r2 > 0.1:
+        d = V_inv @ (-nabla_psi)
+    elif method == "cg":
         # Use conjugate gradient
         V = W @ W.T
-        np.fill_diagonal(V, V.diagonal() + 1)
+        if sparse.issparse(A):
+            V += sparse.eye(m, format="csc")
+        else:
+            np.fill_diagonal(V, V.diagonal() + 1)
 
         M = sparse.diags(V.diagonal())  # preconditioner
         d, _ = cg(V, -nabla_psi, tol=cg_param["eta"], M=M)
     else:
         V = W @ W.T
-        np.fill_diagonal(V, V.diagonal() + 1)
-
-        d = cho_solve(cho_factor(V), -nabla_psi)
+        if sparse.issparse(A):
+            V = sparse.eye(V.shape[0]) + W @ W.T
+            d = spsolve(V, -nabla_psi)
+        else:
+            np.fill_diagonal(V, V.diagonal() + 1)
+            d = cho_solve(cho_factor(V), -nabla_psi)
 
     return d, nabla_psi
 
@@ -311,9 +338,10 @@ if __name__ == "__main__":
     rng = default_rng()
 
     m = 100
-    n = 100
+    n = 10
 
-    A = rng.standard_normal((m, n))
+    # A = rng.standard_normal((m, n))
+    A = sparse.random(m, n, format="csc")
     b = rng.standard_normal(m)
 
     # generate lambdas

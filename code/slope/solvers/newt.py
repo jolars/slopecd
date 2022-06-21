@@ -252,6 +252,7 @@ def newton_solver(
     y=None,
     max_epochs=1000,
     tol=1e-6,
+    max_time=np.inf,
     gap_freq=1,
     max_inner_it=1_000,
     solver="auto",
@@ -277,6 +278,10 @@ def newton_solver(
     primals, gaps = [], []
     primals.append(norm(b) ** 2 / (2 * m))
     gaps.append(primals[0])
+
+    times = []
+    time_start = timer()
+    times.append(timer() - time_start)
 
     ATy = A.T @ y
     for epoch in range(max_epochs):
@@ -314,7 +319,9 @@ def newton_solver(
         # increased based on the primal and dual residuals.
         local_param["sigma"] *= 1.1
 
-        if epoch % gap_freq == 0:
+        times_up = timer() - time_start > max_time
+
+        if epoch % gap_freq == 0 or times_up:
             r[:] = b - A @ x
             theta = r / m
             theta /= max(1, dual_norm_slope(A, theta, lambdas / m))
@@ -325,7 +332,7 @@ def newton_solver(
             primals.append(primal)
             gap = (primal - dual) / max(1, primal)
             gaps.append(gap)
-            # times.append(timer() - time_start)
+            times.append(timer() - time_start)
 
             if verbose:
                 print(f"Epoch: {epoch + 1}, loss: {primal}, gap: {gap:.2e}")
@@ -333,7 +340,7 @@ def newton_solver(
             if gap < tol:
                 break
 
-    return x, gaps, primals
+    return x, primals, gaps, times
 
 
 def problem1():

@@ -43,7 +43,7 @@ def build_AMAT_old(x_tilde, sigma, lambdas, A):
     return V
 
 
-def build_AMAT(x_tilde, sigma, lambdas, A):
+def build_W(x_tilde, sigma, lambdas, A):
 
     ord = np.argsort(np.abs(x_tilde))[::-1]
     x_lambda = np.abs(prox_slope(x_tilde, sigma)[ord])
@@ -70,8 +70,7 @@ def build_AMAT(x_tilde, sigma, lambdas, A):
             VW[:, i] /= np.sqrt(ind.shape[0])
         start = GammaC[i] + 1
 
-    VW *= np.sqrt(sigma)
-    return VW @ VW.T
+    return np.sqrt(sigma) * VW
 
 
 def psi(y, x, A, b, lambdas, sigma):
@@ -105,18 +104,30 @@ def compute_direction(x, sigma, A, y, ATy, lambdas, cg_param):
 
     x_tilde = x / sigma - ATy
 
-    V = build_AMAT(x_tilde, sigma, lambdas, A)
-
-    np.fill_diagonal(V, V.diagonal() + 1.0)
-
     nabla_psi = y + b - A @ prox_slope(x - sigma * ATy, sigma * lambdas)
 
-    d = solve(V, -nabla_psi)
+    W = build_W(x_tilde, sigma, lambdas, A)
 
-    if norm(V @ d + nabla_psi) > min(
-        cg_param["eta"], norm(nabla_psi) ** (1 + cg_param["tau"])
-    ):
-        warnings.warn("Solver did not work")
+    if W.shape[1] <= 100 * W.shape[0]:
+        # Use Woodbury
+        WTW = W.T @ W
+        np.fill_diagonal(WTW, WTW.diagonal() + 1)
+
+        tmp = W @ solve(WTW, W.T)
+        np.fill_diagonal(tmp, tmp.diagonal() - 1)
+
+        d = tmp @ nabla_psi
+    else:
+        V = W @ W.T
+        np.fill_diagonal(V, V.diagonal() + 1)
+
+        d = solve(V, -nabla_psi)
+
+        # if debug:
+        #     if norm(V @ d + nabla_psi) > min(
+        #         cg_param["eta"], norm(nabla_psi) ** (1 + cg_param["tau"])
+        #     ):
+        #         warnings.warn("Solver did not work")
 
     return d, nabla_psi
 

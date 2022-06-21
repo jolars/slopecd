@@ -144,7 +144,7 @@ def check_convegence(x_diff_norm, nabla_psi, epsilon_k, sigma, delta_k, delta_pr
     # check for convergence
     norm_nabla_psi = norm(nabla_psi)
 
-    crit_A  = norm_nabla_psi <= epsilon_k / np.sqrt(sigma)
+    crit_A = norm_nabla_psi <= epsilon_k / np.sqrt(sigma)
     crit_B1 = norm_nabla_psi <= (delta_k / np.sqrt(sigma)) * x_diff_norm
     crit_B2 = norm_nabla_psi <= (delta_prime_k / sigma) * x_diff_norm
 
@@ -254,13 +254,11 @@ def newton_solver(
             theta = r / m
             theta /= max(1, dual_norm_slope(A, theta, lambdas / m))
 
-            primal = (0.5 ) * norm(r) ** 2 + np.sum(
-                (lambdas ) * np.sort(np.abs(x))[::-1]
-            )
-            dual = (0.5 ) * (norm(b) ** 2 - norm(b - theta * m) ** 2)
+            primal = (0.5) * norm(r) ** 2 + np.sum((lambdas) * np.sort(np.abs(x))[::-1])
+            dual = (0.5) * (norm(b) ** 2 - norm(b - theta * m) ** 2)
 
             primals.append(primal)
-            gap = (primal - dual)/max(1,primal)
+            gap = (primal - dual) / max(1, primal)
             gaps.append(gap)
             # times.append(timer() - time_start)
 

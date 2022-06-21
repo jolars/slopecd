@@ -5,7 +5,7 @@ import numpy as np
 from benchopt.datasets.simulated import make_correlated_data
 from numpy.random import default_rng
 from scipy import sparse, stats
-from scipy.linalg import inv, norm, solve
+from scipy.linalg import inv, norm, solve, cho_solve, cho_factor
 from scipy.optimize import minimize
 from scipy.sparse.linalg import spsolve
 
@@ -120,8 +120,8 @@ def compute_direction(x, sigma, A, y, ATy, lambdas, cg_param):
     else:
         V = W @ W.T
         np.fill_diagonal(V, V.diagonal() + 1)
-
-        d = solve(V, -nabla_psi)
+        
+        d = cho_solve(cho_factor(V), -nabla_psi)
 
         # if debug:
         #     if norm(V @ d + nabla_psi) > min(

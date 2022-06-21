@@ -244,7 +244,7 @@ def inner_step(
     return converged, x, y, ATy
 
 
-def newton_solver(
+def newt_alm(
     A,
     b,
     lambdas,
@@ -360,7 +360,7 @@ def problem1():
 
     lambdas = lambda_max * lambdas_seq / 5
 
-    x = newton_solver(A, b, lambdas)
+    x = newt_alm(A, b, lambdas)
 
     return x
 
@@ -385,4 +385,4 @@ if __name__ == "__main__":
 
     x_diff_norm = 0
 
-    x = newton_solver(A, b, lambdas, solver="cg")
+    x = newt_alm(A, b, lambdas, solver="cg")

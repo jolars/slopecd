@@ -144,6 +144,7 @@ def compute_direction(x, sigma, A, y, ATy, lambdas, cg_param, solver):
         # Use conjugate gradient
         eta = cg_param["eta"]
         tau = cg_param["tau"]
+        tol = cg_param["starting_tol"]
         d = np.zeros(m)
 
         while True:
@@ -154,12 +155,12 @@ def compute_direction(x, sigma, A, y, ATy, lambdas, cg_param, solver):
                 np.fill_diagonal(V, V.diagonal() + 1)
 
             M = sparse.diags(V.diagonal())  # preconditioner
-            d, _ = cg(V, -nabla_psi, tol=eta, M=M, x0=d)
+            d, _ = cg(V, -nabla_psi, tol=tol, M=M, x0=d)
 
             if norm(V @ d + nabla_psi) <= min(eta, norm(nabla_psi) ** (1 + tau)):
                 break
             else:
-                eta *= 0.1
+                tol *= 0.1
     else:
         V = W @ W.T
         if sparse.issparse(A):
@@ -249,10 +250,13 @@ def newton_solver(
     lambdas,
     x=None,
     y=None,
-    optim_param={"max_epochs": 100, "max_inner_it": 10000, "tol": 1e-6, "gap_freq": 1},
+    max_epochs=1000,
+    tol=1e-6,
+    gap_freq=1,
+    max_inner_it=1_000,
     solver="auto",
     line_search_param={"mu": 0.2, "delta": 0.5, "beta": 2},
-    cg_param={"eta": 1e-3, "tau": 0.5},
+    cg_param={"eta": 1e-4, "tau": 0.1, "starting_tol": 1e-1},
     verbose=True,
 ):
     if solver not in ["auto", "standard", "woodbury", "cg"]:
@@ -264,8 +268,6 @@ def newton_solver(
         x = rng.standard_normal(n)
     if y is None:
         y = rng.standard_normal(m)
-    max_epochs = optim_param["max_epochs"]
-    max_inner_it = optim_param["max_inner_it"]
 
     # step 1 update parameters
     local_param = {"epsilon": 1, "delta": 1, "delta_prime": 1, "sigma": 0.5}
@@ -286,7 +288,6 @@ def newton_solver(
         x_old = x.copy()
 
         for j in range(max_inner_it):
-
             converged, x, y, ATy = inner_step(
                 A,
                 b,
@@ -305,7 +306,6 @@ def newton_solver(
 
             if j == max_inner_it - 1:
                 warnings.warn("The inner solver did not converge.")
-                raise ValueError
 
         # step 3, update sigma
         # TODO(jolars): The paper says nothing about how sigma is updated except
@@ -314,7 +314,7 @@ def newton_solver(
         # increased based on the primal and dual residuals.
         local_param["sigma"] *= 1.1
 
-        if epoch % optim_param["gap_freq"] == 0:
+        if epoch % gap_freq == 0:
             r[:] = b - A @ x
             theta = r / m
             theta /= max(1, dual_norm_slope(A, theta, lambdas / m))
@@ -330,7 +330,7 @@ def newton_solver(
             if verbose:
                 print(f"Epoch: {epoch + 1}, loss: {primal}, gap: {gap:.2e}")
 
-            if gap < optim_param["tol"]:
+            if gap < tol:
                 break
 
     return x, gaps, primals
@@ -361,11 +361,11 @@ def problem1():
 if __name__ == "__main__":
     rng = default_rng()
 
-    m = 10
+    m = 100
     n = 100
 
-    # A = rng.standard_normal((m, n))
-    A = sparse.random(m, n, format="csc")
+    A = rng.standard_normal((m, n))
+    # A = sparse.random(m, n, format="csc")
     b = rng.standard_normal(m)
 
     # generate lambdas

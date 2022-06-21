@@ -44,6 +44,7 @@ def build_AMAT_old(x_tilde, sigma, lambdas, A):
 
 
 def build_W(x_tilde, sigma, lambdas, A):
+    m = A.shape[0]
 
     ord = np.argsort(np.abs(x_tilde))[::-1]
     x_lambda = np.abs(prox_slope(x_tilde, sigma)[ord])
@@ -109,7 +110,7 @@ def psi2(y, x, ATy, b, lambdas, sigma):
     return 0.5 * norm(y) ** 2 + b @ y - (0.5 / sigma) * norm(x) ** 2 + sigma * phi
 
 
-def compute_direction(x, sigma, A, y, ATy, lambdas, cg_param, solver):
+def compute_direction(x, sigma, A, b, y, ATy, lambdas, cg_param, solver):
 
     x_tilde = x / sigma - ATy
 
@@ -218,7 +219,9 @@ def inner_step(
 ):
 
     sigma = local_param["sigma"]
-    d, nabla_psi = compute_direction(x_old, sigma, A, y, ATy, lambdas, cg_param, solver)
+    d, nabla_psi = compute_direction(
+        x_old, sigma, A, b, y, ATy, lambdas, cg_param, solver
+    )
     ATd = A.T @ d
     alpha = line_search(
         y, d, x_old, A, ATy, ATd, b, lambdas, sigma, nabla_psi, line_search_param
@@ -248,8 +251,6 @@ def newt_alm(
     A,
     b,
     lambdas,
-    x=None,
-    y=None,
     max_epochs=1000,
     tol=1e-6,
     max_time=np.inf,
@@ -265,14 +266,13 @@ def newt_alm(
 
     m, n = A.shape
 
-    if x is None:
-        x = rng.standard_normal(n)
-    if y is None:
-        y = rng.standard_normal(m)
+    lambdas *= m
 
     # step 1 update parameters
     local_param = {"epsilon": 1, "delta": 1, "delta_prime": 1, "sigma": 0.5}
 
+    x = np.zeros(n)
+    y = np.zeros(m)
     r = b.copy()
     theta = np.zeros(m)
     primals, gaps = [], []
@@ -326,8 +326,10 @@ def newt_alm(
             theta = r / m
             theta /= max(1, dual_norm_slope(A, theta, lambdas / m))
 
-            primal = (0.5) * norm(r) ** 2 + np.sum((lambdas) * np.sort(np.abs(x))[::-1])
-            dual = (0.5) * (norm(b) ** 2 - norm(b - theta * m) ** 2)
+            primal = (0.5 / m) * norm(r) ** 2 + np.sum(
+                lambdas * np.sort(np.abs(x))[::-1]
+            ) / m
+            dual = (0.5 / m) * (norm(b) ** 2 - norm(b - theta * m) ** 2)
 
             primals.append(primal)
             gap = (primal - dual) / max(1, primal)
@@ -341,48 +343,3 @@ def newt_alm(
                 break
 
     return x, primals, gaps, times
-
-
-def problem1():
-    rng = default_rng(9)
-
-    m = 70
-    n = 70
-
-    A = rng.standard_normal((m, n))
-    b = rng.standard_normal(m)
-
-    # generate lambdas
-    randnorm = stats.norm(loc=0, scale=1)
-    q = 0.3
-    lambdas_seq = randnorm.ppf(1 - np.arange(1, n + 1) * q / (2 * n))
-    lambda_max = dual_norm_slope(A, b, lambdas_seq)
-
-    lambdas = lambda_max * lambdas_seq / 5
-
-    x = newt_alm(A, b, lambdas)
-
-    return x
-
-
-if __name__ == "__main__":
-    rng = default_rng()
-
-    m = 100
-    n = 100
-
-    A = rng.standard_normal((m, n))
-    # A = sparse.random(m, n, format="csc")
-    b = rng.standard_normal(m)
-
-    # generate lambdas
-    randnorm = stats.norm(loc=0, scale=1)
-    q = 0.3
-    lambdas_seq = randnorm.ppf(1 - np.arange(1, n + 1) * q / (2 * n))
-    lambda_max = dual_norm_slope(A, b, lambdas_seq)
-
-    lambdas = lambda_max * lambdas_seq / 5
-
-    x_diff_norm = 0
-
-    x = newt_alm(A, b, lambdas, solver="cg")

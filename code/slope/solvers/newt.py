@@ -142,14 +142,24 @@ def compute_direction(x, sigma, A, y, ATy, lambdas, cg_param, solver):
         d = V_inv @ (-nabla_psi)
     elif solver == "cg":
         # Use conjugate gradient
-        V = W @ W.T
-        if sparse.issparse(A):
-            V += sparse.eye(m, format="csc")
-        else:
-            np.fill_diagonal(V, V.diagonal() + 1)
+        eta = cg_param["eta"]
+        tau = cg_param["tau"]
+        d = np.zeros(m)
 
-        M = sparse.diags(V.diagonal())  # preconditioner
-        d, _ = cg(V, -nabla_psi, tol=cg_param["eta"], M=M)
+        while True:
+            V = W @ W.T
+            if sparse.issparse(A):
+                V += sparse.eye(m, format="csc")
+            else:
+                np.fill_diagonal(V, V.diagonal() + 1)
+
+            M = sparse.diags(V.diagonal())  # preconditioner
+            d, _ = cg(V, -nabla_psi, tol=eta, M=M, x0=d)
+
+            if norm(V @ d + nabla_psi) <= min(eta, norm(nabla_psi) ** (1 + tau)):
+                break
+            else:
+                eta *= 0.1
     else:
         V = W @ W.T
         if sparse.issparse(A):
@@ -242,7 +252,7 @@ def newton_solver(
     optim_param={"max_epochs": 100, "max_inner_it": 10000, "tol": 1e-6, "gap_freq": 1},
     solver="auto",
     line_search_param={"mu": 0.2, "delta": 0.5, "beta": 2},
-    cg_param={"eta": 1e-6, "tau": 0.5},
+    cg_param={"eta": 1e-3, "tau": 0.5},
     verbose=True,
 ):
     if solver not in ["auto", "standard", "woodbury", "cg"]:

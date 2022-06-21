@@ -5,9 +5,9 @@ import numpy as np
 from benchopt.datasets.simulated import make_correlated_data
 from numpy.random import default_rng
 from scipy import sparse, stats
-from scipy.linalg import inv, norm, solve, cho_solve, cho_factor
+from scipy.linalg import cho_factor, cho_solve, inv, norm, solve
 from scipy.optimize import minimize
-from scipy.sparse.linalg import spsolve
+from scipy.sparse.linalg import cg, spsolve
 
 import slope.permutation as slopep
 from slope.clusters import get_clusters
@@ -108,8 +108,10 @@ def compute_direction(x, sigma, A, y, ATy, lambdas, cg_param):
 
     W = build_W(x_tilde, sigma, lambdas, A)
 
-    if W.shape[1] <= 100 * W.shape[0]:
-        # Use Woodbury
+    m, r1_plus_r2 = W.shape
+
+    if r1_plus_r2 <= 100 * m:
+        # Use Woodbury factorization solve
         WTW = W.T @ W
         np.fill_diagonal(WTW, WTW.diagonal() + 1)
 
@@ -117,17 +119,18 @@ def compute_direction(x, sigma, A, y, ATy, lambdas, cg_param):
         np.fill_diagonal(tmp, tmp.diagonal() - 1)
 
         d = tmp @ nabla_psi
+    elif m > 10_000 and m / r1_plus_r2 > 0.1:
+        # Use conjugate gradient
+        V = W @ W.T
+        np.fill_diagonal(V, V.diagonal() + 1)
+
+        M = sparse.diags(V.diagonal())  # preconditioner
+        d, _ = cg(V, -nabla_psi, tol=cg_param["eta"], M=M)
     else:
         V = W @ W.T
         np.fill_diagonal(V, V.diagonal() + 1)
-        
-        d = cho_solve(cho_factor(V), -nabla_psi)
 
-        # if debug:
-        #     if norm(V @ d + nabla_psi) > min(
-        #         cg_param["eta"], norm(nabla_psi) ** (1 + cg_param["tau"])
-        #     ):
-        #         warnings.warn("Solver did not work")
+        d = cho_solve(cho_factor(V), -nabla_psi)
 
     return d, nabla_psi
 
@@ -201,7 +204,7 @@ def newton_solver(
     y=None,
     optim_param={"max_epochs": 100, "max_inner_it": 10000, "tol": 1e-6, "gap_freq": 1},
     line_search_param={"mu": 0.2, "delta": 0.5, "beta": 2},
-    cg_param={"eta": 1e-4, "tau": 0.5},
+    cg_param={"eta": 1e-5, "tau": 0.5},
     verbose=True,
 ):
 

@@ -141,17 +141,14 @@ def line_search(y, d, x, A, ATy, ATd, b, lambdas, sigma, nabla_psi, line_search_
 
 
 def check_convegence(x_diff_norm, nabla_psi, epsilon_k, sigma, delta_k, delta_prime_k):
-
     # check for convergence
     norm_nabla_psi = norm(nabla_psi)
 
     crit_A  = norm_nabla_psi <= epsilon_k / np.sqrt(sigma)
     crit_B1 = norm_nabla_psi <= (delta_k / np.sqrt(sigma)) * x_diff_norm
     crit_B2 = norm_nabla_psi <= (delta_prime_k / sigma) * x_diff_norm
-    if crit_A and crit_B1 and crit_B2:
-        return True
 
-    return False
+    return crit_A and crit_B1 and crit_B2
 
 
 def inner_step(

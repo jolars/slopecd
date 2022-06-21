@@ -109,7 +109,7 @@ def psi2(y, x, ATy, b, lambdas, sigma):
     return 0.5 * norm(y) ** 2 + b @ y - (0.5 / sigma) * norm(x) ** 2 + sigma * phi
 
 
-def compute_direction(x, sigma, A, y, ATy, lambdas, cg_param, method="auto"):
+def compute_direction(x, sigma, A, y, ATy, lambdas, cg_param, solver):
 
     x_tilde = x / sigma - ATy
 
@@ -119,15 +119,15 @@ def compute_direction(x, sigma, A, y, ATy, lambdas, cg_param, method="auto"):
 
     m, r1_plus_r2 = W.shape
 
-    if method == "auto":
+    if solver == "auto":
         if r1_plus_r2 <= 100 * m:
-            method = "woodbury"
+            solver = "woodbury"
         elif m > 10_000 and m / r1_plus_r2 > 0.1:
-            method = "cg"
+            solver = "cg"
         else:
-            method = "standrad"
+            solver = "standrad"
 
-    if method == "woodbury":
+    if solver == "woodbury":
         # Use Woodbury factorization solve
         WTW = W.T @ W
         if sparse.issparse(A):
@@ -140,7 +140,7 @@ def compute_direction(x, sigma, A, y, ATy, lambdas, cg_param, method="auto"):
             np.fill_diagonal(V_inv, V_inv.diagonal() + 1)
 
         d = V_inv @ (-nabla_psi)
-    elif method == "cg":
+    elif solver == "cg":
         # Use conjugate gradient
         V = W @ W.T
         if sparse.issparse(A):
@@ -193,11 +193,21 @@ def check_convegence(x_diff_norm, nabla_psi, epsilon_k, sigma, delta_k, delta_pr
 
 
 def inner_step(
-    A, b, x, y, ATy, lambdas, x_old, local_param, line_search_param, cg_param
+    A,
+    b,
+    x,
+    y,
+    ATy,
+    lambdas,
+    x_old,
+    local_param,
+    line_search_param,
+    cg_param,
+    solver,
 ):
 
     sigma = local_param["sigma"]
-    d, nabla_psi = compute_direction(x_old, sigma, A, y, ATy, lambdas, cg_param)
+    d, nabla_psi = compute_direction(x_old, sigma, A, y, ATy, lambdas, cg_param, solver)
     ATd = A.T @ d
     alpha = line_search(
         y, d, x_old, A, ATy, ATd, b, lambdas, sigma, nabla_psi, line_search_param
@@ -230,10 +240,13 @@ def newton_solver(
     x=None,
     y=None,
     optim_param={"max_epochs": 100, "max_inner_it": 10000, "tol": 1e-6, "gap_freq": 1},
+    solver="auto",
     line_search_param={"mu": 0.2, "delta": 0.5, "beta": 2},
-    cg_param={"eta": 1e-5, "tau": 0.5},
+    cg_param={"eta": 1e-6, "tau": 0.5},
     verbose=True,
 ):
+    if solver not in ["auto", "standard", "woodbury", "cg"]:
+        raise ValueError("`solver` must be one of auto, standard, woodbury, and cg")
 
     m, n = A.shape
 
@@ -275,6 +288,7 @@ def newton_solver(
                 local_param,
                 line_search_param,
                 cg_param,
+                solver,
             )
             if converged:
                 break
@@ -337,8 +351,8 @@ def problem1():
 if __name__ == "__main__":
     rng = default_rng()
 
-    m = 100
-    n = 10
+    m = 10
+    n = 100
 
     # A = rng.standard_normal((m, n))
     A = sparse.random(m, n, format="csc")
@@ -354,4 +368,4 @@ if __name__ == "__main__":
 
     x_diff_norm = 0
 
-    x = newton_solver(A, b, lambdas)
+    x = newton_solver(A, b, lambdas, solver="cg")

@@ -7,21 +7,22 @@ Created on Sun Jun 19 23:31:14 2022
 """
 
 import unittest
+
 import numpy as np
-from scipy import sparse
-from slope.permutation import permutation_matrix
-import slope.permutation as slopep
-from numpy.random import default_rng
 import numpy.random as npr
+from numpy.random import default_rng
+from scipy import sparse
 from scipy.sparse.linalg import spsolve
+
+import slope.permutation as slopep
+from slope.permutation import permutation_matrix
 
 # NOTE THAT THE INVERSE OF B.T is np.cumsum
 
 
 class TestPerumation(unittest.TestCase):
-
     def test_permutation_matrix(self):
-        x = np.array([1., 1., -2., 2., 3])
+        x = np.array([1.0, 1.0, -2.0, 2.0, 3])
         Pi = permutation_matrix(x)
         Pix = Pi @ x
 
@@ -30,14 +31,13 @@ class TestPerumation(unittest.TestCase):
 
     def test_Projection(self):
 
-        x = np.array([1., 1., -2., 2., 3])
+        x = np.array([1.0, 1.0, -2.0, 2.0, 3])
         n = x.shape[0]
         B = sparse.eye(n, format="csc") - sparse.eye(n, k=1, format="csc")
         Gamma = np.array([0, 1, 2])
 
 
 class TestBfunctions(unittest.TestCase):
-
     def test_BtInv(self):
         n = 10
         rng = default_rng(9)
@@ -71,26 +71,29 @@ class TestBfunctions(unittest.TestCase):
         n = x.shape[0]
         B = sparse.eye(n, format="csc") - sparse.eye(n, k=1, format="csc")
         np.testing.assert_array_almost_equal(
-            slopep.BBT_inv_B(x), spsolve(B @ B.T, B @ x))
+            slopep.BBT_inv_B(x), spsolve(B @ B.T, B @ x)
+        )
 
     def test_pi(self):
 
-        xs = [np.array([3., 3., 0., 1., -1, 2, -3]),
-              np.array([3., 0., 0., 1., -1, 2, -3]),
-              npr.randint(-5, 5, 10)]
+        xs = [
+            np.array([3.0, 3.0, 0.0, 1.0, -1, 2, -3]),
+            np.array([3.0, 0.0, 0.0, 1.0, -1, 2, -3]),
+            npr.randint(-5, 5, 10),
+        ]
         for x in xs:
             pi = slopep.permutation_matrix(x)
             pi_list, piT_list = slopep.build_pi(x)
-            np.testing.assert_array_almost_equal(
-                pi @ x, slopep.pix(x, pi_list))
-            np.testing.assert_array_almost_equal(
-                pi.T @ x, slopep.pix(x, piT_list))
+            np.testing.assert_array_almost_equal(pi @ x, slopep.pix(x, pi_list))
+            np.testing.assert_array_almost_equal(pi.T @ x, slopep.pix(x, piT_list))
 
     def test_build_AMAT(self):
 
-        xs = [np.array([3., 3., 0., 1., -1, 2, -3]),
-              np.array([3., 0., 0., 1., -1, 2, -3]),
-              npr.randint(-5, 5, 10)]
+        xs = [
+            np.array([3.0, 3.0, 0.0, 1.0, -1, 2, -3]),
+            np.array([3.0, 0.0, 0.0, 1.0, -1, 2, -3]),
+            npr.randint(-5, 5, 10),
+        ]
         for x in xs:
             m = 10
             # more test larger zero space, etc
@@ -113,9 +116,8 @@ class TestBfunctions(unittest.TestCase):
             )
             M = pi.T @ P @ pi
 
-            V = (A @ M @ A.T)
-            
-            
+            V = A @ M @ A.T
+
             ##
             # method 2
             ##
@@ -124,25 +126,25 @@ class TestBfunctions(unittest.TestCase):
             nC = GammaC.shape[0]
             VW = np.zeros((m, nC))
             for i in range(nC):
-                ind = np.arange(start, GammaC[i]+1)
+                ind = np.arange(start, GammaC[i] + 1)
                 VW[:, i] += np.sum(A @ pi[ind, :].T, 1)
-                if(ind.shape[0] > 1):
+                if ind.shape[0] > 1:
                     VW[:, i] /= np.sqrt(ind.shape[0])
                 start = GammaC[i] + 1
 
             ##
             # method 3
             ##
-            
+
             start = 0
             nC = GammaC.shape[0]
             VW = np.zeros((m, nC))
             pi_list, piT_list = slopep.build_pi(x)
             for i in range(nC):
-                ind = np.arange(start, GammaC[i]+1)
+                ind = np.arange(start, GammaC[i] + 1)
                 for j in ind:
                     VW[:, i] += pi_list[j, 1] * A[:, pi_list[j, 0]]
-                if(ind.shape[0] > 1):
+                if ind.shape[0] > 1:
                     VW[:, i] /= np.sqrt(ind.shape[0])
                 start = GammaC[i] + 1
 
@@ -152,7 +154,7 @@ class TestBfunctions(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    x = np.array([3., 3., 0., 1., -1, 2, -3])
+    x = np.array([3.0, 3.0, 0.0, 1.0, -1, 2, -3])
     pi_list, piT_list = slopep.build_pi(x)
     pi = slopep.permutation_matrix(x)
     unittest.main()

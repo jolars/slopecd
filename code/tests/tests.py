@@ -2,12 +2,13 @@ import unittest
 from bisect import bisect_right
 
 import numpy as np
+import scipy.sparse as sparse
 from benchopt.datasets.simulated import make_correlated_data
 from scipy import stats
 
 import slope
 from slope.clusters import get_clusters, update_cluster
-from slope.solvers import prox_grad
+from slope.solvers import newt_alm, prox_grad
 from slope.utils import dual_norm_slope
 
 
@@ -29,6 +30,30 @@ class TestPenalty(unittest.TestCase):
             slope.SortedL1Norm(np.array([0.1, 0.2]))
         with self.assertRaises(ValueError):
             slope.SortedL1Norm(np.array([0.2, -0.2]))
+
+
+class TestNewtALMSolver(unittest.TestCase):
+    def test_convergence(self):
+        X, y, _ = make_correlated_data(n_samples=20, n_features=200, random_state=0)
+
+        q = 0.4
+        reg = 0.1
+
+        randnorm = stats.norm(loc=0, scale=1)
+        lambdas_seq = randnorm.ppf(
+            1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1])
+        )
+        lambda_max = dual_norm_slope(X, y / len(y), lambdas_seq)
+        lambdas = lambda_max * lambdas_seq * reg
+
+        tol = 1e-6
+
+        for X_sparse in [False, True]:
+            X_in = sparse.csc_array(X) if X_sparse else X
+            for solver in ["standard", "cg", "woodbury"]:
+                _, _, gaps, _ = newt_alm(X_in, y, lambdas, solver=solver, tol=tol)
+                with self.subTest():
+                    self.assertGreater(tol, gaps[-1])
 
 
 class TestPGDSolvers(unittest.TestCase):

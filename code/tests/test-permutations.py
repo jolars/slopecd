@@ -29,13 +29,6 @@ class TestPerumation(unittest.TestCase):
         self.assertTrue(np.alltrue(Pix >= 0))
         self.assertTrue(np.alltrue(np.diff(Pix) <= 0))
 
-    def test_Projection(self):
-
-        x = np.array([1.0, 1.0, -2.0, 2.0, 3])
-        n = x.shape[0]
-        B = sparse.eye(n, format="csc") - sparse.eye(n, k=1, format="csc")
-        Gamma = np.array([0, 1, 2])
-
 
 class TestBfunctions(unittest.TestCase):
     def test_BtInv(self):

@@ -2,45 +2,13 @@ import warnings
 from timeit import default_timer as timer
 
 import numpy as np
-from benchopt.datasets.simulated import make_correlated_data
-from numba import jit, njit
-from numpy.random import default_rng
-from scipy import sparse, stats
-from scipy.linalg import cho_factor, cho_solve, inv, norm, solve
-from scipy.optimize import minimize
+from numba import njit
+from scipy import sparse
+from scipy.linalg import cho_factor, cho_solve, norm, solve
 from scipy.sparse.linalg import cg, spsolve
 
 import slope.permutation as slopep
-from slope.clusters import get_clusters
-from slope.solvers import prox_grad
-from slope.utils import dual_norm_slope, prox_slope, prox_slope2
-
-# build the approximate Hessian
-# def build_AMAT_old(x_tilde, sigma, lambdas, A):
-
-#     B = sparse.eye(x_tilde.shape[0], format="csc") - sparse.eye(
-#         x_tilde.shape[0], k=1, format="csc"
-#     )
-#     pi = slopep.permutation_matrix(x_tilde)  # pi @ x == np.sort(np.abs(x))[::-1]
-#     ord = np.argsort(np.abs(x_tilde))[::-1]
-#     x_lambda = np.abs(prox_slope(x_tilde, lambdas * sigma)[ord])
-
-#     z = slopep.BBT_inv_B(np.abs(x_tilde[ord]) - lambdas - x_lambda)
-
-#     z_supp = np.where(z != 0)[0]
-#     I_x_lambda = np.where(B @ x_lambda == 0)[0]
-
-#     Gamma = np.intersect1d(z_supp, I_x_lambda)
-
-#     B_Gamma = B[Gamma, :]
-
-#     P = sparse.eye(n, format="csc") - B_Gamma.T @ spsolve(B_Gamma @ B_Gamma.T, B_Gamma)
-
-#     M = pi.T @ P @ pi
-
-#     V = sigma * (A @ M @ A.T)
-
-#     return V
+from slope.utils import dual_norm_slope, prox_slope2
 
 
 def build_W(x_tilde, sigma, lambdas, A):
@@ -254,7 +222,7 @@ def newt_alm(
 
     m, n = A.shape
 
-    lambdas *= m
+    lambdas = lambdas.copy() * m
 
     x = np.zeros(n)
     y = np.zeros(m)

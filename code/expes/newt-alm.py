@@ -1,66 +1,82 @@
-from importlib import reload
-
 import matplotlib.pyplot as plt
 import numpy as np
 from benchopt.datasets.simulated import make_correlated_data
-from libsvmdata import fetch_libsvm
 from matplotlib.cm import get_cmap
-from scipy import stats
+from scipy import sparse, stats
 
 import slope
+from slope.data import get_data
+from slope.solvers import hybrid_cd, newt_alm, prox_grad
+from slope.utils import dual_norm_slope
 
-# from slope.solvers import newt_alm, prox_grad
-# from slope.utils import dual_norm_slope
+cm = get_cmap("tab10")
 
-x = np.array([5, 2.0, 1.0])
-lambdas = np.array([2.5, 1.0, 1.0])
-epsilon = 10
+n = 100
+p = 10000
 
-# z = project_to_OWL_ball(z - opts.gamma *(AtA*z - Atb), w, epsilon, 'false');
+dataset = "Rhee2006"
+if dataset == "simulated":
+    X, y, _ = make_correlated_data(n_samples=n, n_features=p, random_state=0, rho=0.3)
+else:
+    X, y = get_data(dataset)
 
-# cm = get_cmap("tab10")
+n, p = X.shape
 
-# n = 1000
-# p = 10
+randnorm = stats.norm(loc=0, scale=1)
+q = 0.2
+reg = 0.02
 
-# dataset = "simulated"
-# if dataset == "simulated":
-#     X, y, _ = make_correlated_data(n_samples=n, n_features=p, random_state=0)
-# else:
-#     X, y = fetch_libsvm(dataset)
+alphas_seq = randnorm.ppf(1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1]))
 
-# y = y - np.mean(y)
+alpha_max = dual_norm_slope(X, y / len(y), alphas_seq)
 
-# randnorm = stats.norm(loc=0, scale=1)
-# q = 0.1
-# alphas_seq = randnorm.ppf(1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1]))
+lambdas = alpha_max * alphas_seq * reg
 
+max_epochs = 10_000
+gap_freq = 10
+tol = 1e-8
+verbose = True
 
-# alpha_max = dual_norm_slope(X, y / len(y), alphas_seq)
+w_ista, primals_ista, gaps_ista, times_ista = prox_grad(
+    X,
+    y,
+    lambdas,
+    fista=True,
+    gap_freq=gap_freq,
+    max_epochs=max_epochs,
+    tol=tol,
+    verbose=verbose,
+)
 
-# lambdas = alpha_max * alphas_seq / 100
+w_cd, primals_cd, gaps_cd, times_cd = hybrid_cd(
+    X, y, lambdas, max_epochs=max_epochs, tol=tol, verbose=verbose
+)
 
-# plt.close("all")
-# plt.figure()
+w_newt, primals_newt, gaps_newt, times_newt = newt_alm(
+    X,
+    y,
+    lambdas,
+    gap_freq=1,
+    max_epochs=max_epochs,
+    tol=tol,
+    verbose=verbose,
+)
 
-# max_epochs = 100
-# gap_freq = 10
+plt.close("all")
+plt.figure()
 
-# w_ista, primals_ista, gaps_ista, times_ista = prox_grad(
-#     X, y, lambdas, fista=False, verbose=True, gap_freq=gap_freq, max_epochs=max_epochs
-# )
+primals_ista = np.array(primals_ista)
+primals_newt = np.array(primals_newt)
+primals_cd = np.array(primals_cd)
+p_star = min(np.min(primals_ista), np.min(primals_newt), np.min(primals_cd))
+plt.semilogy(times_ista, primals_ista - p_star, c=cm(0), label="primal subopt PGD")
+plt.semilogy(times_newt, primals_newt - p_star, c=cm(1), label="primal subopt NEWT-ALM")
+plt.semilogy(times_cd, primals_cd - p_star, c=cm(2), label="primal subopt cd")
 
-# w_newt, primals_newt, gaps_newt, times_newt = newt_alm(
-#     X, y, lambdas, verbose=True, gap_freq=gap_freq, max_epochs=max_epochs
-# )
+# plt.semilogy(times_ista, gaps_ista, c=cm(0), label="primal subopt PGD")
+# plt.semilogy(times_newt, gaps_newt, c=cm(1), label="primal subopt NEWT-ALM")
+# plt.semilogy(times_cd, gaps_cd, c=cm(2), label="primal subopt cd")
 
-# primals_ista = np.array(primals_ista)
-# primals_fista = np.array(primals_newt)
-# p_star = min(np.min(primals_ista), np.min(primals_fista))
-# plt.semilogy(primals_ista - p_star, c=cm(0), label="primal subopt PGD")
-# plt.semilogy(primals_fista - p_star, c=cm(1), label="primal subopt NEWT-ALM")
+plt.legend()
 
-# plt.semilogy(gaps_ista, c=cm(0), linestyle="--", label="gap PGD")
-# plt.semilogy(gaps_newt, c=cm(1), linestyle="--", label="gap NEWT-ALM")
-# plt.legend()
-# plt.show(block=False)
+plt.show(block=False)

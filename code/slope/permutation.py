@@ -3,9 +3,11 @@ Various permuation, ordering objects
 
 """
 import numpy as np
+from numba import njit
 from scipy import sparse
 
 
+@njit
 def nonzero_sign(x):
     n = len(x)
     out = np.empty(n)
@@ -32,8 +34,8 @@ def permutation_matrix(x):
 
 
 # build the signedpermutation object
+@njit
 def build_pi(x):
-
     n = len(x)
     pi_list = np.empty((n, 2), dtype=np.int64)
     piT_list = np.empty((n, 2), dtype=np.int64)
@@ -50,6 +52,7 @@ def build_pi(x):
 
 
 # multiplaction of signed permuation
+@njit
 def pix(x, pi_list):
     return x[pi_list[:, 0]] * pi_list[:, 1]
 
@@ -60,10 +63,12 @@ def BTinv(x):
 
 
 # inverse of the matrix B
+@njit
 def Binv(x):
     return np.cumsum(x[::-1])[::-1]
 
 
+@njit
 def B(x):
     y = x.copy()
     y[:-1] -= x[1:]
@@ -74,3 +79,46 @@ def B(x):
 # returns (BBt) ^-1 B x
 def BBT_inv_B(x):
     return BTinv(x)
+
+
+@njit
+def assemble_sparse_W(nC, GammaC, pi_list, A_data, A_indices, A_indptr):
+    W_row = []
+    W_col = []
+    W_data = []
+
+    start = 0
+
+    for i in range(nC):
+        nCi = GammaC[i] + 1 - start
+        for j in range(start, GammaC[i] + 1):
+            k = pi_list[j, 0]
+            pi_list_j1 = pi_list[j, 1]
+            for ind in range(A_indptr[k], A_indptr[k + 1]):
+                W_row.append(A_indices[ind])
+                W_col.append(i)
+                val = pi_list_j1 * A_data[ind]
+                if nCi > 1:
+                    val /= np.sqrt(nCi)
+                W_data.append(val)
+        start = GammaC[i] + 1
+
+    return np.array(W_row), np.array(W_col), np.array(W_data)
+
+
+@njit
+def assemble_dense_W(nC, GammaC, pi_list, A):
+    m = A.shape[0]
+
+    W = np.zeros((m, nC))
+
+    start = 0
+    for i in range(nC):
+        nCi = GammaC[i] + 1 - start
+        for j in range(start, GammaC[i] + 1):
+            W[:, i] += pi_list[j, 1] * A[:, pi_list[j, 0]]
+        if nCi > 1:
+            W[:, i] /= np.sqrt(nCi)
+        start = GammaC[i] + 1
+
+    return W

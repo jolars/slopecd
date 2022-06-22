@@ -3,6 +3,7 @@ from timeit import default_timer as timer
 
 import numpy as np
 from benchopt.datasets.simulated import make_correlated_data
+from numba import jit, njit
 from numpy.random import default_rng
 from scipy import sparse, stats
 from scipy.linalg import cho_factor, cho_solve, inv, norm, solve
@@ -12,109 +13,84 @@ from scipy.sparse.linalg import cg, spsolve
 import slope.permutation as slopep
 from slope.clusters import get_clusters
 from slope.solvers import prox_grad
-from slope.utils import dual_norm_slope, prox_slope
-
+from slope.utils import dual_norm_slope, prox_slope, prox_slope2
 
 # build the approximate Hessian
-def build_AMAT_old(x_tilde, sigma, lambdas, A):
+# def build_AMAT_old(x_tilde, sigma, lambdas, A):
 
-    B = sparse.eye(x_tilde.shape[0], format="csc") - sparse.eye(
-        x_tilde.shape[0], k=1, format="csc"
-    )
-    pi = slopep.permutation_matrix(x_tilde)  # pi @ x == np.sort(np.abs(x))[::-1]
-    ord = np.argsort(np.abs(x_tilde))[::-1]
-    x_lambda = np.abs(prox_slope(x_tilde, sigma)[ord])
+#     B = sparse.eye(x_tilde.shape[0], format="csc") - sparse.eye(
+#         x_tilde.shape[0], k=1, format="csc"
+#     )
+#     pi = slopep.permutation_matrix(x_tilde)  # pi @ x == np.sort(np.abs(x))[::-1]
+#     ord = np.argsort(np.abs(x_tilde))[::-1]
+#     x_lambda = np.abs(prox_slope(x_tilde, lambdas * sigma)[ord])
 
-    z = slopep.BBT_inv_B(np.abs(x_tilde[ord]) - lambdas - x_lambda)
+#     z = slopep.BBT_inv_B(np.abs(x_tilde[ord]) - lambdas - x_lambda)
 
-    z_supp = np.where(z != 0)[0]
-    I_x_lambda = np.where(B @ x_lambda == 0)[0]
+#     z_supp = np.where(z != 0)[0]
+#     I_x_lambda = np.where(B @ x_lambda == 0)[0]
 
-    Gamma = np.intersect1d(z_supp, I_x_lambda)
+#     Gamma = np.intersect1d(z_supp, I_x_lambda)
 
-    B_Gamma = B[Gamma, :]
+#     B_Gamma = B[Gamma, :]
 
-    P = sparse.eye(n, format="csc") - B_Gamma.T @ spsolve(B_Gamma @ B_Gamma.T, B_Gamma)
+#     P = sparse.eye(n, format="csc") - B_Gamma.T @ spsolve(B_Gamma @ B_Gamma.T, B_Gamma)
 
-    M = pi.T @ P @ pi
+#     M = pi.T @ P @ pi
 
-    V = sigma * (A @ M @ A.T)
+#     V = sigma * (A @ M @ A.T)
 
-    return V
+#     return V
 
 
 def build_W(x_tilde, sigma, lambdas, A):
     m = A.shape[0]
 
     ord = np.argsort(np.abs(x_tilde))[::-1]
-    x_lambda = np.abs(prox_slope(x_tilde, sigma)[ord])
+    x_lambda = np.abs(prox_slope2(x_tilde, lambdas)[ord])
 
     z = slopep.BBT_inv_B(np.abs(x_tilde[ord]) - lambdas - x_lambda)
 
-    z_supp = np.where(z != 0)[0]
-    I_x_lambda = np.where(slopep.B(x_lambda) == 0)[0]
+    Gamma = np.where(np.logical_and(z != 0, slopep.B(x_lambda) == 0))[0]
+    GammaC = np.setdiff1d(np.arange(len(x_tilde)), Gamma)
 
-    Gamma = np.intersect1d(z_supp, I_x_lambda)
-    GammaC = np.setdiff1d(np.arange(x_tilde.shape[0]), Gamma)
+    nC = len(GammaC)
 
-    start = 0
-    nC = GammaC.shape[0]
+    pi_list, _ = slopep.build_pi(x_tilde)
 
     if sparse.issparse(A):
-        VW = sparse.lil_matrix((m, nC), dtype=float)
+        W_row, W_col, W_data = slopep.assemble_sparse_W(
+            nC, GammaC, pi_list, A.data, A.indices, A.indptr
+        )
+        # we use CSR here because transpose later on makes it CSC, which
+        # is what we really want.
+        W = sparse.coo_matrix((W_data, (W_row, W_col)), shape=(m, nC)).tocsr()
     else:
-        VW = np.zeros((m, nC))
+        W = slopep.assemble_dense_W(nC, GammaC, pi_list, A)
 
-    pi_list, piT_list = slopep.build_pi(x_tilde)
-
-    for i in range(nC):
-        ind = np.arange(start, GammaC[i] + 1)
-        for j in ind:
-            VW[:, i] += pi_list[j, 1] * A[:, pi_list[j, 0]]
-        if ind.shape[0] > 1:
-            VW[:, i] /= np.sqrt(ind.shape[0])
-        start = GammaC[i] + 1
-
-    if sparse.issparse(A):
-        # NOTE: Use CSR here because transpose later on causes it to become CSC,
-        # which is what we really want.
-        VW = sparse.csr_matrix(VW)
-
-    return np.sqrt(sigma) * VW
+    return np.sqrt(sigma) * W
 
 
-def psi(y, x, A, b, lambdas, sigma):
-    ATy = A.T @ y
-
-    # TODO(jolars): not at all sure what epsilon and lambdas should be here
-    # epsilon = np.sum(np.abs(ATy))
+@njit
+def psi(y, x, ATy, b, lambdas, sigma):
     w = x - sigma * ATy
-    # u = sorted_l1_proj(x_tilde, lambdas / sigma, epsilon / sigma)
-    u = (1 / sigma) * (w - prox_slope(w, lambdas * sigma))
+    u = (1 / sigma) * (w - prox_slope2(w, lambdas * sigma))
 
-    phi = 0.5 * norm(u - w / sigma) ** 2
+    phi = 0.5 * np.linalg.norm(u - w / sigma) ** 2
 
-    return 0.5 * norm(y) ** 2 + b @ y - (0.5 / sigma) * norm(x) ** 2 + sigma * phi
-
-
-def psi2(y, x, ATy, b, lambdas, sigma):
-
-    # TODO(jolars): not at all sure what epsilon and lambdas should be here
-    # epsilon = np.sum(np.abs(ATy))
-    w = x - sigma * ATy
-    # u = sorted_l1_proj(x_tilde, lambdas / sigma, epsilon / sigma)
-    u = (1 / sigma) * (w - prox_slope(w, lambdas * sigma))
-
-    phi = 0.5 * norm(u - w / sigma) ** 2
-
-    return 0.5 * norm(y) ** 2 + b @ y - (0.5 / sigma) * norm(x) ** 2 + sigma * phi
+    return (
+        0.5 * np.linalg.norm(y) ** 2
+        + b @ y
+        - (0.5 / sigma) * np.linalg.norm(x) ** 2
+        + sigma * phi
+    )
 
 
 def compute_direction(x, sigma, A, b, y, ATy, lambdas, cg_param, solver):
 
     x_tilde = x / sigma - ATy
 
-    nabla_psi = y + b - A @ prox_slope(x - sigma * ATy, sigma * lambdas)
+    nabla_psi = y + b - A @ prox_slope2(x - sigma * ATy, sigma * lambdas)
 
     W = build_W(x_tilde, sigma, lambdas, A)
 
@@ -126,7 +102,7 @@ def compute_direction(x, sigma, A, b, y, ATy, lambdas, cg_param, solver):
         elif m > 10_000 and m / r1_plus_r2 > 0.1:
             solver = "cg"
         else:
-            solver = "standrad"
+            solver = "standard"
 
     if solver == "woodbury":
         # Use Woodbury factorization solve
@@ -174,21 +150,22 @@ def compute_direction(x, sigma, A, b, y, ATy, lambdas, cg_param, solver):
     return d, nabla_psi
 
 
-def line_search(y, d, x, A, ATy, ATd, b, lambdas, sigma, nabla_psi, line_search_param):
+@njit
+def line_search(y, d, x, ATy, ATd, b, lambdas, sigma, nabla_psi, delta, mu, beta):
     # step 1b, line search
     mj = 0
 
-    psi0 = psi2(y, x, ATy, b, lambdas, sigma)
+    psi0 = psi(y, x, ATy, b, lambdas, sigma)
     nabla_psi_d = nabla_psi @ d
     while True:
-        alpha = line_search_param["delta"] ** mj
-        lhs = psi2(y + alpha * d, x, ATy + alpha * ATd, b, lambdas, sigma)
-        rhs = psi0 + line_search_param["mu"] * alpha * nabla_psi_d
+        alpha = delta**mj
+        lhs = psi(y + alpha * d, x, ATy + alpha * ATd, b, lambdas, sigma)
+        rhs = psi0 + mu * alpha * nabla_psi_d
 
         if lhs <= rhs:
             break
 
-        mj = 1 if mj == 0 else mj * line_search_param["beta"]
+        mj = 1 if mj == 0 else mj * beta
 
     return alpha
 
@@ -217,14 +194,24 @@ def inner_step(
     cg_param,
     solver,
 ):
-
     sigma = local_param["sigma"]
     d, nabla_psi = compute_direction(
         x_old, sigma, A, b, y, ATy, lambdas, cg_param, solver
     )
     ATd = A.T @ d
     alpha = line_search(
-        y, d, x_old, A, ATy, ATd, b, lambdas, sigma, nabla_psi, line_search_param
+        y,
+        d,
+        x_old,
+        ATy,
+        ATd,
+        b,
+        lambdas,
+        sigma,
+        nabla_psi,
+        line_search_param["delta"],
+        line_search_param["mu"],
+        line_search_param["beta"],
     )
 
     # step 1c, update y
@@ -232,7 +219,7 @@ def inner_step(
     ATy += alpha * ATd
 
     # step 2, update x
-    x = prox_slope(x_old - sigma * ATy, sigma * lambdas)
+    x = prox_slope2(x_old - sigma * ATy, sigma * lambdas)
 
     # check for convergence
     x_diff_norm = norm(x - x_old)
@@ -268,7 +255,6 @@ def newt_alm(
 
     lambdas *= m
 
-    # step 1 update parameters
     local_param = {"epsilon": 1, "delta": 1, "delta_prime": 1, "sigma": 0.5}
 
     x = np.zeros(n)

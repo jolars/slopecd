@@ -242,10 +242,11 @@ def newt_alm(
     tol=1e-6,
     max_time=np.inf,
     gap_freq=1,
-    max_inner_it=1_000,
+    max_inner_it=100_000,
     solver="auto",
     line_search_param={"mu": 0.2, "delta": 0.5, "beta": 2},
     cg_param={"eta": 1e-4, "tau": 0.1, "starting_tol": 1e-1},
+    local_param={"epsilon": 1.0, "delta": 1.0, "delta_prime": 1.0, "sigma": 0.5},
     verbose=True,
 ):
     if solver not in ["auto", "standard", "woodbury", "cg"]:
@@ -254,8 +255,6 @@ def newt_alm(
     m, n = A.shape
 
     lambdas *= m
-
-    local_param = {"epsilon": 1, "delta": 1, "delta_prime": 1, "sigma": 0.5}
 
     x = np.zeros(n)
     y = np.zeros(m)

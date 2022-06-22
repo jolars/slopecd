@@ -87,25 +87,19 @@ def compute_direction(x, sigma, A, b, y, ATy, lambdas, cg_param, solver):
         d = V_inv @ (-nabla_psi)
     elif solver == "cg":
         # Use conjugate gradient
-        eta = cg_param["eta"]
-        tau = cg_param["tau"]
-        tol = cg_param["starting_tol"]
-        d = np.zeros(m)
+        V = W @ W.T
+        if sparse.issparse(A):
+            V += sparse.eye(m, format="csc")
+        else:
+            np.fill_diagonal(V, V.diagonal() + 1)
 
-        while True:
-            V = W @ W.T
-            if sparse.issparse(A):
-                V += sparse.eye(m, format="csc")
-            else:
-                np.fill_diagonal(V, V.diagonal() + 1)
+        rel_tol = cg_param["abs_tol"]
+        abs_tol = cg_param["rel_tol"]
 
-            M = sparse.diags(V.diagonal())  # preconditioner
-            d, _ = cg(V, -nabla_psi, tol=tol, M=M, x0=d)
+        # preconditioner
+        M = sparse.diags(V.diagonal())
 
-            if norm(V @ d + nabla_psi) <= min(eta, norm(nabla_psi) ** (1 + tau)):
-                break
-            else:
-                tol *= 0.1
+        d, _ = cg(V, -nabla_psi, tol=rel_tol, atol=abs_tol, M=M)
     else:
         V = W @ W.T
         if sparse.issparse(A):
@@ -213,7 +207,7 @@ def newt_alm(
     max_inner_it=100_000,
     solver="auto",
     line_search_param={"mu": 0.2, "delta": 0.5, "beta": 2},
-    cg_param={"eta": 1e-4, "tau": 0.1, "starting_tol": 1e-1},
+    cg_param={"rel_tol": 1e-5, "abs_tol": 1e-8},
     local_param={"epsilon": 1.0, "delta": 1.0, "delta_prime": 1.0, "sigma": 0.5},
     verbose=True,
 ):

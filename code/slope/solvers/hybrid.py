@@ -122,7 +122,7 @@ def hybrid_cd(
     X,
     y,
     alphas,
-    cluster_updates=False,
+    cluster_updates=True,
     update_zero_cluster=False,
     pgd_freq=5,
     tol=1e-6,

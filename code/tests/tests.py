@@ -5,30 +5,9 @@ import numpy as np
 from benchopt.datasets.simulated import make_correlated_data
 from scipy import stats
 
-import slope
 from slope.clusters import get_clusters, update_cluster
 from slope.solvers import prox_grad
 from slope.utils import dual_norm_slope
-
-
-class TestPenalty(unittest.TestCase):
-    def test_results(self):
-        beta = np.array([3, 2.5, 1.2, -4, 0, -0.2])
-        lam = np.array([2.7, 2, 1.7, 1.1, 0.8, 0.4])
-
-        pen = slope.SortedL1Norm(lam)
-
-        self.assertAlmostEqual(pen.evaluate(beta), 22.53)
-
-        np.testing.assert_allclose(
-            pen.prox(beta), np.array([1.0, 0.8, 0.1, -1.3, 0.0, -0.0])
-        )
-
-    def test_assertions(self):
-        with self.assertRaises(ValueError):
-            slope.SortedL1Norm(np.array([0.1, 0.2]))
-        with self.assertRaises(ValueError):
-            slope.SortedL1Norm(np.array([0.2, -0.2]))
 
 
 class TestPGDSolvers(unittest.TestCase):

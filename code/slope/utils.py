@@ -122,5 +122,5 @@ def add_intercept_column(X):
 
     if sparse.issparse(X):
         return sparse.hstack((sparse.csc_array(np.ones((n, 1))), X), format="csc")
-    else
+    else:
         return np.hstack((np.ones((n, 1)), X))

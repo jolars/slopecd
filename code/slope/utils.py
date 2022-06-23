@@ -35,7 +35,7 @@ def dual_norm_slope(X, theta, alphas):
     return np.max(np.cumsum(Xtheta) * taus)
 
 
-def generate_lambda_sequence(X, y, fit_intercept, reg=0.1, q=0.1):
+def lambda_sequence(X, y, fit_intercept, reg=0.1, q=0.1):
     """Generates the BH-type lambda sequence"""
     n, p = X.shape
 

@@ -6,7 +6,7 @@ from scipy import sparse
 from scipy.linalg import cholesky, solve_triangular
 from scipy.sparse.linalg import lsqr
 
-from slope.utils import dual_norm_slope, prox_slope
+from slope.utils import add_intercept_column, dual_norm_slope, prox_slope
 
 
 def admm(
@@ -36,11 +36,7 @@ def admm(
     n, p = X.shape
 
     if fit_intercept:
-        if sparse.issparse(X):
-            X = sparse.hstack((sparse.csc_array(np.ones((n, 1))), X), format="csc")
-        else:
-            X = np.hstack((np.ones((n, 1)), X))
-
+        X = add_intercept_column(X)
         p += 1
 
     r = y.copy()

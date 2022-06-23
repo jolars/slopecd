@@ -125,6 +125,7 @@ def hybrid_cd(
     cluster_updates=False,
     update_zero_cluster=False,
     pgd_freq=5,
+    gap_freq=10,
     tol=1e-6,
     max_epochs=10_000,
     max_time=np.inf,
@@ -184,23 +185,24 @@ def hybrid_cd(
                     update_zero_cluster
                 )
 
-        theta = R / n_samples
-        theta /= max(1, dual_norm_slope(X, theta, alphas))
-        dual = (norm(y) ** 2 - norm(y - theta * n_samples) ** 2) / \
-            (2 * n_samples)
-        primal = norm(R) ** 2 / (2 * n_samples) + \
-            np.sum(alphas * np.sort(np.abs(w))[::-1])
-
-        E.append(primal)
-        gap = primal - dual
-        gaps.append(gap)
-        times.append(timer() - time_start)
-
         times_up = timer() - time_start > max_time
 
-        if verbose:
-            print(f"Epoch: {epoch + 1}, loss: {primal}, gap: {gap:.2e}")
-        if gap < tol or times_up:
-            break
+        if epoch % gap_freq == 0 or times_up:
+            theta = R / n_samples
+            theta /= max(1, dual_norm_slope(X, theta, alphas))
+            dual = (norm(y) ** 2 - norm(y - theta * n_samples) ** 2) / \
+                (2 * n_samples)
+            primal = norm(R) ** 2 / (2 * n_samples) + \
+                np.sum(alphas * np.sort(np.abs(w))[::-1])
+
+            E.append(primal)
+            gap = primal - dual
+            gaps.append(gap)
+            times.append(timer() - time_start)
+
+            if verbose:
+                print(f"Epoch: {epoch + 1}, loss: {primal}, gap: {gap:.2e}")
+            if gap < tol or times_up:
+                break
 
     return w, E, gaps, times

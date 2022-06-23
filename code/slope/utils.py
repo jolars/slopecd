@@ -1,4 +1,5 @@
 import numpy as np
+import scipy.sparse as sparse
 from numba import njit
 from numpy.linalg import norm
 from sklearn.isotonic import isotonic_regression
@@ -49,9 +50,7 @@ def prox_slope(w, alphas):
 
 def get_clusters(w):
     # check if there is a cheaper way of doing this
-    unique, counts = np.unique(
-        np.abs(w), return_inverse=False, return_counts=True
-    )
+    unique, counts = np.unique(np.abs(w), return_inverse=False, return_counts=True)
     cluster_indices = np.argsort(np.abs(w))[::-1]
     cluster_ptr = np.cumsum(counts[::-1])
     cluster_ptr = np.r_[0, cluster_ptr]
@@ -66,9 +65,9 @@ def slope_threshold(x, lambdas, cluster_ptr, c, n_c, j):
     sign_x = np.sign(x)
 
     # check which direction we need to search
-    up_direction = abs_x - sum(
-        lambdas[cluster_ptr[j] : cluster_ptr[j + 1]]
-    ) > np.abs(c[j])
+    up_direction = abs_x - sum(lambdas[cluster_ptr[j] : cluster_ptr[j + 1]]) > np.abs(
+        c[j]
+    )
 
     if up_direction:
         start = cluster_ptr[j + 1]
@@ -116,3 +115,12 @@ def slope_threshold(x, lambdas, cluster_ptr, c, n_c, j):
         else:
             # in zero cluster
             return 0.0, n_c - 1
+
+
+def add_intercept_column(X):
+    n = X.shape[0]
+
+    if sparse.issparse(X):
+        return sparse.hstack((sparse.csc_array(np.ones((n, 1))), X), format="csc")
+    else
+        return np.hstack((np.ones((n, 1)), X))

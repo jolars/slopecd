@@ -25,6 +25,9 @@ def admm(
     max_time=np.inf,
     verbose=False,
 ):
+    # implementation from https://web.stanford.edu/~boyd/papers/admm/lasso/lasso.html
+    # splitting: min f(w) + g(z) subject to z = w + use *scaled* Lagrangian variable u
+
     # parameters
     mu = 10
     tau_incr = 2

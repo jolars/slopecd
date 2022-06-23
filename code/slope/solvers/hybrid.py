@@ -6,7 +6,11 @@ from numpy.linalg import norm
 from scipy import sparse
 
 from slope.clusters import get_clusters, update_cluster
-from slope.utils import dual_norm_slope, prox_slope, slope_threshold
+from slope.utils import (
+    dual_norm_slope,
+    prox_slope,
+    slope_threshold
+)
 
 
 @njit
@@ -20,17 +24,18 @@ def block_cd_epoch(
     c,
     n_c,
     cluster_updates,
+    update_zero_cluster,
 ):
     n_samples = X.shape[0]
 
     j = 0
     while j < n_c:
-        if c[j] == 0:
+        if c[j] == 0 and not update_zero_cluster:
             j += 1
             continue
 
         cluster = cluster_indices[cluster_ptr[j]:cluster_ptr[j+1]]
-        sign_w = np.sign(w[cluster])
+        sign_w = np.sign(w[cluster]) if c[j] != 0 else np.ones(len(cluster))
         sum_X = X[:, cluster] @ sign_w
         L_j = sum_X.T @ sum_X / n_samples
         c_old = abs(c[j])
@@ -66,18 +71,19 @@ def block_cd_epoch_sparse(
     cluster_ptr,
     c,
     n_c,
-    cluster_updates
+    cluster_updates,
+    update_zero_cluster
 ):
     n_samples = len(R)
 
     j = 0
     while j < n_c:
-        if c[j] == 0:
+        if c[j] == 0 and not update_zero_cluster:
             j += 1
             continue
 
         cluster = cluster_indices[cluster_ptr[j]:cluster_ptr[j+1]]
-        sign_w = np.sign(w[cluster])
+        sign_w = np.sign(w[cluster]) if c[j] != 0 else np.ones(len(cluster))
         sum_X = compute_block_scalar_sparse(
             X_data, X_indices, X_indptr, sign_w, cluster, n_samples)
         L_j = sum_X.T @ sum_X / n_samples
@@ -117,10 +123,14 @@ def hybrid_cd(
     y,
     alphas,
     fit_intercept=True,
-    max_epochs=1000,
     cluster_updates=False,
-    verbose=True,
-    tol=1e-3,
+    update_zero_cluster=False,
+    pgd_freq=5,
+    gap_freq=10,
+    tol=1e-6,
+    max_epochs=10_000,
+    max_time=np.inf,
+    verbose=False,
 ):
     is_X_sparse = sparse.issparse(X)
     n_samples, n_features = X.shape
@@ -155,11 +165,9 @@ def hybrid_cd(
     E.append(norm(y)**2 / (2 * n_samples))
     gaps.append(E[0])
 
-    c, cluster_ptr, cluster_indices, n_c = get_clusters(w)
-
     for epoch in range(max_epochs):
         # This is experimental, it will need to be justified
-        if epoch % 5 == 0:
+        if epoch % pgd_freq == 0:
             w = prox_slope(w + (X.T @ R) / (L * n_samples), alphas / L)
             if fit_intercept:
                 intercept = intercept + np.sum(R) / (L * n_samples)
@@ -179,6 +187,7 @@ def hybrid_cd(
                     c,
                     n_c,
                     cluster_updates,
+                    update_zero_cluster
                 )
             else:
                 n_c = block_cd_epoch(
@@ -191,6 +200,7 @@ def hybrid_cd(
                     c,
                     n_c,
                     cluster_updates,
+                    update_zero_cluster
                 )
 
             if fit_intercept:
@@ -198,21 +208,24 @@ def hybrid_cd(
                 R -= intercept_update
                 intercept += intercept_update
 
-        theta = R / n_samples
-        theta /= max(1, dual_norm_slope(X, theta, alphas))
-        dual = (norm(y) ** 2 - norm(y - theta * n_samples) ** 2) / \
-            (2 * n_samples)
-        primal = norm(R) ** 2 / (2 * n_samples) + \
-            np.sum(alphas * np.sort(np.abs(w))[::-1])
+        times_up = timer() - time_start > max_time
 
-        E.append(primal)
-        gap = primal - dual
-        gaps.append(gap)
-        times.append(timer() - time_start)
+        if epoch % gap_freq == 0 or times_up:
+            theta = R / n_samples
+            theta /= max(1, dual_norm_slope(X, theta, alphas))
+            dual = (norm(y) ** 2 - norm(y - theta * n_samples) ** 2) / \
+                (2 * n_samples)
+            primal = norm(R) ** 2 / (2 * n_samples) + \
+                np.sum(alphas * np.sort(np.abs(w))[::-1])
 
-        if verbose:
-            print(f"Epoch: {epoch + 1}, loss: {primal}, gap: {gap:.2e}")
-        if gap < tol:
-            break
+            E.append(primal)
+            gap = primal - dual
+            gaps.append(gap)
+            times.append(timer() - time_start)
+
+            if verbose:
+                print(f"Epoch: {epoch + 1}, loss: {primal}, gap: {gap:.2e}")
+            if gap < tol or times_up:
+                break
 
     return w, intercept, E, gaps, times

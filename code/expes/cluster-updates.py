@@ -1,10 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 from benchopt.datasets import make_correlated_data
-from libsvmdata import fetch_libsvm
 from scipy import stats
-from scipy.sparse import csc_matrix
 
 from slope.solvers import hybrid_cd
 from slope.utils import dual_norm_slope

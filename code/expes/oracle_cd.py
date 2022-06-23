@@ -15,8 +15,13 @@ alphas_seq = randnorm.ppf(1 - np.arange(1, X.shape[1] + 1) * q /
 
 # make it infinity norm:
 # alphas_seq[1:] = 0
+fit_intercept = True
 
-alpha_max = dual_norm_slope(X, y / len(y), alphas_seq)
+alpha_max = dual_norm_slope(
+    X,
+    (y - fit_intercept*np.mean(y)) / len(y),
+    alphas_seq
+)
 
 alphas = alpha_max * alphas_seq / 5
 plt.close('all')

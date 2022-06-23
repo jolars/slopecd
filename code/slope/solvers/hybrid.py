@@ -122,37 +122,56 @@ def hybrid_cd(
     X,
     y,
     alphas,
-    max_epochs=1000,
-    max_time=np.inf,
+    fit_intercept=True,
     cluster_updates=False,
     update_zero_cluster=False,
-    verbose=True,
-    tol=1e-3,
-    pgd_freq=5
+    pgd_freq=5,
+    gap_freq=10,
+    tol=1e-6,
+    max_epochs=10_000,
+    max_time=np.inf,
+    verbose=False,
 ):
     is_X_sparse = sparse.issparse(X)
     n_samples, n_features = X.shape
     R = y.copy()
     w = np.zeros(n_features)
+    intercept = 0.0
     theta = np.zeros(n_samples)
 
-    if is_X_sparse:
-        L = sparse.linalg.svds(X, k=1)[1][0] ** 2
-        L /= n_samples
-    else:
-        L = norm(X, ord=2)**2 / n_samples
-    E, gaps = [], []
-    E.append(norm(y)**2 / (2 * n_samples))
-    gaps.append(E[0])
     times = []
     time_start = timer()
     times.append(timer() - time_start)
+
+    if sparse.issparse(X):
+        if fit_intercept:
+            # TODO: consider if it's possible to avoid creating this
+            # temporary design matrix with a column of ones
+            ones_col = sparse.csc_array(np.ones((n_samples, 1)))
+            decomp = sparse.linalg.svds(sparse.hstack((ones_col, X)), k=1)
+        else:
+            decomp = sparse.linalg.svds(X, k=1)
+
+        L = decomp[1][0] ** 2 / n_samples
+    else:
+        if fit_intercept:
+            spectral_norm = norm(np.hstack((np.ones((n_samples, 1)), X)), ord=2)
+        else:
+            spectral_norm = norm(X, ord=2)
+
+        L = spectral_norm ** 2 / n_samples
+
+    E, gaps = [], []
+    E.append(norm(y)**2 / (2 * n_samples))
+    gaps.append(E[0])
 
     for epoch in range(max_epochs):
         # This is experimental, it will need to be justified
         if epoch % pgd_freq == 0:
             w = prox_slope(w + (X.T @ R) / (L * n_samples), alphas / L)
-            R[:] = y - X @ w
+            if fit_intercept:
+                intercept = intercept + np.sum(R) / (L * n_samples)
+            R[:] = y - X @ w - intercept
             c, cluster_ptr, cluster_indices, n_c = get_clusters(w)
         else:
             if is_X_sparse:
@@ -184,23 +203,29 @@ def hybrid_cd(
                     update_zero_cluster
                 )
 
-        theta = R / n_samples
-        theta /= max(1, dual_norm_slope(X, theta, alphas))
-        dual = (norm(y) ** 2 - norm(y - theta * n_samples) ** 2) / \
-            (2 * n_samples)
-        primal = norm(R) ** 2 / (2 * n_samples) + \
-            np.sum(alphas * np.sort(np.abs(w))[::-1])
-
-        E.append(primal)
-        gap = primal - dual
-        gaps.append(gap)
-        times.append(timer() - time_start)
+            if fit_intercept:
+                intercept_update = np.sum(R) / n_samples
+                R -= intercept_update
+                intercept += intercept_update
 
         times_up = timer() - time_start > max_time
 
-        if verbose:
-            print(f"Epoch: {epoch + 1}, loss: {primal}, gap: {gap:.2e}")
-        if gap < tol or times_up:
-            break
+        if epoch % gap_freq == 0 or times_up:
+            theta = R / n_samples
+            theta /= max(1, dual_norm_slope(X, theta, alphas))
+            dual = (norm(y) ** 2 - norm(y - theta * n_samples) ** 2) / \
+                (2 * n_samples)
+            primal = norm(R) ** 2 / (2 * n_samples) + \
+                np.sum(alphas * np.sort(np.abs(w))[::-1])
 
-    return w, E, gaps, times
+            E.append(primal)
+            gap = primal - dual
+            gaps.append(gap)
+            times.append(timer() - time_start)
+
+            if verbose:
+                print(f"Epoch: {epoch + 1}, loss: {primal}, gap: {gap:.2e}")
+            if gap < tol or times_up:
+                break
+
+    return w, intercept, E, gaps, times

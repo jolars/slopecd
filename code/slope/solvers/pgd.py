@@ -11,6 +11,7 @@ def prox_grad(
     X,
     y,
     alphas,
+    fit_intercept=True,
     fista=False,
     anderson=False,
     gap_freq=10,
@@ -24,6 +25,7 @@ def prox_grad(
     n_samples, n_features = X.shape
     R = y.copy()
     w = np.zeros(n_features)
+    intercept = 0.0
     theta = np.zeros(n_samples)
     # FISTA parameters:
     z = w.copy()
@@ -39,16 +41,31 @@ def prox_grad(
     times.append(timer() - time_start)
 
     if sparse.issparse(X):
-        L = sparse.linalg.svds(X, k=1)[1][0] ** 2 / n_samples
+        if fit_intercept:
+            # TODO: consider if it's possible to avoid creating this
+            # temporary design matrix with a column of ones
+            ones_col = sparse.csc_array(np.ones((n_samples, 1)))
+            decomp = sparse.linalg.svds(sparse.hstack((ones_col, X)), k=1)
+        else:
+            decomp = sparse.linalg.svds(X, k=1)
+
+        L = decomp[1][0] ** 2 / n_samples
     else:
-        L = norm(X, ord=2)**2 / n_samples
+        if fit_intercept:
+            spectral_norm = norm(np.hstack((np.ones((n_samples, 1)), X)), ord=2)
+        else:
+            spectral_norm = norm(X, ord=2)
+
+        L = spectral_norm ** 2 / n_samples
 
     E, gaps = [], []
     E.append(norm(y)**2 / (2 * n_samples))
     gaps.append(E[0])
     for it in range(max_epochs):
-        R[:] = y - X @ z
+        R[:] = y - X @ z - intercept
         w_new = prox_slope(z + (X.T @ R) / (L * n_samples), alphas / L)
+        if fit_intercept:
+            intercept += np.sum(R) / (L * n_samples)
         if anderson:
             # TODO multiple improvements possible here
             if it < K + 1:
@@ -67,10 +84,11 @@ def prox_grad(
                     c = coefs / coefs.sum()
                     w_acc = np.sum(last_K_w[:-1] * c[:, None],
                                    axis=0)
-                    p_obj = norm(y - X @ w_new) ** 2 / (2 * n_samples) + \
+                    p_obj = norm(y - X @ w_new - intercept) ** 2 / (2 * n_samples) + \
                         np.sum(alphas * np.sort(np.abs(w_new))[::-1])
-                    p_obj_acc = norm(y - X @ w_acc) ** 2 / (2 * n_samples) + \
-                        np.sum(alphas * np.sort(np.abs(w_acc))[::-1])
+                    p_obj_acc = norm(y - X @ w_acc - intercept) ** 2 / (
+                        2 * n_samples
+                    ) + np.sum(alphas * np.sort(np.abs(w_acc))[::-1])
                     if p_obj_acc < p_obj:
                         w_new = w_acc
                 except np.linalg.LinAlgError:
@@ -89,7 +107,7 @@ def prox_grad(
         times_up = timer() - time_start > max_time
 
         if it % gap_freq == 0 or times_up:
-            R[:] = y - X @ w
+            R[:] = y - X @ w - intercept
             theta = R / n_samples
             theta /= max(1, dual_norm_slope(X, theta, alphas))
 
@@ -107,5 +125,4 @@ def prox_grad(
                 print(f"Epoch: {it + 1}, loss: {primal}, gap: {gap:.2e}")
             if gap < tol or times_up:
                 break
-
-    return w, E, gaps, times
+    return w, intercept, E, gaps, times

@@ -2,34 +2,57 @@ import unittest
 from bisect import bisect_right
 
 import numpy as np
-from benchopt.datasets.simulated import make_correlated_data
-from scipy import stats
 import scipy.sparse as sparse
+from benchopt.datasets.simulated import make_correlated_data
 
 from slope.clusters import get_clusters, update_cluster
-from slope.solvers import admm, prox_grad
-from slope.utils import dual_norm_slope
+from slope.solvers import admm, hybrid_cd, prox_grad
+from slope.utils import lambda_sequence
+
+
+class TestHybridSolver(unittest.TestCase):
+    def test_convergence(self):
+        X, y, _ = make_correlated_data(n_samples=100, n_features=30, random_state=0)
+
+        tol = 1e-6
+        q = 0.4
+        reg = 0.01
+
+        for X_sparse in [False, True]:
+            if X_sparse:
+                X = sparse.csc_matrix(X)
+            for fit_intercept in [False, True]:
+                lambdas = lambda_sequence(X, y, fit_intercept, reg=reg, q=q)
+
+                _, _, _, gaps, _ = hybrid_cd(
+                    X, y, lambdas, fit_intercept=fit_intercept, tol=tol
+                )
+
+                with self.subTest():
+                    self.assertGreater(tol, gaps[-1])
 
 
 class TestPGDSolvers(unittest.TestCase):
     def test_convergence(self):
         X, y, _ = make_correlated_data(n_samples=30, n_features=70, random_state=0)
 
-        randnorm = stats.norm(loc=0, scale=1)
+        tol = 1e-6
         q = 0.5
-        alphas_seq = randnorm.ppf(
-            1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1])
-        )
-        alpha_max = dual_norm_slope(X, y / len(y), alphas_seq)
+        reg = 0.02
 
-        alphas = alpha_max * alphas_seq / 50
+        for X_sparse in [False, True]:
+            if X_sparse:
+                X = sparse.csc_matrix(X)
+            for fista in [False, True]:
+                for fit_intercept in [False, True]:
+                    lambdas = lambda_sequence(X, y, fit_intercept, reg=reg, q=q)
 
-        tol = 1e-8
+                    _, _, _, gaps, _ = prox_grad(
+                        X, y, lambdas, fista=fista, fit_intercept=fit_intercept, tol=tol
+                    )
 
-        for fista in [False, True]:
-            _, _, gaps, _ = prox_grad(X, y, alphas, fista=fista, tol=1e-8)
-            with self.subTest():
-                self.assertGreater(tol, gaps[-1])
+                    with self.subTest():
+                        self.assertGreater(tol, gaps[-1])
 
 
 class TestADMMSolver(unittest.TestCase):
@@ -41,25 +64,17 @@ class TestADMMSolver(unittest.TestCase):
             q = 0.3
             tol = 1e-5
 
-            randnorm = stats.norm(loc=0, scale=1)
-            lambdas_seq = randnorm.ppf(
-                1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1])
-            )
-            lambda_max = dual_norm_slope(X, y / len(y), lambdas_seq)
-
-            lambdas = lambda_max * lambdas_seq * reg
-
-            for X_sparse in [True, False]:
+            for X_sparse in [False, True]:
                 if X_sparse:
                     X = sparse.csc_matrix(X)
-                for fit_intercept in [True, False]:
+
+                for fit_intercept in [False, True]:
+                    lambdas = lambda_sequence(X, y, fit_intercept, reg=reg, q=q)
+
                     _, _, _, gaps, _ = admm(
-                        X,
-                        y,
-                        lambdas,
-                        fit_intercept=fit_intercept,
-                        tol=tol,
+                        X, y, lambdas, fit_intercept=fit_intercept, tol=tol
                     )
+
                     with self.subTest():
                         self.assertGreater(tol, gaps[-1])
 

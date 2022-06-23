@@ -4,6 +4,7 @@ import numpy as np
 from numpy.linalg import norm
 from scipy import sparse
 from scipy.linalg import cholesky, solve_triangular
+from scipy.sparse.linalg import lsqr
 
 from slope.utils import dual_norm_slope, prox_slope
 
@@ -51,22 +52,18 @@ def admm(
     time_start = timer()
     times.append(timer() - time_start)
 
-    # cache factorizations
-    if n >= p:
-        XtX = X.T @ X
-        if sparse.issparse(X):
-            XtX = XtX.toarray()
-        np.fill_diagonal(XtX, XtX.diagonal() + rho)
-        L = cholesky(XtX, lower=True)
-    else:
-        XXt = X @ X.T
-        if sparse.issparse(X):
-            XXt = XXt.toarray()
-        XXt *= (1 / rho)
-        np.fill_diagonal(XXt, XXt.diagonal() + 1)
-        L = cholesky(XXt, lower=True)
+    # cache factorizations if dense
+    if not sparse.issparse(X):
+        if n >= p:
+            XtX = X.T @ X
+            np.fill_diagonal(XtX, XtX.diagonal() + rho)
+            L = cholesky(XtX, lower=True)
+        else:
+            XXt = (X @ X.T) * (1 / rho)
+            np.fill_diagonal(XXt, XXt.diagonal() + 1)
+            L = cholesky(XXt, lower=True)
 
-    U = L.T
+        U = L.T
 
     Xty = X.T @ y
 
@@ -76,15 +73,23 @@ def admm(
     gaps.append(primals[0])
 
     for it in range(max_epochs):
-        q = Xty + rho * (z - u)
-
-        U = L.T
-
-        if n >= p:
-            w = solve_triangular(U, solve_triangular(L, q, lower=True))
+        if sparse.issparse(X):
+            res = lsqr(
+                sparse.vstack((X, np.sqrt(rho) * sparse.eye(p))),
+                np.hstack((y, np.sqrt(rho) * (z - u))),
+                x0=w,
+            )
+            w = res[0]
         else:
-            tmp = solve_triangular(U, solve_triangular(L, X @ q, lower=True))
-            w = q / rho - (X.T @ tmp) / (rho**2)
+            q = Xty + rho * (z - u)
+
+            U = L.T
+
+            if n >= p:
+                w = solve_triangular(U, solve_triangular(L, q, lower=True))
+            else:
+                tmp = solve_triangular(U, solve_triangular(L, X @ q, lower=True))
+                w = q / rho - (X.T @ tmp) / (rho**2)
 
         z_old = z.copy()
         w_hat = alpha * w + (1 - alpha) * z_old
@@ -108,7 +113,7 @@ def admm(
                 rho /= tau_decr
                 u *= tau_decr
 
-            if rho_old != rho:
+            if rho_old != rho and not sparse.issparse(X):
                 # need to refactorize since rho has changed
                 if n >= p:
                     np.fill_diagonal(XtX, XtX.diagonal() + (rho - rho_old))

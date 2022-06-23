@@ -18,15 +18,18 @@ class TestHybridSolver(unittest.TestCase):
         q = 0.4
         reg = 0.01
 
-        for fit_intercept in [False, True]:
-            lambdas = lambda_sequence(X, y, fit_intercept, reg=reg, q=q)
+        for X_sparse in [False, True]:
+            if X_sparse:
+                X = sparse.csc_matrix(X)
+            for fit_intercept in [False, True]:
+                lambdas = lambda_sequence(X, y, fit_intercept, reg=reg, q=q)
 
-            _, _, _, gaps, _ = hybrid_cd(
-                X, y, lambdas, fit_intercept=fit_intercept, tol=tol
-            )
+                _, _, _, gaps, _ = hybrid_cd(
+                    X, y, lambdas, fit_intercept=fit_intercept, tol=tol
+                )
 
-            with self.subTest():
-                self.assertGreater(tol, gaps[-1])
+                with self.subTest():
+                    self.assertGreater(tol, gaps[-1])
 
 
 class TestPGDSolvers(unittest.TestCase):
@@ -37,23 +40,19 @@ class TestPGDSolvers(unittest.TestCase):
         q = 0.5
         reg = 0.02
 
-        for fista in [False, True]:
-            for fit_intercept in [False, True]:
-                lambdas = lambda_sequence(X, y, fit_intercept, reg=reg, q=q)
+        for X_sparse in [False, True]:
+            if X_sparse:
+                X = sparse.csc_matrix(X)
+            for fista in [False, True]:
+                for fit_intercept in [False, True]:
+                    lambdas = lambda_sequence(X, y, fit_intercept, reg=reg, q=q)
 
-                w, intercept, E, gaps, _ = prox_grad(
-                    X,
-                    y,
-                    lambdas,
-                    fista=fista,
-                    fit_intercept=fit_intercept,
-                    tol=tol,
-                    max_epochs=25_000,
-                    gap_freq=10,
-                    verbose=False,
-                )
-                with self.subTest():
-                    self.assertGreater(tol, gaps[-1])
+                    _, _, _, gaps, _ = prox_grad(
+                        X, y, lambdas, fista=fista, fit_intercept=fit_intercept, tol=tol
+                    )
+
+                    with self.subTest():
+                        self.assertGreater(tol, gaps[-1])
 
 
 class TestADMMSolver(unittest.TestCase):
@@ -65,20 +64,17 @@ class TestADMMSolver(unittest.TestCase):
             q = 0.3
             tol = 1e-5
 
-            for X_sparse in [True, False]:
+            for X_sparse in [False, True]:
                 if X_sparse:
                     X = sparse.csc_matrix(X)
 
-                for fit_intercept in [True, False]:
+                for fit_intercept in [False, True]:
                     lambdas = lambda_sequence(X, y, fit_intercept, reg=reg, q=q)
 
                     _, _, _, gaps, _ = admm(
-                        X,
-                        y,
-                        lambdas,
-                        fit_intercept=fit_intercept,
-                        tol=tol,
+                        X, y, lambdas, fit_intercept=fit_intercept, tol=tol
                     )
+
                     with self.subTest():
                         self.assertGreater(tol, gaps[-1])
 

@@ -17,6 +17,8 @@ def admm(
     rho=1.0,
     alpha=1.0,
     adaptive_rho=True,
+    lsqr_atol=1e-6,
+    lsqr_btol=1e-6,
     gap_freq=10,
     tol=1e-6,
     max_epochs=10_000,
@@ -32,7 +34,7 @@ def admm(
 
     if fit_intercept:
         if sparse.issparse(X):
-            X = sparse.hstack((sparse.csc_array(np.ones((n, 1))), X))
+            X = sparse.hstack((sparse.csc_array(np.ones((n, 1))), X), format="csc")
         else:
             X = np.hstack((np.ones((n, 1)), X))
 
@@ -52,14 +54,21 @@ def admm(
     time_start = timer()
     times.append(timer() - time_start)
 
+    do_lsqr = sparse.issparse(X) and min(n, p) > 1000
+
     # cache factorizations if dense
-    if not sparse.issparse(X):
+    if not do_lsqr:
         if n >= p:
             XtX = X.T @ X
+            if sparse.issparse(X):
+                XtX = XtX.toarray()
             np.fill_diagonal(XtX, XtX.diagonal() + rho)
             L = cholesky(XtX, lower=True)
         else:
-            XXt = (X @ X.T) * (1 / rho)
+            XXt = X @ X.T
+            if sparse.issparse(X):
+                XXt = XXt.toarray()
+            XXt *= 1 / rho
             np.fill_diagonal(XXt, XXt.diagonal() + 1)
             L = cholesky(XXt, lower=True)
 
@@ -73,11 +82,13 @@ def admm(
     gaps.append(primals[0])
 
     for it in range(max_epochs):
-        if sparse.issparse(X):
+        if do_lsqr:
             res = lsqr(
                 sparse.vstack((X, np.sqrt(rho) * sparse.eye(p))),
                 np.hstack((y, np.sqrt(rho) * (z - u))),
                 x0=w,
+                atol=lsqr_atol,
+                btol=lsqr_btol,
             )
             w = res[0]
         else:
@@ -113,7 +124,7 @@ def admm(
                 rho /= tau_decr
                 u *= tau_decr
 
-            if rho_old != rho and not sparse.issparse(X):
+            if rho_old != rho and not do_lsqr:
                 # need to refactorize since rho has changed
                 if n >= p:
                     np.fill_diagonal(XtX, XtX.diagonal() + (rho - rho_old))

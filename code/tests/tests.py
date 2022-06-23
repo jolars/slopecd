@@ -4,31 +4,11 @@ from bisect import bisect_right
 import numpy as np
 from benchopt.datasets.simulated import make_correlated_data
 from scipy import stats
+import scipy.sparse as sparse
 
-import slope
 from slope.clusters import get_clusters, update_cluster
-from slope.solvers import prox_grad
+from slope.solvers import admm, prox_grad
 from slope.utils import dual_norm_slope
-
-
-class TestPenalty(unittest.TestCase):
-    def test_results(self):
-        beta = np.array([3, 2.5, 1.2, -4, 0, -0.2])
-        lam = np.array([2.7, 2, 1.7, 1.1, 0.8, 0.4])
-
-        pen = slope.SortedL1Norm(lam)
-
-        self.assertAlmostEqual(pen.evaluate(beta), 22.53)
-
-        np.testing.assert_allclose(
-            pen.prox(beta), np.array([1.0, 0.8, 0.1, -1.3, 0.0, -0.0])
-        )
-
-    def test_assertions(self):
-        with self.assertRaises(ValueError):
-            slope.SortedL1Norm(np.array([0.1, 0.2]))
-        with self.assertRaises(ValueError):
-            slope.SortedL1Norm(np.array([0.2, -0.2]))
 
 
 class TestPGDSolvers(unittest.TestCase):
@@ -63,6 +43,38 @@ class TestPGDSolvers(unittest.TestCase):
                 )
                 with self.subTest():
                     self.assertGreater(tol, gaps[-1])
+
+
+class TestADMMSolver(unittest.TestCase):
+    def test_admm_convergence(self):
+        for p in [50, 150]:
+            X, y, _ = make_correlated_data(n_samples=100, n_features=p, random_state=51)
+
+            reg = 0.1
+            q = 0.3
+            tol = 1e-5
+
+            randnorm = stats.norm(loc=0, scale=1)
+            lambdas_seq = randnorm.ppf(
+                1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1])
+            )
+            lambda_max = dual_norm_slope(X, y / len(y), lambdas_seq)
+
+            lambdas = lambda_max * lambdas_seq * reg
+
+            for X_sparse in [True, False]:
+                if X_sparse:
+                    X = sparse.csc_matrix(X)
+                for fit_intercept in [True, False]:
+                    _, _, _, gaps, _ = admm(
+                        X,
+                        y,
+                        lambdas,
+                        fit_intercept=fit_intercept,
+                        tol=tol,
+                    )
+                    with self.subTest():
+                        self.assertGreater(tol, gaps[-1])
 
 
 class TestClusterUpdates(unittest.TestCase):

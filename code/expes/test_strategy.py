@@ -1,43 +1,41 @@
-import numpy as np
-from scipy import stats
 import matplotlib.pyplot as plt
+import numpy as np
 from benchopt.datasets import make_correlated_data
+from scipy import stats
+
+from slope.solvers import hybrid_cd, prox_grad
 from slope.utils import dual_norm_slope
 from slope.solvers import prox_grad
 from slope.solvers import hybrid_cd
 from slope.solvers import oracle_cd
 
-import time
-from libsvmdata import fetch_libsvm
-
-dataset = 'real-sim'
+dataset = "bcTCGA"
 if dataset == "simulated":
-    X, y, _ = make_correlated_data(
-        n_samples=100, n_features=40, random_state=0)
+    X, y, _ = make_correlated_data(n_samples=100, n_features=40, random_state=0)
     # X = csc_matrix(X)
 else:
-    X, y = fetch_libsvm(dataset)
+    X, y = get_data(dataset)
 
 fit_intercept=True
 
 randnorm = stats.norm(loc=0, scale=1)
-q = 0.5
+q = 0.1
+reg = 0.01
 
-alphas_seq = randnorm.ppf(
-    1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1]))
-
+alphas_seq = randnorm.ppf(1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1]))
 
 alpha_max = dual_norm_slope(X, (y - fit_intercept*np.mean(y)) / len(y), alphas_seq)
 
-alphas = alpha_max * alphas_seq / 5
-plt.close('all')
+alphas = alpha_max * alphas_seq * reg
+plt.close("all")
 
 max_epochs = 10000
-tol = 1e-10
-
+max_time = 120
+tol = 1e-6
 
 beta_cd, primals_cd, gaps_cd, time_cd = hybrid_cd(
-    X, y, alphas, max_epochs=max_epochs, verbose=True, tol=tol)
+    X, y, alphas, max_epochs=max_epochs, verbose=True, tol=tol, max_time=max_time
+)
 beta_pgd, primals_pgd, gaps_pgd, time_pgd = prox_grad(
     X, y, alphas, max_epochs=max_epochs, verbose=True, tol=tol, fista=True
 )
@@ -45,7 +43,6 @@ beta_oracle, primals_oracle, gaps_oracle, time_oracle = oracle_cd(
     X, y, alphas, max_epochs=max_epochs, verbose=True, tol=tol,
 )
 
-# Duality gap vs epoch
 plt.clf()
 
 plt.semilogy(gaps_cd, label='cd')

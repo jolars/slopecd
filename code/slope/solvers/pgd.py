@@ -13,11 +13,12 @@ def prox_grad(
     alphas,
     fit_intercept=True,
     fista=False,
-    max_epochs=100,
-    tol=1e-10,
-    gap_freq=1,
     anderson=False,
-    verbose=True,
+    gap_freq=10,
+    tol=1e-6,
+    max_epochs=10_000,
+    max_time=np.inf,
+    verbose=False,
 ):
     if anderson and fista:
         raise ValueError("anderson=True cannot be combined with fista=True")
@@ -103,7 +104,9 @@ def prox_grad(
             w = w_new
             z = w
 
-        if it % gap_freq == 0:
+        times_up = timer() - time_start > max_time
+
+        if it % gap_freq == 0 or times_up:
             R[:] = y - X @ w - intercept
             theta = R / n_samples
             theta /= max(1, dual_norm_slope(X, theta, alphas))
@@ -120,6 +123,6 @@ def prox_grad(
 
             if verbose:
                 print(f"Epoch: {it + 1}, loss: {primal}, gap: {gap:.2e}")
-            if gap < tol:
+            if gap < tol or times_up:
                 break
     return w, intercept, E, gaps, times

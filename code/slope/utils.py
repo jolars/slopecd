@@ -2,6 +2,7 @@ import numpy as np
 import scipy.sparse as sparse
 from numba import njit
 from numpy.linalg import norm
+from scipy import stats
 from sklearn.isotonic import isotonic_regression
 
 
@@ -32,6 +33,17 @@ def dual_norm_slope(X, theta, alphas):
     Xtheta = np.sort(np.abs(X.T @ theta))[::-1]
     taus = 1 / np.cumsum(alphas)
     return np.max(np.cumsum(Xtheta) * taus)
+
+
+def generate_lambda_sequence(X, y, fit_intercept, reg=0.1, q=0.1):
+    """Generates the BH-type lambda sequence"""
+    n, p = X.shape
+
+    randnorm = stats.norm(loc=0, scale=1)
+    lambdas = randnorm.ppf(1 - np.arange(1, p + 1) * q / (2 * p))
+    lambda_max = dual_norm_slope(X, (y - np.mean(y) * fit_intercept) / n, lambdas)
+
+    return lambda_max * lambdas * reg
 
 
 def prox_slope(w, alphas):

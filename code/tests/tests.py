@@ -8,33 +8,25 @@ import scipy.sparse as sparse
 
 from slope.clusters import get_clusters, update_cluster
 from slope.solvers import admm, prox_grad
-from slope.utils import dual_norm_slope
+from slope.utils import dual_norm_slope, lambda_sequence
 
 
 class TestPGDSolvers(unittest.TestCase):
     def test_convergence(self):
         X, y, _ = make_correlated_data(n_samples=30, n_features=70, random_state=0)
 
-        randnorm = stats.norm(loc=0, scale=1)
+        tol = 1e-6
         q = 0.5
-        tol = 1e-10
-        alphas_seq = randnorm.ppf(
-            1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1])
-        )
+        reg = 0.02
+
         for fista in [False, True]:
             for fit_intercept in [False, True]:
-                alpha_max = dual_norm_slope(
-                    X,
-                    (y - np.mean(y)*fit_intercept) / len(y),
-                    alphas_seq
-                )
-
-                alphas = alpha_max * alphas_seq / 50
+                lambdas = lambda_sequence(X, y, fit_intercept, reg=reg, q=q)
 
                 w, intercept, E, gaps, _ = prox_grad(
                     X,
                     y,
-                    alphas,
+                    lambdas,
                     fista=fista,
                     fit_intercept=fit_intercept,
                     tol=tol,
@@ -55,18 +47,13 @@ class TestADMMSolver(unittest.TestCase):
             q = 0.3
             tol = 1e-5
 
-            randnorm = stats.norm(loc=0, scale=1)
-            lambdas_seq = randnorm.ppf(
-                1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1])
-            )
-            lambda_max = dual_norm_slope(X, y / len(y), lambdas_seq)
-
-            lambdas = lambda_max * lambdas_seq * reg
-
             for X_sparse in [True, False]:
                 if X_sparse:
                     X = sparse.csc_matrix(X)
+
                 for fit_intercept in [True, False]:
+                    lambdas = lambda_sequence(X, y, fit_intercept, reg=reg, q=q)
+
                     _, _, _, gaps, _ = admm(
                         X,
                         y,

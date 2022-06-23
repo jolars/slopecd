@@ -122,13 +122,13 @@ def hybrid_cd(
     X,
     y,
     alphas,
-    max_epochs=1000,
-    max_time=np.inf,
     cluster_updates=False,
     update_zero_cluster=False,
-    verbose=True,
-    tol=1e-3,
-    pgd_freq=5
+    pgd_freq=5,
+    tol=1e-6,
+    max_epochs=10_000,
+    max_time=np.inf,
+    verbose=False,
 ):
     is_X_sparse = sparse.issparse(X)
     n_samples, n_features = X.shape

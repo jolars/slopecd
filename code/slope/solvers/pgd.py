@@ -12,12 +12,12 @@ def prox_grad(
     y,
     alphas,
     fista=False,
-    max_epochs=100,
-    tol=1e-10,
-    max_time=np.inf,
-    gap_freq=1,
     anderson=False,
-    verbose=True,
+    gap_freq=10,
+    tol=1e-6,
+    max_epochs=10_000,
+    max_time=np.inf,
+    verbose=False,
 ):
     if anderson and fista:
         raise ValueError("anderson=True cannot be combined with fista=True")

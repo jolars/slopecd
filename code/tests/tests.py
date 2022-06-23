@@ -2,12 +2,31 @@ import unittest
 from bisect import bisect_right
 
 import numpy as np
-from benchopt.datasets.simulated import make_correlated_data
 import scipy.sparse as sparse
+from benchopt.datasets.simulated import make_correlated_data
 
 from slope.clusters import get_clusters, update_cluster
-from slope.solvers import admm, prox_grad
+from slope.solvers import admm, hybrid_cd, prox_grad
 from slope.utils import lambda_sequence
+
+
+class TestHybridSolver(unittest.TestCase):
+    def test_convergence(self):
+        X, y, _ = make_correlated_data(n_samples=100, n_features=30, random_state=0)
+
+        tol = 1e-6
+        q = 0.4
+        reg = 0.01
+
+        for fit_intercept in [False, True]:
+            lambdas = lambda_sequence(X, y, fit_intercept, reg=reg, q=q)
+
+            _, _, _, gaps, _ = hybrid_cd(
+                X, y, lambdas, fit_intercept=fit_intercept, tol=tol
+            )
+
+            with self.subTest():
+                self.assertGreater(tol, gaps[-1])
 
 
 class TestPGDSolvers(unittest.TestCase):

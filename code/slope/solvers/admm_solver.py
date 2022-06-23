@@ -15,7 +15,7 @@ def admm(
     lambdas,
     fit_intercept=True,
     rho=1.0,
-    alpha=1.65,
+    alpha=1.0,
     adaptive_rho=True,
     gap_freq=10,
     tol=1e-6,

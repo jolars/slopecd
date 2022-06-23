@@ -17,6 +17,7 @@ class TestPGDSolvers(unittest.TestCase):
 
         randnorm = stats.norm(loc=0, scale=1)
         q = 0.5
+        tol = 1e-10
         alphas_seq = randnorm.ppf(
             1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1])
         )
@@ -30,13 +31,13 @@ class TestPGDSolvers(unittest.TestCase):
 
                 alphas = alpha_max * alphas_seq / 50
 
-                tol = 1e-10
                 w, intercept, E, gaps, _ = prox_grad(
                     X,
                     y,
                     alphas,
                     fista=fista,
                     fit_intercept=fit_intercept,
+                    tol=tol,
                     max_epochs=25_000,
                     gap_freq=10,
                     verbose=False,

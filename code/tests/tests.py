@@ -4,9 +4,10 @@ from bisect import bisect_right
 import numpy as np
 from benchopt.datasets.simulated import make_correlated_data
 from scipy import stats
+import scipy.sparse as sparse
 
 from slope.clusters import get_clusters, update_cluster
-from slope.solvers import prox_grad
+from slope.solvers import admm, prox_grad
 from slope.utils import dual_norm_slope
 
 
@@ -29,6 +30,38 @@ class TestPGDSolvers(unittest.TestCase):
             _, _, gaps, _ = prox_grad(X, y, alphas, fista=fista, tol=1e-8)
             with self.subTest():
                 self.assertGreater(tol, gaps[-1])
+
+
+class TestADMMSolver(unittest.TestCase):
+    def test_admm_convergence(self):
+        for p in [50, 150]:
+            X, y, _ = make_correlated_data(n_samples=100, n_features=p, random_state=51)
+
+            reg = 0.1
+            q = 0.3
+            tol = 1e-5
+
+            randnorm = stats.norm(loc=0, scale=1)
+            lambdas_seq = randnorm.ppf(
+                1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1])
+            )
+            lambda_max = dual_norm_slope(X, y / len(y), lambdas_seq)
+
+            lambdas = lambda_max * lambdas_seq * reg
+
+            for X_sparse in [True, False]:
+                if X_sparse:
+                    X = sparse.csc_matrix(X)
+                for fit_intercept in [True, False]:
+                    _, _, _, gaps, _ = admm(
+                        X,
+                        y,
+                        lambdas,
+                        fit_intercept=fit_intercept,
+                        tol=tol,
+                    )
+                    with self.subTest():
+                        self.assertGreater(tol, gaps[-1])
 
 
 class TestClusterUpdates(unittest.TestCase):

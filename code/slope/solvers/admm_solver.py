@@ -59,9 +59,10 @@ def admm(
         np.fill_diagonal(XtX, XtX.diagonal() + rho)
         L = cholesky(XtX, lower=True)
     else:
-        XXt = (X @ X.T) * (1 / rho)
+        XXt = X @ X.T
         if sparse.issparse(X):
-            XtX = XXt.toarray()
+            XXt = XXt.toarray()
+        XXt *= (1 / rho)
         np.fill_diagonal(XXt, XXt.diagonal() + 1)
         L = cholesky(XXt, lower=True)
 

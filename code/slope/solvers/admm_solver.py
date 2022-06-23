@@ -17,10 +17,10 @@ def admm(
     alpha=1.0,
     adaptive_rho=True,
     gap_freq=10,
-    max_time=np.inf,
-    max_epochs=100,
     tol=1e-10,
-    verbose=True,
+    max_epochs=100,
+    max_time=np.inf,
+    verbose=False,
 ):
     # parameters
     mu = 10

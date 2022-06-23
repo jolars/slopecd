@@ -3,12 +3,11 @@ from bisect import bisect_right
 
 import numpy as np
 from benchopt.datasets.simulated import make_correlated_data
-from scipy import stats
 import scipy.sparse as sparse
 
 from slope.clusters import get_clusters, update_cluster
 from slope.solvers import admm, prox_grad
-from slope.utils import dual_norm_slope, lambda_sequence
+from slope.utils import lambda_sequence
 
 
 class TestPGDSolvers(unittest.TestCase):

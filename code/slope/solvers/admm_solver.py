@@ -19,7 +19,7 @@ def admm(
     adaptive_rho=True,
     gap_freq=10,
     tol=1e-6,
-    max_epochs=100,
+    max_epochs=10_000,
     max_time=np.inf,
     verbose=False,
 ):

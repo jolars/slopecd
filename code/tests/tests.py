@@ -6,7 +6,7 @@ import scipy.sparse as sparse
 from benchopt.datasets.simulated import make_correlated_data
 
 from slope.clusters import get_clusters, update_cluster
-from slope.solvers import admm, hybrid_cd, prox_grad
+from slope.solvers import admm, hybrid_cd, newt_alm, prox_grad
 from slope.utils import lambda_sequence
 
 
@@ -25,6 +25,28 @@ class TestHybridSolver(unittest.TestCase):
                 lambdas = lambda_sequence(X, y, fit_intercept, reg=reg, q=q)
 
                 _, _, _, gaps, _ = hybrid_cd(
+                    X, y, lambdas, fit_intercept=fit_intercept, tol=tol
+                )
+
+                with self.subTest():
+                    self.assertGreater(tol, gaps[-1])
+
+
+class TestNewtALMSolver(unittest.TestCase):
+    def test_convergence(self):
+        X, y, _ = make_correlated_data(n_samples=20, n_features=200, random_state=0)
+
+        tol = 1e-6
+        q = 0.5
+        reg = 0.02
+
+        for X_sparse in [False, True]:
+            if X_sparse:
+                X = sparse.csc_matrix(X)
+            for fit_intercept in [False, True]:
+                lambdas = lambda_sequence(X, y, fit_intercept, reg=reg, q=q)
+
+                _, _, _, gaps, _ = newt_alm(
                     X, y, lambdas, fit_intercept=fit_intercept, tol=tol
                 )
 

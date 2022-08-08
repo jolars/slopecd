@@ -8,6 +8,7 @@ from slope.utils import dual_norm_slope
 from slope.solvers import prox_grad
 from slope.solvers import hybrid_cd
 from slope.solvers import oracle_cd
+from slope.data import get_data
 
 dataset = "bcTCGA"
 if dataset == "simulated":

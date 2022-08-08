@@ -4,7 +4,7 @@ from timeit import default_timer as timer
 import numpy as np
 from numba import njit
 from scipy import sparse
-from scipy.linalg import block_diag, cho_factor, cho_solve, norm, solve
+from scipy.linalg import cho_factor, cho_solve, norm, solve
 from scipy.sparse.linalg import cg, spsolve
 
 import slope.permutation as slopep

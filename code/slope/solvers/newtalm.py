@@ -4,45 +4,56 @@ from timeit import default_timer as timer
 import numpy as np
 from numba import njit
 from scipy import sparse
-from scipy.linalg import cho_factor, cho_solve, norm, solve
+from scipy.linalg import block_diag, cho_factor, cho_solve, norm, solve
 from scipy.sparse.linalg import cg, spsolve
 
 import slope.permutation as slopep
-from slope.utils import dual_norm_slope, prox_slope2
+from slope.utils import add_intercept_column, dual_norm_slope, prox_slope2
 
 
-def build_W(x_tilde, sigma, lambdas, A):
+def build_W(x_tilde, sigma, lambdas, A, fit_intercept):
     m = A.shape[0]
 
-    ord = np.argsort(np.abs(x_tilde))[::-1]
-    x_lambda = np.abs(prox_slope2(x_tilde, lambdas)[ord])
+    ord = np.argsort(np.abs(x_tilde[fit_intercept:]))[::-1]
+    x_lambda = np.abs(prox_slope2(x_tilde[fit_intercept:], lambdas)[ord])
 
-    z = slopep.BBT_inv_B(np.abs(x_tilde[ord]) - lambdas - x_lambda)
+    z = slopep.BBT_inv_B(np.abs(x_tilde[fit_intercept:][ord]) - lambdas - x_lambda)
 
     Gamma = np.where(np.logical_and(z != 0, slopep.B(x_lambda) == 0))[0]
-    GammaC = np.setdiff1d(np.arange(len(x_tilde)), Gamma)
+    # if fit_intercept:
+    #     Gamma = np.hstack(([0], Gamma + 1))
+    GammaC = np.setdiff1d(np.arange(len(x_lambda)), Gamma)
+
+    # GammaC += fit_intercept
 
     nC = len(GammaC)
 
-    pi_list, _ = slopep.build_pi(x_tilde)
+    pi_list, _ = slopep.build_pi(x_tilde[fit_intercept:])
 
     if sparse.issparse(A):
         W_row, W_col, W_data = slopep.assemble_sparse_W(
-            nC, GammaC, pi_list, A.data, A.indices, A.indptr
+            nC, GammaC, pi_list, A.data, A.indices, A.indptr, m, fit_intercept
         )
         # we use CSR here because transpose later on makes it CSC, which
         # is what we really want.
-        W = sparse.coo_matrix((W_data, (W_row, W_col)), shape=(m, nC)).tocsr()
+        W = sparse.coo_matrix(
+            (W_data, (W_row, W_col)), shape=(m, nC + fit_intercept)
+        ).tocsr()
     else:
-        W = slopep.assemble_dense_W(nC, GammaC, pi_list, A)
+        W = slopep.assemble_dense_W(nC, GammaC, pi_list, A, fit_intercept)
 
     return np.sqrt(sigma) * W
 
 
 @njit
-def psi(y, x, ATy, b, lambdas, sigma):
+def psi(y, x, ATy, b, lambdas, sigma, fit_intercept):
     w = x - sigma * ATy
-    u = (1 / sigma) * (w - prox_slope2(w, lambdas * sigma))
+    u = np.zeros(len(w))
+    u[fit_intercept:] = (1 / sigma) * (
+        w[fit_intercept:] - prox_slope2(w[fit_intercept:], lambdas * sigma)
+    )
+    if fit_intercept:
+        u[0] = 0.0
 
     phi = 0.5 * np.linalg.norm(u - w / sigma) ** 2
 
@@ -54,13 +65,22 @@ def psi(y, x, ATy, b, lambdas, sigma):
     )
 
 
-def compute_direction(x, sigma, A, b, y, ATy, lambdas, cg_param, solver):
+def compute_direction(x, sigma, A, b, y, ATy, lambdas, cg_param, solver, fit_intercept):
 
     x_tilde = x / sigma - ATy
 
-    nabla_psi = y + b - A @ prox_slope2(x - sigma * ATy, sigma * lambdas)
+    x_tilde_prox = x - sigma * ATy
+    x_tilde_prox[fit_intercept:] = prox_slope2(
+        x_tilde_prox[fit_intercept:], sigma * lambdas
+    )
 
-    W = build_W(x_tilde, sigma, lambdas, A)
+    nabla_psi = y + b - A @ x_tilde_prox
+
+    W = build_W(x_tilde, sigma, lambdas, A, fit_intercept)
+
+    # if fit_intercept:
+    #     # print(f"W: {W}")
+    #     print(f"W^TW: {W.T @ W}")
 
     m, r1_plus_r2 = W.shape
 
@@ -80,10 +100,13 @@ def compute_direction(x, sigma, A, b, y, ATy, lambdas, cg_param, solver):
                 sparse.eye(r1_plus_r2, format="csc") + WTW, W.T
             )
         else:
+            # print(WTW)
             np.fill_diagonal(WTW, WTW.diagonal() + 1)
             V_inv = -(W @ solve(WTW, W.T))
             np.fill_diagonal(V_inv, V_inv.diagonal() + 1)
 
+        # print(V_inv.shape)
+        # print(nabla_psi.shape)
         d = V_inv @ (-nabla_psi)
     elif solver == "cg":
         # Use conjugate gradient
@@ -113,15 +136,17 @@ def compute_direction(x, sigma, A, b, y, ATy, lambdas, cg_param, solver):
 
 
 @njit
-def line_search(y, d, x, ATy, ATd, b, lambdas, sigma, nabla_psi, delta, mu, beta):
+def line_search(
+    y, d, x, ATy, ATd, b, lambdas, sigma, nabla_psi, delta, mu, beta, fit_intercept
+):
     # step 1b, line search
     mj = 0
 
-    psi0 = psi(y, x, ATy, b, lambdas, sigma)
+    psi0 = psi(y, x, ATy, b, lambdas, sigma, fit_intercept)
     nabla_psi_d = nabla_psi @ d
     while True:
         alpha = delta**mj
-        lhs = psi(y + alpha * d, x, ATy + alpha * ATd, b, lambdas, sigma)
+        lhs = psi(y + alpha * d, x, ATy + alpha * ATd, b, lambdas, sigma, fit_intercept)
         rhs = psi0 + mu * alpha * nabla_psi_d
 
         if lhs <= rhs:
@@ -155,10 +180,12 @@ def inner_step(
     line_search_param,
     cg_param,
     solver,
+    fit_intercept,
 ):
     sigma = local_param["sigma"]
+
     d, nabla_psi = compute_direction(
-        x_old, sigma, A, b, y, ATy, lambdas, cg_param, solver
+        x_old, sigma, A, b, y, ATy, lambdas, cg_param, solver, fit_intercept
     )
     ATd = A.T @ d
     alpha = line_search(
@@ -174,6 +201,7 @@ def inner_step(
         line_search_param["delta"],
         line_search_param["mu"],
         line_search_param["beta"],
+        fit_intercept,
     )
 
     # step 1c, update y
@@ -181,7 +209,8 @@ def inner_step(
     ATy += alpha * ATd
 
     # step 2, update x
-    x = prox_slope2(x_old - sigma * ATy, sigma * lambdas)
+    x = x_old - sigma * ATy
+    x[fit_intercept:] = prox_slope2(x[fit_intercept:], sigma * lambdas)
 
     # check for convergence
     x_diff_norm = norm(x - x_old)
@@ -200,6 +229,7 @@ def newt_alm(
     A,
     b,
     lambdas,
+    fit_intercept=True,
     max_inner_it=100_000,
     solver="auto",
     line_search_param={"mu": 0.2, "delta": 0.5, "beta": 2},
@@ -217,6 +247,10 @@ def newt_alm(
     m, n = A.shape
 
     lambdas = lambdas.copy() * m
+
+    if fit_intercept:
+        A = add_intercept_column(A)
+        n += 1
 
     x = np.zeros(n)
     y = np.zeros(m)
@@ -252,6 +286,7 @@ def newt_alm(
                 line_search_param,
                 cg_param,
                 solver,
+                fit_intercept,
             )
             if converged:
                 break
@@ -271,10 +306,10 @@ def newt_alm(
         if epoch % gap_freq == 0 or times_up:
             r[:] = b - A @ x
             theta = r / m
-            theta /= max(1, dual_norm_slope(A, theta, lambdas / m))
+            theta /= max(1, dual_norm_slope(A[:, fit_intercept:], theta, lambdas / m))
 
             primal = (0.5 / m) * norm(r) ** 2 + np.sum(
-                lambdas * np.sort(np.abs(x))[::-1]
+                lambdas * np.sort(np.abs(x[fit_intercept:]))[::-1]
             ) / m
             dual = (0.5 / m) * (norm(b) ** 2 - norm(b - theta * m) ** 2)
 
@@ -289,4 +324,6 @@ def newt_alm(
             if gap < tol:
                 break
 
-    return x, primals, gaps, times
+    intercept = x[0] if fit_intercept else 0.0
+
+    return x[:fit_intercept], intercept, primals, gaps, times

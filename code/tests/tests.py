@@ -43,14 +43,15 @@ class TestNewtALMSolver(unittest.TestCase):
         for X_sparse in [False, True]:
             if X_sparse:
                 X = sparse.csc_matrix(X)
-            for fista in [False, True]:
-                for fit_intercept in [False, True]:
-                    lambdas = lambda_sequence(X, y, fit_intercept, reg=reg, q=q)
+            for fit_intercept in [False, True]:
+                lambdas = lambda_sequence(X, y, fit_intercept, reg=reg, q=q)
 
-                    _, _, _, gaps, _ = newt_alm(X, y, lambdas, tol=tol)
+                _, _, _, gaps, _ = newt_alm(
+                    X, y, lambdas, fit_intercept=fit_intercept, tol=tol
+                )
 
-                    with self.subTest():
-                        self.assertGreater(tol, gaps[-1])
+                with self.subTest():
+                    self.assertGreater(tol, gaps[-1])
 
 
 class TestPGDSolvers(unittest.TestCase):

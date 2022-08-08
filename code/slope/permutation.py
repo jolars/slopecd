@@ -82,21 +82,31 @@ def BBT_inv_B(x):
 
 
 @njit
-def assemble_sparse_W(nC, GammaC, pi_list, A_data, A_indices, A_indptr):
+def assemble_sparse_W(
+    nC, GammaC, pi_list, A_data, A_indices, A_indptr, m, fit_intercept
+):
     W_row = []
     W_col = []
     W_data = []
 
     start = 0
 
+    if fit_intercept:
+        for i in range(m):
+            W_col.append(0)
+            W_row.append(i)
+            W_data.append(1.0)
+
     for i in range(nC):
         nCi = GammaC[i] + 1 - start
         for j in range(start, GammaC[i] + 1):
             k = pi_list[j, 0]
             pi_list_j1 = pi_list[j, 1]
-            for ind in range(A_indptr[k], A_indptr[k + 1]):
+            for ind in range(
+                A_indptr[k + fit_intercept], A_indptr[k + 1 + fit_intercept]
+            ):
                 W_row.append(A_indices[ind])
-                W_col.append(i)
+                W_col.append(i + fit_intercept)
                 val = pi_list_j1 * A_data[ind]
                 if nCi > 1:
                     val /= np.sqrt(nCi)
@@ -107,18 +117,23 @@ def assemble_sparse_W(nC, GammaC, pi_list, A_data, A_indices, A_indptr):
 
 
 @njit
-def assemble_dense_W(nC, GammaC, pi_list, A):
+def assemble_dense_W(nC, GammaC, pi_list, A, fit_intercept):
     m = A.shape[0]
 
-    W = np.zeros((m, nC))
+    W = np.zeros((m, nC + fit_intercept))
+
+    if fit_intercept:
+        W[:, 0] = np.ones(m, dtype=np.float64)
 
     start = 0
     for i in range(nC):
         nCi = GammaC[i] + 1 - start
         for j in range(start, GammaC[i] + 1):
-            W[:, i] += pi_list[j, 1] * A[:, pi_list[j, 0]]
+            W[:, i + fit_intercept] += (
+                pi_list[j, 1] * A[:, pi_list[j, 0] + fit_intercept]
+            )
         if nCi > 1:
-            W[:, i] /= np.sqrt(nCi)
+            W[:, i + fit_intercept] /= np.sqrt(nCi)
         start = GammaC[i] + 1
 
     return W

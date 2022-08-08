@@ -52,6 +52,7 @@ def oracle_cd(
     X,
     y,
     alphas,
+    fit_intercept=True,
     w_star=None,
     tol=1e-6,
     max_epochs=10_000,
@@ -84,6 +85,7 @@ def oracle_cd(
     # run CD on it:
     w = np.zeros(n_features)
     w_reduced = np.zeros(n_clusters)
+    intercept = 0.0
     R = y.copy()
 
     times = []
@@ -106,6 +108,11 @@ def oracle_cd(
                 cluster = clusters[cluster_ptr[j]:cluster_ptr[j+1]]
                 w[cluster] = w_reduced[j] * np.sign(w_star[cluster])
 
+        if fit_intercept:
+            intercept_update = np.sum(R) / n_samples
+            R -= intercept_update
+            intercept += intercept_update
+
         theta = R / n_samples
         theta /= max(1, dual_norm_slope(X, theta, alphas))
 
@@ -125,4 +132,4 @@ def oracle_cd(
         if gap < tol or times_up:
             break
 
-    return w, E, gaps, times
+    return w, intercept, E, gaps, times

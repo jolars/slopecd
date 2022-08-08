@@ -1,6 +1,8 @@
 import numpy as np
+import scipy.sparse as sparse
 from numba import njit
 from numpy.linalg import norm
+from scipy import stats
 from sklearn.isotonic import isotonic_regression
 
 
@@ -33,6 +35,17 @@ def dual_norm_slope(X, theta, alphas):
     return np.max(np.cumsum(Xtheta) * taus)
 
 
+def lambda_sequence(X, y, fit_intercept, reg=0.1, q=0.1):
+    """Generates the BH-type lambda sequence"""
+    n, p = X.shape
+
+    randnorm = stats.norm(loc=0, scale=1)
+    lambdas = randnorm.ppf(1 - np.arange(1, p + 1) * q / (2 * p))
+    lambda_max = dual_norm_slope(X, (y - np.mean(y) * fit_intercept) / n, lambdas)
+
+    return lambda_max * lambdas * reg
+
+
 def prox_slope(w, alphas):
     w_abs = np.abs(w)
     idx = np.argsort(w_abs)[::-1]
@@ -47,11 +60,64 @@ def prox_slope(w, alphas):
     return np.sign(w) * w_abs[inv_idx]
 
 
+@njit
+def prox_slope2(beta, lambdas):
+    """Compute the sorted L1 proximal operator
+
+    Parameters
+    ----------
+    beta : array
+        vector of coefficients
+    lambdas : array
+        vector of regularization weights
+
+    Returns
+    -------
+    array
+        the result of the proximal operator
+    """
+    beta_sign = np.sign(beta)
+    beta = np.abs(beta)
+    ord = np.flip(np.argsort(beta))
+    beta = beta[ord]
+
+    p = len(beta)
+
+    s = np.empty(p, np.float64)
+    w = np.empty(p, np.float64)
+    idx_i = np.empty(p, np.int64)
+    idx_j = np.empty(p, np.int64)
+
+    k = 0
+
+    for i in range(p):
+        idx_i[k] = i
+        idx_j[k] = i
+        s[k] = beta[i] - lambdas[i]
+        w[k] = s[k]
+
+        while (k > 0) and (w[k - 1] <= w[k]):
+            k = k - 1
+            idx_j[k] = i
+            s[k] += s[k + 1]
+            w[k] = s[k] / (i - idx_i[k] + 1)
+
+        k = k + 1
+
+    for j in range(k):
+        d = max(w[j], 0.0)
+        for i in range(idx_i[j], idx_j[j] + 1):
+            beta[i] = d
+
+    beta[ord] = beta.copy()
+    beta *= beta_sign
+
+    return beta
+
+
 def get_clusters(w):
     # check if there is a cheaper way of doing this
-    unique, counts = np.unique(
-        np.abs(w), return_inverse=False, return_counts=True
-    )
+    unique, counts = np.unique(np.abs(w), return_inverse=False, return_counts=True)
     cluster_indices = np.argsort(np.abs(w))[::-1]
     cluster_ptr = np.cumsum(counts[::-1])
     cluster_ptr = np.r_[0, cluster_ptr]
@@ -66,9 +132,9 @@ def slope_threshold(x, lambdas, cluster_ptr, c, n_c, j):
     sign_x = np.sign(x)
 
     # check which direction we need to search
-    up_direction = abs_x - sum(
-        lambdas[cluster_ptr[j] : cluster_ptr[j + 1]]
-    ) > np.abs(c[j])
+    up_direction = abs_x - sum(lambdas[cluster_ptr[j] : cluster_ptr[j + 1]]) > np.abs(
+        c[j]
+    )
 
     if up_direction:
         start = cluster_ptr[j + 1]
@@ -116,3 +182,12 @@ def slope_threshold(x, lambdas, cluster_ptr, c, n_c, j):
         else:
             # in zero cluster
             return 0.0, n_c - 1
+
+
+def add_intercept_column(X):
+    n = X.shape[0]
+
+    if sparse.issparse(X):
+        return sparse.hstack((sparse.csc_array(np.ones((n, 1))), X), format="csc")
+    else:
+        return np.hstack((np.ones((n, 1)), X))

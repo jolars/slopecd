@@ -16,7 +16,7 @@ if dataset == "simulated":
 else:
     X, y = get_data(dataset)
 
-fit_intercept=True
+fit_intercept = True
 
 randnorm = stats.norm(loc=0, scale=1)
 q = 0.1
@@ -33,14 +33,34 @@ max_epochs = 10000
 max_time = 120
 tol = 1e-6
 
-beta_cd, primals_cd, gaps_cd, time_cd = hybrid_cd(
-    X, y, alphas, max_epochs=max_epochs, verbose=True, tol=tol, max_time=max_time
+beta_cd, intercept_cd, primals_cd, gaps_cd, time_cd = hybrid_cd(
+    X,
+    y,
+    alphas,
+    fit_intercept=fit_intercept,
+    max_epochs=max_epochs,
+    verbose=True,
+    tol=tol,
+    max_time=max_time
 )
-beta_pgd, primals_pgd, gaps_pgd, time_pgd = prox_grad(
-    X, y, alphas, max_epochs=max_epochs, verbose=True, tol=tol, fista=True
+beta_pgd, intercept_cd, primals_pgd, gaps_pgd, time_pgd = prox_grad(
+    X,
+    y,
+    alphas,
+    fit_intercept=fit_intercept,
+    max_epochs=max_epochs,
+    verbose=True,
+    tol=tol,
+    fista=True
 )
-beta_oracle, primals_oracle, gaps_oracle, time_oracle = oracle_cd(
-    X, y, alphas, max_epochs=max_epochs, verbose=True, tol=tol,
+beta_oracle, intercept_cd, primals_oracle, gaps_oracle, time_oracle = oracle_cd(
+    X,
+    y,
+    alphas,
+    fit_intercept=fit_intercept,
+    max_epochs=max_epochs,
+    verbose=True,
+    tol=tol
 )
 
 plt.clf()

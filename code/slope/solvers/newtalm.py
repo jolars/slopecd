@@ -20,11 +20,7 @@ def build_W(x_tilde, sigma, lambdas, A, fit_intercept):
     z = slopep.BBT_inv_B(np.abs(x_tilde[fit_intercept:][ord]) - lambdas - x_lambda)
 
     Gamma = np.where(np.logical_and(z != 0, slopep.B(x_lambda) == 0))[0]
-    # if fit_intercept:
-    #     Gamma = np.hstack(([0], Gamma + 1))
     GammaC = np.setdiff1d(np.arange(len(x_lambda)), Gamma)
-
-    # GammaC += fit_intercept
 
     nC = len(GammaC)
 
@@ -78,10 +74,6 @@ def compute_direction(x, sigma, A, b, y, ATy, lambdas, cg_param, solver, fit_int
 
     W = build_W(x_tilde, sigma, lambdas, A, fit_intercept)
 
-    # if fit_intercept:
-    #     # print(f"W: {W}")
-    #     print(f"W^TW: {W.T @ W}")
-
     m, r1_plus_r2 = W.shape
 
     if solver == "auto":
@@ -105,8 +97,6 @@ def compute_direction(x, sigma, A, b, y, ATy, lambdas, cg_param, solver, fit_int
             V_inv = -(W @ solve(WTW, W.T))
             np.fill_diagonal(V_inv, V_inv.diagonal() + 1)
 
-        # print(V_inv.shape)
-        # print(nabla_psi.shape)
         d = V_inv @ (-nabla_psi)
     elif solver == "cg":
         # Use conjugate gradient

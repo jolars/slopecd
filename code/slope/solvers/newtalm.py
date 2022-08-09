@@ -316,4 +316,4 @@ def newt_alm(
 
     intercept = x[0] if fit_intercept else 0.0
 
-    return x[:fit_intercept], intercept, primals, gaps, times
+    return x[fit_intercept:], intercept, primals, gaps, times

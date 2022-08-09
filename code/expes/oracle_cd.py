@@ -19,7 +19,6 @@ fit_intercept = True
 alpha_max = dual_norm_slope(X, (y - fit_intercept * np.mean(y)) / len(y), alphas_seq)
 
 alphas = alpha_max * alphas_seq / 5
-plt.close("all")
 
 w, intercept, E, gaps, times_pgd = prox_grad(
     X, y, alphas, max_epochs=1000, fit_intercept=fit_intercept, verbose=False

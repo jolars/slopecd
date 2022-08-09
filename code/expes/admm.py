@@ -4,7 +4,7 @@ from benchopt.datasets import make_correlated_data
 from libsvmdata import fetch_libsvm
 from scipy import stats
 
-from slope.solvers import admm, hybrid_cd, prox_grad, oracle_cd
+from slope.solvers import admm, hybrid_cd, oracle_cd, prox_grad
 from slope.utils import dual_norm_slope
 
 n = 500
@@ -30,15 +30,14 @@ alpha_max = dual_norm_slope(X, y / len(y), alphas_seq)
 reg = 0.01
 
 alphas = alpha_max * alphas_seq * reg
-plt.close("all")
 
 max_epochs = 1000
 tol = 1e-8
 
-beta_cd, primals_cd, gaps_cd, time_cd = hybrid_cd(
+beta_cd, intercept_cd, primals_cd, gaps_cd, time_cd = hybrid_cd(
     X, y, alphas, max_epochs=max_epochs, verbose=True, tol=tol, cluster_updates=True
 )
-beta_pgd, primals_pgd, gaps_pgd, time_pgd = prox_grad(
+beta_pgd, intercept_pgd, primals_pgd, gaps_pgd, time_pgd = prox_grad(
     X, y, alphas, max_epochs=max_epochs, verbose=True, tol=tol, fista=True
 )
 beta_admm, _, primals_admm, gaps_admm, time_admm = admm(
@@ -53,7 +52,7 @@ beta_admm, _, primals_admm, gaps_admm, time_admm = admm(
     fit_intercept=False,
 )
 
-beta_oracle, primals_oracle, gaps_oracle, time_oracle = oracle_cd(
+beta_oracle, intercept_oracle, primals_oracle, gaps_oracle, time_oracle = oracle_cd(
     X, y, alphas, max_epochs=max_epochs, verbose=True, tol=tol
 )
 

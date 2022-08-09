@@ -3,6 +3,7 @@ import scipy.sparse as sparse
 from numba import njit
 from numpy.linalg import norm
 from scipy import stats
+from sklearn import feature_selection, preprocessing
 from sklearn.isotonic import isotonic_regression
 
 
@@ -191,3 +192,20 @@ def add_intercept_column(X):
         return sparse.hstack((sparse.csc_array(np.ones((n, 1))), X), format="csc")
     else:
         return np.hstack((np.ones((n, 1)), X))
+
+
+def preprocess(X, y, standardize_X=True, standardize_y=True, remove_zero_var=True):
+    if remove_zero_var:
+        X = feature_selection.VarianceThreshold().fit_transform(X)
+
+    if standardize_y:
+        y -= np.mean(y)
+        y /= np.linalg.norm(y) ** 2
+
+    if standardize_X:
+        if sparse.issparse(X):
+            X = preprocessing.MaxAbsScaler().fit_transform(X).to_csc()
+        else:
+            X = preprocessing.StandardScaler().fit_transform(X)
+
+    return X, y

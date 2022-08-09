@@ -32,10 +32,10 @@ plt.clf()
 gaps_cd = []
 gaps_cd_updates = []
 
-beta_cd, primals_cd, gaps_cd, time_cd = hybrid_cd(
+beta_cd, _, primals_cd, gaps_cd, time_cd = hybrid_cd(
     X, y, alphas, max_epochs=max_epochs, verbose=verbose, tol=tol
 )
-beta_cd_updates, primals_cd_updates, gaps_cd_updates, time_cd_updates = hybrid_cd(
+beta_cd_updates, _, primals_cd_updates, gaps_cd_updates, time_cd_updates = hybrid_cd(
     X,
     y,
     alphas,

@@ -160,4 +160,4 @@ def admm(
 
     intercept = w[0] if fit_intercept else 0.0
 
-    return w[:fit_intercept], intercept, primals, gaps, times
+    return w[fit_intercept:], intercept, primals, gaps, times

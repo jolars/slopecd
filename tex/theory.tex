@@ -3,61 +3,66 @@
 \section{Theory}\label{sec:theory}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Coordinate Updates}%
+\subsection{Coordinate Descent for SLOPE}%
 \label{sec:coordinate-updates}
 
-We will now consider the variable \(\tilde \beta_k\) which equals the magnitude of the \(k\)th cluster, that is \(|\beta_j|=\tilde \beta_k\) for all \(j \in \mathcal{C}_k\).
-We will now derive the method how to update the parameters in the coordinate that corresponds to keeping the clusters fixed, which is equivalent to minimizing \(P(\beta)\) over \(\tilde \beta_k\).
-Evaluating the objective function at \(\beta\) we have
+In this section we derive a coordinate descent algorithm for minimizing the SLOPE problem~\eqref{eq:slope-problem} with respect to the coefficients of a single cluster at a time.
+First observe that we can write \eqref{eq:slope-problem} as
 \[
   \begin{aligned}
     P(\beta) & =  \frac{1}{2} \lVert y - X\beta\rVert_2^2 + J(\beta)                                                                                                                                                                                                                                       \\
-             & = \frac{1}{2} \lVert y - X_{\bar{\mathcal{C}_k}} \beta_{\bar{\mathcal{C}_k}} - \big(X_{\mathcal{C}_k} s_{\mathcal{C}_k}\big)\tilde\beta_k  \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)|\tilde\beta_k|,
+             & = \frac{1}{2} \lVert y - X_{\bar{\mathcal{C}_k}} \beta_{\bar{\mathcal{C}_k}} - \big(X_{\mathcal{C}_k} s_{\mathcal{C}_k}\big)c_k  \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)c_k \\
+             & = \frac{1}{2} \lVert \tilde r - \tilde x c_k \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)c_k \\
   \end{aligned}
 \]
-where \(s=\sign(\beta)\). We can consider this as subproblem trying to minimize the one-dimensional function
-\[
-  \begin{aligned}
-    P(\tilde \beta_k) & = \frac{1}{2} \lVert r_k - \tilde x_k \tilde \beta_k \beta_{\bar{\mathcal{C}_k}} - \big(X_{\mathcal{C}_k} \beta_{\mathcal{C}_k}\big)c_k  \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^- }\bigg) |\tilde \beta_k|,
-  \end{aligned}
-\]
-where \(\tilde y_k = X_{\bar{\mathcal{C}}_k} \beta_{\bar{\mathcal{C}_k}}\), \( \tilde x_k = X_{\mathcal{C}_k} s_{\mathcal{C}_k}\),
-and \(\tilde r_k= y - \tilde y_k\) is the \emph{partial residual}. An alternative formulation (with identical solution) is to minimize
+with \( \tilde x_k = X_{\mathcal{C}_k} s_{\mathcal{C}_k}\) and
+where \(\tilde r_k = y - \tilde y_k = y - X_{\bar{\mathcal{C}}_k} \beta_{\bar{\mathcal{C}_k}}\). 
+
+Our coordinate-wise update is based on optimizing over clusters' corresponding coefficients one at a time, keeping the relative signs of the coefficients inside each cluster constant, but allowing the signs of all of them to flip. This one-dimensional sub-problem is given by
+\begin{equation*}
+  \operatorname*{minimize}_{\alpha \in \mathbb{R}} \left( \frac{1}{2} \lVert \tilde r - \tilde x \alpha_k \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)|\alpha_k|\right).
+\end{equation*}
+Differentiating with respect to \(\alpha_k\), yields
+\begin{equation}
+  \label{eq:cluster-grad}
+  \partial_{\alpha_k}
+  P(\beta) = \tilde x^T \tilde x \alpha_k - \tilde r^T \tilde x + 
+    \partial_{\alpha_k} \Bigg(\sum_{j \notin \mathcal{C}_k}\lambda_{(j)^-}
+      |\beta_j| + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)|\alpha_k|
+    \Bigg),
+\end{equation}
+where the last term is the partial subdifferential of the sorted \(\ell_1\)
+norm.
+
+\subsubsection{Alternative Formulation}
+
+An alternative formulation (with identical solution) is to minimize
 \[
   \begin{aligned}
     P(c_k) & = \frac{1}{2} \lVert y - X_{\bar{\mathcal{C}_k}} \beta_{\bar{\mathcal{C}_k}} - \big(X_{\mathcal{C}_k} \beta_{\mathcal{C}_k}\big)c_k  \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + |c_k|\bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^- }|\beta_j|\bigg),
   \end{aligned}
 \]
 and \(\beta_k := c_k\beta_k\).
-Now take
-derivate with respect to \(\tilde\beta_k\), yielding
-\begin{equation}
-  \label{eq:cluster-grad}
-  \partial_{\tilde\beta_k}
-  P(\beta) = \tilde r^T \tilde x + \tilde x^T \tilde x \tilde\beta_k + \partial_{\tilde\beta_k}\Bigg(\bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)|\tilde\beta_k| + \sum_{j \notin \mathcal{C}_k}\lambda_{(j)^-}|\beta_j|\Bigg),
-\end{equation}
-where the last term is the partial subdifferential of the sorted \(\ell_1\)
-norm.
-The optimality condition for the sub-problem is \(\boldsymbol{0} \in
-\partial_{\tilde \beta} P(\beta).
-\)
+
+\subsubsection{Partial Subdifferential of the Sorted \(\ell_1\) Norm}
+
 We now derive a closed form expression for the subdifferential
 of the sorted \(\ell_1\) norm.
 \begin{theorem}
   \label{thm:cluster-subdifferential}
   The partial subdifferential for the sorted \(\ell_1\) norm with respect
-  to \(\tilde\beta_k\), is
+  to \(\alpha_k\), is
   \[
     \partial_{\tilde \beta_k}  J(\beta)       =
     \begin{cases}
-      \big[-\sum_{j=1}^{|C(0)|}\lambda^{C(0)}_j, \sum_{j=1}^{|C(0)|}\lambda^{C(0)}_j\big]                                                                        & \text{if } \tilde\beta = 0,           \\
-      \big[\sum_{j=|\mathcal{C}_i| - |\mathcal{C}_k|+1}^{|\mathcal{C}_i|}\lambda^{\mathcal{C}_i}_j, \sum_{j=1}^{|\mathcal{C}_k|}\lambda^{\mathcal{C}_i}_j\big]   & \text{if } \tilde\beta = c_i \neq 0,  \\
-      \big[-\sum_{j=1}^{|\mathcal{C}_k|}\lambda^{\mathcal{C}_i}_j, -\sum_{j=|\mathcal{C}_i| - |\mathcal{C}_k|+1}^{|\mathcal{C}_i|}\lambda^{\mathcal{C}_k}_j\big] & \text{if } \tilde\beta = -c_i \neq 0, \\
-      \{\sign(\tilde\beta)\boldsymbol{1}^T\lambda^{C(\tilde\beta)}\}                                                                                             & \text{otherwise.
+      \big[-\sum_{j=1}^{|C(0)|}\lambda^{C(0)}_j, \sum_{j=1}^{|C(0)|}\lambda^{C(0)}_j\big]                                                                        & \text{if } \alpha = 0,           \\
+      \big[\sum_{j=|\mathcal{C}_i| - |\mathcal{C}_k|+1}^{|\mathcal{C}_i|}\lambda^{\mathcal{C}_i}_j, \sum_{j=1}^{|\mathcal{C}_k|}\lambda^{\mathcal{C}_i}_j\big]   & \text{if } \alpha = c_i \neq 0,  \\
+      \big[-\sum_{j=1}^{|\mathcal{C}_k|}\lambda^{\mathcal{C}_i}_j, -\sum_{j=|\mathcal{C}_i| - |\mathcal{C}_k|+1}^{|\mathcal{C}_i|}\lambda^{\mathcal{C}_k}_j\big] & \text{if } \alpha = -c_i \neq 0, \\
+      \{\sign(\alpha)\boldsymbol{1}^T\lambda^{C(\alpha)}\}                                                                                             & \text{otherwise.
       }
-      % \{\sign(\tilde\beta) S\big(C(\tilde\beta)\big)\}                                                                                                & \text{if } \tilde\beta \neq c_i \neq 0, \\
-      % [-S(\mathcal{C}_m), S(\mathcal{C}_m)]                                                                                                           & \text{if } \tilde\beta = 0,             \\
-      % [\sign(\tilde\beta)S\big( C(c_i - \sign(\tilde\beta)\varepsilon_i)\big), \sign(\tilde\beta)S\big(C(c_i + \sign(\tilde\beta)\varepsilon_i)\big)] & \text{if } |\tilde\beta| = c_i,
+      % \{\sign(\alpha) S\big(C(\alpha)\big)\}                                                                                                & \text{if } \alpha \neq c_i \neq 0, \\
+      % [-S(\mathcal{C}_m), S(\mathcal{C}_m)]                                                                                                           & \text{if } \alpha = 0,             \\
+      % [\sign(\alpha)S\big( C(c_i - \sign(\alpha)\varepsilon_i)\big), \sign(\alpha)S\big(C(c_i + \sign(\alpha)\varepsilon_i)\big)] & \text{if } |\alpha| = c_i,
     \end{cases}
   \]
 \end{theorem}
@@ -80,7 +85,7 @@ of the sorted \(\ell_1\) norm.
   for all \(x^* \in \mathbb{R}\).
   Without loss of generality, since \(f\) is convex \mathurin{here I did not understand the WLOG relationship with convexity}, assume that we have
   a vector \(\beta\) such that there are two clusters: one corresponding
-  to \(\tilde\beta\), which we are optimizing over, and
+  to \(\alpha\), which we are optimizing over, and
   one additional cluster \(\mathcal{C}_q\) with corresponding
   coefficient \(c_q\).
   Then we can rewrite \eqref{eq:subgrad-ineq} as
@@ -121,7 +126,7 @@ of the sorted \(\ell_1\) norm.
   must have \(g\) such that
   \(-S(\mathcal{C}_1) \geq g \geq - S(\mathcal{C}_2)\).
   For all other choices of \(x\), \(f\) is differentiable with
-  derivative \(\sign(\tilde\beta)S\big(C(\tilde\beta)\big)\).
+  derivative \(\sign(\alpha)S\big(C(\alpha)\big)\).
 \end{proof}
 
 The objective and subgradient for the cluster-wise problem are shown in
@@ -133,7 +138,7 @@ The objective and subgradient for the cluster-wise problem are shown in
   \caption{%
     Objective and gradient under the constraint that we have a fixed
     cluster.
-    The optimum is found at \(\tilde\beta = 0.3\).
+    The optimum is found at \(\alpha = 0.3\).
   }%
   \label{fig:cluster-grad-obj}
 \end{figure}

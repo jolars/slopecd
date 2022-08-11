@@ -46,6 +46,19 @@ As in \textcite{friedman2010}, we can improve the efficiency of updates by obser
   \end{aligned}
 \end{equation}
 
+\subsubsection{Storing Reductions}
+
+Observe that \(\tilde x_k\) only changes between subsequent coordinate updates provided that the members of the cluster \(k\) change, for instance if two clusters are merged, a predictor leaves a cluster, or the signs flip (through an update of \(\alpha_k\)).
+It is therefore possible to obtain significant computational gains by storing \(\tilde x_k\) and \(\tilde x_k^T \tilde x_k\) for each cluster. When there is no change in the clusters, we avoid these costly computations. And even when there are changes, we can still reduce the costs involved since \(\tilde x_k\) can be updated in place.
+
+Letting \(\tilde x_k^\text{old}\) correspond to the value of \(\tilde x_k\) before the update, we note that
+\(\tilde x_k \gets \tilde x_k^\text{old} + x_j \sign(\beta_j)\)
+for each \(j \in \mathcal{C}_k^\text{new} \setminus \mathcal{C}_k^\text{old}\)
+and \(\tilde x_k \gets \tilde x_k^\text{old} - x_j \sign(\beta_j)\) for each
+\(j \in \mathcal{C}_k^\text{old} \setminus \mathcal{C}_k^\text{new}\). 
+If instead only the signs flip, we simply have to also flip the signs in \(\tilde x_k\).
+
+
 \subsubsection{Alternative Formulation}
 
 An alternative formulation (with identical solution) is to minimize

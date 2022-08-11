@@ -34,6 +34,18 @@ Differentiating with respect to \(\alpha_k\), yields
 where the last term is the partial subdifferential of the sorted \(\ell_1\)
 norm.
 
+\subsubsection{Naive Updates}
+
+As in \textcite{friedman2010}, we can improve the efficiency of updates by observing that
+\begin{equation}
+  \begin{aligned}
+    \tilde r_k & = y - \tilde y_k                                                     \\
+               & = \underbrace{y - X_{\bar{\mathcal{C}_k}}\beta_{\bar{\mathcal{C}_k}}
+    - \tilde x c_k}_r + \tilde x c_k                                                  \\
+               & = r + \tilde x c_k.
+  \end{aligned}
+\end{equation}
+
 \subsubsection{Alternative Formulation}
 
 An alternative formulation (with identical solution) is to minimize

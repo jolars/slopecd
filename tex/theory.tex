@@ -7,16 +7,16 @@
 \label{sec:coordinate-updates}
 
 In this section we derive a coordinate descent algorithm for minimizing the SLOPE problem~\eqref{eq:slope-problem} with respect to the coefficients of a single cluster at a time.
-First observe that we can write \eqref{eq:slope-problem} as
+First observe that we can write \eqref{eq:slope-problem}.
 \[
   \begin{aligned}
-    P(\beta) & =  \frac{1}{2} \lVert y - X\beta\rVert_2^2 + J(\beta)                                                                                                                                                                                                                                       \\
+    P(\beta) & =  \frac{1}{2} \lVert y - X\beta\rVert_2^2 + J(\beta)                                                                                                                                                                                                                \\
              & = \frac{1}{2} \lVert y - X_{\bar{\mathcal{C}_k}} \beta_{\bar{\mathcal{C}_k}} - \big(X_{\mathcal{C}_k} s_{\mathcal{C}_k}\big)c_k  \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)c_k \\
-             & = \frac{1}{2} \lVert \tilde r - \tilde x c_k \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)c_k \\
+             & = \frac{1}{2} \lVert \tilde r - \tilde x c_k \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)c_k                                                                                     \\
   \end{aligned}
 \]
 with \( \tilde x_k = X_{\mathcal{C}_k} s_{\mathcal{C}_k}\) and
-where \(\tilde r_k = y - \tilde y_k = y - X_{\bar{\mathcal{C}}_k} \beta_{\bar{\mathcal{C}_k}}\). 
+where \(\tilde r_k = y - \tilde y_k = y - X_{\bar{\mathcal{C}}_k} \beta_{\bar{\mathcal{C}_k}}\).
 
 Our coordinate-wise update is based on optimizing over clusters' corresponding coefficients one at a time, keeping the relative signs of the coefficients inside each cluster constant, but allowing the signs of all of them to flip. This one-dimensional sub-problem is given by
 \begin{equation*}
@@ -26,10 +26,10 @@ Differentiating with respect to \(\alpha_k\), yields
 \begin{equation}
   \label{eq:cluster-grad}
   \partial_{\alpha_k}
-  P(\beta) = \tilde x^T \tilde x \alpha_k - \tilde r^T \tilde x + 
-    \partial_{\alpha_k} \Bigg(\sum_{j \notin \mathcal{C}_k}\lambda_{(j)^-}
-      |\beta_j| + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)|\alpha_k|
-    \Bigg),
+  P(\beta) = \tilde x^T \tilde x \alpha_k - \tilde r^T \tilde x +
+  \partial_{\alpha_k} \Bigg(\sum_{j \notin \mathcal{C}_k}\lambda_{(j)^-}
+  |\beta_j| + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)|\alpha_k|
+  \Bigg),
 \end{equation}
 where the last term is the partial subdifferential of the sorted \(\ell_1\)
 norm.
@@ -58,7 +58,7 @@ of the sorted \(\ell_1\) norm.
       \big[-\sum_{j=1}^{|C(0)|}\lambda^{C(0)}_j, \sum_{j=1}^{|C(0)|}\lambda^{C(0)}_j\big]                                                                        & \text{if } \alpha = 0,           \\
       \big[\sum_{j=|\mathcal{C}_i| - |\mathcal{C}_k|+1}^{|\mathcal{C}_i|}\lambda^{\mathcal{C}_i}_j, \sum_{j=1}^{|\mathcal{C}_k|}\lambda^{\mathcal{C}_i}_j\big]   & \text{if } \alpha = c_i \neq 0,  \\
       \big[-\sum_{j=1}^{|\mathcal{C}_k|}\lambda^{\mathcal{C}_i}_j, -\sum_{j=|\mathcal{C}_i| - |\mathcal{C}_k|+1}^{|\mathcal{C}_i|}\lambda^{\mathcal{C}_k}_j\big] & \text{if } \alpha = -c_i \neq 0, \\
-      \{\sign(\alpha)\boldsymbol{1}^T\lambda^{C(\alpha)}\}                                                                                             & \text{otherwise.
+      \{\sign(\alpha)\boldsymbol{1}^T\lambda^{C(\alpha)}\}                                                                                                       & \text{otherwise.
       }
       % \{\sign(\alpha) S\big(C(\alpha)\big)\}                                                                                                & \text{if } \alpha \neq c_i \neq 0, \\
       % [-S(\mathcal{C}_m), S(\mathcal{C}_m)]                                                                                                           & \text{if } \alpha = 0,             \\

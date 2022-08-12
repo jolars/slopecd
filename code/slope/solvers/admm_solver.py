@@ -124,7 +124,7 @@ def admm(
                 U = L.T
 
         intercept = w[0] if fit_intercept else 0.0
-        converged = monitor.check_convergence(w[fit_intercept:], w[0], it)
+        converged = monitor.check_convergence(w[fit_intercept:], intercept, it)
 
         if converged:
             break

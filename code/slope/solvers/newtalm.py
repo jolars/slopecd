@@ -288,7 +288,7 @@ def newt_alm(
 
         intercept = x[0] if fit_intercept else 0.0
 
-        converged = monitor.check_convergence(x[fit_intercept:], x[0], epoch)
+        converged = monitor.check_convergence(x[fit_intercept:], intercept, epoch)
 
         if converged:
             break

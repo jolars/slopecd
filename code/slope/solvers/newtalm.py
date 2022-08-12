@@ -229,7 +229,7 @@ def newt_alm(
     tol=1e-6,
     max_epochs=1000,
     max_time=np.inf,
-    verbose=True,
+    verbose=False,
 ):
     if solver not in ["auto", "standard", "woodbury", "cg"]:
         raise ValueError("`solver` must be one of auto, standard, woodbury, and cg")

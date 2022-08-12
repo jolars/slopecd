@@ -304,7 +304,7 @@ def newt_alm(
             dual = (0.5 / m) * (norm(b) ** 2 - norm(b - theta * m) ** 2)
 
             primals.append(primal)
-            gap = (primal - dual) / max(1, primal)
+            gap = primal - dual
             gaps.append(gap)
             times.append(timer() - time_start)
 

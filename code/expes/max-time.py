@@ -19,20 +19,19 @@ q = 0.5
 
 alphas_seq = randnorm.ppf(1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1]))
 
-
 alpha_max = dual_norm_slope(X, y / len(y), alphas_seq)
 
 alphas = alpha_max * alphas_seq / 5
-plt.close("all")
 
 max_epochs = 10000
 tol = 1e-10
 max_time = 3
 
-beta_cd, primals_cd, gaps_cd, time_cd = hybrid_cd(
+beta_cd, intercept_cd, primals_cd, gaps_cd, time_cd = hybrid_cd(
     X, y, alphas, max_epochs=max_epochs, verbose=True, tol=tol, max_time=max_time
 )
-beta_pgd, primals_pgd, gaps_pgd, time_pgd = prox_grad(
+
+beta_pgd, intercept_pgd, primals_pgd, gaps_pgd, time_pgd = prox_grad(
     X,
     y,
     alphas,
@@ -42,7 +41,8 @@ beta_pgd, primals_pgd, gaps_pgd, time_pgd = prox_grad(
     fista=True,
     max_time=max_time,
 )
-beta_oracle, primals_oracle, gaps_oracle, time_oracle = oracle_cd(
+
+beta_oracle, intercept_oracle, primals_oracle, gaps_oracle, time_oracle = oracle_cd(
     X, y, alphas, max_epochs=max_epochs, verbose=True, tol=tol, max_time=max_time
 )
 

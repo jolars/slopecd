@@ -1,7 +1,7 @@
 all: install
 
 install:
-	pip install -e .
+	pip install .
 
 test:
 	python -m unittest discover

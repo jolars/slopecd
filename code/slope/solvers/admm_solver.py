@@ -1,12 +1,10 @@
-from timeit import default_timer as timer
-
 import numpy as np
 from numpy.linalg import norm
 from scipy import sparse
 from scipy.linalg import cholesky, solve_triangular
 from scipy.sparse.linalg import lsqr
 
-from slope.utils import add_intercept_column, dual_norm_slope, prox_slope
+from slope.utils import add_intercept_column, prox_slope, ConvergenceMonitor
 
 
 def admm(
@@ -39,19 +37,13 @@ def admm(
         X = add_intercept_column(X)
         p += 1
 
-    r = y.copy()
+    monitor = ConvergenceMonitor(
+        X, y, lambdas, tol, gap_freq, max_time, verbose, intercept_column=fit_intercept
+    )
 
     w = np.zeros(p)
     z = np.zeros(p)
     u = np.zeros(p)
-
-    theta = np.zeros(n)
-
-    y_norm_2 = norm(y) ** 2
-
-    times = []
-    time_start = timer()
-    times.append(timer() - time_start)
 
     do_lsqr = sparse.issparse(X) and min(n, p) > 1000
 
@@ -74,11 +66,6 @@ def admm(
         U = L.T
 
     Xty = X.T @ y
-
-    primals, gaps = [], []
-    primals.append(y_norm_2 / (2 * n))
-
-    gaps.append(primals[0])
 
     for it in range(max_epochs):
         if do_lsqr:
@@ -136,28 +123,13 @@ def admm(
 
                 U = L.T
 
-        times_up = timer() - time_start > max_time
+        intercept = w[0] if fit_intercept else 0.0
+        converged = monitor.check_convergence(w[fit_intercept:], w[0], it)
 
-        if it % gap_freq == 0 or times_up:
-            r[:] = y - X @ w
-            theta = r / n
-            theta /= max(1, dual_norm_slope(X[:, fit_intercept:], theta, lambdas))
+        if converged:
+            break
 
-            dual = (y_norm_2 - norm(y - theta * n) ** 2) / (2 * n)
-            primal = norm(r) ** 2 / (2 * n) + np.sum(
-                lambdas * np.sort(np.abs(w[fit_intercept:]))[::-1]
-            )
-
-            primals.append(primal)
-            gap = primal - dual
-            gaps.append(gap)
-            times.append(timer() - time_start)
-
-            if verbose:
-                print(f"Epoch: {it + 1}, loss: {primal}, gap: {gap:.2e}")
-            if gap < tol or times_up:
-                break
-
+    primals, gaps, times = monitor.get_results()
     intercept = w[0] if fit_intercept else 0.0
 
     return w[fit_intercept:], intercept, primals, gaps, times

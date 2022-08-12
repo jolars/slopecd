@@ -311,7 +311,7 @@ def newt_alm(
             if verbose:
                 print(f"Epoch: {epoch + 1}, loss: {primal}, gap: {gap:.2e}")
 
-            if gap < tol:
+            if gap < tol or times_up:
                 break
 
     intercept = x[0] if fit_intercept else 0.0

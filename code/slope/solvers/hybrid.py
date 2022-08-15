@@ -202,8 +202,7 @@ def hybrid_cd(
 
     update_time = 0.0
 
-    # if use_reduced_X:
-    X_reduced = np.zeros(X.shape, np.float64, order="F")
+    X_reduced = np.empty(X.shape, np.float64, order="F")
     L_archive = np.empty(n_features, np.float64)
 
     if sparse.issparse(X):

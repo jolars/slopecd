@@ -4,7 +4,7 @@ from numba import njit
 
 # numba implementation of np.unique(., return_counts=True) from
 # https://github.com/numba/numba/pull/2959
-@njit
+# @njit
 def unique_counts(x):
     x = np.sort(x.ravel())
     mask = np.empty(x.shape, dtype=np.bool_)
@@ -21,7 +21,7 @@ def unique_counts(x):
     return unique, counts
 
 
-@njit
+# @njit
 def get_clusters(beta):
     p = len(beta)
 
@@ -35,19 +35,25 @@ def get_clusters(beta):
     counts_cumsum = np.cumsum(counts[::-1])
     c_ptr[: n_c + 1] = np.hstack((np.array([0.0]), counts_cumsum))
     c[:n_c] = c_tmp[::-1]
+    c_perm = np.arange(n_c)
 
-    return c, c_ptr, c_ind, n_c
+    return c, c_ptr, c_ind, c_perm, n_c
 
 
-@njit
-def merge_clusters(c, c_ptr, c_ind, n_c, ind_from, ind_to):
+# @njit
+def merge_clusters(c, c_ptr, c_ind, c_perm, n_c, ind_from, ind_to):
     size_from = c_ptr[ind_from + 1] - c_ptr[ind_from]
 
     c_ind_from = c_ind[c_ptr[ind_from] : c_ptr[ind_from + 1]].copy()
 
     if ind_from != ind_to:
         # update c
-        c[ind_from : n_c - 1] = c[ind_from + 1 : n_c]
+        # c[ind_from : n_c - 1] = c[ind_from + 1 : n_c]
+
+        # update permutation vector
+        c_perm_old = c_perm[ind_from]
+        c_perm[ind_from : n_c - 1] = c_perm[ind_from + 1 : n_c]
+        c_perm[n_c - 1] = c_perm_old
 
         # update c_ind
         if abs(ind_to - ind_from) != 1:
@@ -78,18 +84,23 @@ def merge_clusters(c, c_ptr, c_ind, n_c, ind_from, ind_to):
     return n_c
 
 
-@njit
-def reorder_cluster(c, c_ptr, c_ind, new_coef, ind_old, ind_new):
+# @njit
+def reorder_cluster(c, c_ptr, c_ind, c_perm, new_coef, ind_old, ind_new):
     cluster = c_ind[c_ptr[ind_old] : c_ptr[ind_old + 1]].copy()
     w = len(cluster)
 
-    # update c
-    if ind_new < ind_old:
-        c[ind_new + 1 : ind_old + 1] = c[ind_new:ind_old]
-    elif ind_new > ind_old:
-        c[ind_old:ind_new] = c[ind_old + 1 : ind_new + 1]
+    # update c_perm
+    c_perm_old = c_perm[ind_old]
 
-    c[ind_new] = abs(new_coef)
+    if ind_new < ind_old:
+        c_perm[ind_new + 1 : ind_old + 1] = c_perm[ind_new:ind_old]
+    elif ind_new > ind_old:
+        c_perm[ind_old:ind_new] = c_perm[ind_old + 1 : ind_new + 1]
+
+    c_perm[ind_new] = c_perm_old
+
+    # update c
+    c[c_perm_old] = abs(new_coef)
 
     # update c_ind
     if ind_new < ind_old:
@@ -112,17 +123,30 @@ def reorder_cluster(c, c_ptr, c_ind, new_coef, ind_old, ind_new):
         c_ptr[ind_new] = c_ptr[ind_new + 1] - w
 
 
-@njit
-def update_cluster(c, c_ptr, c_ind, n_c, new_coef, ind_old, ind_new):
+# @njit
+def update_cluster(
+    c,
+    c_ptr,
+    c_ind,
+    c_perm,
+    n_c,
+    new_coef,
+    ind_old,
+    ind_new,
+):
     old_coef = c[ind_old]
 
     if abs(new_coef) != abs(old_coef):
-        if abs(new_coef) == c[ind_new]:
-            n_c = merge_clusters(c, c_ptr, c_ind, n_c, ind_old, ind_new)
+        if abs(new_coef) == c[c_perm[ind_new]]:
+            # print("merge")
+            n_c = merge_clusters(c, c_ptr, c_ind, c_perm, n_c, ind_old, ind_new)
+
         elif ind_old != ind_new:
-            reorder_cluster(c, c_ptr, c_ind, new_coef, ind_old, ind_new)
+            # print("reorder")
+            reorder_cluster(c, c_ptr, c_ind, c_perm, new_coef, ind_old, ind_new)
         else:
             # same position as before, just update the coefficient
-            c[ind_old] = abs(new_coef)
+            # print("update")
+            c[c_perm[ind_old]] = abs(new_coef)
 
     return n_c

@@ -9,7 +9,7 @@ from slope.clusters import get_clusters, update_cluster
 from slope.utils import dual_norm_slope, prox_slope, slope_threshold
 
 
-# @njit
+@njit
 def update_reduced_X(
     L_archive,
     X_reduced,
@@ -17,10 +17,12 @@ def update_reduced_X(
     s,
     cluster_indices,
     cluster_ptr,
+    cluster_perm,
     c,
     n_c,
     cluster_indices_old,
     cluster_ptr_old,
+    cluster_perm_old,
     n_c_old,
     s_old,
 ):
@@ -28,8 +30,10 @@ def update_reduced_X(
 
     update = False
 
+    X_reduced[:, :n_c_old] = X_reduced[:, cluster_perm_old[:n_c_old]]
+
     for j in range(n_c):  # don't update zero cluster
-        if c[j] == 0:
+        if c[cluster_perm[j]] == 0:
             continue
 
         cluster = cluster_indices[cluster_ptr[j] : cluster_ptr[j + 1]]
@@ -54,8 +58,11 @@ def update_reduced_X(
             X_reduced[:, j] = X[:, cluster] @ s[cluster]
             L_archive[j] = (X_reduced[:, j].T @ X_reduced[:, j]) / n_samples
 
+        # X_reduced[:, j] = X[:, cluster] @ s[cluster]
+        # L_archive[j] = (X_reduced[:, j].T @ X_reduced[:, j]) / n_samples
 
-# @njit
+
+@njit
 def block_cd_epoch(
     w,
     X,
@@ -76,20 +83,29 @@ def block_cd_epoch(
 
     j = 0
     while j < n_c:
-        c_old = c[cluster_perm[j]]
+        k = cluster_perm[j]
+        c_old = c[k]
+        # print("j: ", j, ", k: ", k)
 
         if c_old == 0 and not update_zero_cluster:
             j += 1
             continue
 
         cluster = cluster_indices[cluster_ptr[j] : cluster_ptr[j + 1]]
-        sign_w = (
-            np.sign(w[cluster]) if c_old != 0 else np.ones(len(cluster))
-        )
+        sign_w = np.sign(w[cluster]) if c_old != 0 else np.ones(len(cluster))
 
         if use_reduced_X:
-            sum_X = X_reduced[:, j]
-            L_j = L_archive[j]
+            sum_X = X_reduced[:, k]
+            # sum_X_true = X[:, cluster] @ sign_w
+            # if not np.allclose(sum_X, sum_X_true):
+            #     print("sign_w: ", sign_w)
+            #     print("sum_X: ", sum_X)
+            #     print("sum_X_true: ", sum_X_true)
+            #     print("cluster: ", cluster)
+            #     print("c: ", c[cluster_perm[:n_c]])
+            #     print("c_perm: ", cluster_perm[:n_c])
+            #     raise ValueError
+            L_j = L_archive[k]
         else:
             sum_X = X[:, cluster] @ sign_w
             L_j = sum_X.T @ sum_X / n_samples
@@ -106,6 +122,8 @@ def block_cd_epoch(
             x, alphas / L_j, cluster_ptr, cluster_perm, c, n_c, j
         )
 
+        c_new = abs(beta_tilde)
+
         w[cluster] = beta_tilde * sign_w
 
         if c_old != beta_tilde:
@@ -113,7 +131,7 @@ def block_cd_epoch(
 
         if use_reduced_X:
             if np.sign(beta_tilde) == -1:
-                X_reduced[:, j] = -X_reduced[:, j]
+                X_reduced[:, k] = -X_reduced[:, k]
 
         if cluster_updates:
             ind_old = j
@@ -123,12 +141,17 @@ def block_cd_epoch(
                 cluster_indices,
                 cluster_perm,
                 n_c,
-                abs(beta_tilde),
+                c_new,
+                c_old,
                 ind_old,
                 ind_new,
+                X,
+                X_reduced,
+                L_archive,
+                use_reduced_X
             )
         else:
-            c[cluster_perm[j]] = abs(beta_tilde)
+            c[k] = c_new
 
         j += 1
 
@@ -170,7 +193,7 @@ def block_cd_epoch_sparse(
         L_j = sum_X.T @ sum_X / n_samples
         c_old = abs(c[j])
         x = c_old + (sum_X.T @ R) / (L_j * n_samples)
-        beta_tilde, ind_new = slope_threshold(x, alphas / L_j, cluster_ptr, c, n_c, j)
+        beta_tilde, ind_new = slope_threshold(x, alphas / L_j, cluster_ptr, cluster_perm, c, n_c, j)
         w[cluster] = beta_tilde * sign_w
         if c_old != beta_tilde:
             R += (c_old - beta_tilde) * sum_X
@@ -274,6 +297,7 @@ def hybrid_cd(
             if use_reduced_X:
                 cluster_ptr_old = cluster_ptr.copy()
                 cluster_indices_old = cluster_indices.copy()
+                cluster_perm_old = cluster_perm.copy()
                 n_c_old = n_c
 
                 c, cluster_ptr, cluster_indices, cluster_perm, n_c = get_clusters(w)
@@ -287,10 +311,12 @@ def hybrid_cd(
                     s,
                     cluster_indices,
                     cluster_ptr,
+                    cluster_perm,
                     c,
                     n_c,
                     cluster_indices_old,
                     cluster_ptr_old,
+                    cluster_perm_old,
                     n_c_old,
                     s_old,
                 )

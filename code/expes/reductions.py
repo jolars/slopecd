@@ -7,8 +7,8 @@ from slope.data import get_data
 from slope.solvers import hybrid_cd
 from slope.utils import dual_norm_slope
 
-# dataset = "rcv1.binary"
-dataset = "Scheetz2006"
+dataset = "real-sim"
+# dataset = "Rhee2006"
 # dataset = "bcTCGA"
 # dataset = "simulated"
 if dataset == "simulated":
@@ -16,7 +16,7 @@ if dataset == "simulated":
     # X = csc_matrix(X)
 else:
     X, y = get_data(dataset)
-
+# X = X.todense()
 fit_intercept = False
 
 randnorm = stats.norm(loc=0, scale=1)
@@ -49,7 +49,7 @@ tol = 1e-6
     tol=tol,
     max_time=max_time,
     use_reduced_X=True,
-    cluster_updates=True
+    cluster_updates=True,
 )
 
 beta_cd, intercept_cd, primals_cd, gaps_cd, time_cd = hybrid_cd(
@@ -62,7 +62,7 @@ beta_cd, intercept_cd, primals_cd, gaps_cd, time_cd = hybrid_cd(
     tol=tol,
     max_time=max_time,
     use_reduced_X=False,
-    cluster_updates=True
+    cluster_updates=True,
 )
 
 primals_star = np.min(np.hstack((primals_cd, np.array(primals_cd_reduced))))

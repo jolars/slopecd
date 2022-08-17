@@ -117,7 +117,7 @@ def hybrid_cd(
     y,
     alphas,
     fit_intercept=True,
-    cluster_updates=False,
+    cluster_updates=True,
     update_zero_cluster=False,
     pgd_freq=5,
     gap_freq=10,

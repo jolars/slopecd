@@ -1,5 +1,4 @@
 import warnings
-from timeit import default_timer as timer
 
 import numpy as np
 from numba import njit
@@ -8,7 +7,7 @@ from scipy.linalg import cho_factor, cho_solve, norm, solve
 from scipy.sparse.linalg import cg, spsolve
 
 import slope.permutation as slopep
-from slope.utils import add_intercept_column, dual_norm_slope, prox_slope2
+from slope.utils import add_intercept_column, prox_slope2, ConvergenceMonitor
 
 
 def build_W(x_tilde, sigma, lambdas, A, fit_intercept):
@@ -236,25 +235,21 @@ def newt_alm(
 
     m, n = A.shape
 
-    lambdas = lambdas.copy() * m
-
     if fit_intercept:
         A = add_intercept_column(A)
         n += 1
 
+    monitor = ConvergenceMonitor(
+        A, b, lambdas, tol, gap_freq, max_time, verbose, intercept_column=fit_intercept
+    )
+
+    lambdas = lambdas.copy() * m
+
     x = np.zeros(n)
     y = np.zeros(m)
-    r = b.copy()
-    theta = np.zeros(m)
-    primals, gaps = [], []
-    primals.append(norm(b) ** 2 / (2 * m))
-    gaps.append(primals[0])
-
-    times = []
-    time_start = timer()
-    times.append(timer() - time_start)
 
     ATy = A.T @ y
+
     for epoch in range(max_epochs):
         # step 1
         local_param["delta_prime"] *= 0.999
@@ -291,29 +286,14 @@ def newt_alm(
         # increased based on the primal and dual residuals.
         local_param["sigma"] *= 1.1
 
-        times_up = timer() - time_start > max_time
+        intercept = x[0] if fit_intercept else 0.0
 
-        if epoch % gap_freq == 0 or times_up:
-            r[:] = b - A @ x
-            theta = r / m
-            theta /= max(1, dual_norm_slope(A[:, fit_intercept:], theta, lambdas / m))
+        converged = monitor.check_convergence(x[fit_intercept:], intercept, epoch)
 
-            primal = (0.5 / m) * norm(r) ** 2 + np.sum(
-                lambdas * np.sort(np.abs(x[fit_intercept:]))[::-1]
-            ) / m
-            dual = (0.5 / m) * (norm(b) ** 2 - norm(b - theta * m) ** 2)
+        if converged:
+            break
 
-            primals.append(primal)
-            gap = primal - dual
-            gaps.append(gap)
-            times.append(timer() - time_start)
-
-            if verbose:
-                print(f"Epoch: {epoch + 1}, loss: {primal}, gap: {gap:.2e}")
-
-            if gap < tol or times_up:
-                break
-
+    primals, gaps, times = monitor.get_results()
     intercept = x[0] if fit_intercept else 0.0
 
     return x[fit_intercept:], intercept, primals, gaps, times

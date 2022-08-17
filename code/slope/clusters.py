@@ -27,6 +27,7 @@ def get_clusters(beta):
 
     c_ptr = np.empty(p + 1, dtype=np.int64)
     c = np.empty(p)
+    c_perm = np.empty(p, dtype=np.int64)
 
     # c_tmp, counts = np.unique(np.abs(beta), return_counts=True)
     c_tmp, counts = unique_counts(np.abs(beta))
@@ -35,7 +36,7 @@ def get_clusters(beta):
     counts_cumsum = np.cumsum(counts[::-1])
     c_ptr[: n_c + 1] = np.hstack((np.array([0.0]), counts_cumsum))
     c[:n_c] = c_tmp[::-1]
-    c_perm = np.arange(n_c)
+    c_perm[:n_c] = np.arange(n_c)
 
     return c, c_ptr, c_ind, c_perm, n_c
 
@@ -97,7 +98,7 @@ def reorder_cluster(c, c_ptr, c_ind, c_perm, new_coef, ind_old, ind_new):
     c_perm[ind_new] = c_perm_old
 
     # update c
-    c[c_perm_old] = abs(new_coef)
+    c[c_perm_old] = new_coef
 
     # update c_ind
     if ind_new < ind_old:
@@ -139,24 +140,42 @@ def update_cluster(
     n_samples = X.shape[0]
 
     if c_new != c_old:
-        if c_new == c[c_perm[ind_new]]:
-            # print("merge")
-            # print("ind_new: ", c_perm[ind_new], ", ind_old: ", c_perm[ind_old])
-            k = c_perm[ind_new]
+        k = c_perm[ind_new]
+        if c_new == c[k]:
             if use_reduced_X:
                 X_reduced[:, k] += X_reduced[:, c_perm[ind_old]]
-                L_archive[c_perm[ind_new]] = (
-                    X_reduced[:, k] @ X_reduced[:, k] / n_samples
-                )
+                L_archive[k] = (X_reduced[:, k].T @ X_reduced[:, k]) / n_samples
 
             n_c = merge_clusters(c, c_ptr, c_ind, c_perm, n_c, ind_old, ind_new)
 
         elif ind_old != ind_new:
-            # print("reorder")
             reorder_cluster(c, c_ptr, c_ind, c_perm, c_new, ind_old, ind_new)
         else:
-            # same position as before, just update the coefficient
-            # print("update")
+            c[c_perm[ind_old]] = c_new
+
+    return n_c
+
+
+@njit
+def update_cluster_sparse(
+    c,
+    c_ptr,
+    c_ind,
+    c_perm,
+    n_c,
+    c_new,
+    c_old,
+    ind_old,
+    ind_new,
+):
+    if c_new != c_old:
+        k = c_perm[ind_new]
+        if c_new == c[k]:
+            n_c = merge_clusters(c, c_ptr, c_ind, c_perm, n_c, ind_old, ind_new)
+
+        elif ind_old != ind_new:
+            reorder_cluster(c, c_ptr, c_ind, c_perm, c_new, ind_old, ind_new)
+        else:
             c[c_perm[ind_old]] = c_new
 
     return n_c

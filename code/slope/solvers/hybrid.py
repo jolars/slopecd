@@ -291,7 +291,6 @@ def hybrid_cd(
                 cluster_ptr_old = cluster_ptr.copy()
                 cluster_indices_old = cluster_indices.copy()
                 cluster_perm_old = cluster_perm.copy()
-                c_old = c.copy()
                 n_c_old = n_c
 
                 c, cluster_ptr, cluster_indices, cluster_perm, n_c = get_clusters(w)

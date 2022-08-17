@@ -5,7 +5,7 @@ from numba import njit
 from numpy.linalg import norm
 from scipy import sparse
 
-from slope.clusters import get_clusters, update_cluster
+from slope.clusters import get_clusters, update_cluster, update_cluster_sparse
 from slope.utils import dual_norm_slope, prox_slope, slope_threshold
 
 
@@ -23,6 +23,7 @@ def update_reduced_X(
     cluster_indices_old,
     cluster_ptr_old,
     cluster_perm_old,
+    c_old,
     n_c_old,
     s_old,
 ):
@@ -30,14 +31,21 @@ def update_reduced_X(
 
     update = False
 
+    # TODO(jolars): We reset the permutations because the clusters are
+    # refreshed after a PGD step, but it's probably possible to avoid this.
     X_reduced[:, :n_c_old] = X_reduced[:, cluster_perm_old[:n_c_old]]
+    L_archive[:n_c_old] = L_archive[cluster_perm_old[:n_c_old]]
 
-    for j in range(n_c):  # don't update zero cluster
-        if c[cluster_perm[j]] == 0:
+    for j in range(n_c):
+        k = cluster_perm[j]
+        if c[k] == 0:
             continue
 
         cluster = cluster_indices[cluster_ptr[j] : cluster_ptr[j + 1]]
 
+        # NOTE(jolars): More fine-grained logic is possible here, but I'm not
+        # sure that it would do much of a difference in practice except for
+        # heavily clustered fits.
         if j < n_c_old:
             cluster_old = cluster_indices_old[
                 cluster_ptr_old[j] : cluster_ptr_old[j + 1]
@@ -55,11 +63,8 @@ def update_reduced_X(
             update = True
 
         if update:
-            X_reduced[:, j] = X[:, cluster] @ s[cluster]
-            L_archive[j] = (X_reduced[:, j].T @ X_reduced[:, j]) / n_samples
-
-        # X_reduced[:, j] = X[:, cluster] @ s[cluster]
-        # L_archive[j] = (X_reduced[:, j].T @ X_reduced[:, j]) / n_samples
+            X_reduced[:, k] = X[:, cluster] @ s[cluster]
+            L_archive[k] = (X_reduced[:, k].T @ X_reduced[:, k]) / n_samples
 
 
 @njit
@@ -85,7 +90,6 @@ def block_cd_epoch(
     while j < n_c:
         k = cluster_perm[j]
         c_old = c[k]
-        # print("j: ", j, ", k: ", k)
 
         if c_old == 0 and not update_zero_cluster:
             j += 1
@@ -95,27 +99,14 @@ def block_cd_epoch(
         sign_w = np.sign(w[cluster]) if c_old != 0 else np.ones(len(cluster))
 
         if use_reduced_X:
-            sum_X = X_reduced[:, k]
-            # sum_X_true = X[:, cluster] @ sign_w
-            # if not np.allclose(sum_X, sum_X_true):
-            #     print("sign_w: ", sign_w)
-            #     print("sum_X: ", sum_X)
-            #     print("sum_X_true: ", sum_X_true)
-            #     print("cluster: ", cluster)
-            #     print("c: ", c[cluster_perm[:n_c]])
-            #     print("c_perm: ", cluster_perm[:n_c])
-            #     raise ValueError
+            # NOTE(jolars): numba cannot determine that the slice is contiguous
+            # despite it definitely being so. So we have to make a copy here.
+            # See https://github.com/numba/numba/issues/8131.
+            sum_X = X_reduced[:, k].copy()
             L_j = L_archive[k]
         else:
             sum_X = X[:, cluster] @ sign_w
-            L_j = sum_X.T @ sum_X / n_samples
-
-        if L_j == 0:
-            print("sign_w: ", sign_w)
-            print("cluster: ", cluster)
-            print("c: ", c[cluster_perm[:n_c]])
-            print("c_perm: ", cluster_perm[:n_c])
-            raise ValueError
+            L_j = (sum_X.T @ sum_X) / n_samples
 
         x = c_old + (sum_X.T @ R) / (L_j * n_samples)
         beta_tilde, ind_new = slope_threshold(
@@ -123,7 +114,6 @@ def block_cd_epoch(
         )
 
         c_new = abs(beta_tilde)
-
         w[cluster] = beta_tilde * sign_w
 
         if c_old != beta_tilde:
@@ -148,7 +138,7 @@ def block_cd_epoch(
                 X,
                 X_reduced,
                 L_archive,
-                use_reduced_X
+                use_reduced_X,
             )
         else:
             c[k] = c_new
@@ -164,7 +154,6 @@ def block_cd_epoch_sparse(
     X_data,
     X_indices,
     X_indptr,
-    X_reduced,
     R,
     alphas,
     cluster_indices,
@@ -174,44 +163,52 @@ def block_cd_epoch_sparse(
     n_c,
     cluster_updates,
     update_zero_cluster,
-    use_reduced_X,
-    L_archive,
 ):
     n_samples = len(R)
 
     j = 0
     while j < n_c:
-        if c[j] == 0 and not update_zero_cluster:
+        k = cluster_perm[j]
+        c_old = c[k]
+
+        if c_old == 0 and not update_zero_cluster:
             j += 1
             continue
 
         cluster = cluster_indices[cluster_ptr[j] : cluster_ptr[j + 1]]
-        sign_w = np.sign(w[cluster]) if c[j] != 0 else np.ones(len(cluster))
+        sign_w = np.sign(w[cluster]) if c_old != 0 else np.ones(len(cluster))
+
         sum_X = compute_block_scalar_sparse(
             X_data, X_indices, X_indptr, sign_w, cluster, n_samples
         )
         L_j = sum_X.T @ sum_X / n_samples
-        c_old = abs(c[j])
+
         x = c_old + (sum_X.T @ R) / (L_j * n_samples)
-        beta_tilde, ind_new = slope_threshold(x, alphas / L_j, cluster_ptr, cluster_perm, c, n_c, j)
+        beta_tilde, ind_new = slope_threshold(
+            x, alphas / L_j, cluster_ptr, cluster_perm, c, n_c, j
+        )
+
+        c_new = abs(beta_tilde)
         w[cluster] = beta_tilde * sign_w
+
         if c_old != beta_tilde:
             R += (c_old - beta_tilde) * sum_X
 
         if cluster_updates:
             ind_old = j
-            n_c = update_cluster(
+            n_c = update_cluster_sparse(
                 c,
                 cluster_ptr,
                 cluster_indices,
                 cluster_perm,
                 n_c,
-                beta_tilde,
+                c_new,
+                c_old,
                 ind_old,
                 ind_new,
             )
         else:
-            c[j] = beta_tilde
+            c[k] = c_new
 
         j += 1
 
@@ -235,7 +232,7 @@ def hybrid_cd(
     fit_intercept=True,
     cluster_updates=False,
     update_zero_cluster=False,
-    use_reduced_X=False,
+    use_reduced_X=True,
     pgd_freq=5,
     gap_freq=10,
     tol=1e-6,
@@ -250,14 +247,13 @@ def hybrid_cd(
     intercept = 0.0
     theta = np.zeros(n_samples)
 
+    use_reduced_X = use_reduced_X and not sparse.issparse(X)
+
     times = []
     time_start = timer()
     times.append(timer() - time_start)
 
-    update_time = 0.0
-
-    # if use_reduced_X:
-    X_reduced = np.zeros(X.shape, np.float64, order="F")
+    X_reduced = np.empty(X.shape, np.float64, order="F")
     L_archive = np.empty(n_features, np.float64)
 
     if sparse.issparse(X):
@@ -285,7 +281,6 @@ def hybrid_cd(
     c, cluster_ptr, cluster_indices, cluster_perm, n_c = get_clusters(w)
 
     for epoch in range(max_epochs):
-        # This is experimental, it will need to be justified
         if epoch % pgd_freq == 0:
             s_old = np.sign(w)
             w = prox_slope(w + (X.T @ R) / (L * n_samples), alphas / L)
@@ -293,11 +288,11 @@ def hybrid_cd(
                 intercept = intercept + np.sum(R) / (L * n_samples)
             R[:] = y - X @ w - intercept
 
-            t0 = timer()
             if use_reduced_X:
                 cluster_ptr_old = cluster_ptr.copy()
                 cluster_indices_old = cluster_indices.copy()
                 cluster_perm_old = cluster_perm.copy()
+                c_old = c.copy()
                 n_c_old = n_c
 
                 c, cluster_ptr, cluster_indices, cluster_perm, n_c = get_clusters(w)
@@ -317,13 +312,13 @@ def hybrid_cd(
                     cluster_indices_old,
                     cluster_ptr_old,
                     cluster_perm_old,
+                    c_old,
                     n_c_old,
                     s_old,
                 )
             else:
                 c, cluster_ptr, cluster_indices, cluster_perm, n_c = get_clusters(w)
 
-            update_time += timer() - t0
         else:
 
             if is_X_sparse:
@@ -332,7 +327,6 @@ def hybrid_cd(
                     X.data,
                     X.indices,
                     X.indptr,
-                    X_reduced,
                     R,
                     alphas,
                     cluster_indices,
@@ -342,8 +336,6 @@ def hybrid_cd(
                     n_c,
                     cluster_updates,
                     update_zero_cluster,
-                    use_reduced_X,
-                    L_archive,
                 )
             else:
                 n_c = block_cd_epoch(
@@ -387,7 +379,5 @@ def hybrid_cd(
                 print(f"Epoch: {epoch + 1}, loss: {primal}, gap: {gap:.2e}")
             if gap < tol or times_up:
                 break
-
-    print(f"update_time: {update_time}")
 
     return w, intercept, E, gaps, times

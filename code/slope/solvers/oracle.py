@@ -40,12 +40,11 @@ def pure_cd_epoch_sparse(
         sum_X = compute_block_scalar_sparse(
             X_data, X_indices, X_indptr, sign_w[cluster], cluster, n_samples)
         L_j = sum_X.T @ sum_X / n_samples
-        old = np.abs(w[cluster][0])
+        old = w[j]
         x = old + (sum_X.T @ R) / (L_j * n_samples)
-        beta_tilde = ST(
+        w[j] = ST(
             x, alphas[cluster_ptr[j]:cluster_ptr[j+1]].sum()/L_j)
-        w[cluster] = beta_tilde * sign_w[cluster]
-        R += (old - beta_tilde) * sum_X
+        R += (old - w[j]) * sum_X
 
 
 def oracle_cd(
@@ -100,13 +99,13 @@ def oracle_cd(
     for epoch in range(max_epochs):
         if is_X_sparse:
             pure_cd_epoch_sparse(
-                w, X.data, X.indices, X.indptr, R, alphas, clusters,
+                w_reduced, X.data, X.indices, X.indptr, R, alphas, clusters,
                 cluster_ptr, np.sign(w_star), unique)
         else:
             pure_cd_epoch(w_reduced, X_reduced, R, alphas_reduced, lc)
-            for j in range(n_clusters):
-                cluster = clusters[cluster_ptr[j]:cluster_ptr[j+1]]
-                w[cluster] = w_reduced[j] * np.sign(w_star[cluster])
+        for j in range(n_clusters):
+            cluster = clusters[cluster_ptr[j]:cluster_ptr[j+1]]
+            w[cluster] = w_reduced[j] * np.sign(w_star[cluster])
 
         if fit_intercept:
             intercept_update = np.sum(R) / n_samples

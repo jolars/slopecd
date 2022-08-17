@@ -23,7 +23,6 @@ def update_reduced_X(
     cluster_indices_old,
     cluster_ptr_old,
     cluster_perm_old,
-    c_old,
     n_c_old,
     s_old,
 ):
@@ -312,7 +311,6 @@ def hybrid_cd(
                     cluster_indices_old,
                     cluster_ptr_old,
                     cluster_perm_old,
-                    c_old,
                     n_c_old,
                     s_old,
                 )

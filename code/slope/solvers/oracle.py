@@ -22,9 +22,10 @@ def pure_cd_epoch(w, X, R, alphas, lc):
     n_samples, n_features = X.shape
     for j in range(n_features):
         old = w[j]
-        w[j] = ST(w[j] + X[:, j] @ R / (lc[j] * n_samples), alphas[j] / lc[j])
+        X_j = X[:, j].copy()  # need to do this to have a contiguous array in numba
+        w[j] = ST(w[j] + X_j @ R / (lc[j] * n_samples), alphas[j] / lc[j])
         if w[j] != old:
-            R += (old - w[j]) * X[:, j]
+            R += (old - w[j]) * X_j
 
 
 @njit

@@ -3,18 +3,9 @@ from numba import njit
 from numpy.linalg import norm
 from scipy import sparse
 
+from slope.cd_utils import compute_grad_hess_sumX
 from slope.solvers import prox_grad
 from slope.utils import ST, ConvergenceMonitor, get_clusters
-
-
-@njit
-def compute_block_scalar_sparse(X_data, X_indices, X_indptr, v, cluster, n_samples):
-    scal = np.zeros(n_samples)
-    for k, j in enumerate(cluster):
-        start, end = X_indptr[j : j + 2]
-        for ind in range(start, end):
-            scal[X_indices[ind]] += v[k] * X_data[ind]
-    return scal
 
 
 @njit
@@ -35,14 +26,18 @@ def pure_cd_epoch_sparse(
     n_samples = len(R)
     for j in range(len(cluster_ptr) - 1):
         cluster = cluster_indices[cluster_ptr[j] : cluster_ptr[j + 1]]
-        sum_X = compute_block_scalar_sparse(
-            X_data, X_indices, X_indptr, sign_w[cluster], cluster, n_samples
+        w_old = w[j]
+
+        grad, L_j, X_sum_vals, X_sum_inds = compute_grad_hess_sumX(
+            R, X_data, X_indices, X_indptr, sign_w[cluster], cluster, n_samples
         )
-        L_j = sum_X.T @ sum_X / n_samples
-        old = w[j]
-        x = old + (sum_X.T @ R) / (L_j * n_samples)
+
+        x = w_old - grad / (L_j * n_samples)
         w[j] = ST(x, alphas[cluster_ptr[j] : cluster_ptr[j + 1]].sum() / L_j)
-        R += (old - w[j]) * sum_X
+
+        diff = w_old - w[j]
+        for i, ind in enumerate(X_sum_inds):
+            R[ind] += diff * X_sum_vals[i]
 
 
 def oracle_cd(
@@ -95,7 +90,7 @@ def oracle_cd(
 
     monitor = ConvergenceMonitor(X, y, alphas, tol, gap_freq, max_time, verbose, False)
 
-    lc = norm(X_reduced, axis=0)**2 / n_samples
+    lc = norm(X_reduced, axis=0) ** 2 / n_samples
 
     for epoch in range(max_epochs):
         if is_X_sparse:

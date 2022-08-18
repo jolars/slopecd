@@ -18,18 +18,6 @@ def ST(x, u):
         return 0
 
 
-def primal(residual, beta, lambdas):
-    n = len(residual)
-    return (norm(residual) ** 2) / (2 * n) + np.sum(
-        lambdas * np.sort(np.abs(beta))[::-1]
-    )
-
-
-def dual(theta, y):
-    n = len(y)
-    return (norm(y) ** 2 - norm(y - theta * n) ** 2) / (2 * n)
-
-
 def dual_norm_slope(X, theta, alphas):
     """Dual slope norm of X.T @ theta"""
     Xtheta = np.sort(np.abs(X.T @ theta))[::-1]

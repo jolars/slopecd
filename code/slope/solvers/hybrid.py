@@ -137,30 +137,18 @@ def hybrid_cd(
     )
 
     if sparse.issparse(X):
-        if fit_intercept:
-            # TODO: consider if it's possible to avoid creating this
-            # temporary design matrix with a column of ones
-            ones_col = sparse.csc_array(np.ones((n_samples, 1)))
-            decomp = sparse.linalg.svds(sparse.hstack((ones_col, X)), k=1)
-        else:
-            decomp = sparse.linalg.svds(X, k=1)
-
-        L = decomp[1][0] ** 2 / n_samples
+        L = sparse.linalg.svds(X, k=1)[1][0] ** 2 / n_samples
     else:
-        if fit_intercept:
-            spectral_norm = norm(np.hstack((np.ones((n_samples, 1)), X)), ord=2)
-        else:
-            spectral_norm = norm(X, ord=2)
-
-        L = spectral_norm**2 / n_samples
+        L = norm(X, ord=2) ** 2 / n_samples
 
     for epoch in range(max_epochs):
         # This is experimental, it will need to be justified
         if epoch % pgd_freq == 0:
             w = prox_slope(w + (X.T @ R) / (L * n_samples), alphas / L)
+            R[:] = y - X @ w
             if fit_intercept:
-                intercept = intercept + np.sum(R) / (L * n_samples)
-            R[:] = y - X @ w - intercept
+                intercept = np.mean(R)
+                R -= intercept
             c, cluster_ptr, cluster_indices, n_c = get_clusters(w)
         else:
             if is_X_sparse:
@@ -193,7 +181,7 @@ def hybrid_cd(
                 )
 
             if fit_intercept:
-                intercept_update = np.sum(R) / n_samples
+                intercept_update = np.mean(R)
                 R -= intercept_update
                 intercept += intercept_update
 

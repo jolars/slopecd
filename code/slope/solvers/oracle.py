@@ -111,7 +111,7 @@ def oracle_cd(
                 w[cluster] = w_reduced[j] * np.sign(w_star[cluster])
 
         if fit_intercept:
-            intercept_update = np.sum(R) / n_samples
+            intercept_update = np.mean(R)
             R -= intercept_update
             intercept += intercept_update
 

@@ -3,6 +3,7 @@ from numba import njit
 from numpy.linalg import norm
 from scipy import sparse
 
+from slope.cd_utils import compute_grad_hess_sumX
 from slope.clusters import get_clusters, update_cluster
 from slope.utils import ConvergenceMonitor, prox_slope, slope_threshold
 
@@ -78,16 +79,21 @@ def block_cd_epoch_sparse(
 
         cluster = cluster_indices[cluster_ptr[j] : cluster_ptr[j + 1]]
         sign_w = np.sign(w[cluster]) if c[j] != 0 else np.ones(len(cluster))
-        sum_X = compute_block_scalar_sparse(
-            X_data, X_indices, X_indptr, sign_w, cluster, n_samples
+
+        c_old = c[j]
+
+        grad, L_j, new_vals, new_rows = compute_grad_hess_sumX(
+            R, X_data, X_indices, X_indptr, sign_w, cluster, n_samples
         )
-        L_j = sum_X.T @ sum_X / n_samples
-        c_old = abs(c[j])
-        x = c_old + (sum_X.T @ R) / (L_j * n_samples)
+
+        x = c_old - grad / (L_j * n_samples)
         beta_tilde, ind_new = slope_threshold(x, alphas / L_j, cluster_ptr, c, n_c, j)
+
         w[cluster] = beta_tilde * sign_w
-        if c_old != beta_tilde:
-            R += (c_old - beta_tilde) * sum_X
+
+        diff = c_old - beta_tilde
+        for i, ind in enumerate(new_rows):
+            R[ind] += diff * new_vals[i]
 
         if cluster_updates:
             ind_old = j
@@ -95,21 +101,11 @@ def block_cd_epoch_sparse(
                 c, cluster_ptr, cluster_indices, n_c, beta_tilde, ind_old, ind_new
             )
         else:
-            c[j] = beta_tilde
+            c[j] = abs(beta_tilde)
 
         j += 1
 
     return n_c
-
-
-@njit
-def compute_block_scalar_sparse(X_data, X_indices, X_indptr, v, cluster, n_samples):
-    scal = np.zeros(n_samples)
-    for k, j in enumerate(cluster):
-        start, end = X_indptr[j : j + 2]
-        for ind in range(start, end):
-            scal[X_indices[ind]] += v[k] * X_data[ind]
-    return scal
 
 
 def hybrid_cd(

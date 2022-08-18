@@ -67,6 +67,7 @@ def oracle_cd(
             alphas,
             fit_intercept=fit_intercept,
             max_epochs=10000,
+            fista=True,
             tol=1e-10,
         )[0]
     clusters, cluster_ptr, unique = get_clusters(w_star)

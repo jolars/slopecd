@@ -5,7 +5,8 @@ from scipy import sparse
 
 from slope.cd_utils import compute_grad_hess_sumX
 from slope.solvers import prox_grad
-from slope.utils import ST, ConvergenceMonitor, get_clusters
+from slope.clusters import get_clusters
+from slope.utils import ST, ConvergenceMonitor
 
 
 @njit
@@ -21,10 +22,10 @@ def pure_cd_epoch(w, X, R, alphas, lc):
 
 @njit
 def pure_cd_epoch_sparse(
-    w, X_data, X_indices, X_indptr, R, alphas, cluster_indices, cluster_ptr, sign_w, c
+    w, X_data, X_indices, X_indptr, R, alphas, cluster_indices, cluster_ptr, sign_w, n_clusters
 ):
     n_samples = len(R)
-    for j in range(len(cluster_ptr) - 1):
+    for j in range(n_clusters):
         cluster = cluster_indices[cluster_ptr[j] : cluster_ptr[j + 1]]
         w_old = w[j]
 
@@ -64,14 +65,11 @@ def oracle_cd(
             fista=True,
             tol=1e-10,
         )[0]
-    clusters, cluster_ptr, unique = get_clusters(w_star)
-    n_clusters = len(cluster_ptr) - 1
+    c, cluster_ptr, clusters, n_clusters = get_clusters(w_star)
     is_X_sparse = sparse.issparse(X)
     # create collapsed design. Beware, we ignore the last cluster, but only
     # if it is 0 valued
-    if w_star[clusters[-1]] == 0:
-        clusters = clusters[0 : cluster_ptr[-2]]
-        cluster_ptr = cluster_ptr[0:-1]
+    if c[n_clusters - 1] == 0:
         n_clusters -= 1
 
     X_reduced = np.zeros([n_samples, n_clusters])
@@ -104,7 +102,7 @@ def oracle_cd(
                 clusters,
                 cluster_ptr,
                 np.sign(w_star),
-                unique,
+                n_clusters,
             )
         else:
             pure_cd_epoch(w_reduced, X_reduced, R, alphas_reduced, lc)

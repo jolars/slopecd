@@ -101,7 +101,7 @@ def block_cd_epoch_sparse(
                 c, cluster_ptr, cluster_indices, n_c, beta_tilde, ind_old, ind_new
             )
         else:
-            c[j] = beta_tilde
+            c[j] = abs(beta_tilde)
 
         j += 1
 

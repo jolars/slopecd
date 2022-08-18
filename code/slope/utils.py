@@ -5,7 +5,6 @@ import scipy.sparse as sparse
 from numba import njit
 from numpy.linalg import norm
 from scipy import stats
-from sklearn.isotonic import isotonic_regression
 
 
 @njit
@@ -48,23 +47,9 @@ def lambda_sequence(X, y, fit_intercept, reg=0.1, q=0.1):
     return lambda_max * lambdas * reg
 
 
-def prox_slope(w, alphas):
-    w_abs = np.abs(w)
-    idx = np.argsort(w_abs)[::-1]
-    w_abs = w_abs[idx]
-    # projection onto Km+
-    w_abs = isotonic_regression(w_abs - alphas, y_min=0, increasing=False)
-
-    # undo the sorting
-    inv_idx = np.zeros_like(idx)
-    inv_idx[idx] = np.arange(len(w))
-
-    return np.sign(w) * w_abs[inv_idx]
-
-
 @njit
-def prox_slope2(beta, lambdas):
-    """Compute the sorted L1 proximal operator
+def prox_slope(beta, lambdas):
+    """Compute the sorted L1 proximal operator.
 
     Parameters
     ----------

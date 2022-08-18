@@ -7,14 +7,14 @@ from scipy.linalg import cho_factor, cho_solve, norm, solve
 from scipy.sparse.linalg import cg, spsolve
 
 import slope.permutation as slopep
-from slope.utils import add_intercept_column, prox_slope2, ConvergenceMonitor
+from slope.utils import ConvergenceMonitor, add_intercept_column, prox_slope
 
 
 def build_W(x_tilde, sigma, lambdas, A, fit_intercept):
     m = A.shape[0]
 
     ord = np.argsort(np.abs(x_tilde[fit_intercept:]))[::-1]
-    x_lambda = np.abs(prox_slope2(x_tilde[fit_intercept:], lambdas)[ord])
+    x_lambda = np.abs(prox_slope(x_tilde[fit_intercept:], lambdas)[ord])
 
     z = slopep.BBT_inv_B(np.abs(x_tilde[fit_intercept:][ord]) - lambdas - x_lambda)
 
@@ -45,7 +45,7 @@ def psi(y, x, ATy, b, lambdas, sigma, fit_intercept):
     w = x - sigma * ATy
     u = np.zeros(len(w))
     u[fit_intercept:] = (1 / sigma) * (
-        w[fit_intercept:] - prox_slope2(w[fit_intercept:], lambdas * sigma)
+        w[fit_intercept:] - prox_slope(w[fit_intercept:], lambdas * sigma)
     )
     if fit_intercept:
         u[0] = 0.0
@@ -65,7 +65,7 @@ def compute_direction(x, sigma, A, b, y, ATy, lambdas, cg_param, solver, fit_int
     x_tilde = x / sigma - ATy
 
     x_tilde_prox = x - sigma * ATy
-    x_tilde_prox[fit_intercept:] = prox_slope2(
+    x_tilde_prox[fit_intercept:] = prox_slope(
         x_tilde_prox[fit_intercept:], sigma * lambdas
     )
 
@@ -199,7 +199,7 @@ def inner_step(
 
     # step 2, update x
     x = x_old - sigma * ATy
-    x[fit_intercept:] = prox_slope2(x[fit_intercept:], sigma * lambdas)
+    x[fit_intercept:] = prox_slope(x[fit_intercept:], sigma * lambdas)
 
     # check for convergence
     x_diff_norm = norm(x - x_old)

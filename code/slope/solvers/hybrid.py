@@ -1,13 +1,11 @@
-from timeit import default_timer as timer
-
 import numpy as np
 from numba import njit
 from numpy.linalg import norm
 from scipy import sparse
 
-from slope.clusters import get_clusters, update_cluster
-from slope.utils import dual_norm_slope, prox_slope, slope_threshold
 from slope.cd_utils import compute_grad_hess_sumX
+from slope.clusters import get_clusters, update_cluster
+from slope.utils import ConvergenceMonitor, prox_slope, slope_threshold
 
 
 @njit
@@ -115,7 +113,7 @@ def hybrid_cd(
     y,
     alphas,
     fit_intercept=True,
-    cluster_updates=False,
+    cluster_updates=True,
     update_zero_cluster=False,
     pgd_freq=5,
     gap_freq=10,
@@ -129,41 +127,24 @@ def hybrid_cd(
     R = y.copy()
     w = np.zeros(n_features)
     intercept = 0.0
-    theta = np.zeros(n_samples)
 
-    times = []
-    time_start = timer()
-    times.append(timer() - time_start)
+    monitor = ConvergenceMonitor(
+        X, y, alphas, tol, gap_freq, max_time, verbose, intercept_column=False
+    )
 
     if sparse.issparse(X):
-        if fit_intercept:
-            # TODO: consider if it's possible to avoid creating this
-            # temporary design matrix with a column of ones
-            ones_col = sparse.csc_array(np.ones((n_samples, 1)))
-            decomp = sparse.linalg.svds(sparse.hstack((ones_col, X)), k=1)
-        else:
-            decomp = sparse.linalg.svds(X, k=1)
-
-        L = decomp[1][0] ** 2 / n_samples
+        L = sparse.linalg.svds(X, k=1)[1][0] ** 2 / n_samples
     else:
-        if fit_intercept:
-            spectral_norm = norm(np.hstack((np.ones((n_samples, 1)), X)), ord=2)
-        else:
-            spectral_norm = norm(X, ord=2)
-
-        L = spectral_norm**2 / n_samples
-
-    E, gaps = [], []
-    E.append(norm(y) ** 2 / (2 * n_samples))
-    gaps.append(E[0])
+        L = norm(X, ord=2) ** 2 / n_samples
 
     for epoch in range(max_epochs):
         # This is experimental, it will need to be justified
         if epoch % pgd_freq == 0:
             w = prox_slope(w + (X.T @ R) / (L * n_samples), alphas / L)
+            R[:] = y - X @ w
             if fit_intercept:
-                intercept = intercept + np.sum(R) / (L * n_samples)
-            R[:] = y - X @ w - intercept
+                intercept = np.mean(R)
+                R -= intercept
             c, cluster_ptr, cluster_indices, n_c = get_clusters(w)
         else:
             if is_X_sparse:
@@ -196,28 +177,15 @@ def hybrid_cd(
                 )
 
             if fit_intercept:
-                intercept_update = np.sum(R) / n_samples
+                intercept_update = np.mean(R)
                 R -= intercept_update
                 intercept += intercept_update
 
-        times_up = timer() - time_start > max_time
+        converged = monitor.check_convergence(w, intercept, epoch)
 
-        if epoch % gap_freq == 0 or times_up:
-            theta = R / n_samples
-            theta /= max(1, dual_norm_slope(X, theta, alphas))
-            dual = (norm(y) ** 2 - norm(y - theta * n_samples) ** 2) / (2 * n_samples)
-            primal = norm(R) ** 2 / (2 * n_samples) + np.sum(
-                alphas * np.sort(np.abs(w))[::-1]
-            )
+        if converged:
+            break
 
-            E.append(primal)
-            gap = primal - dual
-            gaps.append(gap)
-            times.append(timer() - time_start)
+    primals, gaps, times = monitor.get_results()
 
-            if verbose:
-                print(f"Epoch: {epoch + 1}, loss: {primal}, gap: {gap:.2e}")
-            if gap < tol or times_up:
-                break
-
-    return w, intercept, E, gaps, times
+    return w, intercept, primals, gaps, times

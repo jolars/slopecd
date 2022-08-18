@@ -26,18 +26,16 @@ def pure_cd_epoch_sparse(
     n_samples = len(R)
     for j in range(len(cluster_ptr) - 1):
         cluster = cluster_indices[cluster_ptr[j] : cluster_ptr[j + 1]]
-        c_old = abs(w[cluster[0]])
+        w_old = w[j]
 
         grad, L_j, X_sum_vals, X_sum_inds = compute_grad_hess_sumX(
             R, X_data, X_indices, X_indptr, sign_w[cluster], cluster, n_samples
         )
 
-        x = c_old + grad / (L_j * n_samples)
-        beta_tilde = ST(x, alphas[cluster_ptr[j] : cluster_ptr[j + 1]].sum() / L_j)
+        x = w_old + grad / (L_j * n_samples)
+        w[j] = ST(x, alphas[cluster_ptr[j] : cluster_ptr[j + 1]].sum() / L_j)
 
-        w[cluster] = beta_tilde * sign_w[cluster]
-
-        diff = c_old - beta_tilde
+        diff = w_old - w[j]
         for i, ind in enumerate(X_sum_inds):
             R[ind] += diff * X_sum_vals[i]
 
@@ -57,7 +55,15 @@ def oracle_cd(
     """Oracle CD: get solution clusters and run CD on collapsed design."""
     n_samples, n_features = X.shape
     if w_star is None:
-        w_star = prox_grad(X, y, alphas, max_epochs=10000, tol=1e-10)[0]
+        w_star = prox_grad(
+            X,
+            y,
+            alphas,
+            fit_intercept=fit_intercept,
+            max_epochs=10000,
+            fista=True,
+            tol=1e-10,
+        )[0]
     clusters, cluster_ptr, unique = get_clusters(w_star)
     n_clusters = len(cluster_ptr) - 1
     is_X_sparse = sparse.issparse(X)
@@ -89,7 +95,7 @@ def oracle_cd(
     for epoch in range(max_epochs):
         if is_X_sparse:
             pure_cd_epoch_sparse(
-                w,
+                w_reduced,
                 X.data,
                 X.indices,
                 X.indptr,
@@ -102,9 +108,9 @@ def oracle_cd(
             )
         else:
             pure_cd_epoch(w_reduced, X_reduced, R, alphas_reduced, lc)
-            for j in range(n_clusters):
-                cluster = clusters[cluster_ptr[j] : cluster_ptr[j + 1]]
-                w[cluster] = w_reduced[j] * np.sign(w_star[cluster])
+        for j in range(n_clusters):
+            cluster = clusters[cluster_ptr[j] : cluster_ptr[j + 1]]
+            w[cluster] = w_reduced[j] * np.sign(w_star[cluster])
 
         if fit_intercept:
             intercept_update = np.mean(R)

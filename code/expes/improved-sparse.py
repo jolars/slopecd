@@ -22,7 +22,7 @@ fit_intercept = False
 
 randnorm = stats.norm(loc=0, scale=1)
 q = 0.1
-reg = 0.1
+reg = 0.01
 
 alphas_seq = randnorm.ppf(1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1]))
 
@@ -32,7 +32,7 @@ alphas = alpha_max * alphas_seq * reg
 
 max_epochs = 10000
 max_time = np.inf
-tol = 1e-3
+tol = 1e-6
 
 beta_cd, intercept_cd, primals_cd, gaps_cd, time_cd = hybrid_cd(
     X,

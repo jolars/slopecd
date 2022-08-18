@@ -34,19 +34,6 @@ max_epochs = 10000
 max_time = np.inf
 tol = 1e-6
 
-beta_cd_new, intercept_cd_new, primals_cd_new, gaps_cd_new, time_cd_new = hybrid_cd(
-    X,
-    y,
-    alphas,
-    fit_intercept=fit_intercept,
-    max_epochs=max_epochs,
-    verbose=True,
-    tol=tol,
-    max_time=max_time,
-    cluster_updates=True,
-    improved_sparse_updates=True,
-)
-
 beta_cd, intercept_cd, primals_cd, gaps_cd, time_cd = hybrid_cd(
     X,
     y,
@@ -57,22 +44,18 @@ beta_cd, intercept_cd, primals_cd, gaps_cd, time_cd = hybrid_cd(
     tol=tol,
     max_time=max_time,
     cluster_updates=True,
-    improved_sparse_updates=False,
 )
 
-primals_star = np.min(np.hstack((np.array(primals_cd), np.array(primals_cd_new))))
+# primals_star = np.min(np.hstack((np.array(primals_cd), np.array(primals_cd_new))))
 
 plt.clf()
 
-plt.semilogy(time_cd, primals_cd - primals_star, label="cd")
-plt.semilogy(time_cd_new, primals_cd_new - primals_star, label="cd_new")
+# plt.semilogy(time_cd, primals_cd - primals_star, label="cd")
 
-# plt.semilogy(time_cd, gaps_cd, label="cd")
-# plt.semilogy(time_cd_reduced, gaps_cd_reduced, label="cd_updates")
-# plt.xlabel("Time (s)")
+plt.semilogy(time_cd, gaps_cd, label="cd")
+plt.xlabel("Time (s)")
 
 # plt.semilogy(np.arange(len(gaps_cd))*10, gaps_cd, label="cd")
-# plt.semilogy(np.arange(len(gaps_cd_new))*10, gaps_cd_new, label="cd_new")
 # plt.xlabel("Epoch")
 
 plt.ylabel("suboptimality")

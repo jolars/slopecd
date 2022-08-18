@@ -17,7 +17,7 @@ def compute_grad_hess_sumX(resid, X_data, X_indices, X_indptr, s, cluster, n_sam
         X_sum_rows = X_indices[start:end]
 
         for i, v in enumerate(X_sum_vals):
-            grad += v * resid[X_sum_rows[i]]
+            grad -= v * resid[X_sum_rows[i]]
             L += v * v
     else:
         rows = []
@@ -28,7 +28,7 @@ def compute_grad_hess_sumX(resid, X_data, X_indices, X_indptr, s, cluster, n_sam
             for ind in range(start, end):
                 row_ind = X_indices[ind]
                 v = s[k] * X_data[ind]
-                grad += v * resid[row_ind]
+                grad -= v * resid[row_ind]
 
                 rows.append(row_ind)
                 vals.append(v)

@@ -86,7 +86,7 @@ def block_cd_epoch_sparse(
             R, X_data, X_indices, X_indptr, sign_w, cluster, n_samples
         )
 
-        x = c_old + grad / (L_j * n_samples)
+        x = c_old - grad / (L_j * n_samples)
         beta_tilde, ind_new = slope_threshold(x, alphas / L_j, cluster_ptr, c, n_c, j)
 
         w[cluster] = beta_tilde * sign_w

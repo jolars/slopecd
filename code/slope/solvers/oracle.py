@@ -32,7 +32,7 @@ def pure_cd_epoch_sparse(
             R, X_data, X_indices, X_indptr, sign_w[cluster], cluster, n_samples
         )
 
-        x = w_old + grad / (L_j * n_samples)
+        x = w_old - grad / (L_j * n_samples)
         w[j] = ST(x, alphas[cluster_ptr[j] : cluster_ptr[j + 1]].sum() / L_j)
 
         diff = w_old - w[j]

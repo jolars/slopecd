@@ -105,6 +105,15 @@ def prox_slope2(beta, lambdas):
     return beta
 
 
+def get_clusters(w):
+    # check if there is a cheaper way of doing this
+    unique, counts = np.unique(np.abs(w), return_inverse=False, return_counts=True)
+    cluster_indices = np.argsort(np.abs(w))[::-1]
+    cluster_ptr = np.cumsum(counts[::-1])
+    cluster_ptr = np.r_[0, cluster_ptr]
+    return cluster_indices, cluster_ptr, unique[::-1]
+
+
 @njit
 def slope_threshold(x, lambdas, cluster_ptr, c, n_c, j):
     cluster_size = cluster_ptr[j + 1] - cluster_ptr[j]

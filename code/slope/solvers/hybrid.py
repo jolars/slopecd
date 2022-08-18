@@ -92,8 +92,9 @@ def block_cd_epoch_sparse(
         w[cluster] = beta_tilde * sign_w
 
         diff = c_old - beta_tilde
-        for i, ind in enumerate(new_rows):
-            R[ind] += diff * new_vals[i]
+        if diff != 0:
+            for i, ind in enumerate(new_rows):
+                R[ind] += diff * new_vals[i]
 
         if cluster_updates:
             ind_old = j

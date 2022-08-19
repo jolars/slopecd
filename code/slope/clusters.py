@@ -155,26 +155,26 @@ def update_cluster(
     return n_c
 
 
-# @njit
-# def update_cluster_sparse(
-#     c,
-#     c_ptr,
-#     c_ind,
-#     c_perm,
-#     n_c,
-#     c_new,
-#     c_old,
-#     ind_old,
-#     ind_new,
-# ):
-#     if c_new != c_old:
-#         k = c_perm[ind_new]
-#         if c_new == c[k]:
-#             n_c = merge_clusters(c, c_ptr, c_ind, c_perm, n_c, ind_old, ind_new)
+@njit
+def update_cluster_sparse(
+    c,
+    c_ptr,
+    c_ind,
+    c_perm,
+    n_c,
+    c_new,
+    c_old,
+    ind_old,
+    ind_new,
+):
+    if c_new != c_old:
+        k = c_perm[ind_new]
+        if c_new == c[k]:
+            n_c = merge_clusters(c, c_ptr, c_ind, c_perm, n_c, ind_old, ind_new)
 
-#         elif ind_old != ind_new:
-#             reorder_cluster(c, c_ptr, c_ind, c_perm, c_new, ind_old, ind_new)
-#         else:
-#             c[c_perm[ind_old]] = c_new
+        elif ind_old != ind_new:
+            reorder_cluster(c, c_ptr, c_ind, c_perm, c_new, ind_old, ind_new)
+        else:
+            c[c_perm[ind_old]] = c_new
 
-#     return n_c
+    return n_c

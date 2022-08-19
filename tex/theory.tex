@@ -37,27 +37,46 @@ norm.
 \subsubsection{Naive Updates}
 
 As in \textcite{friedman2010}, we can improve the efficiency of updates by observing that
-\begin{equation}
+\begin{equation*}
   \begin{aligned}
-    \tilde r_k & = y - \tilde y_k                                                     \\
-               & = \underbrace{y - X_{\bar{\mathcal{C}_k}}\beta_{\bar{\mathcal{C}_k}}
-    - \tilde x c_k}_r + \tilde x c_k                                                  \\
-               & = r + \tilde x c_k.
+    \tilde r_k & = y - \tilde y_k                                                                       \\
+               & = y - X_{\bar{\mathcal{C}_k}}\beta_{\bar{\mathcal{C}_k}} - \tilde x c_k + \tilde x c_k \\
+               & = r + \tilde x c_k
   \end{aligned}
+\end{equation*}
+and therefore that
+\begin{equation}
+  \label{eq:naive-update}
+  \tilde x_k^T (y - \tilde y_k) = \tilde x_k^T r + \tilde x_k^T \tilde x_k c_k.
 \end{equation}
 
-\subsubsection{Storing Reductions}
+\subsubsection{Caching Reductions}
 
 Observe that \(\tilde x_k\) only changes between subsequent coordinate updates provided that the members of the cluster \(k\) change, for instance if two clusters are merged, a predictor leaves a cluster, or the signs flip (through an update of \(\alpha_k\)).
-It is therefore possible to obtain significant computational gains by storing \(\tilde x_k\) and \(\tilde x_k^T \tilde x_k\) for each cluster. When there is no change in the clusters, we avoid these costly computations. And even when there are changes, we can still reduce the costs involved since \(\tilde x_k\) can be updated in place.
+As a result, it is possible to obtain computational gains by caching \(\tilde x_k\) and \(\tilde x_k^T \tilde x_k\) for each cluster (except the zero cluster, which we do not consider in our coordinate descent step).
+When there is no change in the clusters, there is no need to recompute these quantities.
+And even when there are changes, we can still reduce the costs involved since \(\tilde x_k\) can be updated in place.
+If a large cluster is joined by few new predictors, then the cost of updating may be much lower than recomputing the quantities for the entire cluster.
+Also note that, for single-member clusters we only need to store \(\tilde x_k^T \tilde x_k\) since \(\tilde x_k\) is just a column in \(X\) times the corresponding sign.
 
-Letting \(\tilde x_k^\text{old}\) correspond to the value of \(\tilde x_k\) before the update, we note that
-\(\tilde x_k \gets \tilde x_k^\text{old} + x_j \sign(\beta_j)\)
-for each \(j \in \mathcal{C}_k^\text{new} \setminus \mathcal{C}_k^\text{old}\)
-and \(\tilde x_k \gets \tilde x_k^\text{old} - x_j \sign(\beta_j)\) for each
-\(j \in \mathcal{C}_k^\text{old} \setminus \mathcal{C}_k^\text{new}\). 
-If instead only the signs flip, we simply have to also flip the signs in \(\tilde x_k\).
+Letting \(\tilde x_k^\text{old}\) correspond to the value of \(\tilde x_k\) before the update, we note that \(\tilde x_k \gets \tilde x_k^\text{old} + x_j \sign(\beta_j)\) for each \(j \in \mathcal{C}_k^\text{new} \setminus \mathcal{C}_k^\text{old}\) and \(\tilde x_k \gets \tilde x_k^\text{old} - x_j \sign(\beta_j)\) for each \(j \in \mathcal{C}_k^\text{old} \setminus \mathcal{C}_k^\text{new}\).
+If only the signs flip, we simply have to also flip the signs in \(\tilde x_k\).
 
+\subsubsection{Covariance Updates}
+
+Notice that we can rewrite the first term in \eqref{eq:naive-update} as
+\begin{equation}
+  \begin{aligned}
+    \tilde x_k^T r & = \tilde x_k^T y - \sum_{j : \beta_j \neq 0} \tilde x_k^T x_j \beta_j                                                                     \\
+                   & = \tilde x_k^T y - \sum_{j : c_j \neq 0} \tilde x_k^T \tilde x_j c_j                                                                      \\
+                   & = s_{\mathcal{C}_k}^T X_{\mathcal{C}_k}^T y - \sum_{j : \beta_j \neq 0} s_{\mathcal{C}_k}^T X_{\mathcal{C}_k}^T x_j \beta_j               \\
+                   & = s_{\mathcal{C}_k}^T \left(X^T y\right)_{\mathcal{C}_k} - \sum_{j : \beta_j \neq 0} s_{\mathcal{C}_k}^T X_{\mathcal{C}_k}^T x_j \beta_j.
+  \end{aligned}
+\end{equation}
+As in \textcite{friedman2010}, this formulation can be used to achieve so-called \emph{covariance updates}.
+We compute \(X^T y\) once at the start.
+Then, each time a new predictor becomes non-zero, we compute its inner product with all other predictors, caching these products.
+Unfortunately, we still need to update \(\tilde x^T_k \tilde x_k\) (since it appears in \eqref{eq:naive-update}) for each \(k\) whenever predictors leave or enter \(\mathcal{C}_k\) or if the relative signs of the predictors within the cluster change.
 
 \subsubsection{Alternative Formulation}
 
@@ -212,15 +231,15 @@ In \cref{fig:slope-thresholding}, we visualize the operator.
 
 We propose an iterative solver that alternates between proximal gradient step and proximal coordinate descent.
 Since the regularization term for SLOPE is not separable, applying PCD does not guarantee convergence (show example where CD gets stuck).
-However, \cite{dupuis2021} showed that once the clusters are known, the subdifferential of $J$ can be written as the cartesian product of the subdifferential of $J$ restricted to the clusters. 
-Hence, if one knew the clusters, PCD updates could be applied on each cluster. 
+However, \cite{dupuis2021} showed that once the clusters are known, the subdifferential of $J$ can be written as the cartesian product of the subdifferential of $J$ restricted to the clusters.
+Hence, if one knew the clusters, PCD updates could be applied on each cluster.
 
-The notion of clusters for SLOPE extends the notion of sparsity coming from the LASSO. 
-Identification of the sparsity pattern throughout the iterative algorithm have largely been studied. 
-Talk about Partly Smooth functions, related Manifold and that support transpose to cluster for SLOPE regularization. DO the maths. 
+The notion of clusters for SLOPE extends the notion of sparsity coming from the LASSO.
+Identification of the sparsity pattern throughout the iterative algorithm have largely been studied.
+Talk about Partly Smooth functions, related Manifold and that support transpose to cluster for SLOPE regularization. DO the maths.
 
-Then identification of this underlying structure occurs when applying PGD. 
-Hence the idea to alternate, PGD and PCD step to take advantage of the speed of PCD and ensure convergence via the identification of the right structure with PGD steps. 
+Then identification of this underlying structure occurs when applying PGD.
+Hence the idea to alternate, PGD and PCD step to take advantage of the speed of PCD and ensure convergence via the identification of the right structure with PGD steps.
 
 \begin{algorithm}[tb]
   \SetKwInOut{Init}{init}

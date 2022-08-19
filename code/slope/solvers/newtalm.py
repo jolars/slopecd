@@ -1,5 +1,4 @@
 import warnings
-from timeit import default_timer as timer
 
 import numpy as np
 from numba import njit
@@ -8,14 +7,14 @@ from scipy.linalg import cho_factor, cho_solve, norm, solve
 from scipy.sparse.linalg import cg, spsolve
 
 import slope.permutation as slopep
-from slope.utils import add_intercept_column, dual_norm_slope, prox_slope2
+from slope.utils import ConvergenceMonitor, add_intercept_column, prox_slope
 
 
 def build_W(x_tilde, sigma, lambdas, A, fit_intercept):
     m = A.shape[0]
 
     ord = np.argsort(np.abs(x_tilde[fit_intercept:]))[::-1]
-    x_lambda = np.abs(prox_slope2(x_tilde[fit_intercept:], lambdas)[ord])
+    x_lambda = np.abs(prox_slope(x_tilde[fit_intercept:], lambdas)[ord])
 
     z = slopep.BBT_inv_B(np.abs(x_tilde[fit_intercept:][ord]) - lambdas - x_lambda)
 
@@ -46,7 +45,7 @@ def psi(y, x, ATy, b, lambdas, sigma, fit_intercept):
     w = x - sigma * ATy
     u = np.zeros(len(w))
     u[fit_intercept:] = (1 / sigma) * (
-        w[fit_intercept:] - prox_slope2(w[fit_intercept:], lambdas * sigma)
+        w[fit_intercept:] - prox_slope(w[fit_intercept:], lambdas * sigma)
     )
     if fit_intercept:
         u[0] = 0.0
@@ -66,7 +65,7 @@ def compute_direction(x, sigma, A, b, y, ATy, lambdas, cg_param, solver, fit_int
     x_tilde = x / sigma - ATy
 
     x_tilde_prox = x - sigma * ATy
-    x_tilde_prox[fit_intercept:] = prox_slope2(
+    x_tilde_prox[fit_intercept:] = prox_slope(
         x_tilde_prox[fit_intercept:], sigma * lambdas
     )
 
@@ -200,7 +199,7 @@ def inner_step(
 
     # step 2, update x
     x = x_old - sigma * ATy
-    x[fit_intercept:] = prox_slope2(x[fit_intercept:], sigma * lambdas)
+    x[fit_intercept:] = prox_slope(x[fit_intercept:], sigma * lambdas)
 
     # check for convergence
     x_diff_norm = norm(x - x_old)
@@ -229,32 +228,28 @@ def newt_alm(
     tol=1e-6,
     max_epochs=1000,
     max_time=np.inf,
-    verbose=True,
+    verbose=False,
 ):
     if solver not in ["auto", "standard", "woodbury", "cg"]:
         raise ValueError("`solver` must be one of auto, standard, woodbury, and cg")
 
     m, n = A.shape
 
-    lambdas = lambdas.copy() * m
-
     if fit_intercept:
         A = add_intercept_column(A)
         n += 1
 
+    monitor = ConvergenceMonitor(
+        A, b, lambdas, tol, gap_freq, max_time, verbose, intercept_column=fit_intercept
+    )
+
+    lambdas = lambdas.copy() * m
+
     x = np.zeros(n)
     y = np.zeros(m)
-    r = b.copy()
-    theta = np.zeros(m)
-    primals, gaps = [], []
-    primals.append(norm(b) ** 2 / (2 * m))
-    gaps.append(primals[0])
-
-    times = []
-    time_start = timer()
-    times.append(timer() - time_start)
 
     ATy = A.T @ y
+
     for epoch in range(max_epochs):
         # step 1
         local_param["delta_prime"] *= 0.999
@@ -291,29 +286,14 @@ def newt_alm(
         # increased based on the primal and dual residuals.
         local_param["sigma"] *= 1.1
 
-        times_up = timer() - time_start > max_time
+        intercept = x[0] if fit_intercept else 0.0
 
-        if epoch % gap_freq == 0 or times_up:
-            r[:] = b - A @ x
-            theta = r / m
-            theta /= max(1, dual_norm_slope(A[:, fit_intercept:], theta, lambdas / m))
+        converged = monitor.check_convergence(x[fit_intercept:], intercept, epoch)
 
-            primal = (0.5 / m) * norm(r) ** 2 + np.sum(
-                lambdas * np.sort(np.abs(x[fit_intercept:]))[::-1]
-            ) / m
-            dual = (0.5 / m) * (norm(b) ** 2 - norm(b - theta * m) ** 2)
+        if converged:
+            break
 
-            primals.append(primal)
-            gap = (primal - dual) / max(1, primal)
-            gaps.append(gap)
-            times.append(timer() - time_start)
-
-            if verbose:
-                print(f"Epoch: {epoch + 1}, loss: {primal}, gap: {gap:.2e}")
-
-            if gap < tol:
-                break
-
+    primals, gaps, times = monitor.get_results()
     intercept = x[0] if fit_intercept else 0.0
 
     return x[fit_intercept:], intercept, primals, gaps, times

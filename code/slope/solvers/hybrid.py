@@ -1,12 +1,26 @@
-from timeit import default_timer as timer
-
 import numpy as np
 from numba import njit
 from numpy.linalg import norm
 from scipy import sparse
 
+from slope.cd_utils import compute_grad_hess_sumX
 from slope.clusters import get_clusters, update_cluster
-from slope.utils import dual_norm_slope, prox_slope, slope_threshold
+from slope.utils import ConvergenceMonitor, prox_slope, slope_threshold
+
+
+# TODO(jolars): This should be updated along the lines of `compute_grad_hess_sumX`
+@njit
+def compute_block_scalar_sparse(X_data, X_indices, X_indptr, v, cluster, n_samples):
+    scal = np.zeros(n_samples)
+    if len(cluster) == 1:
+        start, end = X_indptr[cluster[0] : cluster[0] + 2]
+        scal[X_indices[start:end]] = v * X_data[start:end]
+    else:
+        for k, j in enumerate(cluster):
+            start, end = X_indptr[j : j + 2]
+            for ind in range(start, end):
+                scal[X_indices[ind]] += v[k] * X_data[ind]
+    return scal
 
 
 @njit
@@ -65,7 +79,8 @@ def update_reduced_X_sparse(
 
         if update:
             X_reduced[:, k] = compute_block_scalar_sparse(
-                X_data, X_indices, X_indptr, s[cluster], cluster, n_samples)
+                X_data, X_indices, X_indptr, s[cluster], cluster, n_samples
+            )
             L_archive[k] = (X_reduced[:, k].T @ X_reduced[:, k]) / n_samples
 
 
@@ -122,7 +137,6 @@ def update_reduced_X(
             update = True
 
         if update:
-
             X_reduced[:, k] = X[:, cluster] @ s[cluster]
             L_archive[k] = (X_reduced[:, k].T @ X_reduced[:, k]) / n_samples
 
@@ -246,12 +260,13 @@ def block_cd_epoch_sparse(
             # See https://github.com/numba/numba/issues/8131.
             sum_X = X_reduced[:, k].copy()
             L_j = L_archive[k]
+            grad = -(sum_X @ R)
         else:
-            sum_X = compute_block_scalar_sparse(
-                X_data, X_indices, X_indptr, sign_w, cluster, n_samples)
-            L_j = sum_X.T @ sum_X / n_samples
+            grad, L_j, new_vals, new_rows = compute_grad_hess_sumX(
+                R, X_data, X_indices, X_indptr, sign_w, cluster, n_samples
+            )
 
-        x = c_old + (sum_X.T @ R) / (L_j * n_samples)
+        x = c_old - grad / (L_j * n_samples)
         beta_tilde, ind_new = slope_threshold(
             x, alphas / L_j, cluster_ptr, cluster_perm, c, n_c, j
         )
@@ -259,12 +274,16 @@ def block_cd_epoch_sparse(
         c_new = abs(beta_tilde)
         w[cluster] = beta_tilde * sign_w
 
-        if c_old != beta_tilde:
-            R += (c_old - beta_tilde) * sum_X
-
         if use_reduced_X:
+            if c_old != beta_tilde:
+                R += (c_old - beta_tilde) * sum_X
             if np.sign(beta_tilde) == -1:
                 X_reduced[:, k] = -X_reduced[:, k]
+        else:
+            diff = c_old - beta_tilde
+            if diff != 0:
+                for i, ind in enumerate(new_rows):
+                    R[ind] += diff * new_vals[i]
 
         if cluster_updates:
             ind_old = j
@@ -290,26 +309,12 @@ def block_cd_epoch_sparse(
     return n_c
 
 
-@njit
-def compute_block_scalar_sparse(X_data, X_indices, X_indptr, v, cluster, n_samples):
-    scal = np.zeros(n_samples)
-    if len(cluster) == 1:
-        start, end = X_indptr[cluster[0] : cluster[0] + 2]
-        scal[X_indices[start:end]] = v * X_data[start:end]
-    else:
-        for k, j in enumerate(cluster):
-            start, end = X_indptr[j : j + 2]
-            for ind in range(start, end):
-                scal[X_indices[ind]] += v[k] * X_data[ind]
-    return scal
-
-
 def hybrid_cd(
     X,
     y,
     alphas,
     fit_intercept=True,
-    cluster_updates=False,
+    cluster_updates=True,
     update_zero_cluster=False,
     use_reduced_X=True,
     pgd_freq=5,
@@ -324,36 +329,18 @@ def hybrid_cd(
     R = y.copy()
     w = np.zeros(n_features)
     intercept = 0.0
-    theta = np.zeros(n_samples)
 
-    times = []
-    time_start = timer()
-    times.append(timer() - time_start)
+    monitor = ConvergenceMonitor(
+        X, y, alphas, tol, gap_freq, max_time, verbose, intercept_column=False
+    )
 
     X_reduced = np.empty(X.shape, np.float64, order="F")
     L_archive = np.empty(n_features, np.float64)
 
     if sparse.issparse(X):
-        if fit_intercept:
-            # TODO: consider if it's possible to avoid creating this
-            # temporary design matrix with a column of ones
-            ones_col = sparse.csc_array(np.ones((n_samples, 1)))
-            decomp = sparse.linalg.svds(sparse.hstack((ones_col, X)), k=1)
-        else:
-            decomp = sparse.linalg.svds(X, k=1)
-
-        L = decomp[1][0] ** 2 / n_samples
+        L = sparse.linalg.svds(X, k=1)[1][0] ** 2 / n_samples
     else:
-        if fit_intercept:
-            spectral_norm = norm(np.hstack((np.ones((n_samples, 1)), X)), ord=2)
-        else:
-            spectral_norm = norm(X, ord=2)
-
-        L = spectral_norm**2 / n_samples
-
-    E, gaps = [], []
-    E.append(norm(y) ** 2 / (2 * n_samples))
-    gaps.append(E[0])
+        L = norm(X, ord=2) ** 2 / n_samples
 
     c, cluster_ptr, cluster_indices, cluster_perm, n_c = get_clusters(w)
 
@@ -361,9 +348,10 @@ def hybrid_cd(
         if epoch % pgd_freq == 0:
             s_old = np.sign(w)
             w = prox_slope(w + (X.T @ R) / (L * n_samples), alphas / L)
+            R[:] = y - X @ w
             if fit_intercept:
-                intercept = intercept + np.sum(R) / (L * n_samples)
-            R[:] = y - X @ w - intercept
+                intercept = np.mean(R)
+                R -= intercept
 
             if use_reduced_X:
                 cluster_ptr_old = cluster_ptr.copy()
@@ -415,7 +403,6 @@ def hybrid_cd(
                 c, cluster_ptr, cluster_indices, cluster_perm, n_c = get_clusters(w)
 
         else:
-
             if is_X_sparse:
                 n_c = block_cd_epoch_sparse(
                     w,
@@ -454,28 +441,15 @@ def hybrid_cd(
                 )
 
             if fit_intercept:
-                intercept_update = np.sum(R) / n_samples
+                intercept_update = np.mean(R)
                 R -= intercept_update
                 intercept += intercept_update
 
-        times_up = timer() - time_start > max_time
+        converged = monitor.check_convergence(w, intercept, epoch)
 
-        if epoch % gap_freq == 0 or times_up:
-            theta = R / n_samples
-            theta /= max(1, dual_norm_slope(X, theta, alphas))
-            dual = (norm(y) ** 2 - norm(y - theta * n_samples) ** 2) / (2 * n_samples)
-            primal = norm(R) ** 2 / (2 * n_samples) + np.sum(
-                alphas * np.sort(np.abs(w))[::-1]
-            )
+        if converged:
+            break
 
-            E.append(primal)
-            gap = primal - dual
-            gaps.append(gap)
-            times.append(timer() - time_start)
+    primals, gaps, times = monitor.get_results()
 
-            if verbose:
-                print(f"Epoch: {epoch + 1}, loss: {primal}, gap: {gap:.2e}")
-            if gap < tol or times_up:
-                break
-
-    return w, intercept, E, gaps, times
+    return w, intercept, primals, gaps, times

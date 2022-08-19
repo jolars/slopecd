@@ -132,6 +132,8 @@ def update_cluster(
     c_old,
     ind_old,
     ind_new,
+    w,
+    X,
     X_reduced,
     L_archive,
     use_reduced_X,
@@ -142,7 +144,18 @@ def update_cluster(
         k = c_perm[ind_new]
         if c_new == c[k]:
             if use_reduced_X:
-                X_reduced[:, k] += X_reduced[:, c_perm[ind_old]]
+                cluster_to = c_ind[c_ptr[ind_new] : c_ptr[ind_new + 1]]
+                cluster_from = c_ind[c_ptr[ind_old] : c_ptr[ind_old + 1]]
+                if len(cluster_to) == 1:
+                    X_reduced[:, k] = X[:, cluster_to[0]] * np.sign(w[cluster_to[0]])
+
+                if len(cluster_from) == 1:
+                    X_reduced[:, k] += X[:, cluster_from[0]] * np.sign(
+                        w[cluster_from[0]]
+                    )
+                else:
+                    X_reduced[:, k] += X_reduced[:, c_perm[ind_old]]
+
                 L_archive[k] = (X_reduced[:, k].T @ X_reduced[:, k]) / n_samples
 
             n_c = merge_clusters(c, c_ptr, c_ind, c_perm, n_c, ind_old, ind_new)

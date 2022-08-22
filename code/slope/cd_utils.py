@@ -28,6 +28,9 @@ def compute_grad_hess_sumX(resid, X_data, X_indices, X_indptr, s, cluster, n_sam
         grad = -sparse_dot_product(resid, X_sum_vals, X_sum_inds)
         L = np.sum(np.square(X_sum_vals))
     else:
+        # NOTE(jolars): It is possible to do this even more efficiently by just
+        # using arrays and only advancing positions for the array with the
+        # lowest index.
         X_sum = Dict.empty(key_type=types.int32, value_type=types.float64)
 
         for k, j in enumerate(cluster):

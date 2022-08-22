@@ -1,5 +1,6 @@
 import numpy as np
-from numba import njit, prange
+from numba import njit, prange, types
+from numba.typed import Dict
 
 
 @njit(parallel=True)
@@ -27,10 +28,8 @@ def compute_grad_hess_sumX(resid, X_data, X_indices, X_indptr, s, cluster, n_sam
         grad = -sparse_dot_product(resid, X_sum_vals, X_sum_rows)
         L = np.sum(np.square(X_sum_vals))
     else:
-        rows = np.empty(len(cluster)*n_samples, dtype=np.int32)
-        vals = np.empty(len(cluster)*n_samples, dtype=np.double)
+        X_sum = Dict.empty(key_type=types.int32, value_type=types.float64)
 
-        i = 0
         for k, j in enumerate(cluster):
             start, end = X_indptr[j : j + 2]
             for ind in range(start, end):
@@ -38,39 +37,24 @@ def compute_grad_hess_sumX(resid, X_data, X_indices, X_indptr, s, cluster, n_sam
                 v = s[k] * X_data[ind]
                 grad -= v * resid[row_ind]
 
-                rows[i] = row_ind
-                vals[i] = v
+                X_sum[row_ind] = X_sum.get(row_ind, 0.0) + v
 
-                i += 1
+        # Convert values and keys to arrays
+        # TODO(jolars): It is strange that np.array(X_sum.values()) does not
+        # work. There should be some better way to do this.
+        vals = X_sum.values()
+        keys = X_sum.keys()
 
-        rows = rows[:i]
-        vals = vals[:i]
+        X_sum_vals = np.empty(len(vals), dtype=np.double)
+        X_sum_rows = np.empty(len(keys), dtype=np.int32)
 
-        ord = np.argsort(rows)
-        rows = rows[ord]
-        vals = vals[ord]
+        for i, val in enumerate(vals):
+            X_sum_vals[i] = val
 
-        X_sum_rows = []
-        X_sum_vals = []
+        for i, key in enumerate(keys):
+            X_sum_rows[i] = key
 
-        j = 0
-        while j < len(rows):
-            start = rows[j]
-            end = start
-
-            val = 0.0
-            while start == end and j < len(rows):
-                val += vals[j]
-                j += 1
-                end = rows[j]
-
-            L += val * val
-
-            X_sum_rows.append(start)
-            X_sum_vals.append(val)
-
-        X_sum_rows = np.array(X_sum_rows)
-        X_sum_vals = np.array(X_sum_vals)
+        L = np.sum(np.square(X_sum_vals))
 
     L /= n_samples
 

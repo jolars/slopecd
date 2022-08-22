@@ -1,5 +1,13 @@
 import numpy as np
-from numba import njit
+from numba import njit, prange
+
+
+@njit(parallel=True)
+def sparse_dot_product(a, vals, inds):
+    out = 0.0
+    for i in prange(len(vals)):
+        out += vals[i] * a[inds[i]]
+    return out
 
 
 @njit
@@ -16,13 +24,13 @@ def compute_grad_hess_sumX(resid, X_data, X_indices, X_indptr, s, cluster, n_sam
         X_sum_vals = X_data[start:end] * s[0]
         X_sum_rows = X_indices[start:end]
 
-        for i, v in enumerate(X_sum_vals):
-            grad -= v * resid[X_sum_rows[i]]
-            L += v * v
+        grad = -sparse_dot_product(resid, X_sum_vals, X_sum_rows)
+        L = np.sum(np.square(X_sum_vals))
     else:
-        rows = []
-        vals = []
+        rows = np.empty(len(cluster)*n_samples, dtype=np.int32)
+        vals = np.empty(len(cluster)*n_samples, dtype=np.double)
 
+        i = 0
         for k, j in enumerate(cluster):
             start, end = X_indptr[j : j + 2]
             for ind in range(start, end):
@@ -30,12 +38,17 @@ def compute_grad_hess_sumX(resid, X_data, X_indices, X_indptr, s, cluster, n_sam
                 v = s[k] * X_data[ind]
                 grad -= v * resid[row_ind]
 
-                rows.append(row_ind)
-                vals.append(v)
+                rows[i] = row_ind
+                vals[i] = v
 
-        ord = np.argsort(np.array(rows))
-        rows = np.array(rows)[ord]
-        vals = np.array(vals)[ord]
+                i += 1
+
+        rows = rows[:i]
+        vals = vals[:i]
+
+        ord = np.argsort(rows)
+        rows = rows[ord]
+        vals = vals[ord]
 
         X_sum_rows = []
         X_sum_vals = []

@@ -23,9 +23,9 @@ def compute_grad_hess_sumX(resid, X_data, X_indices, X_indptr, s, cluster, n_sam
         start, end = X_indptr[j : j + 2]
 
         X_sum_vals = X_data[start:end] * s[0]
-        X_sum_rows = X_indices[start:end]
+        X_sum_inds = X_indices[start:end]
 
-        grad = -sparse_dot_product(resid, X_sum_vals, X_sum_rows)
+        grad = -sparse_dot_product(resid, X_sum_vals, X_sum_inds)
         L = np.sum(np.square(X_sum_vals))
     else:
         X_sum = Dict.empty(key_type=types.int32, value_type=types.float64)
@@ -43,19 +43,19 @@ def compute_grad_hess_sumX(resid, X_data, X_indices, X_indptr, s, cluster, n_sam
         # TODO(jolars): It is strange that np.array(X_sum.values()) does not
         # work. There should be some better way to do this.
         vals = X_sum.values()
-        keys = X_sum.keys()
+        inds = X_sum.keys()
 
         X_sum_vals = np.empty(len(vals), dtype=np.double)
-        X_sum_rows = np.empty(len(keys), dtype=np.int32)
+        X_sum_inds = np.empty(len(inds), dtype=np.int32)
 
         for i, val in enumerate(vals):
             X_sum_vals[i] = val
 
-        for i, key in enumerate(keys):
-            X_sum_rows[i] = key
+        for i, ind in enumerate(inds):
+            X_sum_inds[i] = ind
 
         L = np.sum(np.square(X_sum_vals))
 
     L /= n_samples
 
-    return grad, L, X_sum_vals, X_sum_rows
+    return grad, L, X_sum_vals, X_sum_inds

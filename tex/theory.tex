@@ -67,16 +67,16 @@ If only the signs flip, we simply have to also flip the signs in \(\tilde x_k\).
 Notice that we can rewrite the first term in \eqref{eq:naive-update} as
 \begin{equation}
   \begin{aligned}
-    \tilde x_k^T r & = \tilde x_k^T y - \sum_{j : \beta_j \neq 0} \tilde x_k^T x_j \beta_j                                                                     \\
-                   & = \tilde x_k^T y - \sum_{j : c_j \neq 0} \tilde x_k^T \tilde x_j c_j                                                                      \\
-                   & = s_{\mathcal{C}_k}^T X_{\mathcal{C}_k}^T y - \sum_{j : \beta_j \neq 0} s_{\mathcal{C}_k}^T X_{\mathcal{C}_k}^T x_j \beta_j               \\
-                   & = s_{\mathcal{C}_k}^T \left(X^T y\right)_{\mathcal{C}_k} - \sum_{j : \beta_j \neq 0} s_{\mathcal{C}_k}^T X_{\mathcal{C}_k}^T x_j \beta_j.
+    \tilde x_k^T r & = \tilde x_k^T y - \sum_{j : \beta_j \neq 0} \tilde x_k^T x_j \beta_j                                                                    \\
+                   & = \tilde x_k^T y - \sum_{j : c_j \neq 0} \tilde x_k^T \tilde x_j c_j                                                                     \\
+                   & = s_{\mathcal{C}_k}^T X_{\mathcal{C}_k}^T y - \sum_{j : \beta_j \neq 0} s_{\mathcal{C}_k}^T X_{\mathcal{C}_k}^T x_j \beta_j              \\
+                   & = s_{\mathcal{C}_k}^T \left(X^T y\right)_{\mathcal{C}_k} - \sum_{j : \beta_j \neq 0} s_{\mathcal{C}_k}^T X_{\mathcal{C}_k}^T x_j \beta_j \\
+                   & = \sum_{j \in \mathcal{C}_k}\left( s_j x_j^Ty - \sum_{t : \beta_t \neq 0} s_j x_j^T x_t \beta_t \right)
   \end{aligned}
 \end{equation}
 As in \textcite{friedman2010}, this formulation can be used to achieve so-called \emph{covariance updates}.
 We compute \(X^T y\) once at the start.
 Then, each time a new predictor becomes non-zero, we compute its inner product with all other predictors, caching these products.
-Unfortunately, we still need to update \(\tilde x^T_k \tilde x_k\) (since it appears in \eqref{eq:naive-update}) for each \(k\) whenever predictors leave or enter \(\mathcal{C}_k\) or if the relative signs of the predictors within the cluster change.
 
 \subsubsection{Alternative Formulation}
 

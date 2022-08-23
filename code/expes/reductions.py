@@ -4,10 +4,10 @@ from benchopt.datasets import make_correlated_data
 from scipy import stats
 
 from slope.data import get_data
-from slope.solvers import hybrid_cd
+from slope.solvers import hybrid_cd, oracle_cd
 from slope.utils import dual_norm_slope
 
-dataset = "real-sim"
+dataset = "rcv1.binary"
 # dataset = "Rhee2006"
 # dataset = "bcTCGA"
 # dataset = "simulated"
@@ -31,26 +31,7 @@ alphas = alpha_max * alphas_seq * reg
 
 max_epochs = 10000
 max_time = np.inf
-tol = 1e-6
-
-(
-    beta_cd_reduced,
-    intercept_cd_reduced,
-    primals_cd_reduced,
-    gaps_cd_reduced,
-    time_cd_reduced,
-) = hybrid_cd(
-    X,
-    y,
-    alphas,
-    fit_intercept=fit_intercept,
-    max_epochs=max_epochs,
-    verbose=True,
-    tol=tol,
-    max_time=max_time,
-    use_reduced_X=True,
-    cluster_updates=True,
-)
+tol = 1e-4
 
 beta_cd, intercept_cd, primals_cd, gaps_cd, time_cd = hybrid_cd(
     X,
@@ -61,15 +42,26 @@ beta_cd, intercept_cd, primals_cd, gaps_cd, time_cd = hybrid_cd(
     verbose=True,
     tol=tol,
     max_time=max_time,
-    use_reduced_X=False,
     cluster_updates=True,
 )
 
-primals_star = np.min(np.hstack((primals_cd, np.array(primals_cd_reduced))))
+beta_oracle, intercept_oracle, primals_oracle, gaps_oracle, time_oracle = oracle_cd(
+    X,
+    y,
+    alphas,
+    fit_intercept=fit_intercept,
+    max_epochs=max_epochs,
+    verbose=True,
+    tol=tol,
+    max_time=max_time,
+    w_star=beta_cd,
+)
+
+primals_star = np.min(np.hstack((primals_cd, np.array(primals_oracle))))
 
 plt.clf()
-plt.semilogy(time_cd, primals_cd - primals_star, label="cd")
-plt.semilogy(time_cd_reduced, primals_cd_reduced - primals_star, label="cd_reduced")
+plt.semilogy(time_cd, primals_cd - primals_star, label="cd_hybrid")
+plt.semilogy(time_oracle, primals_oracle - primals_star, label="cd_oracle")
 
 # plt.semilogy(time_cd, gaps_cd, label="cd")
 # plt.semilogy(time_cd_reduced, gaps_cd_reduced, label="cd_updates")

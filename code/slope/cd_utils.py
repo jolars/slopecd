@@ -1,5 +1,14 @@
 import numpy as np
-from numba import njit
+from numba import njit, prange, types
+from numba.typed import Dict
+
+
+@njit(parallel=True)
+def sparse_dot_product(a, vals, inds):
+    out = 0.0
+    for i in prange(len(vals)):
+        out += vals[i] * a[inds[i]]
+    return out
 
 
 @njit
@@ -14,14 +23,15 @@ def compute_grad_hess_sumX(resid, X_data, X_indices, X_indptr, s, cluster, n_sam
         start, end = X_indptr[j : j + 2]
 
         X_sum_vals = X_data[start:end] * s[0]
-        X_sum_rows = X_indices[start:end]
+        X_sum_inds = X_indices[start:end]
 
-        for i, v in enumerate(X_sum_vals):
-            grad -= v * resid[X_sum_rows[i]]
-            L += v * v
+        grad = -sparse_dot_product(resid, X_sum_vals, X_sum_inds)
+        L = np.sum(np.square(X_sum_vals))
     else:
-        rows = []
-        vals = []
+        # NOTE(jolars): It is possible to do this even more efficiently by just
+        # using arrays and only advancing positions for the array with the
+        # lowest index.
+        X_sum = Dict.empty(key_type=types.int32, value_type=types.float64)
 
         for k, j in enumerate(cluster):
             start, end = X_indptr[j : j + 2]
@@ -30,35 +40,25 @@ def compute_grad_hess_sumX(resid, X_data, X_indices, X_indptr, s, cluster, n_sam
                 v = s[k] * X_data[ind]
                 grad -= v * resid[row_ind]
 
-                rows.append(row_ind)
-                vals.append(v)
+                X_sum[row_ind] = X_sum.get(row_ind, 0.0) + v
 
-        ord = np.argsort(np.array(rows))
-        rows = np.array(rows)[ord]
-        vals = np.array(vals)[ord]
+        # Convert values and keys to arrays
+        # TODO(jolars): It is strange that np.array(X_sum.values()) does not
+        # work. There should be some better way to do this.
+        vals = X_sum.values()
+        inds = X_sum.keys()
 
-        X_sum_rows = []
-        X_sum_vals = []
+        X_sum_vals = np.empty(len(vals), dtype=np.double)
+        X_sum_inds = np.empty(len(inds), dtype=np.int32)
 
-        j = 0
-        while j < len(rows):
-            start = rows[j]
-            end = start
+        for i, val in enumerate(vals):
+            X_sum_vals[i] = val
 
-            val = 0.0
-            while start == end and j < len(rows):
-                val += vals[j]
-                j += 1
-                end = rows[j]
+        for i, ind in enumerate(inds):
+            X_sum_inds[i] = ind
 
-            L += val * val
-
-            X_sum_rows.append(start)
-            X_sum_vals.append(val)
-
-        X_sum_rows = np.array(X_sum_rows)
-        X_sum_vals = np.array(X_sum_vals)
+        L = np.sum(np.square(X_sum_vals))
 
     L /= n_samples
 
-    return grad, L, X_sum_vals, X_sum_rows
+    return grad, L, X_sum_vals, X_sum_inds

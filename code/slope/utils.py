@@ -100,7 +100,7 @@ def get_clusters(w):
 
 
 @njit
-def slope_threshold(x, lambdas, cluster_ptr, c, n_c, j):
+def slope_threshold(x, lambdas, cluster_ptr, c_perm, c, n_c, j):
     cluster_size = cluster_ptr[j + 1] - cluster_ptr[j]
 
     abs_x = abs(x)
@@ -108,7 +108,7 @@ def slope_threshold(x, lambdas, cluster_ptr, c, n_c, j):
 
     # check which direction we need to search
     up_direction = abs_x - sum(lambdas[cluster_ptr[j] : cluster_ptr[j + 1]]) > np.abs(
-        c[j]
+        c[c_perm[j]]
     )
 
     if up_direction:
@@ -119,7 +119,7 @@ def slope_threshold(x, lambdas, cluster_ptr, c, n_c, j):
             start = cluster_ptr[k]
             hi = sum(lambdas[start : start + cluster_size])
 
-            abs_c_k = abs(c[k])
+            abs_c_k = abs(c[c_perm[k]])
 
             if abs_x < lo + abs_c_k:
                 # we must be between clusters
@@ -141,7 +141,7 @@ def slope_threshold(x, lambdas, cluster_ptr, c, n_c, j):
             end = cluster_ptr[k + 1]
             lo = sum(lambdas[end - cluster_size : end])
 
-            abs_c_k = abs(c[k])
+            abs_c_k = abs(c[c_perm[k]])
 
             if abs_x > hi + abs_c_k:
                 # we must be between clusters

@@ -6,21 +6,29 @@
 \subsection{Coordinate Descent for SLOPE}%
 \label{sec:coordinate-updates}
 
+\mathurin{Maybe we need to motivate here: CD cannot be applied because the problem is not separable. However if one knows the clusters of the solution in advance, then the problem is the same as a separable Lasso where the clusters are collapsed [I'm not even sure I have a proof for that, but experimentally we have it]. So an idea is to try to identify the clusters, and to perform CD updates on the collapsed estimates.}
 In this section we derive a coordinate descent algorithm for minimizing the SLOPE problem~\eqref{eq:slope-problem} with respect to the coefficients of a single cluster at a time.
 First observe that we can write \eqref{eq:slope-problem}.
 \[
   \begin{aligned}
-    P(\beta) & =  \frac{1}{2} \lVert y - X\beta\rVert_2^2 + J(\beta)                                                                                                                                                                                                                \\
-             & = \frac{1}{2} \lVert y - X_{\bar{\mathcal{C}_k}} \beta_{\bar{\mathcal{C}_k}} - \big(X_{\mathcal{C}_k} s_{\mathcal{C}_k}\big)c_k  \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)c_k \\
-             & = \frac{1}{2} \lVert \tilde r - \tilde x c_k \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)c_k                                                                                     \\
+    P(\beta) & =  \frac{1}{2} \lVert y - X\beta \rVert_2^2 + J(\beta)                                                                                                                                                                                                                \\
+             & = \frac{1}{2} \lVert y - X_{\bar{\mathcal{C}}_k} \beta_{\bar{\mathcal{C}}_k} - \big(X_{\mathcal{C}_k} s_{\mathcal{C}_k}\big)c_k  \rVert_2^2
+             + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k|
+             + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)c_k \\
+             %
+             & = \frac{1}{2} \lVert \tilde r - \tilde x_k c_k \rVert_2^2
+             + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k|
+             + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)c_k
+             \enspace , \\
   \end{aligned}
 \]
-with \( \tilde x_k = X_{\mathcal{C}_k} s_{\mathcal{C}_k}\) and
-where \(\tilde r_k = y - \tilde y_k = y - X_{\bar{\mathcal{C}}_k} \beta_{\bar{\mathcal{C}_k}}\).
+with \( \tilde x_k = X_{\mathcal{C}_k} s_{\mathcal{C}_k} \in \mathbb{R}^n \) and
+\(\tilde r_k = y - \tilde y_k = y - X_{\bar{\mathcal{C}}_k} \beta_{\bar{\mathcal{C}}_k} \in \bbR^n\).
+\mm{do we need $\tilde y _k$ ?}
 
 Our coordinate-wise update is based on optimizing over clusters' corresponding coefficients one at a time, keeping the relative signs of the coefficients inside each cluster constant, but allowing the signs of all of them to flip. This one-dimensional sub-problem is given by
 \begin{equation*}
-  \operatorname*{minimize}_{\alpha \in \mathbb{R}} \left( \frac{1}{2} \lVert \tilde r - \tilde x \alpha_k \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)|\alpha_k|\right).
+  \minimize_{\alpha \in \mathbb{R}} \left( \frac{1}{2} \lVert \tilde r - \tilde x \alpha_k \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)|\alpha_k|\right) \enspace.
 \end{equation*}
 Differentiating with respect to \(\alpha_k\), yields
 \begin{equation}
@@ -29,7 +37,7 @@ Differentiating with respect to \(\alpha_k\), yields
   P(\beta) = \tilde x^T \tilde x \alpha_k - \tilde r^T \tilde x +
   \partial_{\alpha_k} \Bigg(\sum_{j \notin \mathcal{C}_k}\lambda_{(j)^-}
   |\beta_j| + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)|\alpha_k|
-  \Bigg),
+  \Bigg) \enspace,
 \end{equation}
 where the last term is the partial subdifferential of the sorted \(\ell_1\)
 norm.
@@ -40,7 +48,7 @@ As in \textcite{friedman2010}, we can improve the efficiency of updates by obser
 \begin{equation*}
   \begin{aligned}
     \tilde r_k & = y - \tilde y_k                                                                       \\
-               & = y - X_{\bar{\mathcal{C}_k}}\beta_{\bar{\mathcal{C}_k}} - \tilde x c_k + \tilde x c_k \\
+               & = y - X_{\bar{\mathcal{C}}_k}\beta_{\bar{\mathcal{C}}_k} - \tilde x c_k + \tilde x c_k \\
                & = r + \tilde x c_k
   \end{aligned}
 \end{equation*}
@@ -83,7 +91,7 @@ Then, each time a new predictor becomes non-zero, we compute its inner product w
 An alternative formulation (with identical solution) is to minimize
 \[
   \begin{aligned}
-    P(c_k) & = \frac{1}{2} \lVert y - X_{\bar{\mathcal{C}_k}} \beta_{\bar{\mathcal{C}_k}} - \big(X_{\mathcal{C}_k} \beta_{\mathcal{C}_k}\big)c_k  \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + |c_k|\bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^- }|\beta_j|\bigg),
+    P(c_k) & = \frac{1}{2} \lVert y - X_{\bar{\mathcal{C}}_k} \beta_{\bar{\mathcal{C}}_k} - \big(X_{\mathcal{C}_k} \beta_{\mathcal{C}_k}\big)c_k  \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + |c_k|\bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^- }|\beta_j|\bigg),
   \end{aligned}
 \]
 and \(\beta_k := c_k\beta_k\).

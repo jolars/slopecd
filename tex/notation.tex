@@ -16,19 +16,20 @@ Let \((i)^{-}\) be the inverse of \((i)\) such that
 Note that this means that
 \[
   J(\beta) = \sum_{j=1}^p \lambda_j |\beta_{(j)}|
-           = \sum_{j=1}^p \lambda_{(j)^-}|\beta_j|.
+           = \sum_{j=1}^p \lambda_{(j)^-}|\beta_j| \enspace.
 \]
-
-Furthermore, let
+%
+Furthermore for $\mathcal{A} \subset [p]$, let
 \[
-  S(\mathcal{A}) = \sum_{i \in \mathcal{A}} \lambda_{(i)^-}.
+  S(\mathcal{A}) = \sum_{i \in \mathcal{A}} \lambda_{(i)^-} \enspace.
 \]
-
-Also, let \(\mathcal{C}_1, \mathcal{C}_2\, \dots, \mathcal{C}_m\) be the
-clusters such that
+%
+A key property of SLOPE is that the coefficients of $\beta$ tend to cluster.
+Let \(\mathcal{C}_1, \mathcal{C}_2\, \dots, \mathcal{C}_m\) be the
+clusters such that\mm{this notation may be ambiguous as $m$ depends on $\beta$}
 \[
   \mathcal{C}_i = \{j : |\beta_j| = c_i\} \quad \text{and} \quad
-  c_1 > c_2 > \cdots \geq 0.
+  c_1 > c_2 > \cdots > c_m \geq 0.
 \]
 In addition, let \(C(\alpha)\) be a function that returns the
 cluster corresponding to \(\alpha\), that is
@@ -39,7 +40,7 @@ Let \(\lambda^{\mathcal{A}}\) be the sub-sequence of
 \(\lambda\) corresponding to the \(\mathcal{A}\) cluster, i.e.
 \[
   \lambda^\mathcal{A} = \{\lambda_{(i)^-} : i \in \mathcal{A}\}
-\]
+\]\mathurin{put on the same level as $\mathcal{S}(\mathcal{A})$ definition?}
 
 
 

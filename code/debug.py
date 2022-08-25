@@ -48,14 +48,22 @@ beta_oracle, intercept_oracle, primals_oracle, gaps_oracle, time_oracle = oracle
 
 primals_star = np.min(np.hstack((np.array(primals_cd), np.array(primals_oracle))))
 
-plt.clf()
+plt.close('all')
 
-plt.semilogy(time_cd, primals_cd - primals_star, label="cd")
-plt.semilogy(time_oracle, primals_oracle - primals_star, label="cd_oracle")
+fig, axarr = plt.subplots(2, 1, sharex=True, constrained_layout=True)
+ax = axarr[0]
+ax.semilogy(time_cd, primals_cd - primals_star, label="cd")
+ax.semilogy(time_oracle, primals_oracle - primals_star, label="cd_oracle")
 
-plt.xlabel("Time (s)")
 
-plt.ylabel("suboptimality")
-plt.legend()
-plt.title(dataset)
+ax.set_ylabel("suboptimality")
+ax.legend()
+ax.set_title(dataset)
+
+ax = axarr[1]
+ax.semilogy(times_cd, gaps_cd, label='cd')
+ax.semilogy(times_oracle, gaps_oracle, label='cd_oracle')
+ax.legend()
+ax.set_ylabel("duality gap")
+ax.set_xlabel("Time (s)")
 plt.show(block=False)

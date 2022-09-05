@@ -2,175 +2,302 @@
 
 \section{Theory}\label{sec:theory}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \subsection{Coordinate Descent for SLOPE}%
 \label{sec:coordinate-updates}
 
 In this section we derive a coordinate descent algorithm for minimizing the SLOPE problem~\eqref{eq:slope-problem} with respect to the coefficients of a single cluster at a time.
-First observe that we can write \eqref{eq:slope-problem}.
+First observe that we can write \eqref{eq:slope-problem} as
 \[
   \begin{aligned}
-    P(\beta) & =  \frac{1}{2} \lVert y - X\beta\rVert_2^2 + J(\beta)                                                                                                                                                                                                                \\
-             & = \frac{1}{2} \lVert y - X_{\bar{\mathcal{C}_k}} \beta_{\bar{\mathcal{C}_k}} - \big(X_{\mathcal{C}_k} s_{\mathcal{C}_k}\big)c_k  \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)c_k \\
-             & = \frac{1}{2} \lVert \tilde r - \tilde x c_k \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)c_k                                                                                     \\
+    P(\beta)
+     & =  \frac{1}{2} \lVert y - X\beta\rVert_2^2 + J(\beta)                        \\
+     & = \frac{1}{2} \lVert y - X_{\bar{\mathcal{C}_k}} \beta_{\bar{\mathcal{C}_k}}
+    - \big(X_{\mathcal{C}_k} s_{\mathcal{C}_k}\big)c_k  \rVert_2^2
+    + |c_k|\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}
+    + \sum_{j \notin {\mathcal{C}_k}} |\beta_j|\lambda_{(j)^-}                      \\
+     & = \frac{1}{2} \lVert \tilde r - \tilde x c_k \rVert_2^2
+    + |c_k|\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}
+    + \sum_{j \notin {\mathcal{C}_k}} |\beta_j|\lambda_{(j)^-}                      \\
   \end{aligned}
 \]
 with \( \tilde x_k = X_{\mathcal{C}_k} s_{\mathcal{C}_k}\) and
-where \(\tilde r_k = y - \tilde y_k = y - X_{\bar{\mathcal{C}}_k} \beta_{\bar{\mathcal{C}_k}}\).
+\(\tilde r_k = y - \tilde y_k = y - X_{\bar{\mathcal{C}}_k} \beta_{\bar{\mathcal{C}_k}}\).
 
-Our coordinate-wise update is based on optimizing over clusters' corresponding coefficients one at a time, keeping the relative signs of the coefficients inside each cluster constant, but allowing the signs of all of them to flip. This one-dimensional sub-problem is given by
+We propose a coordinate-wise update that minimizes \(P(\beta)\) with respect to the
+clusters' corresponding coefficients one at a time, keeping the relative signs
+of the coordinates within each cluster fixed but allowing all of the signs to
+flip (simultaneously).
+
+Letting \(\beta\) correspond to a fixed vector, note that
+\(\beta_i = s_i c_{(j)^-}\), \(i \in \mathcal{C}_j\) for all
+\(i\). Now let \(\tilde{\mathcal{C}}_i\)
+correspond to the indices of the \(i\)th cluster for \(\beta\), that is,
+\(|\beta_j| = c_i\) for all \(j \in \tilde{\mathcal{C}}_i\).
+Next, we let
 \begin{equation*}
-  \operatorname*{minimize}_{\alpha \in \mathbb{R}} \left( \frac{1}{2} \lVert \tilde r - \tilde x \alpha_k \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)|\alpha_k|\right).
+  \beta_i(z) =
+  \begin{cases}
+    s_k z   & \text{if } i \in \mathcal{C}_k, \\
+    \beta_i & \text{otherwise.}
+  \end{cases}
 \end{equation*}
-Differentiating with respect to \(\alpha_k\), yields
+This means that \(\beta(x)\) corresponds to a version of \(\beta\) with a
+coordinate update for the \(k\)th cluster.
+
+This corresponds to solving the following
+one-dimensional problem:
+
+\begin{equation*}
+  \operatorname*{minimize}_{z \in \mathbb{R}} \left( \frac{1}{2} \lVert \tilde r - \tilde x z \rVert_2^2 + J_k(z)\right)
+\end{equation*}
+with
+\[
+  J_k(z) = |z| \sum_{j \in \mathcal{C}_k} \lambda_{(j)^-_z}
+  + \sum_{j \notin \mathcal{C}_k} |\beta_j| \lambda_{(j)^-_z},
+\]
+where we write \(\lambda_{(j)^-_z}\) to indicate that the permutation operator \((j)^-_z\)
+depends on \(\beta(z)\).
+
+The optimality condition for this problem is \(0 \in \partial_z P(\beta).\)
+Differentiating with respect to \(z\) yields
 \begin{equation}
   \label{eq:cluster-grad}
-  \partial_{\alpha_k}
-  P(\beta) = \tilde x^T \tilde x \alpha_k - \tilde r^T \tilde x +
-  \partial_{\alpha_k} \Bigg(\sum_{j \notin \mathcal{C}_k}\lambda_{(j)^-}
-  |\beta_j| + \bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}\bigg)|\alpha_k|
-  \Bigg),
+  \partial_{z} P(\beta) = \tilde x^T \tilde x z - \tilde r^T \tilde x + \partial_{z} J_k(z)
 \end{equation}
 where the last term is the partial subdifferential of the sorted \(\ell_1\)
-norm.
-
-\subsubsection{Naive Updates}
-
-As in \textcite{friedman2010}, we can improve the efficiency of updates by observing that
-\begin{equation*}
-  \begin{aligned}
-    \tilde r_k & = y - \tilde y_k                                                                       \\
-               & = y - X_{\bar{\mathcal{C}_k}}\beta_{\bar{\mathcal{C}_k}} - \tilde x c_k + \tilde x c_k \\
-               & = r + \tilde x c_k
-  \end{aligned}
-\end{equation*}
-and therefore that
-\begin{equation}
-  \label{eq:naive-update}
-  \tilde x_k^T (y - \tilde y_k) = \tilde x_k^T r + \tilde x_k^T \tilde x_k c_k.
-\end{equation}
-
-\subsubsection{Caching Reductions}
-
-Observe that \(\tilde x_k\) only changes between subsequent coordinate updates provided that the members of the cluster \(k\) change, for instance if two clusters are merged, a predictor leaves a cluster, or the signs flip (through an update of \(\alpha_k\)).
-As a result, it is possible to obtain computational gains by caching \(\tilde x_k\) and \(\tilde x_k^T \tilde x_k\) for each cluster (except the zero cluster, which we do not consider in our coordinate descent step).
-When there is no change in the clusters, there is no need to recompute these quantities.
-And even when there are changes, we can still reduce the costs involved since \(\tilde x_k\) can be updated in place.
-If a large cluster is joined by few new predictors, then the cost of updating may be much lower than recomputing the quantities for the entire cluster.
-Also note that, for single-member clusters we only need to store \(\tilde x_k^T \tilde x_k\) since \(\tilde x_k\) is just a column in \(X\) times the corresponding sign.
-
-Letting \(\tilde x_k^\text{old}\) correspond to the value of \(\tilde x_k\) before the update, we note that \(\tilde x_k \gets \tilde x_k^\text{old} + x_j \sign(\beta_j)\) for each \(j \in \mathcal{C}_k^\text{new} \setminus \mathcal{C}_k^\text{old}\) and \(\tilde x_k \gets \tilde x_k^\text{old} - x_j \sign(\beta_j)\) for each \(j \in \mathcal{C}_k^\text{old} \setminus \mathcal{C}_k^\text{new}\).
-If only the signs flip, we simply have to also flip the signs in \(\tilde x_k\).
-
-\subsubsection{Covariance Updates}
-
-Notice that we can rewrite the first term in \eqref{eq:naive-update} as
-\begin{equation}
-  \begin{aligned}
-    \tilde x_k^T r & = \tilde x_k^T y - \sum_{j : \beta_j \neq 0} \tilde x_k^T x_j \beta_j                                                                    \\
-                   & = \tilde x_k^T y - \sum_{j : c_j \neq 0} \tilde x_k^T \tilde x_j c_j                                                                     \\
-                   & = s_{\mathcal{C}_k}^T X_{\mathcal{C}_k}^T y - \sum_{j : \beta_j \neq 0} s_{\mathcal{C}_k}^T X_{\mathcal{C}_k}^T x_j \beta_j              \\
-                   & = s_{\mathcal{C}_k}^T \left(X^T y\right)_{\mathcal{C}_k} - \sum_{j : \beta_j \neq 0} s_{\mathcal{C}_k}^T X_{\mathcal{C}_k}^T x_j \beta_j \\
-                   & = \sum_{j \in \mathcal{C}_k}\left( s_j x_j^Ty - \sum_{t : \beta_t \neq 0} s_j x_j^T x_t \beta_t \right)
-  \end{aligned}
-\end{equation}
-As in \textcite{friedman2010}, this formulation can be used to achieve so-called \emph{covariance updates}.
-We compute \(X^T y\) once at the start.
-Then, each time a new predictor becomes non-zero, we compute its inner product with all other predictors, caching these products.
-
-\subsubsection{Alternative Formulation}
-
-An alternative formulation (with identical solution) is to minimize
-\[
-  \begin{aligned}
-    P(c_k) & = \frac{1}{2} \lVert y - X_{\bar{\mathcal{C}_k}} \beta_{\bar{\mathcal{C}_k}} - \big(X_{\mathcal{C}_k} \beta_{\mathcal{C}_k}\big)c_k  \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + |c_k|\bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^- }|\beta_j|\bigg),
-  \end{aligned}
-\]
-and \(\beta_k := c_k\beta_k\).
+norm with respect to coefficient of the \(k\)th cluster.
 
 \subsubsection{Partial Subdifferential of the Sorted \(\ell_1\) Norm}
 
-We now derive a closed form expression for the subdifferential
-of the sorted \(\ell_1\) norm.
-\begin{theorem}
-  \label{thm:cluster-subdifferential}
-  The partial subdifferential for the sorted \(\ell_1\) norm with respect
-  to \(\alpha_k\), is
+In this section we derive an expression for the partial subdifferential of the
+sorted \(\ell_1\) norm. To do this, we will first introduce the directional
+derivative for the sorted \(\ell_1\) norm with respect to the coefficient of
+the \(k\)th cluster.
+
+Before we arrive at the definition for the directional derivative, however,
+we introduce a key fact in \cref{def:limit-permutation}.
+
+\begin{definition}
+  \label{def:limit-permutation}
+  There exists an \(\varepsilon > 0\) such that
+  \begin{equation}
+    c_{i - 1} > c_i \pm h \delta > c_{i + 1} \geq 0 \qquad \forall\, h < \varepsilon, i,
+  \end{equation}
+\end{definition}
+
+Note that for an \(\varepsilon\) defined as in \cref{def:limit-permutation}, we have
+\begin{equation}
+  \lim_{h \downarrow 0} C(z + h\delta) = C(z + \varepsilon \delta)
+  \quad\text{and}\quad
+  \lim_{h \downarrow 0} \lambda_{(i)^-_{z + h\delta}}
+  = \lambda_{(i)^-_{z + \varepsilon\delta}}.
+\end{equation}
+In other words, the order permutation corresponding to \(B(z + h\delta)\) depends only on
+\(\delta\) in the limit as \(h\) tends to~\(0\).
+
+\begin{remark}
+  A consequence of \cref{def:limit-permutation} is that the order
+  permutations for \(B(z)\) and \(B(z + \varepsilon \delta)\) differ only for a subset of
+  the permutation vectors. For \(z = 0\)
+  these permutations correspond to
   \[
-    \partial_{\tilde \beta_k}  J(\beta)       =
     \begin{cases}
-      \big[-\sum_{j=1}^{|C(0)|}\lambda^{C(0)}_j, \sum_{j=1}^{|C(0)|}\lambda^{C(0)}_j\big]                                                                        & \text{if } \alpha = 0,           \\
-      \big[\sum_{j=|\mathcal{C}_i| - |\mathcal{C}_k|+1}^{|\mathcal{C}_i|}\lambda^{\mathcal{C}_i}_j, \sum_{j=1}^{|\mathcal{C}_k|}\lambda^{\mathcal{C}_i}_j\big]   & \text{if } \alpha = c_i \neq 0,  \\
-      \big[-\sum_{j=1}^{|\mathcal{C}_k|}\lambda^{\mathcal{C}_i}_j, -\sum_{j=|\mathcal{C}_i| - |\mathcal{C}_k|+1}^{|\mathcal{C}_i|}\lambda^{\mathcal{C}_k}_j\big] & \text{if } \alpha = -c_i \neq 0, \\
-      \{\sign(\alpha)\boldsymbol{1}^T\lambda^{C(\alpha)}\}                                                                                                       & \text{otherwise.
+      \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, \tilde{\mathcal{C}}_m, C(\varepsilon\delta)                                          & \text{if } c_m > 0 \text{ and } \delta \neq 0, \\
+      \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, C(\varepsilon\delta), \tilde{\mathcal{C}}_m                                          & \text{if } c_m = 0 \text{ and } \delta \neq 0, \\
+      \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, \underbrace{\tilde{\mathcal{C}}_k \cup \tilde{\mathcal{C}}_m}_{C(\varepsilon\delta)} & \text{if } c_m = 0 \text{ and } \delta = 0.    \\
+    \end{cases}
+  \]
+  In the case when \(z = c_i \neq 0\), \(i \neq k\), the corresponding permutations are
+  \[
+    \begin{cases}
+      \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, C(c_i + \varepsilon\delta), \tilde{\mathcal{C}}_i, \dots, \tilde{\mathcal{C}}_m                                          & \text{if } \delta = 1,  \\
+      \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, \tilde{\mathcal{C}}_i, C(c_i + \varepsilon\delta), \dots, \tilde{\mathcal{C}}_m                                          & \text{if } \delta = -1, \\
+      \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, \underbrace{\tilde{\mathcal{C}}_i \cup \tilde{\mathcal{C}}_k}_{C(c_i + \varepsilon\delta)}, \dots, \tilde{\mathcal{C}}_m & \text{if } \delta = 0.  \\
+    \end{cases}
+  \]
+\end{remark}
+
+We are now ready to define the directional derivative of \(J_k\)~(\cref{thm:sl1-directional-derivative}).
+
+\begin{theorem}\label{thm:sl1-directional-derivative}
+  The directional derivative of \(J_k\) in the direction \(\delta\) is
+  \[
+    J'_k(z, \delta) =
+    \begin{cases}
+      \sign(z)\delta\smashoperator{\sum_{j \in C(z + \varepsilon \delta)}}
+      \lambda_{(j)^-_{z + \varepsilon\delta}}                      & \text{if } z = c_i > 0, \\
+      |\delta|\smashoperator{\sum_{j \in C(\varepsilon \delta)}}
+      \lambda_{(j)^-_{\varepsilon\delta}}                          & \text{if } z = 0,       \\
+      |\delta| \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_z} & \text{otherwise}
+    \end{cases}
+  \]
+  with \(\varepsilon\) defined as in \cref{def:limit-permutation}.
+\end{theorem}
+\begin{proof}
+  The directional derivative of \(J_k\) in the direction \(\delta\) is defined as
+  \begin{align}
+    J_k'(z; \delta)
+    = & \lim_{h \downarrow 0} \frac{J_k(z + h \delta) - J_k(z)}{h} \nonumber \\
+    = &
+    \lim_{h \downarrow 0} \frac{1}{h}
+    \left(
+      |z + h \delta| \smashoperator{\sum_{j \in C(z + h \delta)}} \lambda_{(j)^-_{z + h \delta}}
+      + \smashoperator{\sum_{j \notin C(z + h\delta)}} |\beta_j| \lambda_{(j)^-_{z + h \delta}}
+      - |z| \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_z}
+      - \smashoperator{\sum_{j \notin C(z)}} |\beta_j| \lambda_{(j)^-_z}
+    \right) \nonumber                                                        \\
+    = & \lim_{h \downarrow 0}
+    \frac{1}{h}
+    \left(
+      |z + h \delta| \smashoperator{\sum_{j \in C(z + \varepsilon\delta)}} \lambda_{(j)^-_{z + \varepsilon\delta}}
+      + \smashoperator{\sum_{j \notin C(z + \varepsilon\delta)}} |\beta_j| \lambda_{(j)^-_{z + \varepsilon\delta}}
+      - |z| \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}
+      - \smashoperator{\sum_{j \notin C(z)}} |\beta_j| \lambda_{(j)^-_{z}}
+    \right).
+    \label{eq:directional-derivative-sl1}
+  \end{align}
+
+  First, note that \(J_k\) is differentiable for \(z \notin \{0, c_i\}\), \(i
+  \neq k\) and that \(C(z + \varepsilon\delta) = C(z)\), giving
+  the directional derivative
+  \[
+    \delta \sign(z) \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}.
+  \]
+
+  Turning to the case of \(z = \pm c_i\), \(i \neq k\) now, note that we have,
+  as a result of the definition of
+  \(\varepsilon\)~(\cref{def:limit-permutation}), the following identities:
+  \begin{align*}
+    \tilde{\mathcal{C}}_i               & = \widebar{C(c_i + \varepsilon \delta)} \cap C(c_i),                                                                          \\
+    C(c_i)                              & = \tilde{C}_i \cup \big(C(c_i + \varepsilon\delta) \cap C(c_i)\big) = \tilde{\mathcal{C}}_i \cup C(c_i + \varepsilon \delta), \\
+    \widebar{C(z + \varepsilon \delta)} & = \widebar{C(c_i)} \cup \tilde{\mathcal{C}}_i.
+  \end{align*}
+  Using this, it turns out that we can rewrite \eqref{eq:directional-derivative-sl1}
+  as
+  \begin{equation*}
+    \label{eq:directional-derivative-simplified}
+    J'_k(z; \delta)
+    = \lim_{h \downarrow 0} \frac{1}{h}
+    \left(
+      \splitfrac{
+      |z + h\delta|\smashoperator{\sum_{j \in C(z + \varepsilon\delta)}} \lambda_{(j)^-_{z + \varepsilon\delta}}
+      + |c_i|\smashoperator{\sum_{j \in \tilde{C}_i}} \lambda_{(j)^-_{z + \varepsilon\delta}}
+      + \smashoperator{\sum_{j \in \widebar{C(z)}}} |\beta_j|\lambda_{(j)^-_{z + \varepsilon\delta}}
+      }{%
+      - |z| \smashoperator{\sum_{j \in \tilde{\mathcal{C}}_i}} \lambda_{(j)^-_{z}}
+      - |c_i| \smashoperator{\sum_{j \in C(z + \varepsilon\delta)}} \lambda_{(j)^-_{z}}
+      - \smashoperator{\sum_{j \in \widebar{C(z)}}} |\beta_j| \lambda_{(j)^-_{z}}
       }
-      % \{\sign(\alpha) S\big(C(\alpha)\big)\}                                                                                                & \text{if } \alpha \neq c_i \neq 0, \\
-      % [-S(\mathcal{C}_m), S(\mathcal{C}_m)]                                                                                                           & \text{if } \alpha = 0,             \\
-      % [\sign(\alpha)S\big( C(c_i - \sign(\alpha)\varepsilon_i)\big), \sign(\alpha)S\big(C(c_i + \sign(\alpha)\varepsilon_i)\big)] & \text{if } |\alpha| = c_i,
+    \right).
+  \end{equation*}
+  Next, observe that \(\lambda_{(j)^-_{z + \varepsilon\delta}} =
+  \lambda_{(j)^-_{z}}\) for all \(j \in \widebar{C(z)}\) and consequently
+  \[
+    \smashoperator{\sum_{j \in \widebar{C(z)}}} |\beta_j|\lambda_{(j)^-_{z + \varepsilon\delta}} =
+    \smashoperator{\sum_{j \in \widebar{C(z)}}} |\beta_j|\lambda_{(j)^-_{z}}.
+  \]
+  Moreover, note that, since \(z = \pm c_i\), there exists a permutation corresponding to
+  \(\lambda_{(j)^-_{z}}\) such that
+  \[
+    |z|\smashoperator{\sum_{j \in \tilde{C}_i}} \lambda_{(j)^-_{z + \varepsilon\delta}}
+    = |c_i| \smashoperator{\sum_{j \in \tilde{C}_i}} \lambda_{(j)^-_{z}}
+  \]
+  and consequently
+  \begin{equation}
+    \label{eq:directional-derivative-simplified-again}
+    J'_k(z; \delta)
+    = \lim_{h \downarrow 0} \frac{1}{h}
+    \left(
+      |z + h\delta|\smashoperator{\sum_{j \in C(z + \varepsilon\delta)}} \lambda_{(j)^-_{z + \varepsilon\delta}}
+      - |c_i| \smashoperator{\sum_{j \in C(z + \varepsilon\delta)}} \lambda_{(j)^-_{z}}.
+    \right).
+  \end{equation}
+  Now, since \(c_i + h \delta > 0\) and \(-c_i + h \delta < 0\) in the limit as
+  \(h\) goes to \(0\) for \(c_i \neq 0\), we have
+  \[
+    \lim_{h\downarrow 0} |-c_i + h \delta|
+    = \lim_{h\downarrow 0}\big( |c_i| -h \delta\big)
+    \quad\text{and}\quad
+    \lim_{h\downarrow 0} |c_i + h \delta|
+    = \lim_{h\downarrow 0}(|c_i| + h \delta)
+  \]
+  which means that
+  \begin{align*}
+    J'_k(z; \delta)
+     & = \lim_{h \downarrow 0} \frac{1}{h}
+    \left(
+      \big(|z| + \sign(z)h\delta\big)\smashoperator{\sum_{j \in C(z + \varepsilon\delta)}} \lambda_{(j)^-_{z + \varepsilon\delta}}
+      - |c_i| \smashoperator{\sum_{j \in C(z + \varepsilon\delta)}} \lambda_{(j)^-_{z}}.
+    \right)                                                                                                          \\
+     & = \lim_{h \downarrow 0} \frac{1}{h}
+    \sign(z)h\delta\smashoperator{\sum_{j \in C(z + \varepsilon\delta)}} \lambda_{(j)^-_{z + \varepsilon\delta}}     \\
+     & = \sign(z)\delta\smashoperator{\sum_{j \in C(z + \varepsilon\delta)}} \lambda_{(j)^-_{z + \varepsilon\delta}} \\
+  \end{align*}
+
+  In the case when \(z = c_i = 0\), that is, the cluster corresponding to
+  zero coefficients in \(\beta\) is non-empty,
+  then \eqref{eq:directional-derivative-simplified-again} is
+  simply
+  \begin{equation*}
+    \label{eq:directional-derivative-zerocase}
+    J'_k(0; \delta)
+    = \lim_{h \downarrow 0} \frac{1}{h}
+    |h\delta|\smashoperator{\sum_{j \in C(\varepsilon\delta)}} \lambda_{(j)^-_{\varepsilon\delta}}
+    = |\delta|\smashoperator{\sum_{j \in C(\varepsilon\delta)}} \lambda_{(j)^-_{\varepsilon\delta}}.
+  \end{equation*}
+
+  Proceeding, now, with the case when \(z = 0 \neq c_i\), \(i \neq k\),
+  we see that \eqref{eq:directional-derivative-sl1} reduces to
+  \begin{equation*}
+    J_k'(0; \delta) = \lim_{h \downarrow 0}
+    \frac{1}{h}
+    \left(
+      |h \delta| \smashoperator{\sum_{j \in C(\varepsilon\delta)}} \lambda_{(j)^-_{\varepsilon\delta}}
+      + \smashoperator{\sum_{j \notin C(\varepsilon\delta)}} |\beta_j| \lambda_{(j)^-_{\varepsilon\delta}}
+      - \smashoperator{\sum_{j \notin C(0)}} |\beta_j| \lambda_{(j)^-_{0}}
+    \right).
+  \end{equation*}
+  In this case, we have \(C(0) = C(\varepsilon\delta)\) since \(c_m \neq 0\), and therefore
+  \[
+    \smashoperator{\sum_{j \notin C(\varepsilon\delta)}} |\beta_j| \lambda_{(j)^-_{\varepsilon\delta}}
+    = \smashoperator{\sum_{j \notin C(0)}} |\beta_j| \lambda_{(j)^-_{0}},
+  \]
+  which means that
+  \begin{equation*}
+    J_k'(0; \delta) = \lim_{h \downarrow 0}
+    \frac{1}{h}
+    |h \delta| \smashoperator{\sum_{j \in C(\varepsilon\delta)}} \lambda_{(j)^-_{\varepsilon\delta}}
+    = |\delta|\smashoperator{\sum_{j \in C(\varepsilon\delta)}} \lambda_{(j)^-_{\varepsilon\delta}}
+    = |\delta|\smashoperator{\sum_{j \in C(0)}} \lambda_{(j)^-_{0}}.
+  \end{equation*}
+\end{proof}
+
+Using \cref{thm:sl1-directional-derivative}, we now define the subgradient for
+\(J_k\), \(\partial J_k\) in \cref{thm:cluster-subdifferential}.
+
+\begin{theorem}\label{thm:cluster-subdifferential}
+  Let \(a(i)\) and \(b(i)\) point to the first and last indices, respectively,
+  for the \(\lambda\) sequence associated with the \(i\)th cluster
+  \(\mathcal{C}_i\) corresponding to the vector \(B(z)\). Let \(p_k\) be the
+  size of \(k\)th cluster and \(c_i\) the coefficients of the \(i\)th cluster
+  for a fixed \(\beta\). The subdifferential for \(J_k(z)\) at \(z\) is then
+  \[
+    \partial_{z} J_k(z) =
+    \begin{cases}
+      \big[-\sum_{j = p - p_k + 1}^{p}\lambda_j, \sum_{j = p - p_k + 1}^{p}\lambda_j\big]                                                                         & \text{if } z = 0 \neq c_m,  \\
+      \big[-\sum_{j = p - |\mathcal{C}_m| + 1}^{p - |\mathcal{C}_m| + p_k}\lambda_j, \sum_{j = p - |\mathcal{C}_m| + 1}^{p - |\mathcal{C}_m| + p_k}\lambda_j\big] & \text{if } z = 0 = c_m,     \\
+      \big[\sum_{j = b(i) - p_k + 1}^{b(i)}\lambda_j, \sum_{j = a(i)}^{a(i) + p_k} \lambda_j\big]                                         & \text{if } z = c_i \neq 0,  \\
+      \big[-\sum_{j = a(i)}^{a(i) + p_k} \lambda_j, -\sum_{j = b(i) - p_k + 1}^{b(i)}\lambda_j\big]                                       & \text{if } z = -c_i \neq 0, \\
+      \sign(z)\sum_{j \in C(z)} \lambda_{(j)^-_z}                                                                                                                 & \text{otherwise.}           \\
     \end{cases}
   \]
 \end{theorem}
 \begin{proof}
-  Consider a fixed \(\beta\) and set \(\beta_{\mathcal{C}_k}= s_{\mathcal{C}_k}x\).
-  Now let us consider the function  \(f(x) = |x|\sum_{j \in \mathcal{C}_k}\lambda^x_{(j)^-} + \sum_{j \notin \mathcal{C}_k} \lambda^x_{(j)^-}|\beta_j|\), where the ordering of \(\lambda^x\) is with respect to the vector
+  Since \(J_k(z)\) is convex, \(g \in \mathbb{R}\) is a
+  subgradient at \(z\) if and only if~\cite[Theorem 23.2]{rockafellar1970}
   \[
-    \beta(x)_k = \begin{cases}
-      |x|       & \text{if } \mbox{\(k \in \mathcal{C}_k\)}, \\
-      |\beta_k| & \mbox{otherwise}.
-    \end{cases}
+    J'(x; \delta) \geq g\delta \qquad \forall\,\delta \in \{-1, 1\}.
   \]
-  .\mathurin{If \(f\) is only a function of \(\tilde \beta\), then the second term is constant, and since we are interested in subgradients, we should able to omit it?} \jonas{I added the notation so that it is clear that ordering of the \(\lambda\) depends on \(x\), hence we can not remove the second component.}
-  \(g\in \mathbb{R} \) \mm{\(f/g\) > \(u\) or \(v\) for subgradient?} is a subgradient of \(f\) at \(x\) if
-  \begin{equation}
-    \label{eq:subgrad-ineq}
-    f(x^*)=|x^*|\sum_{j \in C_k}\lambda^{x^*}_{(j)^-} + \sum_{j \notin C(x^*)}\lambda ^{x^*}_{(j)^-}|\beta_j|
-    \geq f(x)+ g(x^* - x)=|x|\sum_{j \in C_k} \lambda^x_{(j)^-} + \sum_{j \notin C_k}\lambda^x_{(j)^-}|\beta^x_j| + g(x^* - x)
-  \end{equation}
-  for all \(x^* \in \mathbb{R}\).
-  Without loss of generality, since \(f\) is convex \mathurin{here I did not understand the WLOG relationship with convexity}, assume that we have
-  a vector \(\beta\) such that there are two clusters: one corresponding
-  to \(\alpha\), which we are optimizing over, and
-  one additional cluster \(\mathcal{C}_q\) with corresponding
-  coefficient \(c_q\).
-  Then we can rewrite \eqref{eq:subgrad-ineq} as
-  \[
-    |y|S\big(C(y)\big) + c_q S\big(\widebar{C(y)}\big) \geq
-    |x| S\big(C(x)\big) + c_q S\big(\widebar{C(x)}\big) + g(y - x).
-  \]
-  First observe that any \(g\) is permissible whenever \(x = y\).
-
-  At \(x = 0\), \eqref{eq:subgrad-ineq} reduces to
-  \[
-    |y|S\big(C(y)\big) + c_q S\big(\widebar{C(y)}\big)
-    \geq c_q S(\mathcal{C}_1) + gy.
-  \]
-  Because \(f\) is convex, it is sufficient to consider \(|y| < c_q\),
-  in which case \(C(y) = \mathcal{C}_1\) and hence
-  \begin{equation}
-    |y|S(\mathcal{C}_2) + c_q S(\mathcal{C}_1) \geq c_q S(\mathcal{C}_1) + gy \implies
-    |y|S(\mathcal{C}_2) \geq gy,
-  \end{equation}
-  which means that \(-S(\mathcal{C}_2) \leq g \leq S(\mathcal{C}_2)\).
-
-  If \(x = c_q\), \eqref{eq:subgrad-ineq} becomes
-  \[
-    |y|S\big(C(y)\big) + x S\big(C(x)\big) \geq x(S(\mathcal{C}_1) + S(\mathcal{C}_2)) + g(y - x).
-  \]
-  For \(y > x\) we have \(C(y) = \mathcal{C}_1\) and consequently
-  \[
-    y\big(S(\mathcal{C}_1) - g\big) + x\big(g - S(\mathcal{C}_1)\big) \geq 0,
-  \]
-  which means that \(g \leq S(\mathcal{C}_1)\).
-  Then, for \(0 < y < x\), we see
-  \[
-    y\big(S(\mathcal{C}_2) - g\big) + x(g - S(\mathcal{C}_2)\big) \geq 0,
-  \]
-  and hence \(g \geq S(\mathcal{C}_2)\).
-  Using the same argument for \(x = -c_q\), we find that we in this case
-  must have \(g\) such that
-  \(-S(\mathcal{C}_1) \geq g \geq - S(\mathcal{C}_2)\).
-  For all other choices of \(x\), \(f\) is differentiable with
-  derivative \(\sign(\alpha)S\big(C(\alpha)\big)\).
 \end{proof}
 
 The objective and subgradient for the cluster-wise problem are shown in
@@ -226,6 +353,51 @@ In \cref{fig:slope-thresholding}, we visualize the operator.
   \caption{The result of the SLOPE thresholding update.}
   \label{fig:slope-thresholding}
 \end{figure}
+
+\subsubsection{Naive Updates}
+
+As in \textcite{friedman2010}, we can improve the efficiency of updates by observing that
+\begin{equation*}
+  \begin{aligned}
+    \tilde r_k & = y - \tilde y_k                                                                       \\
+               & = y - X_{\bar{\mathcal{C}_k}}\beta_{\bar{\mathcal{C}_k}} - \tilde x c_k + \tilde x c_k \\
+               & = r + \tilde x c_k
+  \end{aligned}
+\end{equation*}
+and therefore that
+\begin{equation}
+  \label{eq:naive-update}
+  \tilde x_k^T (y - \tilde y_k) = \tilde x_k^T r + \tilde x_k^T \tilde x_k c_k.
+\end{equation}
+
+\subsubsection{Caching Reductions}
+
+Observe that \(\tilde x_k\) only changes between subsequent coordinate updates provided that the members of the cluster \(k\) change, for instance if two clusters are merged, a predictor leaves a cluster, or the signs flip (through an update of \(\alpha_k\)).
+As a result, it is possible to obtain computational gains by caching \(\tilde x_k\) and \(\tilde x_k^T \tilde x_k\) for each cluster (except the zero cluster, which we do not consider in our coordinate descent step).
+When there is no change in the clusters, there is no need to recompute these quantities.
+And even when there are changes, we can still reduce the costs involved since \(\tilde x_k\) can be updated in place.
+If a large cluster is joined by few new predictors, then the cost of updating may be much lower than recomputing the quantities for the entire cluster.
+Also note that, for single-member clusters we only need to store \(\tilde x_k^T \tilde x_k\) since \(\tilde x_k\) is just a column in \(X\) times the corresponding sign.
+
+Letting \(\tilde x_k^\text{old}\) correspond to the value of \(\tilde x_k\) before the update, we note that \(\tilde x_k \gets \tilde x_k^\text{old} + x_j \sign(\beta_j)\) for each \(j \in \mathcal{C}_k^\text{new} \setminus \mathcal{C}_k^\text{old}\) and \(\tilde x_k \gets \tilde x_k^\text{old} - x_j \sign(\beta_j)\) for each \(j \in \mathcal{C}_k^\text{old} \setminus \mathcal{C}_k^\text{new}\).
+If only the signs flip, we simply have to also flip the signs in \(\tilde x_k\).
+
+\subsubsection{Covariance Updates}
+
+Notice that we can rewrite the first term in~\eqref{eq:naive-update} as
+\begin{equation}
+  \begin{aligned}
+    \tilde x_k^T r & = \tilde x_k^T y - \sum_{j : \beta_j \neq 0} \tilde x_k^T x_j \beta_j                                                                      \\
+                   & = \tilde x_k^T y - \sum_{j : c_j \neq 0} \tilde x_k^T \tilde x_j c_j                                                                       \\
+                   & = s_{\mathcal{C}_k}^T X_{\mathcal{C}_k}^T y - \sum_{j : \beta_j \neq 0} s_{\mathcal{C}_k}^T X_{\mathcal{C}_k}^T x_j \beta_j                \\
+                   & = s_{\mathcal{C}_k}^T {\left(X^T y\right)}_{\mathcal{C}_k} - \sum_{j : \beta_j \neq 0} s_{\mathcal{C}_k}^T X_{\mathcal{C}_k}^T x_j \beta_j \\
+                   & = \sum_{j \in \mathcal{C}_k}\left( s_j {x_j}^T y - \sum_{t : \beta_t \neq 0} s_j x_j^T x_t \beta_t \right)
+  \end{aligned}
+\end{equation}
+As in \textcite{friedman2010}, this formulation can be used to achieve so-called \emph{covariance updates}.
+We compute \(X^T y\) once at the start.
+Then, each time a new predictor becomes non-zero, we compute its inner product with all other predictors, caching these products.
+
 
 \subsection{Hybrid proximal coordinate descent strategy}
 

@@ -12,13 +12,16 @@ Estimation (SLOPE)~\cite{bogdan2013, bogdan2015}, defined as
 where we take \(L\) to be smooth and twice differentiable and
 \begin{equation}
   \label{eq:sorted-l1-norm}
-  J(\beta) = \sum_{j=1}^p \lambda_j|\beta_{(j)}|
+  J(\beta) = \sum_{j=1}^p \lambda_j|\beta_{(j; \beta)}|
 \end{equation}
 is the \emph{sorted \(\ell_1\) norm}, defined such that
 \[
-  |\beta_{(1)}| \geq |\beta_{(2)}| \geq \cdots \geq |\beta_{(p)}|,
+  |\beta_{(1; \beta)}| \geq |\beta_{(2; \beta)}| \geq \cdots \geq |\beta_{(p; \beta)}|,
 \]
-and \(\lambda\) is a fixed non-increasing and non-negative sequence.
+and \(\lambda\) is a fixed non-increasing and non-negative
+sequence.\footnote{In most works on SLOPE, the permutation operator is written
+as \((i)\). But for reasons that will eventually become clear, we instead write
+\((i; \beta)\) to make the dependence on \(\beta\) explicit.}
 
 SLOPE is a sparse regression method that has become increasingly popular due to
 several appealing properties, such as its ability to control false discovery

@@ -1,30 +1,29 @@
 \subsection{Notation}\label{sec:notation}
 
-Let \((i)^{-}\) be the inverse of \((i)\) such that
-\(\big((i)\big)^- = i\).
-\begin{example}
+Let \((i;\beta)^{-}\) be the inverse of \((i;\beta)\) such that
+\(\big((i;\beta)^-;\beta\big)^- = (i;\beta)\). See \cref{tab:permutation-example} for an
+example of this operator for a particular \(\beta\).
+\begin{table}
+  \centering
+  \caption{Example of the permutation operator \((i)\) and its inverse
+    \((i)^-\)\label{tab:permutation-example}}
   \begin{tabular}{cccc}
     \toprule
-    \(i\) & \(\beta\) & \((i)\) & \((i)^-\) \\
+    \(i\) & \(\beta\) & \((i; \beta)\) & \((i; \beta)^-\) \\
     \midrule
-    1     & 1         & 2       & 3         \\
-    2     & -3        & 3       & 1         \\
-    3     & 2         & 1       & 2         \\
+    1     & 1         & 2              & 3                \\
+    2     & -3        & 3              & 1                \\
+    3     & 2         & 1              & 2                \\
     \bottomrule
   \end{tabular}
-\end{example}
-Note that this means that
+\end{table}
+This means that
 \[
-  J(\beta) = \sum_{j=1}^p \lambda_j |\beta_{(j)}|
-           = \sum_{j=1}^p \lambda_{(j)^-}|\beta_j|.
+  J(\beta) = \sum_{j=1}^p \lambda_j |\beta_{(j;\beta)}|
+  = \sum_{j=1}^p \lambda_{(j;\beta)^-}|\beta_j|.
 \]
-
-Furthermore, let
-\[
-  S(\mathcal{A}) = \sum_{i \in \mathcal{A}} \lambda_{(i)^-}.
-\]
-
-Also, let \(\mathcal{C}_1, \mathcal{C}_2\, \dots, \mathcal{C}_m\) be the
+Also, let \(\mathcal{C}_1, \mathcal{C}_2\, \dots, \mathcal{C}_m\) and \(c_1,
+c_2, \dots, c_m\) be the indices and coefficients, respectively, for the \(m\)
 clusters such that
 \[
   \mathcal{C}_i = \{j : |\beta_j| = c_i\} \quad \text{and} \quad

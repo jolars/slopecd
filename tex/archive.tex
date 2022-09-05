@@ -78,3 +78,13 @@
     D_v P(\beta) = v^T \big(\nabla L(\beta)\big) + D_v J(\beta).
   \]
 \end{remark}
+
+\subsubsection{Alternative Formulation}
+
+An alternative formulation (with identical solution) is to minimize
+\[
+  \begin{aligned}
+    P(c_k) & = \frac{1}{2} \lVert y - X_{\bar{\mathcal{C}_k}} \beta_{\bar{\mathcal{C}_k}} - \big(X_{\mathcal{C}_k} \beta_{\mathcal{C}_k}\big)c_k  \rVert_2^2 + \sum_{j \notin {\mathcal{C}_k}} \lambda_{(j)^-}|\beta_k| + |c_k|\bigg(\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^- }|\beta_j|\bigg),
+  \end{aligned}
+\]
+and \(\beta_k := c_k\beta_k\).

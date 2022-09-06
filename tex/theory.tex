@@ -82,34 +82,35 @@ Differentiating with respect to \(z\) yields
 where the last term is the partial subdifferential of the sorted \(\ell_1\)
 norm with respect to coefficient of the \(k\)th cluster.
 
-\subsubsection{Partial Subdifferential of the Sorted \(\ell_1\) Norm}
+\subsection{The SLOPE Thresholding Operator}
 
-In this section we derive an expression for the partial subdifferential of the
-sorted \(\ell_1\) norm. To do this, we will first introduce the directional
-derivative for the sorted \(\ell_1\) norm with respect to the coefficient of
-the \(k\)th cluster.
-
-Before we arrive at the definition for the directional derivative, however,
-we introduce a key fact in \cref{def:limit-permutation}.
-
+In this section we derive the SLOPE thresholding operator and show that it is a
+minimizer of \eqref{eq:cluster-problem}. To do so, we will introduce the
+directional derivative for the sorted \(\ell_1\) norm with respect to the
+coefficient of the \(k\)th cluster. First, however, let \(C(z)\) be a function
+that returns the cluster corresponding to \(z\), that is
+\[
+  C(z) = \{j : |\beta(z)_j| = z\}.
+\]
+Secondly, we introduce \cref{def:limit-permutation}.
 \begin{definition}
   \label{def:limit-permutation}
   Define \(\varepsilon > 0\) such that
   \begin{equation*}
-    \big| c_i - c_j\big| < \varepsilon \quad \forall\, i \neq j.
+    \big| c_i - c_j\big| > \varepsilon \quad \forall\, i \neq j.
   \end{equation*}
 \end{definition}
 
-For an \(\varepsilon\) defined as in \cref{def:limit-permutation}, we have
+For an \(\varepsilon\) defined as in \cref{def:limit-permutation}, we have for
+\(\delta \in \{-1, 1\}\)
 \begin{equation}
   \lim_{h \downarrow 0} C(z + h\delta) = C(z + \varepsilon \delta)
   \quad\text{and}\quad
   \lim_{h \downarrow 0} \lambda_{(i)^-_{z + h\delta}}
   = \lambda_{(i)^-_{z + \varepsilon\delta}}.
 \end{equation}
-for \(\delta \in \{-1, 1\}\).
-In other words, the order permutation corresponding to \(B(z + h\delta)\) depends only on
-\(\delta\) in the limit as \(h\) tends to~\(0\).
+In other words, the order permutation corresponding to \(B(z + h\delta)\)
+depends only on \(\delta\) in the limit as \(h\) tends to~\(0\).
 
 \begin{remark}
   As consequence of \cref{def:limit-permutation}, the order

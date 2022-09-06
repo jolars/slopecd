@@ -1,4 +1,4 @@
-\subsection{Notation}\label{sec:notation}
+\paragraph{Notation}\label{sec:notation}
 
 Let \((i)^{-}\) be the inverse of \((i)\) such that
 \(\big((i)^-\big)^- = (i)\). See \cref{tab:permutation-example} for an
@@ -6,7 +6,7 @@ example of this operator for a particular \(\beta\).
 \begin{table}
   \centering
   \caption{Example of the permutation operator \((i)\) and its inverse
-    \((i)^-\)\label{tab:permutation-example}}
+    \((i)^-\)\label{tab:permutation-example} \mathurin{check: aren't the last two columns permuted?}}
   \begin{tabular}{cccc}
     \toprule
     \(i\) & \(\beta\) & \((i)\) & \((i)^-\) \\
@@ -22,9 +22,9 @@ This means that
   J(\beta) = \sum_{j=1}^p \lambda_j |\beta_{(j)}|
   = \sum_{j=1}^p \lambda_{(j)^-}|\beta_j|.
 \]
-Also, let \(\mathcal{C}_1, \mathcal{C}_2\, \dots, \mathcal{C}_m\) and \(c_1,
+\mathurin{For a fixed $\beta$}, let \(\mathcal{C}_1, \mathcal{C}_2\, \dots, \mathcal{C}_m\) and \(c_1,
 c_2, \dots, c_m\) be the indices and coefficients, respectively, for the \(m\)
-clusters such that
+clusters of $\beta$ such that
 \[
   \mathcal{C}_i = \{j : |\beta_j| = c_i\} \quad \text{and} \quad
   c_1 > c_2 > \cdots > c_m \geq 0.
@@ -34,8 +34,8 @@ cluster corresponding to \(\alpha\), that is
 \[
   C(\alpha) = \{j : |\beta_j| = \alpha\}.
 \]
-Let \(\lambda^{\mathcal{A}}\) be the sub-sequence of
-\(\lambda\) corresponding to the \(\mathcal{A}\) cluster, i.e.
+For a cluster $\mathcal{A}$, let \(\lambda^{\mathcal{A}}\) be the sub-sequence of
+\(\lambda\) corresponding to \(\mathcal{A}\), i.e.
 \[
   \lambda^\mathcal{A} = \{\lambda_{(i)^-} : i \in \mathcal{A}\}
 \]\mathurin{put on the same level as $\mathcal{S}(\mathcal{A})$ definition?}

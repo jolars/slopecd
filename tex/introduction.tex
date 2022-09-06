@@ -4,12 +4,13 @@
 
 In this paper we present a novel numerical algorithm for Sorted L-One Penalized
 Estimation (SLOPE)~\cite{bogdan2013, bogdan2015}, defined as
-\begin{equation}
-  \label{eq:slope-problem}
-  \operatorname{minimize}_{\beta \in \mathbb{R}^p}
-  P(\beta) = L(\beta) + J(\beta)
-\end{equation}
+\begin{problem}
+  \label{pb:slope}
+    \min_{\beta \in \mathbb{R}^p}
+        P(\beta) = L(\beta) + J(\beta)
+\end{problem}
 where we take \(L\) to be smooth and twice differentiable and
+\mm{to discuss: $L(X\beta)$ doable? + some computation are sepcific to  the quadratic case}
 \begin{equation}
   \label{eq:sorted-l1-norm}
   J(\beta) = \sum_{j=1}^p \lambda_j|\beta_{(j)}|
@@ -39,6 +40,13 @@ speed at which the SLOPE and glmnet packages fit a complete regularization
 path for the bcTCGA data set. SLOPE takes x seconds to fit the full path,
 whilst glmnet requires only y seconds. \mm{Maybe this is too much detail for an introduction: if we want to be rigorous, we need to specify the path, the stopping criterion (it's hard to match what glmnet does exactly from my experience). I would be OK with just saying: solving SLOPE is not as fast as Lasso for now}
 
+
+\mathurin{Suggestion: replace up to `` current version of the SLOPE package.'' by: \\
+This lackluster performance has hampered the applicability of SLOPE to many
+real-world applications.
+The main reason for SLOPE being slower to solve than the Lasso, MCP or SCAD is that its non-separability prevents it from being amenable to proximal coordinate descent.
+Current solvers must resort to FISTA \cite{beck2009}, that in ML scenario is much slower than coordinate descent \cite{moreau2022benchopt}.
+}
 This lackluster performance has hampered the applicability of SLOPE to many
 real-world applications, \mm{I would comment out the rest of the sentence: in the intro it's quite understandable that if an estimator is slow to compute people will not use it too much} particularly because users often need to solve SLOPE
 repeatedly when tuning hyper-parameters, for instance in
@@ -46,15 +54,15 @@ cross-validation, or when fitting SLOPE as part of Adaptive Bayesian
 SLOPE~\cite{jiang2022}.
 
 A major reason for why algorithms for solving other regression models with
-non-differentiable penalties,\mm{we have not mentioned non differentiability so far, it may confuse a bit the reader. I would just say ``for solving models with penalties such as the L1 norm, MCP... is that the separability of these penalties makes them amenable to coordiante descent algorithms. On the contrary, SLOPE is not separable and one must resort to FISTA or ADMM''} such as the lasso, MCP, and SCAD, enjoy better
+non-differentiable penalties, such as the lasso, MCP, and SCAD, enjoy better
 performance is that they minimize their objectives using coordinate
 descent~\cite{breheny2011, friedman2010} rather than proximal gradient descent
 algorithms such as FISTA~\cite{beck2009} and the
 alternating direction method of multipliers method (ADMM)~\cite{boyd2010},
 which are both used in the current version of the SLOPE package.
-\jl{Add benchopt reference.}
-\mm{For which point exactly? I did not find a ref for your SLOPE R package, what's the good way to cite it? There also is PyOWL https://github.com/vene/pyowl}
-
+% \jl{Add benchopt reference.}
+% \mm{For which point exactly? I did not find a ref for your SLOPE R package, what's the good way to cite it? There also is PyOWL https://github.com/vene/pyowl}
+\
 Applying coordinate descent to SLOPE is, however, not quite straightforward
 because convergence guarantees for coordinate descent require the
 objective to be separable, which, as we can see from \eqref{eq:sorted-l1-norm}

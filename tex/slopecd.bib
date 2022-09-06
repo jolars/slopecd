@@ -1,182 +1,182 @@
 @article{beck2009,
-  title = {A Fast Iterative Shrinkage-Thresholding Algorithm for Linear Inverse
-           Problems},
-  author = {Beck, A. and Teboulle, M.},
-  date = {2009-01-01},
+  title        = {A Fast Iterative Shrinkage-Thresholding Algorithm for Linear Inverse
+                  Problems},
+  author       = {Beck, A. and Teboulle, M.},
+  date         = {2009-01-01},
   journaltitle = {SIAM Journal on Imaging Sciences},
   shortjournal = {SIAM J. Imaging Sci.},
-  volume = {2},
-  number = {1},
-  pages = {183--202},
-  doi = {10.1137/080716542},
-  url = {https://epubs.siam.org/doi/abs/10.1137/080716542},
-  urldate = {2019-02-10},
-  abstract = {We consider the class of iterative shrinkage-thresholding
-              algorithms (ISTA) for solving linear inverse problems arising in
-              signal/image processing. This class of methods, which can be viewed
-              as an extension of the classical gradient algorithm, is attractive
-              due to its simplicity and thus is adequate for solving large-scale
-              problems even with dense matrix data. However, such methods are
-              also known to converge quite slowly. In this paper we present a new
-              fast iterative shrinkage-thresholding algorithm (FISTA) which
-              preserves the computational simplicity of ISTA but with a global
-              rate of convergence which is proven to be significantly better,
-              both theoretically and practically. Initial promising numerical
-              results for wavelet-based image deblurring demonstrate the
-              capabilities of FISTA which is shown to be faster than ISTA by
-              several orders of magnitude.},
+  volume       = {2},
+  number       = {1},
+  pages        = {183--202},
+  doi          = {10.1137/080716542},
+  url          = {https://epubs.siam.org/doi/abs/10.1137/080716542},
+  urldate      = {2019-02-10},
+  abstract     = {We consider the class of iterative shrinkage-thresholding
+                  algorithms (ISTA) for solving linear inverse problems arising in
+                  signal/image processing. This class of methods, which can be viewed
+                  as an extension of the classical gradient algorithm, is attractive
+                  due to its simplicity and thus is adequate for solving large-scale
+                  problems even with dense matrix data. However, such methods are
+                  also known to converge quite slowly. In this paper we present a new
+                  fast iterative shrinkage-thresholding algorithm (FISTA) which
+                  preserves the computational simplicity of ISTA but with a global
+                  rate of convergence which is proven to be significantly better,
+                  both theoretically and practically. Initial promising numerical
+                  results for wavelet-based image deblurring demonstrate the
+                  capabilities of FISTA which is shown to be faster than ISTA by
+                  several orders of magnitude.}
 }
 
 @unpublished{bogdan2013,
-  title = {Statistical Estimation and Testing via the Sorted {{L1}} Norm},
-  author = {Bogdan, Małgorzata and family=Berg, given=Ewout, prefix=van den,
-            useprefix=false and Su, Weijie and Candès, Emmanuel},
-  date = {2013-10-29},
-  eprint = {1310.1969},
-  eprinttype = {arxiv},
-  primaryclass = {math, stat},
-  url = {http://arxiv.org/abs/1310.1969},
-  urldate = {2020-04-16},
-  abstract = {We introduce a novel method for sparse regression and variable
-              selection, which is inspired by modern ideas in multiple testing.
-              Imagine we have observations from the linear model y = X beta + z,
-              then we suggest estimating the regression coefficients by means of
-              a new estimator called SLOPE, which is the solution to minimize 0.5
-              ||y - Xb\textbackslash |\_2\^2 + lambda\_1 |b|\_(1) + lambda\_2 |b|
-              \_(2) + ... + lambda\_p |b|\_(p); here, lambda\_1 {$>$}=
-              \textbackslash lambda\_2 {$>$}= ... {$>$}= \textbackslash lambda\_p
-              {$>$}= 0 and |b|\_(1) {$>$}= |b|\_(2) {$>$}= ... {$>$}= |b|\_(p) is
-              the order statistic of the magnitudes of b. The regularizer is a
-              sorted L1 norm which penalizes the regression coefficients
-              according to their rank: the higher the rank, the larger the
-              penalty. This is similar to the famous BHq procedure [Benjamini and
-              Hochberg, 1995], which compares the value of a test statistic taken
-              from a family to a critical threshold that depends on its rank in
-              the family. SLOPE is a convex program and we demonstrate an
-              efficient algorithm for computing the solution. We prove that for
-              orthogonal designs with p variables, taking lambda\_i = F\^\{-1\}
-              (1-q\_i) (F is the cdf of the errors), q\_i = iq/(2p), controls the
-              false discovery rate (FDR) for variable selection. When the design
-              matrix is nonorthogonal there are inherent limitations on the FDR
-              level and the power which can be obtained with model selection
-              methods based on L1-like penalties. However, whenever the columns
-              of the design matrix are not strongly correlated, we demonstrate
-              empirically that it is possible to select the parameters lambda\_i
-              as to obtain FDR control at a reasonable level as long as the
-              number of nonzero coefficients is not too large. At the same time,
-              the procedure exhibits increased power over the lasso, which treats
-              all coefficients equally. The paper illustrates further estimation
-              properties of the new selection rule through comprehensive
-              simulation studies.},
-  archiveprefix = {arXiv},
+  title         = {Statistical Estimation and Testing via the Sorted {{L1}} Norm},
+  author        = {Bogdan, Małgorzata and family=Berg, given=Ewout, prefix=van den,
+                   useprefix=false and Su, Weijie and Candès, Emmanuel},
+  date          = {2013-10-29},
+  eprint        = {1310.1969},
+  eprinttype    = {arxiv},
+  primaryclass  = {math, stat},
+  url           = {http://arxiv.org/abs/1310.1969},
+  urldate       = {2020-04-16},
+  abstract      = {We introduce a novel method for sparse regression and variable
+                   selection, which is inspired by modern ideas in multiple testing.
+                   Imagine we have observations from the linear model y = X beta + z,
+                   then we suggest estimating the regression coefficients by means of
+                   a new estimator called SLOPE, which is the solution to minimize 0.5
+                   ||y - Xb\textbackslash |\_2\^2 + lambda\_1 |b|\_(1) + lambda\_2 |b|
+                   \_(2) + ... + lambda\_p |b|\_(p); here, lambda\_1 {$>$}=
+                   \textbackslash lambda\_2 {$>$}= ... {$>$}= \textbackslash lambda\_p
+                   {$>$}= 0 and |b|\_(1) {$>$}= |b|\_(2) {$>$}= ... {$>$}= |b|\_(p) is
+                   the order statistic of the magnitudes of b. The regularizer is a
+                   sorted L1 norm which penalizes the regression coefficients
+                   according to their rank: the higher the rank, the larger the
+                   penalty. This is similar to the famous BHq procedure [Benjamini and
+                   Hochberg, 1995], which compares the value of a test statistic taken
+                   from a family to a critical threshold that depends on its rank in
+                   the family. SLOPE is a convex program and we demonstrate an
+                   efficient algorithm for computing the solution. We prove that for
+                   orthogonal designs with p variables, taking lambda\_i = F\^\{-1\}
+                   (1-q\_i) (F is the cdf of the errors), q\_i = iq/(2p), controls the
+                   false discovery rate (FDR) for variable selection. When the design
+                   matrix is nonorthogonal there are inherent limitations on the FDR
+                   level and the power which can be obtained with model selection
+                   methods based on L1-like penalties. However, whenever the columns
+                   of the design matrix are not strongly correlated, we demonstrate
+                   empirically that it is possible to select the parameters lambda\_i
+                   as to obtain FDR control at a reasonable level as long as the
+                   number of nonzero coefficients is not too large. At the same time,
+                   the procedure exhibits increased power over the lasso, which treats
+                   all coefficients equally. The paper illustrates further estimation
+                   properties of the new selection rule through comprehensive
+                   simulation studies.},
+  archiveprefix = {arXiv}
 }
 
 @article{bogdan2015,
-  title = {{{SLOPE}} – Adaptive Variable Selection via Convex Optimization},
-  author = {Bogdan, Małgorzata and family=Berg, given=Ewout, prefix=van den,
-            useprefix=false and {Chiara Sabatti} and {Weijie Su} and {Emmanuel J.
-            Candès}},
-  date = {2015-09},
+  title        = {{{SLOPE}} – Adaptive Variable Selection via Convex Optimization},
+  author       = {Bogdan, Małgorzata and family=Berg, given=Ewout, prefix=van den,
+                  useprefix=false and {Chiara Sabatti} and {Weijie Su} and {Emmanuel J.
+                  Candès}},
+  date         = {2015-09},
   journaltitle = {The annals of applied statistics},
   shortjournal = {Ann Appl Stat},
-  volume = {9},
-  number = {3},
-  eprint = {26709357},
-  eprinttype = {pmid},
-  pages = {1103--1140},
-  issn = {1932-6157},
-  doi = {10.1214/15-AOAS842},
-  url = {https://projecteuclid.org/euclid.aoas/1446488733},
-  urldate = {2018-12-17},
+  volume       = {9},
+  number       = {3},
+  eprint       = {26709357},
+  eprinttype   = {pmid},
+  pages        = {1103--1140},
+  issn         = {1932-6157},
+  doi          = {10.1214/15-AOAS842},
+  url          = {https://projecteuclid.org/euclid.aoas/1446488733},
+  urldate      = {2018-12-17}
 }
 
 @unpublished{bogdan2022,
-  title = {Pattern Recovery by {{SLOPE}}},
-  author = {Bogdan, Małgorzata and Dupuis, Xavier and Graczyk, Piotr and
-            Kołodziejek, Bartosz and Skalski, Tomasz and Tardivel, Patrick and
-            Wilczyński, Maciej},
-  date = {2022-05-17},
-  number = {arXiv:2203.12086},
-  eprint = {2203.12086},
-  eprinttype = {arxiv},
-  primaryclass = {math, stat},
-  pages = {27},
-  publisher = {{arXiv}},
-  doi = {10.48550/arXiv.2203.12086},
-  url = {http://arxiv.org/abs/2203.12086},
-  urldate = {2022-06-03},
-  abstract = {LASSO and SLOPE are two popular methods for dimensionality
-              reduction in the high-dimensional regression. LASSO can eliminate
-              redundant predictors by setting the corresponding regression
-              coefficients to zero, while SLOPE can additionally identify
-              clusters of variables with the same absolute values of regression
-              coefficients. It is well known that LASSO Irrepresentability
-              Condition is sufficient and necessary for the proper estimation of
-              the sign of sufficiently large regression coefficients. In this
-              article we formulate an analogous Irrepresentability Condition for
-              SLOPE, which is sufficient and necessary for the proper
-              identification of the SLOPE pattern, i.e. of the proper sign as
-              well as of the proper ranking of the absolute values of individual
-              regression coefficients, while proper ranking guarantees a proper
-              clustering. We also provide asymptotic results on the strong
-              consistency of pattern recovery by SLOPE when the number of columns
-              in the design matrix is fixed while the sample size diverges to
-              infinity.},
-  archiveprefix = {arXiv},
+  title         = {Pattern Recovery by {{SLOPE}}},
+  author        = {Bogdan, Małgorzata and Dupuis, Xavier and Graczyk, Piotr and
+                   Kołodziejek, Bartosz and Skalski, Tomasz and Tardivel, Patrick and
+                   Wilczyński, Maciej},
+  date          = {2022-05-17},
+  number        = {arXiv:2203.12086},
+  eprint        = {2203.12086},
+  eprinttype    = {arxiv},
+  primaryclass  = {math, stat},
+  pages         = {27},
+  publisher     = {{arXiv}},
+  doi           = {10.48550/arXiv.2203.12086},
+  url           = {http://arxiv.org/abs/2203.12086},
+  urldate       = {2022-06-03},
+  abstract      = {LASSO and SLOPE are two popular methods for dimensionality
+                   reduction in the high-dimensional regression. LASSO can eliminate
+                   redundant predictors by setting the corresponding regression
+                   coefficients to zero, while SLOPE can additionally identify
+                   clusters of variables with the same absolute values of regression
+                   coefficients. It is well known that LASSO Irrepresentability
+                   Condition is sufficient and necessary for the proper estimation of
+                   the sign of sufficiently large regression coefficients. In this
+                   article we formulate an analogous Irrepresentability Condition for
+                   SLOPE, which is sufficient and necessary for the proper
+                   identification of the SLOPE pattern, i.e. of the proper sign as
+                   well as of the proper ranking of the absolute values of individual
+                   regression coefficients, while proper ranking guarantees a proper
+                   clustering. We also provide asymptotic results on the strong
+                   consistency of pattern recovery by SLOPE when the number of columns
+                   in the design matrix is fixed while the sample size diverges to
+                   infinity.},
+  archiveprefix = {arXiv}
 }
 
 @article{boyd2010,
-  title = {Distributed Optimization and Statistical Learning via the Alternating
-           Direction Method of Multipliers},
-  author = {Boyd, Stephen and Parikh, Neil and Chu, Eric and Peleato, Borja and
-            Eckstein, Jonathan},
-  date = {2010},
+  title        = {Distributed Optimization and Statistical Learning via the Alternating
+                  Direction Method of Multipliers},
+  author       = {Boyd, Stephen and Parikh, Neil and Chu, Eric and Peleato, Borja and
+                  Eckstein, Jonathan},
+  date         = {2010},
   journaltitle = {Foundations and Trends® in Machine Learning},
   shortjournal = {FNT in Machine Learning},
-  volume = {3},
-  number = {1},
-  pages = {1--122},
-  issn = {1935-8237, 1935-8245},
-  doi = {10.1561/2200000016},
-  url = {http://www.nowpublishers.com/article/Details/MAL-016},
-  urldate = {2020-02-07},
-  langid = {english},
+  volume       = {3},
+  number       = {1},
+  pages        = {1--122},
+  issn         = {1935-8237, 1935-8245},
+  doi          = {10.1561/2200000016},
+  url          = {http://www.nowpublishers.com/article/Details/MAL-016},
+  urldate      = {2020-02-07},
+  langid       = {english}
 }
 
 @article{breheny2011,
-  title = {Coordinate Descent Algorithms for Nonconvex Penalized Regression,
-           with Applications to Biological Feature Selection},
-  author = {Breheny, Patrick and Huang, Jian},
-  date = {2011-03},
+  title        = {Coordinate Descent Algorithms for Nonconvex Penalized Regression,
+                  with Applications to Biological Feature Selection},
+  author       = {Breheny, Patrick and Huang, Jian},
+  date         = {2011-03},
   journaltitle = {The Annals of Applied Statistics},
   shortjournal = {Ann. Appl. Stat.},
-  volume = {5},
-  number = {1},
-  pages = {232--253},
-  issn = {1932-6157, 1941-7330},
-  doi = {10/dxfzfz},
-  url = {https://projecteuclid.org/euclid.aoas/1300715189},
-  urldate = {2018-03-12},
-  abstract = {A number of variable selection methods have been proposed
-              involving nonconvex penalty functions. These methods, which include
-              the smoothly clipped absolute deviation (SCAD) penalty and the
-              minimax concave penalty (MCP), have been demonstrated to have
-              attractive theoretical properties, but model fitting is not a
-              straightforward task, and the resulting solutions may be unstable.
-              Here, we demonstrate the potential of coordinate descent algorithms
-              for fitting these models, establishing theoretical convergence
-              properties and demonstrating that they are significantly faster
-              than competing approaches. In addition, we demonstrate the utility
-              of convexity diagnostics to determine regions of the parameter
-              space in which the objective function is locally convex, even
-              though the penalty is not. Our simulation study and data examples
-              indicate that nonconvex penalties like MCP and SCAD are worthwhile
-              alternatives to the lasso in many applications. In particular, our
-              numerical results suggest that MCP is the preferred approach among
-              the three methods.},
-  langid = {english},
-  mrnumber = {MR2810396},
-  zmnumber = {1220.62095},
+  volume       = {5},
+  number       = {1},
+  pages        = {232--253},
+  issn         = {1932-6157, 1941-7330},
+  doi          = {10/dxfzfz},
+  url          = {https://projecteuclid.org/euclid.aoas/1300715189},
+  urldate      = {2018-03-12},
+  abstract     = {A number of variable selection methods have been proposed
+                  involving nonconvex penalty functions. These methods, which include
+                  the smoothly clipped absolute deviation (SCAD) penalty and the
+                  minimax concave penalty (MCP), have been demonstrated to have
+                  attractive theoretical properties, but model fitting is not a
+                  straightforward task, and the resulting solutions may be unstable.
+                  Here, we demonstrate the potential of coordinate descent algorithms
+                  for fitting these models, establishing theoretical convergence
+                  properties and demonstrating that they are significantly faster
+                  than competing approaches. In addition, we demonstrate the utility
+                  of convexity diagnostics to determine regions of the parameter
+                  space in which the objective function is locally convex, even
+                  though the penalty is not. Our simulation study and data examples
+                  indicate that nonconvex penalties like MCP and SCAD are worthwhile
+                  alternatives to the lasso in many applications. In particular, our
+                  numerical results suggest that MCP is the preferred approach among
+                  the three methods.},
+  langid       = {english},
+  mrnumber     = {MR2810396},
+  zmnumber     = {1220.62095}
 }
 % == BibLateX quality report for breheny2011:
 % Unexpected field 'mrnumber'
@@ -187,47 +187,47 @@
 
 
 @article{daubechies2004,
-  title = {An Iterative Thresholding Algorithm for Linear Inverse Problems with
-           a Sparsity Constraint},
-  author = {Daubechies, I. and Defrise, M. and De Mol, C.},
-  date = {2004-08-26},
+  title        = {An Iterative Thresholding Algorithm for Linear Inverse Problems with
+                  a Sparsity Constraint},
+  author       = {Daubechies, I. and Defrise, M. and De Mol, C.},
+  date         = {2004-08-26},
   journaltitle = {Communications on Pure and Applied Mathematics},
-  volume = {57},
-  number = {11},
-  pages = {1413--1457},
-  issn = {1097-0312},
-  doi = {10.1002/cpa.20042},
-  url = {https://onlinelibrary.wiley.com/doi/abs/10.1002/cpa.20042},
-  urldate = {2022-05-27},
-  abstract = {We consider linear inverse problems where the solution is assumed
-              to have a sparse expansion on an arbitrary preassigned orthonormal
-              basis. We prove that replacing the usual quadratic regularizing
-              penalties by weighted 𝓁p-penalties on the coefficients of such
-              expansions, with 1 ≤ p ≤ 2, still regularizes the problem. Use of
-              such 𝓁p-penalized problems with p {$<$} 2 is often advocated when
-              one expects the underlying ideal noiseless solution to have a
-              sparse expansion with respect to the basis under consideration. To
-              compute the corresponding regularized solutions, we analyze an
-              iterative algorithm that amounts to a Landweber iteration with
-              thresholding (or nonlinear shrinkage) applied at each iteration
-              step. We prove that this algorithm converges in norm. © 2004 Wiley
-              Periodicals, Inc.},
-  langid = {english},
-  annotation = {\_eprint:
-                https://onlinelibrary.wiley.com/doi/pdf/10.1002/cpa.20042},
+  volume       = {57},
+  number       = {11},
+  pages        = {1413--1457},
+  issn         = {1097-0312},
+  doi          = {10.1002/cpa.20042},
+  url          = {https://onlinelibrary.wiley.com/doi/abs/10.1002/cpa.20042},
+  urldate      = {2022-05-27},
+  abstract     = {We consider linear inverse problems where the solution is assumed
+                  to have a sparse expansion on an arbitrary preassigned orthonormal
+                  basis. We prove that replacing the usual quadratic regularizing
+                  penalties by weighted 𝓁p-penalties on the coefficients of such
+                  expansions, with 1 ≤ p ≤ 2, still regularizes the problem. Use of
+                  such 𝓁p-penalized problems with p {$<$} 2 is often advocated when
+                  one expects the underlying ideal noiseless solution to have a
+                  sparse expansion with respect to the basis under consideration. To
+                  compute the corresponding regularized solutions, we analyze an
+                  iterative algorithm that amounts to a Landweber iteration with
+                  thresholding (or nonlinear shrinkage) applied at each iteration
+                  step. We prove that this algorithm converges in norm. © 2004 Wiley
+                  Periodicals, Inc.},
+  langid       = {english},
+  annotation   = {\_eprint:
+                  https://onlinelibrary.wiley.com/doi/pdf/10.1002/cpa.20042}
 }
 
 @article{dupuis2021,
-  title = {Proximal operator for the sorted l1 norm: Application to testing
-           procedures based on SLOPE},
-  journal = {Journal of Statistical Planning and Inference},
-  volume = {221},
-  pages = {1-8},
-  year = {2022},
-  issn = {0378-3758},
-  doi = {https://doi.org/10.1016/j.jspi.2022.02.005},
-  url = {https://www.sciencedirect.com/science/article/pii/S0378375822000179},
-  author = {Xavier Dupuis and Patrick J.C. Tardivel},
+  title    = {Proximal operator for the sorted l1 norm: Application to testing
+              procedures based on SLOPE},
+  journal  = {Journal of Statistical Planning and Inference},
+  volume   = {221},
+  pages    = {1-8},
+  year     = {2022},
+  issn     = {0378-3758},
+  doi      = {https://doi.org/10.1016/j.jspi.2022.02.005},
+  url      = {https://www.sciencedirect.com/science/article/pii/S0378375822000179},
+  author   = {Xavier Dupuis and Patrick J.C. Tardivel},
   keywords = {SLOPE, Proximal operator, Sorted norm, False discovery rate},
   abstract = {A decade ago OSCAR was introduced as a penalized estimator where
               the penalty term, the sorted ℓ1 norm, allows to perform clustering
@@ -244,357 +244,365 @@
               prove the formula for the proximal operator provides insights to
               show that testing procedures based on SLOPE are more powerful than
               step-down testing procedures but less powerful than step-up testing
-              procedures.},
+              procedures.}
 }
 @unpublished{elvira2022,
-  title = {Safe Rules for the Identification of Zeros in the Solutions of the {{
-           SLOPE}} Problem},
-  author = {Elvira, Clément and Herzet, Cédric},
-  date = {2022-04-18},
-  number = {arXiv:2110.11784},
-  eprint = {2110.11784},
-  eprinttype = {arxiv},
-  primaryclass = {cs},
-  publisher = {{arXiv}},
-  doi = {10.48550/arXiv.2110.11784},
-  url = {http://arxiv.org/abs/2110.11784},
-  urldate = {2022-06-03},
-  abstract = {In this paper we propose a methodology to accelerate the
-              resolution of the so-called "Sorted L-One Penalized Estimation"
-              (SLOPE) problem. Our method leverages the concept of "safe
-              screening", well-studied in the literature for \textbackslash
-              textit\{group-separable\} sparsity-inducing norms, and aims at
-              identifying the zeros in the solution of SLOPE. More specifically,
-              we derive a set of \textbackslash (\textbackslash tfrac\{n(n+1)\}\{
-              2\}\textbackslash ) inequalities for each element of the
-              \textbackslash (n\textbackslash )-dimensional primal vector and
-              prove that the latter can be safely screened if some subsets of
-              these inequalities are verified. We propose moreover an efficient
-              algorithm to jointly apply the proposed procedure to all the primal
-              variables. Our procedure has a complexity \textbackslash (
-              \textbackslash mathcal\{O\}(n\textbackslash log n + LT)
-              \textbackslash ) where \textbackslash (T\textbackslash leq n
-              \textbackslash ) is a problem-dependent constant and \textbackslash
-              (L\textbackslash ) is the number of zeros identified by the tests.
-              Numerical experiments confirm that, for a prescribed computational
-              budget, the proposed methodology leads to significant improvements
-              of the solving precision.},
-  archiveprefix = {arXiv},
+  title         = {Safe Rules for the Identification of Zeros in the Solutions of the {{
+                   SLOPE}} Problem},
+  author        = {Elvira, Clément and Herzet, Cédric},
+  date          = {2022-04-18},
+  number        = {arXiv:2110.11784},
+  eprint        = {2110.11784},
+  eprinttype    = {arxiv},
+  primaryclass  = {cs},
+  publisher     = {{arXiv}},
+  doi           = {10.48550/arXiv.2110.11784},
+  url           = {http://arxiv.org/abs/2110.11784},
+  urldate       = {2022-06-03},
+  abstract      = {In this paper we propose a methodology to accelerate the
+                   resolution of the so-called "Sorted L-One Penalized Estimation"
+                   (SLOPE) problem. Our method leverages the concept of "safe
+                   screening", well-studied in the literature for \textbackslash
+                   textit\{group-separable\} sparsity-inducing norms, and aims at
+                   identifying the zeros in the solution of SLOPE. More specifically,
+                   we derive a set of \textbackslash (\textbackslash tfrac\{n(n+1)\}\{
+                   2\}\textbackslash ) inequalities for each element of the
+                   \textbackslash (n\textbackslash )-dimensional primal vector and
+                   prove that the latter can be safely screened if some subsets of
+                   these inequalities are verified. We propose moreover an efficient
+                   algorithm to jointly apply the proposed procedure to all the primal
+                   variables. Our procedure has a complexity \textbackslash (
+                   \textbackslash mathcal\{O\}(n\textbackslash log n + LT)
+                   \textbackslash ) where \textbackslash (T\textbackslash leq n
+                   \textbackslash ) is a problem-dependent constant and \textbackslash
+                   (L\textbackslash ) is the number of zeros identified by the tests.
+                   Numerical experiments confirm that, for a prescribed computational
+                   budget, the proposed methodology leads to significant improvements
+                   of the solving precision.},
+  archiveprefix = {arXiv}
 }
 
 @article{fan2001,
-  title = {Variable Selection via Nonconcave Penalized Likelihood and Its Oracle
-           Properties},
-  author = {Fan, Jianqing and Li, Runze},
-  date = {2001-12-01},
+  title        = {Variable Selection via Nonconcave Penalized Likelihood and Its Oracle
+                  Properties},
+  author       = {Fan, Jianqing and Li, Runze},
+  date         = {2001-12-01},
   journaltitle = {Journal of the American Statistical Association},
-  volume = {96},
-  number = {456},
-  pages = {1348--1360},
-  issn = {0162-1459},
-  doi = {10/fd7bfs},
-  url = {https://doi.org/10.1198/016214501753382273},
-  urldate = {2018-03-14},
-  abstract = {Variable selection is fundamental to high-dimensional statistical
-              modeling, including nonparametric regression. Many approaches in
-              use are stepwise selection procedures, which can be computationally
-              expensive and ignore stochastic errors in the variable selection
-              process. In this article, penalized likelihood approaches are
-              proposed to handle these kinds of problems. The proposed methods
-              select variables and estimate coefficients simultaneously. Hence
-              they enable us to construct confidence intervals for estimated
-              parameters. The proposed approaches are distinguished from others
-              in that the penalty functions are symmetric, nonconcave on (0, ∞),
-              and have singularities at the origin to produce sparse solutions.
-              Furthermore, the penalty functions should be bounded by a constant
-              to reduce bias and satisfy certain conditions to yield continuous
-              solutions. A new algorithm is proposed for optimizing penalized
-              likelihood functions. The proposed ideas are widely applicable.
-              They are readily applied to a variety of parametric models such as
-              generalized linear models and robust regression models. They can
-              also be applied easily to nonparametric modeling by using wavelets
-              and splines. Rates of convergence of the proposed penalized
-              likelihood estimators are established. Furthermore, with proper
-              choice of regularization parameters, we show that the proposed
-              estimators perform as well as the oracle procedure in variable
-              selection; namely, they work as well as if the correct submodel
-              were known. Our simulation shows that the newly proposed methods
-              compare favorably with other variable selection techniques.
-              Furthermore, the standard error formulas are tested to be accurate
-              enough for practical applications.},
+  volume       = {96},
+  number       = {456},
+  pages        = {1348--1360},
+  issn         = {0162-1459},
+  doi          = {10/fd7bfs},
+  url          = {https://doi.org/10.1198/016214501753382273},
+  urldate      = {2018-03-14},
+  abstract     = {Variable selection is fundamental to high-dimensional statistical
+                  modeling, including nonparametric regression. Many approaches in
+                  use are stepwise selection procedures, which can be computationally
+                  expensive and ignore stochastic errors in the variable selection
+                  process. In this article, penalized likelihood approaches are
+                  proposed to handle these kinds of problems. The proposed methods
+                  select variables and estimate coefficients simultaneously. Hence
+                  they enable us to construct confidence intervals for estimated
+                  parameters. The proposed approaches are distinguished from others
+                  in that the penalty functions are symmetric, nonconcave on (0, ∞),
+                  and have singularities at the origin to produce sparse solutions.
+                  Furthermore, the penalty functions should be bounded by a constant
+                  to reduce bias and satisfy certain conditions to yield continuous
+                  solutions. A new algorithm is proposed for optimizing penalized
+                  likelihood functions. The proposed ideas are widely applicable.
+                  They are readily applied to a variety of parametric models such as
+                  generalized linear models and robust regression models. They can
+                  also be applied easily to nonparametric modeling by using wavelets
+                  and splines. Rates of convergence of the proposed penalized
+                  likelihood estimators are established. Furthermore, with proper
+                  choice of regularization parameters, we show that the proposed
+                  estimators perform as well as the oracle procedure in variable
+                  selection; namely, they work as well as if the correct submodel
+                  were known. Our simulation shows that the newly proposed methods
+                  compare favorably with other variable selection techniques.
+                  Furthermore, the standard error formulas are tested to be accurate
+                  enough for practical applications.}
 }
 
 @inproceedings{figueiredo2016,
-  title = {Ordered Weighted {{L1}} Regularized Regression with Strongly
-           Correlated Covariates: Theoretical Aspects},
+  title      = {Ordered Weighted {{L1}} Regularized Regression with Strongly
+                Correlated Covariates: Theoretical Aspects},
   shorttitle = {Ordered {{Weighted L1 Regularized Regression}} with {{Strongly
                 Correlated Covariates}}},
-  booktitle = {Artificial {{Intelligence}} and {{Statistics}}},
-  author = {Figueiredo, Mario and Nowak, Robert},
-  date = {2016-05-02},
-  pages = {930--938},
-  url = {http://proceedings.mlr.press/v51/figueiredo16.html},
-  urldate = {2019-11-05},
-  abstract = {This paper studies the ordered weighted L1 (OWL) family of
-              regularizers for sparse linear regression with strongly correlated
-              covariates. We prove sufficient conditions for clustering
-              correlated c...},
+  booktitle  = {Artificial {{Intelligence}} and {{Statistics}}},
+  author     = {Figueiredo, Mario and Nowak, Robert},
+  date       = {2016-05-02},
+  pages      = {930--938},
+  url        = {http://proceedings.mlr.press/v51/figueiredo16.html},
+  urldate    = {2019-11-05},
+  abstract   = {This paper studies the ordered weighted L1 (OWL) family of
+                regularizers for sparse linear regression with strongly correlated
+                covariates. We prove sufficient conditions for clustering
+                correlated c...},
   eventtitle = {Artificial {{Intelligence}} and {{Statistics}}},
-  langid = {english},
+  langid     = {english}
 }
 
 @article{friedman2010,
-  title = {Regularization Paths for Generalized Linear Models via Coordinate
-           Descent},
-  author = {Friedman, Jerome and Hastie, Trevor and Tibshirani, Robert},
-  date = {2010-01},
+  title        = {Regularization Paths for Generalized Linear Models via Coordinate
+                  Descent},
+  author       = {Friedman, Jerome and Hastie, Trevor and Tibshirani, Robert},
+  date         = {2010-01},
   journaltitle = {Journal of Statistical Software},
-  volume = {33},
-  number = {1},
-  pages = {1--22},
-  doi = {10.18637/jss.v033.i01},
-  url = {http://www.jstatsoft.org/v33/i01/},
+  volume       = {33},
+  number       = {1},
+  pages        = {1--22},
+  doi          = {10.18637/jss.v033.i01},
+  url          = {http://www.jstatsoft.org/v33/i01/}
 }
 
 @article{jiang2022,
-  title = {Adaptive {{Bayesian SLOPE}}: Model Selection with Incomplete Data},
-  shorttitle = {Adaptive {{Bayesian SLOPE}}},
-  author = {Jiang, Wei and Bogdan, Małgorzata and Josse, Julie and Majewski,
-            Szymon and Miasojedow, Błażej and Ročková, Veronika},
-  date = {2022-01-02},
+  title        = {Adaptive {{Bayesian SLOPE}}: Model Selection with Incomplete Data},
+  shorttitle   = {Adaptive {{Bayesian SLOPE}}},
+  author       = {Jiang, Wei and Bogdan, Małgorzata and Josse, Julie and Majewski,
+                  Szymon and Miasojedow, Błażej and Ročková, Veronika},
+  date         = {2022-01-02},
   journaltitle = {Journal of Computational and Graphical Statistics},
-  volume = {31},
-  number = {1},
-  pages = {113--137},
-  publisher = {{Taylor \& Francis}},
-  issn = {1061-8600},
-  doi = {10.1080/10618600.2021.1963263},
-  url = {https://doi.org/10.1080/10618600.2021.1963263},
-  urldate = {2022-06-03},
-  abstract = {We consider the problem of variable selection in high-dimensional
-              settings with missing observations among the covariates. To address
-              this relatively understudied problem, we propose a new synergistic
-              procedure—adaptive Bayesian SLOPE with missing values—which
-              effectively combines SLOPE (sorted l1 regularization) with the
-              spike-and-slab LASSO (SSL) and is accompanied by an efficient
-              stochastic approximation of expected maximization (SAEM) algorithm
-              to handle missing data. Similarly as in SSL, the regression
-              coefficients are regarded as arising from a hierarchical model
-              consisting of two groups: the spike for the inactive and the slab
-              for the active. However, instead of assigning independent spike and
-              slab Laplace priors for each covariate, here we deploy a joint
-              SLOPE “spike-and-slab” prior which takes into account the ordering
-              of coefficient magnitudes in order to control for false
-              discoveries. We position our approach within a Bayesian framework
-              which allows for simultaneous variable selection and parameter
-              estimation while handling missing data. Through extensive
-              simulations, we demonstrate satisfactory performance in terms of
-              power, false discovery rate (FDR) and estimation bias under a wide
-              range of scenarios including complete data and existence of
-              missingness. Finally, we analyze a real dataset consisting of
-              patients from Paris hospitals who underwent severe trauma, where we
-              show competitive performance in predicting platelet levels. Our
-              methodology has been implemented in C++ and wrapped into open
-              source R programs for public use. Supplemental files for this
-              article are available online.},
-  annotation = {\_eprint: https://doi.org/10.1080/10618600.2021.1963263},
+  volume       = {31},
+  number       = {1},
+  pages        = {113--137},
+  publisher    = {{Taylor \& Francis}},
+  issn         = {1061-8600},
+  doi          = {10.1080/10618600.2021.1963263},
+  url          = {https://doi.org/10.1080/10618600.2021.1963263},
+  urldate      = {2022-06-03},
+  abstract     = {We consider the problem of variable selection in high-dimensional
+                  settings with missing observations among the covariates. To address
+                  this relatively understudied problem, we propose a new synergistic
+                  procedure—adaptive Bayesian SLOPE with missing values—which
+                  effectively combines SLOPE (sorted l1 regularization) with the
+                  spike-and-slab LASSO (SSL) and is accompanied by an efficient
+                  stochastic approximation of expected maximization (SAEM) algorithm
+                  to handle missing data. Similarly as in SSL, the regression
+                  coefficients are regarded as arising from a hierarchical model
+                  consisting of two groups: the spike for the inactive and the slab
+                  for the active. However, instead of assigning independent spike and
+                  slab Laplace priors for each covariate, here we deploy a joint
+                  SLOPE “spike-and-slab” prior which takes into account the ordering
+                  of coefficient magnitudes in order to control for false
+                  discoveries. We position our approach within a Bayesian framework
+                  which allows for simultaneous variable selection and parameter
+                  estimation while handling missing data. Through extensive
+                  simulations, we demonstrate satisfactory performance in terms of
+                  power, false discovery rate (FDR) and estimation bias under a wide
+                  range of scenarios including complete data and existence of
+                  missingness. Finally, we analyze a real dataset consisting of
+                  patients from Paris hospitals who underwent severe trauma, where we
+                  show competitive performance in predicting platelet levels. Our
+                  methodology has been implemented in C++ and wrapped into open
+                  source R programs for public use. Supplemental files for this
+                  article are available online.},
+  annotation   = {\_eprint: https://doi.org/10.1080/10618600.2021.1963263}
 }
 
 @article{kos2020,
-  title = {On the Asymptotic Properties of {{SLOPE}}},
-  author = {Kos, Michał and Bogdan, Małgorzata},
-  date = {2020-08-11},
+  title        = {On the Asymptotic Properties of {{SLOPE}}},
+  author       = {Kos, Michał and Bogdan, Małgorzata},
+  date         = {2020-08-11},
   journaltitle = {Sankhya A},
   shortjournal = {Sankhya A},
-  volume = {82},
-  number = {2},
-  pages = {499--532},
-  issn = {0976-8378},
-  doi = {10.1007/s13171-020-00212-5},
-  url = {https://doi.org/10.1007/s13171-020-00212-5},
-  urldate = {2022-06-03},
-  abstract = {Sorted L-One Penalized Estimator (SLOPE) is a relatively new
-              convex optimization procedure for selecting predictors in high
-              dimensional regression analyses. SLOPE extends LASSO by replacing
-              the L1 penalty norm with a Sorted L1 norm, based on the
-              non-increasing sequence of tuning parameters. This allows SLOPE to
-              adapt to unknown sparsity and achieve an asymptotic minimax
-              convergency rate under a wide range of high dimensional generalized
-              linear models. Additionally, in the case when the design matrix is
-              orthogonal, SLOPE with the sequence of tuning parameters λBH
-              corresponding to the sequence of decaying thresholds for the
-              Benjamini-Hochberg multiple testing correction provably controls
-              the False Discovery Rate (FDR) in the multiple regression model. In
-              this article we provide new asymptotic results on the properties of
-              SLOPE when the elements of the design matrix are iid random
-              variables from the Gaussian distribution. Specifically, we provide
-              conditions under which the asymptotic FDR of SLOPE based on the
-              sequence λBH converges to zero and the power converges to 1. We
-              illustrate our theoretical asymptotic results with an extensive
-              simulation study. We also provide precise formulas describing FDR
-              of SLOPE under different loss functions, which sets the stage for
-              future investigation on the model selection properties of SLOPE and
-              its extensions.},
-  langid = {english},
+  volume       = {82},
+  number       = {2},
+  pages        = {499--532},
+  issn         = {0976-8378},
+  doi          = {10.1007/s13171-020-00212-5},
+  url          = {https://doi.org/10.1007/s13171-020-00212-5},
+  urldate      = {2022-06-03},
+  abstract     = {Sorted L-One Penalized Estimator (SLOPE) is a relatively new
+                  convex optimization procedure for selecting predictors in high
+                  dimensional regression analyses. SLOPE extends LASSO by replacing
+                  the L1 penalty norm with a Sorted L1 norm, based on the
+                  non-increasing sequence of tuning parameters. This allows SLOPE to
+                  adapt to unknown sparsity and achieve an asymptotic minimax
+                  convergency rate under a wide range of high dimensional generalized
+                  linear models. Additionally, in the case when the design matrix is
+                  orthogonal, SLOPE with the sequence of tuning parameters λBH
+                  corresponding to the sequence of decaying thresholds for the
+                  Benjamini-Hochberg multiple testing correction provably controls
+                  the False Discovery Rate (FDR) in the multiple regression model. In
+                  this article we provide new asymptotic results on the properties of
+                  SLOPE when the elements of the design matrix are iid random
+                  variables from the Gaussian distribution. Specifically, we provide
+                  conditions under which the asymptotic FDR of SLOPE based on the
+                  sequence λBH converges to zero and the power converges to 1. We
+                  illustrate our theoretical asymptotic results with an extensive
+                  simulation study. We also provide precise formulas describing FDR
+                  of SLOPE under different loss functions, which sets the stage for
+                  future investigation on the model selection properties of SLOPE and
+                  its extensions.},
+  langid       = {english}
 }
 
 @inproceedings{larsson2020c,
-  title = {The Strong Screening Rule for {{SLOPE}}},
-  booktitle = {Advances in {{Neural Information Processing Systems}} 33},
-  author = {Larsson, Johan and Bogdan, Małgorzata and Wallin, Jonas},
-  editor = {Larochelle, H. and Ranzato, M. and Hadsell, R. and Balcan, M. F. and
-            Lin, H.},
-  date = {2020-12-06/0012},
-  volume = {33},
-  pages = {14592--14603},
-  publisher = {{Curran Associates, Inc.}},
-  location = {{Virtual}},
-  url = {
-         https://proceedings.neurips.cc/paper/2020/file/a7d8ae4569120b5bec12e7b6e9648b86-Paper.pdf
-         },
-  abstract = {Extracting relevant features from data sets where the number of
-              observations n is much smaller then the number of predictors p is a
-              major challenge in modern statistics. Sorted L-One Penalized
-              Estimation (SLOPE)—a generalization of the lasso---is a promising
-              method within this setting. Current numerical procedures for SLOPE,
-              however, lack the efficiency that respective tools for the lasso
-              enjoy, particularly in the context of estimating a complete
-              regularization path. A key component in the efficiency of the lasso
-              is predictor screening rules: rules that allow predictors to be
-              discarded before estimating the model. This is the first paper to
-              establish such a rule for SLOPE. We develop a screening rule for
-              SLOPE by examining its subdifferential and show that this rule is a
-              generalization of the strong rule for the lasso. Our rule is
-              heuristic, which means that it may discard predictors erroneously.
-              In our paper, however, we show that such situations are rare and
-              easily safeguarded against by a simple check of the optimality
-              conditions. Our numerical experiments show that the rule performs
-              well in practice, leading to improvements by orders of magnitude
-              for data in the p {$>>$} n domain, as well as incurring no
-              additional computational overhead when n {$>$} p.},
+  title      = {The Strong Screening Rule for {{SLOPE}}},
+  booktitle  = {Advances in {{Neural Information Processing Systems}} 33},
+  author     = {Larsson, Johan and Bogdan, Małgorzata and Wallin, Jonas},
+  editor     = {Larochelle, H. and Ranzato, M. and Hadsell, R. and Balcan, M. F. and
+                Lin, H.},
+  date       = {2020-12-06/0012},
+  volume     = {33},
+  pages      = {14592--14603},
+  publisher  = {{Curran Associates, Inc.}},
+  location   = {{Virtual}},
+  url        = {
+                https://proceedings.neurips.cc/paper/2020/file/a7d8ae4569120b5bec12e7b6e9648b86-Paper.pdf
+                },
+  abstract   = {Extracting relevant features from data sets where the number of
+                observations n is much smaller then the number of predictors p is a
+                major challenge in modern statistics. Sorted L-One Penalized
+                Estimation (SLOPE)—a generalization of the lasso---is a promising
+                method within this setting. Current numerical procedures for SLOPE,
+                however, lack the efficiency that respective tools for the lasso
+                enjoy, particularly in the context of estimating a complete
+                regularization path. A key component in the efficiency of the lasso
+                is predictor screening rules: rules that allow predictors to be
+                discarded before estimating the model. This is the first paper to
+                establish such a rule for SLOPE. We develop a screening rule for
+                SLOPE by examining its subdifferential and show that this rule is a
+                generalization of the strong rule for the lasso. Our rule is
+                heuristic, which means that it may discard predictors erroneously.
+                In our paper, however, we show that such situations are rare and
+                easily safeguarded against by a simple check of the optimality
+                conditions. Our numerical experiments show that the rule performs
+                well in practice, leading to improvements by orders of magnitude
+                for data in the p {$>>$} n domain, as well as incurring no
+                additional computational overhead when n {$>$} p.},
   eventtitle = {Neural {{Information Procession Systems}} 2020},
-  langid = {english},
+  langid     = {english}
 }
 
 @unpublished{schneider2020a,
-  title = {The {{Geometry}} of {{Uniqueness}}, Sparsity and Clustering in
-           Penalized Estimation},
-  author = {Schneider, Ulrike and Tardivel, Patrick},
-  date = {2020-08-18},
-  number = {arXiv:2004.09106},
-  eprint = {2004.09106},
-  eprinttype = {arxiv},
-  primaryclass = {math, stat},
-  pages = {34},
-  publisher = {{arXiv}},
-  doi = {10.48550/arXiv.2004.09106},
-  url = {http://arxiv.org/abs/2004.09106},
-  urldate = {2022-06-03},
-  abstract = {We provide a necessary and sufficient condition for the uniqueness
-              of penalized least-squares estimators whose penalty term is given
-              by a norm with a polytope unit ball, covering a wide range of
-              methods including SLOPE and LASSO, as well as the related method of
-              basis pursuit. We consider a strong type of uniqueness that is
-              relevant for statistical problems. The uniqueness condition is
-              geometric and involves how the row span of the design matrix
-              intersects the faces of the dual norm unit ball, which for SLOPE is
-              given by the sign permutahedron. Further considerations based this
-              condition also allow to derive results on sparsity and clustering
-              features. In particular, we define the notion of a SLOPE model to
-              describe both sparsity and clustering properties of this method and
-              also provide a geometric characterization of accessible SLOPE
-              models.},
-  archiveprefix = {arXiv},
+  title         = {The {{Geometry}} of {{Uniqueness}}, Sparsity and Clustering in
+                   Penalized Estimation},
+  author        = {Schneider, Ulrike and Tardivel, Patrick},
+  date          = {2020-08-18},
+  number        = {arXiv:2004.09106},
+  eprint        = {2004.09106},
+  eprinttype    = {arxiv},
+  primaryclass  = {math, stat},
+  pages         = {34},
+  publisher     = {{arXiv}},
+  doi           = {10.48550/arXiv.2004.09106},
+  url           = {http://arxiv.org/abs/2004.09106},
+  urldate       = {2022-06-03},
+  abstract      = {We provide a necessary and sufficient condition for the uniqueness
+                   of penalized least-squares estimators whose penalty term is given
+                   by a norm with a polytope unit ball, covering a wide range of
+                   methods including SLOPE and LASSO, as well as the related method of
+                   basis pursuit. We consider a strong type of uniqueness that is
+                   relevant for statistical problems. The uniqueness condition is
+                   geometric and involves how the row span of the design matrix
+                   intersects the faces of the dual norm unit ball, which for SLOPE is
+                   given by the sign permutahedron. Further considerations based this
+                   condition also allow to derive results on sparsity and clustering
+                   features. In particular, we define the notion of a SLOPE model to
+                   describe both sparsity and clustering properties of this method and
+                   also provide a geometric characterization of accessible SLOPE
+                   models.},
+  archiveprefix = {arXiv}
 }
 
 @article{zhang2010,
-  title = {Nearly Unbiased Variable Selection under Minimax Concave Penalty},
-  author = {Zhang, Cun-Hui},
-  date = {2010-04},
+  title        = {Nearly Unbiased Variable Selection under Minimax Concave Penalty},
+  author       = {Zhang, Cun-Hui},
+  date         = {2010-04},
   journaltitle = {The Annals of Statistics},
   shortjournal = {Ann. Statist.},
-  volume = {38},
-  number = {2},
-  pages = {894--942},
-  issn = {0090-5364, 2168-8966},
-  doi = {10/bp22zz},
-  url = {https://projecteuclid.org/euclid.aos/1266586618},
-  urldate = {2018-03-14},
-  abstract = {We propose MC+, a fast, continuous, nearly unbiased and accurate
-              method of penalized variable selection in high-dimensional linear
-              regression. The LASSO is fast and continuous, but biased. The bias
-              of the LASSO may prevent consistent variable selection. Subset
-              selection is unbiased but computationally costly. The MC+ has two
-              elements: a minimax concave penalty (MCP) and a penalized linear
-              unbiased selection (PLUS) algorithm. The MCP provides the convexity
-              of the penalized loss in sparse regions to the greatest extent
-              given certain thresholds for variable selection and unbiasedness.
-              The PLUS computes multiple exact local minimizers of a possibly
-              nonconvex penalized loss function in a certain main branch of the
-              graph of critical points of the penalized loss. Its output is a
-              continuous piecewise linear path encompassing from the origin for
-              infinite penalty to a least squares solution for zero penalty. We
-              prove that at a universal penalty level, the MC+ has high
-              probability of matching the signs of the unknowns, and thus correct
-              selection, without assuming the strong irrepresentable condition
-              required by the LASSO. This selection consistency applies to the
-              case of p≫n, and is proved to hold for exactly the MC+ solution
-              among possibly many local minimizers. We prove that the MC+ attains
-              certain minimax convergence rates in probability for the estimation
-              of regression coefficients in ℓr balls. We use the SURE method to
-              derive degrees of freedom and Cp-type risk estimates for general
-              penalized LSE, including the LASSO and MC+ estimators, and prove
-              their unbiasedness. Based on the estimated degrees of freedom, we
-              propose an estimator of the noise level for proper choice of the
-              penalty level. For full rank designs and general sub-quadratic
-              penalties, we provide necessary and sufficient conditions for the
-              continuity of the penalized LSE. Simulation results overwhelmingly
-              support our claim of superior variable selection properties and
-              demonstrate the computational efficiency of the proposed method.},
-  langid = {english},
-  mrnumber = {MR2604701},
-  zmnumber = {1183.62120},
+  volume       = {38},
+  number       = {2},
+  pages        = {894--942},
+  issn         = {0090-5364, 2168-8966},
+  doi          = {10/bp22zz},
+  url          = {https://projecteuclid.org/euclid.aos/1266586618},
+  urldate      = {2018-03-14},
+  abstract     = {We propose MC+, a fast, continuous, nearly unbiased and accurate
+                  method of penalized variable selection in high-dimensional linear
+                  regression. The LASSO is fast and continuous, but biased. The bias
+                  of the LASSO may prevent consistent variable selection. Subset
+                  selection is unbiased but computationally costly. The MC+ has two
+                  elements: a minimax concave penalty (MCP) and a penalized linear
+                  unbiased selection (PLUS) algorithm. The MCP provides the convexity
+                  of the penalized loss in sparse regions to the greatest extent
+                  given certain thresholds for variable selection and unbiasedness.
+                  The PLUS computes multiple exact local minimizers of a possibly
+                  nonconvex penalized loss function in a certain main branch of the
+                  graph of critical points of the penalized loss. Its output is a
+                  continuous piecewise linear path encompassing from the origin for
+                  infinite penalty to a least squares solution for zero penalty. We
+                  prove that at a universal penalty level, the MC+ has high
+                  probability of matching the signs of the unknowns, and thus correct
+                  selection, without assuming the strong irrepresentable condition
+                  required by the LASSO. This selection consistency applies to the
+                  case of p≫n, and is proved to hold for exactly the MC+ solution
+                  among possibly many local minimizers. We prove that the MC+ attains
+                  certain minimax convergence rates in probability for the estimation
+                  of regression coefficients in ℓr balls. We use the SURE method to
+                  derive degrees of freedom and Cp-type risk estimates for general
+                  penalized LSE, including the LASSO and MC+ estimators, and prove
+                  their unbiasedness. Based on the estimated degrees of freedom, we
+                  propose an estimator of the noise level for proper choice of the
+                  penalty level. For full rank designs and general sub-quadratic
+                  penalties, we provide necessary and sufficient conditions for the
+                  continuity of the penalized LSE. Simulation results overwhelmingly
+                  support our claim of superior variable selection properties and
+                  demonstrate the computational efficiency of the proposed method.},
+  langid       = {english},
+  mrnumber     = {MR2604701},
+  zmnumber     = {1183.62120}
 }
 
 @book{rockafellar1970,
-  title = {Convex Analysis},
-  author = {Rockafellar, R. Tyrrell},
-  date = {1970},
-  series = {Princeton {{Landmarks}} in {{Mathematics}} and {{Physics}}},
-  eprint = {j.ctt14bs1ff},
+  title      = {Convex Analysis},
+  author     = {Rockafellar, R. Tyrrell},
+  date       = {1970},
+  series     = {Princeton {{Landmarks}} in {{Mathematics}} and {{Physics}}},
+  eprint     = {j.ctt14bs1ff},
   eprinttype = {jstor},
-  publisher = {{Princeton University Press}},
-  abstract = {Available for the first time in paperback, R. Tyrrell
-              Rockafellar's classic study presents readers with a coherent branch
-              of nonlinear mathematical analysis that is especially suited to the
-              study of optimization problems. Rockafellar's theory differs from
-              classical analysis in that differentiability assumptions are
-              replaced by convexity assumptions. The topics treated in this
-              volume include: systems of inequalities, the minimum or maximum of
-              a convex function over a convex set, Lagrange multipliers, minimax
-              theorems and duality, as well as basic results about the structure
-              of convex sets and the continuity and differentiability of convex
-              functions and saddle- functions. This book has firmly established a
-              new and vital area not only for pure mathematics but also for
-              applications to economics and engineering. A sound knowledge of
-              linear algebra and introductory real analysis should provide
-              readers with sufficient background for this book. There is also a
-              guide for the reader who may be using the book as an introduction,
-              indicating which parts are essential and which may be skipped on a
-              first reading.},
-  isbn = {978-0-691-01586-6},
-  langid = {english},
-  pagetotal = {472},
+  publisher  = {{Princeton University Press}},
+  abstract   = {Available for the first time in paperback, R. Tyrrell
+                Rockafellar's classic study presents readers with a coherent branch
+                of nonlinear mathematical analysis that is especially suited to the
+                study of optimization problems. Rockafellar's theory differs from
+                classical analysis in that differentiability assumptions are
+                replaced by convexity assumptions. The topics treated in this
+                volume include: systems of inequalities, the minimum or maximum of
+                a convex function over a convex set, Lagrange multipliers, minimax
+                theorems and duality, as well as basic results about the structure
+                of convex sets and the continuity and differentiability of convex
+                functions and saddle- functions. This book has firmly established a
+                new and vital area not only for pure mathematics but also for
+                applications to economics and engineering. A sound knowledge of
+                linear algebra and introductory real analysis should provide
+                readers with sufficient background for this book. There is also a
+                guide for the reader who may be using the book as an introduction,
+                indicating which parts are essential and which may be skipped on a
+                first reading.},
+  isbn       = {978-0-691-01586-6},
+  langid     = {english},
+  pagetotal  = {472}
 }
 
 @article{Ziyan2019,
-  author = {Ziyan Luo and Defeng Sun and Kim-Chuan Toh and Naihua Xiu},
-  title = {Solving the OSCAR and SLOPE Models Using a Semismooth Newton-Based
-           Augmented Lagrangian Method},
+  author  = {Ziyan Luo and Defeng Sun and Kim-Chuan Toh and Naihua Xiu},
+  title   = {Solving the OSCAR and SLOPE Models Using a Semismooth Newton-Based
+             Augmented Lagrangian Method},
   journal = {Journal of Machine Learning Research},
-  year = {2019},
-  volume = {20},
-  number = {106},
-  pages = {1--25},
-  url = {http://jmlr.org/papers/v20/18-172.html},
+  year    = {2019},
+  volume  = {20},
+  number  = {106},
+  pages   = {1--25},
+  url     = {http://jmlr.org/papers/v20/18-172.html}
+}
+
+
+@article{moreau2022benchopt,
+  title   = {Benchopt: Reproducible, efficient and collaborative optimization benchmarks},
+  author  = {Moreau, Thomas and Massias, Mathurin and Gramfort, Alexandre and Ablin, Pierre and Bannier, Pierre-Antoine and Charlier, Benjamin and Dagr{\'e}ou, Mathieu and la Tour, Tom Dupr{\'e} and Durif, Ghislain and Dantas, Cassio F and Klopfenstein, Quentin and others},
+  journal = {arXiv preprint arXiv:2206.13424},
+  year    = {2022}
 }

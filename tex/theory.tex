@@ -5,10 +5,9 @@
 \subsection{Coordinate Descent for SLOPE}%
 \label{sec:coordinate-updates}
 
-\Cref{pb:slope}
 \mathurin{Suggestion: \\
-Coordinate descent cannot be applied to  because it is not separable.
-However, if the clusters of the solution $\mathcal{C}_1, \ldots, \mathcal{C}_m$ were known together with its sign, then the values $c_1, \ldots, c_m$ taken by $\hat \beta$ on the clusters could be equivalently computed by solving :
+Proximal coordinate descent cannot be applied to \Cref{pb:slope} because it is not separable.
+However, if the clusters $\mathcal{C}_1, \ldots, \mathcal{C}_m$ of the solution $\hat \beta$ were known together with its sign, then the values $c_1, \ldots, c_m$ taken by $\hat \beta$ on the clusters could be equivalently computed by solving :
 \begin{problem}
  \min_{x \in \bbR^m}
       F \left(\sum_{i=1}^m \tilde{X}_i x_i \right)
@@ -18,7 +17,7 @@ where $\tilde{X}_{\mathcal{C}_i} = \sum_{j \in \mathcal{C}_i} X_j \sign (\hat \b
 Hence, the idea of our algorithm is to intertwine steps that identify the clusters, and large coordinatewise steps on these clusters.
 }
 Based on this observation, we derive a coordinate descent algorithm for minimizing the SLOPE problem~\eqref{pb:slope} with respect to the coefficients of a single cluster at a time.
-First observe that we can write \Cref{pb:slope} as \mm{do we restrict to quadratic datafit? in the intro there's a generic df and our strategy would be adapted to it}
+First observe that we can write \Cref{pb:slope} as \mathurin{To discuss:  we restrict to quadratic datafit? in the intro there's a generic df and our strategy would be adapted to it, it's just block coordinate descent with varying blocks}
 \[
   \begin{aligned}
     P(\beta)
@@ -35,7 +34,10 @@ First observe that we can write \Cref{pb:slope} as \mm{do we restrict to quadrat
 with \( \tilde x_k = X_{\mathcal{C}_k} s_{\mathcal{C}_k}\) and
 \(\tilde r_k = y - \tilde y_k = y - X_{\bar{\mathcal{C}}_k} \beta_{\bar{\mathcal{C}}_k} \in \bbR^n\).
 \mm{do we need $\tilde y _k$ ?}
+\mathurin{What is tricky here is that $\beta$ varies so the $C_k$ and $c_k$ vary too. THe notation $C_k(\beta)$ would be too heavy (most of all because $m$ also depends on $\beta$, but so I would avoid writing such computations that are confusing IMO - at least they confused me to be honest)}
 
+\mathurin{I would just say we perform block coordinate descent update/directional updates in the direction of $(\sign \beta)_{\mathcal{C_i}}$
+}
 We propose a coordinate-wise update that minimizes \(P(\beta)\) with respect to the
 clusters' corresponding coefficients one at a time, keeping the relative signs
 of the coordinates within each cluster fixed but allowing all of the signs to
@@ -55,6 +57,7 @@ Next, we let
     \beta_i & \text{otherwise.}
   \end{cases}
 \end{equation}
+\mathurin{maybe we can write $\beta + z \sign(\beta)_{\mathcal{C}_i}$, where $\sign$ is the sign vector, and restricting indices keeps the dimension (and puts 0 as value of excluded indices).}
 This means that \(\beta(x)\) corresponds to a version of \(\beta\) with a
 coordinate update for the \(k\)th cluster.
 

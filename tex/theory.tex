@@ -72,8 +72,11 @@ with
   J_k(z) = |z| \sum_{j \in \mathcal{C}_k} \lambda_{(j)^-_z}
   + \sum_{j \notin \mathcal{C}_k} |\beta_j| \lambda_{(j)^-_z},
 \]
+\mm{new notation; we could write $(j; \beta(z))$ or $(j; \beta + z d)$, $d$ being the direction}
 where we write \(\lambda_{(j)^-_z}\) to indicate that the permutation operator \((j)^-_z\)
 depends on \(\beta(z)\).
+
+\mathurin{One key aspect of such updates that for me deserves to be emphasized: the clusters will almost all remain the same: they can only change order, or two of them merge.}
 
 The optimality condition for this problem is \(0 \in \partial_z P(\beta).\)
 Differentiating with respect to \(z\) yields
@@ -86,23 +89,26 @@ norm with respect to coefficient of the \(k\)th cluster.
 
 \subsubsection{Partial Subdifferential of the Sorted \(\ell_1\) Norm}
 
-In this section we derive an expression for the partial subdifferential of the
+In this section we derive an expression for the partial \mm{how canon is this name?} subdifferential of the
 sorted \(\ell_1\) norm. To do this, we will first introduce the directional
 derivative for the sorted \(\ell_1\) norm with respect to the coefficient of
-the \(k\)th cluster.
+the \(k\)th cluster. \mathurin{this may be ambiguous: I would look for a formula using ``in the direction of...''}
 
 Before we arrive at the definition for the directional derivative, however,
 we introduce a key fact in \cref{def:limit-permutation}.
 
-\begin{definition}
+\begin{definition} \mm{cosmetic: I'm not sure this is a definition}
   \label{def:limit-permutation}
   Define \(\varepsilon > 0\) such that
   \begin{equation*}
     \big| c_i - c_j\big| < \varepsilon \quad \forall\, i \neq j.
   \end{equation*}
+  \mm{should the inequality be in the other direction?}
 \end{definition}
 
 For an \(\varepsilon\) defined as in \cref{def:limit-permutation}, we have
+\mathurin{This can be hard to parse: $C$ implicitely depends on a vector that determiens clsuters. We can emphasize that  In all this section $\beta$ is fixed and we update only in the direction given by the sign of one cluster. Clusters $C_i$ and $c_i$ are fixed.}
+
 \begin{equation}
   \lim_{h \downarrow 0} C(z + h\delta) = C(z + \varepsilon \delta)
   \quad\text{and}\quad
@@ -110,7 +116,7 @@ For an \(\varepsilon\) defined as in \cref{def:limit-permutation}, we have
   = \lambda_{(i)^-_{z + \varepsilon\delta}}.
 \end{equation}
 for \(\delta \in \{-1, 1\}\).
-In other words, the order permutation corresponding to \(B(z + h\delta)\) depends only on
+In other words, the order permutation corresponding to \(B(z + h\delta)\) depends only on \mm{typo B for $\beta$?}
 \(\delta\) in the limit as \(h\) tends to~\(0\).
 
 \begin{remark}

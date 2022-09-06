@@ -1,7 +1,7 @@
 \paragraph{Notation}\label{sec:notation}
 
-Let \((i;\beta)^{-}\) be the inverse of \((i;\beta)\) such that
-\(\big((i;\beta)^-;\beta\big)^- = (i;\beta)\). See \cref{tab:permutation-example} for an
+Let \((i)^{-}\) be the inverse of \((i)\) such that
+\(\big((i)^-\big)^- = (i)\). See \cref{tab:permutation-example} for an
 example of this operator for a particular \(\beta\).
 \begin{table}
   \centering
@@ -9,7 +9,7 @@ example of this operator for a particular \(\beta\).
     \((i)^-\)\label{tab:permutation-example}}
   \begin{tabular}{cccc}
     \toprule
-    \(i\) & \(\beta\) & \((i; \beta)\) & \((i; \beta)^-\) \\
+    \(i\) & \(\beta_i\) & \((i)\) & \((i)^-\) \\
     \midrule
     1     & 1         & 2              & 3                \\
     2     & -3        & 3              & 1                \\
@@ -19,8 +19,8 @@ example of this operator for a particular \(\beta\).
 \end{table}
 This means that
 \[
-  J(\beta) = \sum_{j=1}^p \lambda_j |\beta_{(j;\beta)}|
-  = \sum_{j=1}^p \lambda_{(j;\beta)^-}|\beta_j|.
+  J(\beta) = \sum_{j=1}^p \lambda_j |\beta_{(j)}|
+  = \sum_{j=1}^p \lambda_{(j)^-}|\beta_j|.
 \]
 \mathurin{For a fixed $\beta$}, let \(\mathcal{C}_1, \mathcal{C}_2\, \dots, \mathcal{C}_m\) and \(c_1,
 c_2, \dots, c_m\) be the indices and coefficients, respectively, for the \(m\)
@@ -29,17 +29,4 @@ clusters of $\beta$ such that
   \mathcal{C}_i = \{j : |\beta_j| = c_i\} \quad \text{and} \quad
   c_1 > c_2 > \cdots > c_m \geq 0.
 \]
-In addition, let \(C(\alpha)\) be a function that returns the
-cluster corresponding to \(\alpha\), that is
-\[
-  C(\alpha) = \{j : |\beta_j| = \alpha\}.
-\]
-For a cluster $\mathcal{A}$, let \(\lambda^{\mathcal{A}}\) be the sub-sequence of
-\(\lambda\) corresponding to \(\mathcal{A}\), i.e.
-\[
-  \lambda^\mathcal{A} = \{\lambda_{(i)^-} : i \in \mathcal{A}\}
-\]\mathurin{put on the same level as $\mathcal{S}(\mathcal{A})$ definition?}
-
-
-
 

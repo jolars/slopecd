@@ -64,9 +64,10 @@ coordinate update for the \(k\)th cluster.
 This corresponds to solving the following
 one-dimensional problem:
 
-\begin{equation*}
+\begin{equation}
+  \label{eq:cluster-problem}
   \operatorname*{minimize}_{z \in \mathbb{R}} \left( \frac{1}{2} \lVert \tilde r - \tilde x z \rVert_2^2 + J_k(z)\right)
-\end{equation*}
+\end{equation}
 with
 \[
   J_k(z) = |z| \sum_{j \in \mathcal{C}_k} \lambda_{(j)^-_z}
@@ -87,37 +88,36 @@ Differentiating with respect to \(z\) yields
 where the last term is the partial subdifferential of the sorted \(\ell_1\)
 norm with respect to coefficient of the \(k\)th cluster.
 
-\subsubsection{Partial Subdifferential of the Sorted \(\ell_1\) Norm}
+\subsection{The SLOPE Thresholding Operator}
 
-In this section we derive an expression for the partial \mm{how canon is this name?} subdifferential of the
-sorted \(\ell_1\) norm. To do this, we will first introduce the directional
-derivative for the sorted \(\ell_1\) norm with respect to the coefficient of
-the \(k\)th cluster. \mathurin{this may be ambiguous: I would look for a formula using ``in the direction of...''}
-
-Before we arrive at the definition for the directional derivative, however,
-we introduce a key fact in \cref{def:limit-permutation}.
-
+In this section we derive the SLOPE thresholding operator and show that it is a
+minimizer of \eqref{eq:cluster-problem}. To do so, we will introduce the
+directional derivative for the sorted \(\ell_1\) norm with respect to the
+coefficient of the \(k\)th cluster. First, however, let \(C(z)\) be a function
+that returns the cluster corresponding to \(z\), that is
+\[
+  C(z) = \{j : |\beta(z)_j| = z\}.
+\]
+Secondly, we introduce \cref{def:limit-permutation}.
 \begin{definition} \mm{cosmetic: I'm not sure this is a definition}
   \label{def:limit-permutation}
   Define \(\varepsilon > 0\) such that
   \begin{equation*}
-    \big| c_i - c_j\big| < \varepsilon \quad \forall\, i \neq j.
+    \big| c_i - c_j\big| > \varepsilon \quad \forall\, i \neq j.
   \end{equation*}
   \mm{should the inequality be in the other direction?}
 \end{definition}
 
-For an \(\varepsilon\) defined as in \cref{def:limit-permutation}, we have
-\mathurin{This can be hard to parse: $C$ implicitely depends on a vector that determiens clsuters. We can emphasize that  In all this section $\beta$ is fixed and we update only in the direction given by the sign of one cluster. Clusters $C_i$ and $c_i$ are fixed.}
-
+For an \(\varepsilon\) defined as in \cref{def:limit-permutation}, we have for
+\(\delta \in \{-1, 1\}\)\mathurin{This can be hard to parse: $C$ implicitely depends on a vector that determiens clsuters. We can emphasize that  In all this section $\beta$ is fixed and we update only in the direction given by the sign of one cluster. Clusters $C_i$ and $c_i$ are fixed.}
 \begin{equation}
   \lim_{h \downarrow 0} C(z + h\delta) = C(z + \varepsilon \delta)
   \quad\text{and}\quad
   \lim_{h \downarrow 0} \lambda_{(i)^-_{z + h\delta}}
   = \lambda_{(i)^-_{z + \varepsilon\delta}}.
 \end{equation}
-for \(\delta \in \{-1, 1\}\).
-In other words, the order permutation corresponding to \(B(z + h\delta)\) depends only on \mm{typo B for $\beta$?}
-\(\delta\) in the limit as \(h\) tends to~\(0\).
+In other words, the order permutation corresponding to \(B(z + h\delta)\)
+depends only on \(\delta\) in the limit as \(h\) tends to~\(0\). \mm{typo B for $\beta$?}
 
 \begin{remark}
   As consequence of \cref{def:limit-permutation}, the order
@@ -311,11 +311,11 @@ Using \cref{thm:sl1-directional-derivative}, we define the subgradient for
   \[
     \partial_{z} J_k(z) =
     \begin{cases}
-      \big[-\sum_{j = p - p_k + 1}^{p}\lambda_j, \sum_{j = p - p_k + 1}^{p}\lambda_j\big]                                                                         & \text{if } z = 0 \neq c_m,  \\
+      \big[-\sum_{j = p - p_k + 1}^{p}\lambda_j, \sum_{j = p - p_k + 1}^{p}\lambda_j\big]                         & \text{if } z = 0 \neq c_m,  \\
       \big[-\sum_{j = p - p_m + 1}^{p - p_m + p_k}\lambda_j, \sum_{j = p - p_m + 1}^{p - p_m + p_k}\lambda_j\big] & \text{if } z = 0 = c_m,     \\
-      \big[\sum_{j = b_i - p_k + 1}^{b_i}\lambda_j, \sum_{j = a_i}^{a_i + p_k} \lambda_j\big]                                                                 & \text{if } z = c_i \neq 0,  \\
-      \big[-\sum_{j = a_i}^{a_i + p_k} \lambda_j, -\sum_{j = b_i - p_k + 1}^{b_i}\lambda_j\big]                                                               & \text{if } z = -c_i \neq 0, \\
-      \sign(z)\sum_{j \in C(z)} \lambda_{(j)^-_z}                                                                                                                 & \text{otherwise.}           \\
+      \big[\sum_{j = b_i - p_k + 1}^{b_i}\lambda_j, \sum_{j = a_i}^{a_i + p_k} \lambda_j\big]                     & \text{if } z = c_i \neq 0,  \\
+      \big[-\sum_{j = a_i}^{a_i + p_k} \lambda_j, -\sum_{j = b_i - p_k + 1}^{b_i}\lambda_j\big]                   & \text{if } z = -c_i \neq 0, \\
+      \sign(z)\sum_{j \in C(z)} \lambda_{(j)^-_z}                                                                 & \text{otherwise.}           \\
     \end{cases}
   \]
 \end{theorem}
@@ -329,9 +329,9 @@ Using \cref{thm:sl1-directional-derivative}, we define the subgradient for
   Starting with the case \(z = 0 \neq c_m\), we have
   \[
     \begin{aligned}
-                    & |\delta| \smashoperator{\sum_{j \in C(\varepsilon\delta)}} \lambda_{(j)^-_{\varepsilon\delta}} \geq \delta g & \implies                                                                                                             \\
-                    & \sign(\delta) \smashoperator{\sum_{j \in C(\varepsilon\delta)}} \lambda_{(j)^-_{\varepsilon\delta}} \geq g                                & \implies \\
-                    & -\smashoperator{\sum_{j = p - p_k + 1}^p} \lambda_j \leq g \leq \smashoperator{\sum_{j=p - p_k + 1}^p} \lambda_j
+       & |\delta| \smashoperator{\sum_{j \in C(\varepsilon\delta)}} \lambda_{(j)^-_{\varepsilon\delta}} \geq \delta g     & \implies \\
+       & \sign(\delta) \smashoperator{\sum_{j \in C(\varepsilon\delta)}} \lambda_{(j)^-_{\varepsilon\delta}} \geq g       & \implies \\
+       & -\smashoperator{\sum_{j = p - p_k + 1}^p} \lambda_j \leq g \leq \smashoperator{\sum_{j=p - p_k + 1}^p} \lambda_j
     \end{aligned}
   \]
   since \(C(\varepsilon\delta) = C(0)\) in this case.
@@ -392,24 +392,77 @@ The objective and subgradient for the cluster-wise problem are shown in
   \label{fig:cluster-grad-obj}
 \end{figure}
 
-Let \(\mathcal{B}\) be a cluster initialized to \(\mathcal{C}_k\), with
-corresponding coefficient \(c_k\).
-Then the coordinate update for \(\beta_\mathcal{B}\) is\jl{This obviously
-  does not work when \(s=0\). Can we just set \(s = 1\) here? It's just
-  the relative signs that really matter, right?}\jw{That is a really good point. Do you think we can tie to the sign of the gradient instead?. We also will not move the zero cluster this way suspect. But it should work for any formation then sign of the gradient is the way I think?}
-\jl{Yes, I think you're right, in fact that's what I have in the code now.}
-\[
-  \beta_\mathcal{B} \gets
-  s_\mathcal{B}
-  T \left(
-  \frac{\tilde r^T \tilde x}{\tilde x^T \tilde x},
-  \frac{\lambda}{\tilde x^T \tilde x},
-  k,
-  \tilde \beta,
-  \mathcal{C}
-  \right)
-\]
-where
+We are now ready to introduce a solution to~\eqref{eq:cluster-problem}, using
+the SLOPE thresholding operator~\cref{thm:slope-thresholding}.
+
+\begin{theorem}
+  \label{thm:slope-thresholding}
+  Let
+  \begin{multline*}
+    T_k(\gamma, \omega; c, \lambda) = \\
+    \begin{cases}
+        0                                                                      &
+        \splitfrac{
+          \text{if } \big(-\sum_{j = p - p_k + 1}^p \lambda_j < \gamma \leq \sum_{j = p - p_k + 1}^p \lambda_j
+          \text{ and } c_m \neq 0\big)
+        }{%
+          \text{ or } \big(  -\sum_{j = p - p_k - p_m + 1}^{p - p_m} \lambda_j < \gamma \leq \sum_{j = p - p_k + 1}^{p_m} \lambda_j \text{ and } c_m = 0\big),
+        }                                                                                                                                                                                                              \\
+        c_i                                                                    & \text{if } \exists\, i \neq k: \sum_{j = b_i - p_k + 1}^{b_i} \lambda_j \leq \gamma - \omega c_i \leq \sum_{j = a_i}^{p_k} \lambda_j,    \\
+        -c_i                                                                   & \text{if } \exists\, i \neq k : \sum_{j = b_i - p_k + 1}^{b_i} \lambda_j \leq - \gamma - \omega c_i \leq \sum_{j = a_i}^{p_k} \lambda_j, \\
+        \frac{1}{\omega}\left(\gamma - \sum_{j \in C(z)} \lambda_{(j)^-_z}\right) & \text{otherwise.}                                                                                                                     \\
+      \end{cases}
+  \end{multline*}
+  A minimizer for \eqref{eq:cluster-problem} is given by \(T_k(\tilde{r}^T\tilde{x}, \tilde{x}^T\tilde{x}; c, \lambda)\).
+\end{theorem}
+\begin{proof}
+  Let \(\gamma = \tilde{r}^T\tilde{x}\) and \(\omega = \tilde{x}^T\tilde{x}\).
+  For a minimizer to~\eqref{eq:cluster-problem}, the optimality condition is
+  \[
+    0 \in \tilde{x}^T\tilde{x} z - \tilde{r}^T \tilde{x} + \partial J_k(z).
+  \]
+  \(z = c_i \neq 0\) is a minimizer of~\eqref{eq:cluster-problem} if and only if
+  \[
+    0 \in \omega c_i - \gamma +
+      \left[\sum_{j = b_i - p_k + 1}^{b_i} \lambda_j, \sum_{j=a_i}^{p_k}\lambda_j \right],
+  \]
+  which is equivalent to
+  \[
+    \smashoperator[r]{\sum_{j = b_i - p_k + 1}^{b_i}} \lambda_j \leq \gamma - \omega c_i \leq \sum_{j = a_i}^{p_k} \lambda_j.
+  \]
+  \(z = -c_i \neq 0\) is a minimizer of~\eqref{eq:cluster-problem} if and only if
+  \[
+    0 \in -\omega c_i - \gamma +
+  \left[-\sum_{j=a_i}^{p_k}\lambda_j, -\smashoperator{\sum_{j = b_i - p_k + 1}^{b_i}} \lambda_j\,\right],
+  \]
+  which is equivalent to
+  \[
+    \smashoperator[r]{\sum_{j = b_i - p_k + 1}^{b_i}} \lambda_j \leq -\gamma - \omega c_i \leq \sum_{j = a_i}^{p_k} \lambda_j.
+  \]
+  If \(c_m \neq 0\), then \(z = 0\) is a minimizer if
+  \[
+    0 \in -\gamma +
+      \left[-\sum_{j = p - p_k + 1}^{p} \lambda_j, \sum_{j=p - p_k + 1}^{p}\lambda_j \right],
+  \]
+  which is equivalent to
+  \[
+    -\sum_{j = p - p_k + 1}^{p} \lambda_j \leq \gamma \leq \sum_{j = p - p_k + 1}^{p} \lambda_j.
+  \]
+  Finally, if \(c_m = 0\), then \(z = 0\) is a minimizer if
+  \[
+    0 \in -\gamma +
+      \left[
+        -\sum_{j = p - p_k - p_m + 1}^{p - p_m} \lambda_j,
+      \sum_{j=p - p_k - p_m + 1}^{p - p_m}\lambda_j
+      \right],
+  \]
+  which is equivalent to
+  \[
+    -\sum_{j = p - p_k + 1}^{p} \lambda_j \leq \gamma \leq \sum_{j = p - p_k + 1}^{p} \lambda_j.
+  \]
+
+
+\end{proof}
 
 \begin{equation}
   \label{eq:slope-thresholding}

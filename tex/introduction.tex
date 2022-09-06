@@ -13,16 +13,14 @@ where we take \(L\) to be smooth and twice differentiable and
 \mm{to discuss: $L(X\beta)$ doable? + some computation are sepcific to  the quadratic case}
 \begin{equation}
   \label{eq:sorted-l1-norm}
-  J(\beta) = \sum_{j=1}^p \lambda_j|\beta_{(j; \beta)}|
+  J(\beta) = \sum_{j=1}^p \lambda_j|\beta_{(j)}|
 \end{equation}
 is the \emph{sorted \(\ell_1\) norm}, defined such that
 \[
-  |\beta_{(1; \beta)}| \geq |\beta_{(2; \beta)}| \geq \cdots \geq |\beta_{(p; \beta)}|,
+  |\beta_{(1)}| \geq |\beta_{(2)}| \geq \cdots \geq |\beta_{(p)}|,
 \]
 and \(\lambda\) is a fixed non-increasing and non-negative
-sequence.\footnote{In most works on SLOPE, the permutation operator is written
-as \((i)\). But for reasons that will eventually become clear, we instead write
-\((i; \beta)\) to make the dependence on \(\beta\) explicit.}
+sequence.
 
 SLOPE is a sparse regression \mm{can be used for classif too. For me slope is the penalty, and so the 1st sentence could be rewritten too} method that has become increasingly popular due to
 several appealing properties, such as its ability to control false discovery

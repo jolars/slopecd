@@ -36,13 +36,14 @@ Letting \(\beta\) correspond to a fixed vector, note that
 correspond to the indices of the \(i\)th cluster for \(\beta\), that is,
 \(|\beta_j| = c_i\) for all \(j \in \tilde{\mathcal{C}}_i\).
 Next, we let
-\begin{equation*}
+\begin{equation}
+  \label{eq:coordinate-update-beta}
   \beta_i(z) =
   \begin{cases}
     s_k z   & \text{if } i \in \mathcal{C}_k, \\
     \beta_i & \text{otherwise.}
   \end{cases}
-\end{equation*}
+\end{equation}
 This means that \(\beta(x)\) corresponds to a version of \(\beta\) with a
 coordinate update for the \(k\)th cluster.
 
@@ -274,22 +275,25 @@ We are now ready to define the directional derivative of \(J_k\)~(\cref{thm:sl1-
   \end{equation*}
 \end{proof}
 
-Using \cref{thm:sl1-directional-derivative}, we now define the subgradient for
+Using \cref{thm:sl1-directional-derivative}, we define the subgradient for
 \(J_k\), \(\partial J_k\) in \cref{thm:cluster-subdifferential}.
 
 \begin{theorem}\label{thm:cluster-subdifferential}
-  Let \(a(i)\) and \(b(i)\) point to the first and last indices, respectively,
-  for the \(\lambda\) sequence associated with the \(i\)th cluster
-  \(\mathcal{C}_i\) corresponding to the vector \(B(z)\). Let \(p_k\) be the
-  size of \(k\)th cluster and \(c_i\) the coefficients of the \(i\)th cluster
-  for a fixed \(\beta\). The subdifferential for \(J_k(z)\) at \(z\) is then
+  Let \(\beta\) be a fixed vector and \(p_i\) and \(c_i\) be the size and
+  coefficient, respectively, of the \(i\)th cluster in \(\beta\).
+  Next, let \(\beta(z)\) be defined as in \eqref{eq:coordinate-update-beta}
+  and \(a\) and \(b\) be vectors of indexes, such that
+  \(a_i\) and \(b_i\) are the first and last indexes, respectively,
+  of the \(\lambda\) sequence associated with the \(i\)th cluster
+  in \(B(z)\). The subdifferential for \(J_k(z)\) at \(z\) is
+  then
   \[
     \partial_{z} J_k(z) =
     \begin{cases}
-      \big[-\sum_{j = p - p_k + 1}^{p}\lambda_j, \sum_{j = p - p_k + 1}^{p}\lambda_j\big]                                                                         & \text{if } z = 0 \neq c_m,  \\
-      \big[-\sum_{j = p - |\mathcal{C}_m| + 1}^{p - |\mathcal{C}_m| + p_k}\lambda_j, \sum_{j = p - |\mathcal{C}_m| + 1}^{p - |\mathcal{C}_m| + p_k}\lambda_j\big] & \text{if } z = 0 = c_m,     \\
-      \big[\sum_{j = b(i) - p_k + 1}^{b(i)}\lambda_j, \sum_{j = a(i)}^{a(i) + p_k} \lambda_j\big]                                         & \text{if } z = c_i \neq 0,  \\
-      \big[-\sum_{j = a(i)}^{a(i) + p_k} \lambda_j, -\sum_{j = b(i) - p_k + 1}^{b(i)}\lambda_j\big]                                       & \text{if } z = -c_i \neq 0, \\
+      \big[-\sum_{j = p - p_k + 1}^{p}\lambda_j, \sum_{j = p - p_k + 1}^{p}\lambda_j\big]                                                                         & \text{if } z = c_m \neq 0,  \\
+      \big[-\sum_{j = p - p_m + 1}^{p - p_m + p_k}\lambda_j, \sum_{j = p - p_m + 1}^{p - p_m + p_k}\lambda_j\big] & \text{if } z = c_m = 0,     \\
+      \big[\sum_{j = b_i - p_k + 1}^{b_i}\lambda_j, \sum_{j = a_i}^{a_i + p_k} \lambda_j\big]                                                                 & \text{if } z = c_i \neq 0,  \\
+      \big[-\sum_{j = a_i}^{a_i + p_k} \lambda_j, -\sum_{j = b_i - p_k + 1}^{b_i}\lambda_j\big]                                                               & \text{if } z = -c_i \neq 0, \\
       \sign(z)\sum_{j \in C(z)} \lambda_{(j)^-_z}                                                                                                                 & \text{otherwise.}           \\
     \end{cases}
   \]
@@ -297,8 +301,59 @@ Using \cref{thm:sl1-directional-derivative}, we now define the subgradient for
 \begin{proof}
   Since \(J_k(z)\) is convex, \(g \in \mathbb{R}\) is a
   subgradient at \(z\) if and only if~\cite[Theorem 23.2]{rockafellar1970}
-  \[
+  \begin{equation}
+    \label{eq:subgrad-ineq}
     J'(x; \delta) \geq g\delta \qquad \forall\,\delta \in \{-1, 1\}.
+  \end{equation}
+  Starting with the case \(z = c_m \neq 0\), we have
+  \[
+    \begin{aligned}
+                    & |\delta| \smashoperator{\sum_{j \in C(\varepsilon\delta)}} \lambda_{(j)^-_{\varepsilon\delta}} \geq \delta g & \implies                                                                                                             \\
+                    & \sign(\delta) \smashoperator{\sum_{j \in C(\varepsilon\delta)}} \lambda_{(j)^-_{\varepsilon\delta}} \geq g                                & \implies \\
+                    & -\smashoperator{\sum_{j = p - p_k + 1}^p} \lambda_j \leq g \leq \smashoperator{\sum_{j=p - p_k + 1}^p} \lambda_j
+    \end{aligned}
+  \]
+  since \(C(\varepsilon\delta) = C(0)\) in this case.
+  
+  In the case \(z = c_m = 0\), the cluster \(C(\varepsilon\delta)\) will occupy the
+  next-to-last spot in the order permutation, and hence
+  \[
+    -\smashoperator{\sum_{j = p - p_k - p_m + 1}^{p - p_m}} \lambda_j
+    \quad \leq g \leq \quad
+    \smashoperator{\sum_{j=p - p_k - p_m + 1}^{p - p_m}} \lambda_j.
+  \]
+
+  In the case \(z = c_i\),~\eqref{eq:subgrad-ineq} corresponds to 
+  \begin{equation}
+    \label{eq:subgrad-ineq-nonzero}
+    \sign(z)\delta \smashoperator{\sum_{j \in C(z + \varepsilon\delta)}} \lambda_{(j)^-_{z + \varepsilon\delta}} \geq \delta g.
+  \end{equation}
+  For \(z > 0\), \(\delta = 1\), \(C(z + \varepsilon\delta)\) will occupy the position
+  in the order permutation of \(B(z + \varepsilon\delta)\) that precedes the \(i\)th
+  cluster, and hence
+  \begin{equation*}
+    \sign(z)\delta \smashoperator{\sum_{j \in C(z + \varepsilon\delta)}} \lambda_{(j)^-_{z + \varepsilon\delta}} \geq \delta g
+    \implies
+    \smashoperator{\sum_{j \in C(z + \varepsilon\delta)}} \lambda_{(j)^-_{z + \varepsilon\delta}} \geq g \implies
+    \smashoperator{\sum_{j = a_i}^{a_i + p_k}} \lambda_j \geq g.
+  \end{equation*}
+  If \(\delta = -1\), then \(C(z + \varepsilon\delta)\) instead occupies the
+  position succeeding the \(i\)th cluster, and we have
+  \begin{equation*}
+    \sign(z)\delta \smashoperator{\sum_{j \in C(z + \varepsilon\delta)}} \lambda_{(j)^-_{z + \varepsilon\delta}} \geq \delta g
+    \implies
+    -\smashoperator{\sum_{j \in C(z + \varepsilon\delta)}} \lambda_{(j)^-_{z + \varepsilon\delta}} \geq -g \implies
+    \smashoperator{\sum_{j = b_i - p_k + 1}^{b_i}} \lambda_j \leq g.
+  \end{equation*}
+  It is easy to see that for \(z_i = c_i < 0\), we must analogously have
+  \[
+    -\smashoperator{\sum_{j = b_i - p_k + 1}^{b_i}} \lambda_j
+    \leq g \leq
+    \smashoperator{\sum_{j = a_i}^{a_i + p_k}} \lambda_j.
+  \]
+  For all other \(z\), \(J_k\) is differentiable and therefore
+  \[
+    \partial J_k(z) = \sign(z) \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_z}.
   \]
 \end{proof}
 

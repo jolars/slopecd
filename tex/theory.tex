@@ -291,8 +291,8 @@ Using \cref{thm:sl1-directional-derivative}, we define the subgradient for
   \[
     \partial_{z} J_k(z) =
     \begin{cases}
-      \big[-\sum_{j = p - p_k + 1}^{p}\lambda_j, \sum_{j = p - p_k + 1}^{p}\lambda_j\big]                                                                         & \text{if } z = c_m \neq 0,  \\
-      \big[-\sum_{j = p - p_m + 1}^{p - p_m + p_k}\lambda_j, \sum_{j = p - p_m + 1}^{p - p_m + p_k}\lambda_j\big] & \text{if } z = c_m = 0,     \\
+      \big[-\sum_{j = p - p_k + 1}^{p}\lambda_j, \sum_{j = p - p_k + 1}^{p}\lambda_j\big]                                                                         & \text{if } z = 0 \neq c_m,  \\
+      \big[-\sum_{j = p - p_m + 1}^{p - p_m + p_k}\lambda_j, \sum_{j = p - p_m + 1}^{p - p_m + p_k}\lambda_j\big] & \text{if } z = 0 = c_m,     \\
       \big[\sum_{j = b_i - p_k + 1}^{b_i}\lambda_j, \sum_{j = a_i}^{a_i + p_k} \lambda_j\big]                                                                 & \text{if } z = c_i \neq 0,  \\
       \big[-\sum_{j = a_i}^{a_i + p_k} \lambda_j, -\sum_{j = b_i - p_k + 1}^{b_i}\lambda_j\big]                                                               & \text{if } z = -c_i \neq 0, \\
       \sign(z)\sum_{j \in C(z)} \lambda_{(j)^-_z}                                                                                                                 & \text{otherwise.}           \\
@@ -306,7 +306,7 @@ Using \cref{thm:sl1-directional-derivative}, we define the subgradient for
     \label{eq:subgrad-ineq}
     J'(x; \delta) \geq g\delta \qquad \forall\,\delta \in \{-1, 1\}.
   \end{equation}
-  Starting with the case \(z = c_m \neq 0\), we have
+  Starting with the case \(z = 0 \neq c_m\), we have
   \[
     \begin{aligned}
                     & |\delta| \smashoperator{\sum_{j \in C(\varepsilon\delta)}} \lambda_{(j)^-_{\varepsilon\delta}} \geq \delta g & \implies                                                                                                             \\
@@ -316,7 +316,7 @@ Using \cref{thm:sl1-directional-derivative}, we define the subgradient for
   \]
   since \(C(\varepsilon\delta) = C(0)\) in this case.
   
-  In the case \(z = c_m = 0\), the cluster \(C(\varepsilon\delta)\) will occupy the
+  In the case \(z = 0 = c_m\), the cluster \(C(\varepsilon\delta)\) will occupy the
   next-to-last spot in the order permutation, and hence
   \[
     -\smashoperator{\sum_{j = p - p_k - p_m + 1}^{p - p_m}} \lambda_j

@@ -82,24 +82,25 @@ we introduce a key fact in \cref{def:limit-permutation}.
 
 \begin{definition}
   \label{def:limit-permutation}
-  There exists an \(\varepsilon > 0\) such that
-  \begin{equation}
-    c_{i - 1} > c_i \pm h \delta > c_{i + 1} \geq 0 \qquad \forall\, h < \varepsilon, i,
-  \end{equation}
+  Define \(\varepsilon > 0\) such that
+  \begin{equation*}
+    \big| c_i - c_j\big| < \varepsilon \quad \forall\, i \neq j.
+  \end{equation*}
 \end{definition}
 
-Note that for an \(\varepsilon\) defined as in \cref{def:limit-permutation}, we have
+For an \(\varepsilon\) defined as in \cref{def:limit-permutation}, we have
 \begin{equation}
   \lim_{h \downarrow 0} C(z + h\delta) = C(z + \varepsilon \delta)
   \quad\text{and}\quad
   \lim_{h \downarrow 0} \lambda_{(i)^-_{z + h\delta}}
   = \lambda_{(i)^-_{z + \varepsilon\delta}}.
 \end{equation}
+for \(\delta \in \{-1, 1\}\).
 In other words, the order permutation corresponding to \(B(z + h\delta)\) depends only on
 \(\delta\) in the limit as \(h\) tends to~\(0\).
 
 \begin{remark}
-  A consequence of \cref{def:limit-permutation} is that the order
+  As consequence of \cref{def:limit-permutation}, the order
   permutations for \(B(z)\) and \(B(z + \varepsilon \delta)\) differ only for a subset of
   the permutation vectors. For \(z = 0\)
   these permutations correspond to

@@ -45,6 +45,18 @@
 
 \usepackage[noabbrev,nameinlink]{cleveref}
 
+%%%% problem environment
+\usepackage{aliascnt}
+\newaliascnt{problem}{equation}
+\aliascntresetthe{problem}
+\creflabelformat{problem}{#2\textup{(#1)}#3}
+\makeatletter
+\def\problem{$$\refstepcounter{problem}}
+\def\endproblem{\eqno \hbox{\@eqnnum}$$\@ignoretrue}
+\makeatother
+\Crefname{problem}{Problem}{Problems}
+%%%%%%%%%%%%%%%%%
+
 \usepackage{hyperref}
 \hypersetup{
   colorlinks = true,

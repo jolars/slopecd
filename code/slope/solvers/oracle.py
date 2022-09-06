@@ -25,7 +25,7 @@ def pure_cd_epoch_sparse(
 ):
     n_samples = len(R)
     for j in range(len(cluster_ptr) - 1):
-        cluster = cluster_indices[cluster_ptr[j] : cluster_ptr[j + 1]]
+        cluster = cluster_indices[cluster_ptr[j]: cluster_ptr[j + 1]]
         w_old = w[j]
 
         grad, L_j, X_sum_vals, X_sum_inds = compute_grad_hess_sumX(
@@ -33,7 +33,7 @@ def pure_cd_epoch_sparse(
         )
 
         x = w_old - grad / (L_j * n_samples)
-        w[j] = ST(x, alphas[cluster_ptr[j] : cluster_ptr[j + 1]].sum() / L_j)
+        w[j] = ST(x, alphas[cluster_ptr[j]: cluster_ptr[j + 1]].sum() / L_j)
 
         diff = w_old - w[j]
         for i, ind in enumerate(X_sum_inds):
@@ -70,8 +70,8 @@ def oracle_cd(
     # create collapsed design. Beware, we ignore the last cluster, but only
     # if it is 0 valued
     if w_star[clusters[-1]] == 0:
-        clusters = clusters[0 : cluster_ptr[-2]]
-        cluster_ptr = cluster_ptr[0:-1]
+        clusters = clusters[:cluster_ptr[-2]]
+        cluster_ptr = cluster_ptr[:-1]
         n_clusters -= 1
 
     X_reduced = np.zeros([n_samples, n_clusters])
@@ -79,9 +79,9 @@ def oracle_cd(
 
     if not is_X_sparse:
         for j in range(n_clusters):
-            cluster = clusters[cluster_ptr[j] : cluster_ptr[j + 1]]
+            cluster = clusters[cluster_ptr[j]: cluster_ptr[j + 1]]
             X_reduced[:, j] = (X[:, cluster] * np.sign(w_star[cluster])).sum(axis=1)
-            alphas_reduced[j] = alphas[cluster_ptr[j] : cluster_ptr[j + 1]].sum()
+            alphas_reduced[j] = alphas[cluster_ptr[j]: cluster_ptr[j + 1]].sum()
     # run CD on it:
     w = np.zeros(n_features)
     w_reduced = np.zeros(n_clusters)
@@ -109,7 +109,7 @@ def oracle_cd(
         else:
             pure_cd_epoch(w_reduced, X_reduced, R, alphas_reduced, lc)
         for j in range(n_clusters):
-            cluster = clusters[cluster_ptr[j] : cluster_ptr[j + 1]]
+            cluster = clusters[cluster_ptr[j]: cluster_ptr[j + 1]]
             w[cluster] = w_reduced[j] * np.sign(w_star[cluster])
 
         if fit_intercept:

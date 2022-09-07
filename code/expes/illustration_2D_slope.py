@@ -10,13 +10,14 @@ from slope.clusters import get_clusters, update_cluster
 from slope.utils import ConvergenceMonitor
 
 dir_results = "../../figures/"
+savefig = False
 
 
-def abline(slope, intercept):
-    axes = plt.gca()
-    x_vals = np.array(axes.get_xlim())
-    y_vals = intercept + slope * x_vals
-    plt.plot(x_vals, y_vals, "--", color="grey")
+# def abline(slope, intercept):
+#     axes = plt.gca()
+#     x_vals = np.array(axes.get_xlim())
+#     y_vals = intercept + slope * x_vals
+#     plt.plot(x_vals, y_vals, "--", color="grey")
 
 
 def cd(X, y, alphas, max_iter, beta0):
@@ -31,22 +32,22 @@ def cd(X, y, alphas, max_iter, beta0):
         X, y, alphas, 1e-12, 1, np.inf, True, intercept_column=False
     )
 
-    c, cluster_ptr, cluster_ind, nb_cluster = get_clusters(beta)
+    c, c_ptr, c_ind, c_perm, n_clusters = get_clusters(beta)
 
     for it in range(max_iter):
         j = 0
-        while j < nb_cluster:
+        while j < n_clusters:
             beta1s.append(beta[0])
             beta2s.append(beta[1])
 
-            cluster = cluster_ind[cluster_ptr[j] : cluster_ptr[j + 1]]
+            cluster = c_ind[c_ptr[j]: c_ptr[j + 1]]
             sign_w = np.sign(beta[cluster]) if c[j] != 0 else np.ones(len(cluster))
             sum_X = X[:, cluster] @ sign_w
             L_j = sum_X.T @ sum_X / n_samples
             c_old = abs(c[j])
             x = c_old + (sum_X.T @ R) / (L_j * n_samples)
             beta_tilde, ind_new = slope_threshold(
-                x, alphas / L_j, cluster_ptr, c, nb_cluster, j)
+                x, alphas / L_j, c_ptr, c_perm, c, n_clusters, j)
 
             beta[cluster] = beta_tilde * sign_w
             if c_old != beta_tilde:
@@ -54,8 +55,8 @@ def cd(X, y, alphas, max_iter, beta0):
 
             ind_old = j
             _ = update_cluster(
-                c, cluster_ptr, cluster_ind, nb_cluster, abs(beta_tilde),
-                ind_old, ind_new
+                c, c_ptr, c_ind, c_perm, n_clusters, abs(beta_tilde), c_old,
+                ind_old, ind_new, beta, X, np.zeros([X.shape[0], 2]), np.zeros(1), use_reduced_X=False,
             )
 
             j += 1
@@ -81,7 +82,7 @@ def hybrid_cd(X, y, alphas, max_iter, beta0):
         X, y, alphas, 1e-12, 1, np.inf, True, intercept_column=False
     )
 
-    c, cluster_ptr, cluster_ind, nb_cluster = get_clusters(beta)
+    c, c_ptr, c_ind, c_perm, n_clusters = get_clusters(beta)
 
     for it in range(max_iter):
         if it % 5 == 0:
@@ -92,20 +93,20 @@ def hybrid_cd(X, y, alphas, max_iter, beta0):
         else:
             j = 0
 
-            while j < nb_cluster:
+            while j < n_clusters:
                 beta1s.append(beta[0])
                 beta2s.append(beta[1])
 
-                c, cluster_ptr, cluster_ind, nb_cluster = get_clusters(beta)
+                c, c_ptr, c_ind, c_perm, n_clusters = get_clusters(beta)
 
-                cluster = cluster_ind[cluster_ptr[j] : cluster_ptr[j + 1]]
+                cluster = c_ind[c_ptr[j]: c_ptr[j + 1]]
                 sign_w = np.sign(beta[cluster]) if c[j] != 0 else np.ones(len(cluster))
                 sum_X = X[:, cluster] @ sign_w
                 L_j = sum_X.T @ sum_X / n_samples
                 c_old = abs(c[j])
                 x = c_old + (sum_X.T @ R) / (L_j * n_samples)
                 beta_tilde, ind_new = slope_threshold(
-                    x, alphas / L_j, cluster_ptr, c, nb_cluster, j)
+                    x, alphas / L_j, c_ptr, c_perm, c, n_clusters, j)
 
                 beta[cluster] = beta_tilde * sign_w
                 if c_old != beta_tilde:
@@ -113,8 +114,10 @@ def hybrid_cd(X, y, alphas, max_iter, beta0):
 
                 ind_old = j
                 _ = update_cluster(
-                    c, cluster_ptr, cluster_ind, nb_cluster,
-                    abs(beta_tilde), ind_old, ind_new
+                    c, c_ptr, c_ind, c_perm, n_clusters,
+                    abs(beta_tilde), c_old, ind_old, ind_new, beta,
+                    X, np.zeros([X.shape[0], 2]), np.zeros(1),
+                    use_reduced_X=False,
                 )
 
                 j += 1
@@ -164,9 +167,7 @@ q = 0.1
 reg = 0.01
 
 alphas_seq = randnorm.ppf(1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1]))
-
 alpha_max = dual_norm_slope(X, y / len(y), alphas_seq)
-
 alphas = alpha_max * alphas_seq * reg
 
 beta0 = np.array([-0.8, 0.8])
@@ -192,30 +193,36 @@ for i in range(40):
         primal = 0.5 * norm(r) ** 2 + np.sum(alphas *
                                              np.sort(np.abs(betax))[::-1])
         dual = 0.5 * (norm(y) ** 2 - norm(y - theta) ** 2)
-        gap = primal - dual
+        gap = primal  # - dual
         z[j][i] = gap
 
 
 labels = ['cd', 'hybrid', 'pgd']
 
-fig, ax = plt.subplots(1, 3, sharex=False, sharey=True, figsize=[10.67, 2.5],)
+plt.close('all')
+fig, axarr = plt.subplots(
+    1, 3, sharey=True, figsize=[7, 2.5], constrained_layout=True)
 for i in range(3):
-    ax[i].contour(beta1, beta2, z, levels=40)
-    x_vals = np.array(ax[i].get_xlim())
+    ax = axarr[i]
+    ax.contour(beta1, beta2, z, levels=30)
+    x_vals = np.array(ax.get_xlim())
     y_vals = - x_vals
-    ax[i].plot(x_vals, y_vals, "--", color="grey")
-    x_vals = np.array(ax[i].get_xlim())
+    ax.plot(x_vals, y_vals, "--", color="grey")
+    x_vals = np.array(ax.get_xlim())
     y_vals = x_vals
-    ax[i].plot(x_vals, y_vals, "--", color="grey")
-    ax[i].set_title(labels[i])
-    ax[i].plot(beta_star[0], beta_star[1], color="red", marker="x", markersize=16)
-    ax[i].plot(
+    ax.plot(x_vals, y_vals, "--", color="grey")
+    ax.set_title(labels[i])
+    ax.plot(beta_star[0], beta_star[1], color="red", marker="x", markersize=16)
+    ax.plot(
         betas[i][0], betas[i][1], marker="o",
         color="blue", label=labels[i], markersize=4)
-fig.savefig(dir_results + 'illustration_solvers.pdf')
-fig.show()
+    ax.set_aspect("equal")
+    ax.set_xlabel(r"$\beta_1$")
+    if i == 0:
+        ax.set_ylabel(r"$\beta_2$")
 
-# plt.clf()
-# plt.hlines(0, xmin=0, xmax=maxit, color="lightgrey")
-# plt.plot(np.arange(maxit), gaps)
-# plt.show(block=False)
+if savefig:
+    fig.savefig(dir_results + 'illustration_solvers.pdf')
+    fig.savefig(dir_results + 'illustration_solvers.svg')
+
+plt.show(block=False)

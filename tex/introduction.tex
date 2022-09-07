@@ -9,8 +9,9 @@ Estimation (SLOPE)~\cite{bogdan2013, bogdan2015}, defined as
     \min_{\beta \in \mathbb{R}^p}
         P(\beta) = L(\beta) + J(\beta)
 \end{problem}
+\mm{TODO change}
 where we take \(L\) to be smooth and twice differentiable and
-\mm{to discuss: $L(X\beta)$ doable? + some computation are sepcific to  the quadratic case}
+% \mm{to discuss: $L(X\beta)$ doable? + some computation are sepcific to  the quadratic case}
 \begin{equation}
   \label{eq:sorted-l1-norm}
   J(\beta) = \sum_{j=1}^p \lambda_j|\beta_{(j)}|
@@ -22,7 +23,7 @@ is the \emph{sorted \(\ell_1\) norm}, defined such that
 and \(\lambda\) is a fixed non-increasing and non-negative
 sequence.
 
-SLOPE is a sparse regression \mm{can be used for classif too. For me slope is the penalty, and so the 1st sentence could be rewritten too} method that has become increasingly popular due to
+The sorted $\ell_1$ norm is a sparsity-enforcing penalty  that has become increasingly popular due to
 several appealing properties, such as its ability to control false discovery
 rate~\cite{bogdan2015, kos2020}, cluster coefficients~\cite{figueiredo2016,
 schneider2020a}, and recover sparsity and ordering patterns in the
@@ -38,28 +39,24 @@ those of other, more established, penalization methods such as the lasso
 regularization). As a small illustration of this issue, we compared the
 speed at which the SLOPE and glmnet packages fit a complete regularization
 path for the bcTCGA data set. SLOPE takes x seconds to fit the full path,
-whilst glmnet requires only y seconds. \mm{Maybe this is too much detail for an introduction: if we want to be rigorous, we need to specify the path, the stopping criterion (it's hard to match what glmnet does exactly from my experience). I would be OK with just saying: solving SLOPE is not as fast as Lasso for now}
+whilst glmnet requires only y seconds. \mm{put result here and details in experiment section}
 
 
-\mathurin{Suggestion: replace up to `` current version of the SLOPE package.'' by: \\
+
+
 This lackluster performance has hampered the applicability of SLOPE to many
-real-world applications.
-The main reason for SLOPE being slower to solve than the Lasso, MCP or SCAD is that its non-separability prevents it from being amenable to proximal coordinate descent.
-Current solvers must resort to FISTA \cite{beck2009}, that in ML scenario is much slower than coordinate descent \cite{moreau2022benchopt}.
-}
-This lackluster performance has hampered the applicability of SLOPE to many
-real-world applications, \mm{I would comment out the rest of the sentence: in the intro it's quite understandable that if an estimator is slow to compute people will not use it too much} particularly because users often need to solve SLOPE
-repeatedly when tuning hyper-parameters, for instance in
-cross-validation, or when fitting SLOPE as part of Adaptive Bayesian
-SLOPE~\cite{jiang2022}.
+real-world applications. % particularly because users often need to solve SLOPE
+%repeatedly when tuning hyper-parameters, for instance in
+%cross-validation, or when fitting SLOPE as part of Adaptive Bayesian
+% SLOPE~\cite{jiang2022}.
 
-A major reason for why algorithms for solving other regression models with
-non-differentiable penalties, such as the lasso, MCP, and SCAD, enjoy better
+A major reason for why algorithms for solving $\ell_1$-, MCP-, or SCAD-regularized problems enjoy better
 performance is that they minimize their objectives using coordinate
-descent~\cite{breheny2011, friedman2010} rather than proximal gradient descent
+descent~\cite{breheny2011, friedman2010}.
+On the other hand, current SLOPE solvers rely on proximal gradient descent
 algorithms such as FISTA~\cite{beck2009} and the
-alternating direction method of multipliers method (ADMM)~\cite{boyd2010},
-which are both used in the current version of the SLOPE package.
+alternating direction method of multipliers method (ADMM)~\cite{boyd2010}, that in ML scenario is much slower than coordinate descent \cite{moreau2022benchopt}.
+% which are both used in the current version of the SLOPE package.
 % \jl{Add benchopt reference.}
 % \mm{For which point exactly? I did not find a ref for your SLOPE R package, what's the good way to cite it? There also is PyOWL https://github.com/vene/pyowl}
 \
@@ -80,6 +77,6 @@ required to fit SLOPE by orders of magnitude in our empirical experiments.
 \begin{figure}[htbp]
   \centering
   \includegraphics[scale=0.62]{illustration_solvers.pdf}
-  \caption{Illustration of proposed solver. \mathurin{to discuss with JL}}
+  \caption{Illustration of proposed solver. \mathurin{0) run it on the full problem 1) add $\beta_1$ xlabel, $\beta_2$ ylabel 2) set aspect ratio to 1; 3) add pure CD on the left }}
   \label{fig:illustration-solver}
 \end{figure}

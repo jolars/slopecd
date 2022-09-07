@@ -153,24 +153,23 @@ def pgd(X, y, alphas, max_iter, beta0):
     return beta1s, beta2s
 
 
-np.random.seed(520)
+np.random.seed(0)
 n_samples = 20
-p = 2
 
-X = np.random.rand(n_samples, p)
-beta_true = np.array([0.15, -0.72])
+X = np.random.rand(n_samples, 2)
+beta_true = np.array([0.15, -0.15])
 
 y = X @ beta_true
 
 randnorm = stats.norm(loc=0, scale=1)
 q = 0.1
-reg = 0.01
+reg = 0.05
 
 alphas_seq = randnorm.ppf(1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1]))
 alpha_max = dual_norm_slope(X, y / len(y), alphas_seq)
 alphas = alpha_max * alphas_seq * reg
 
-beta0 = np.array([-0.8, 0.8])
+beta0 = np.array([-0.8, 0.8])  # try to make beta slope have 1 cluster
 
 beta1s_cd, beta2s_cd = cd(X, y, alphas, 20, beta0)
 beta1s_hybrid, beta2s_hybrid = hybrid_cd(X, y, alphas, 20, beta0)

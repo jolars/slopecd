@@ -74,6 +74,7 @@ where
   + \sum_{j \notin \mathcal{C}_k} |\beta_j| \lambda_{(j)^-_z}
 \]
 is the \emph{partial sorted \(\ell_1\) norm} with respect to the \(k\)th cluster and
+\mm{new notation; we could write $(j; \beta(z))$ or $(j; \beta + z d)$, $d$ being the direction}
 where we write \(\lambda_{(j)^-_z}\) to indicate that the permutation operator \((j)^-_z\)
 is defined through \(\beta(z)\).
 
@@ -88,7 +89,7 @@ Note that we have
 \]
 since \(\lVert \tilde{r} - \tilde{x}z\rVert_2^2\) is differentiable.
 
-Differentiating with respect to \(z\) yields
+\mathurin{One key aspect of such updates that for me deserves to be emphasized: the clusters will almost all remain the same: they can only change order, or two of them merge.}
 
 Throughout the rest of this section section we will derive a minimizer
 solution to \eqref{eq:cluster-problem}. To do so, we will introduce the
@@ -99,17 +100,18 @@ coefficient of the \(k\)th cluster. First, however, let
   C(z) = \{j : |\beta(z)_j| = z\}.
 \]
 Secondly, we introduce \cref{def:limit-permutation}.
-\begin{definition}
+\begin{definition} \mm{cosmetic: I'm not sure this is a definition}
   \label{def:limit-permutation}
   Let there be an \(\varepsilon > 0\) such that
   \begin{equation*}
     \big| c_i - c_j\big| > \varepsilon \quad \forall\, i \neq j
   \end{equation*}
   for a strictly decreasing sequence \(c_1, c_2, ..., c_m\).
+  \mm{should the inequality be in the other direction?}
 \end{definition}
 
 For an \(\varepsilon\) defined as in \cref{def:limit-permutation}, we have for
-\(\delta \in \{-1, 1\}\)
+\(\delta \in \{-1, 1\}\)\mathurin{This can be hard to parse: $C$ implicitely depends on a vector that determiens clsuters. We can emphasize that  In all this section $\beta$ is fixed and we update only in the direction given by the sign of one cluster. Clusters $C_i$ and $c_i$ are fixed.}
 \begin{equation}
   \lim_{h \downarrow 0} C(z + h\delta) = C(z + \varepsilon \delta)
   \quad\text{and}\quad
@@ -117,7 +119,7 @@ For an \(\varepsilon\) defined as in \cref{def:limit-permutation}, we have for
   = \lambda_{(i)^-_{z + \varepsilon\delta}}.
 \end{equation}
 In other words, the order permutation corresponding to \(B(z + h\delta)\)
-depends only on \(\delta\) in the limit as \(h\) tends to~\(0\).
+depends only on \(\delta\) in the limit as \(h\) tends to~\(0\). \mm{typo B for $\beta$?}
 
 \begin{remark}
   As consequence of \cref{def:limit-permutation}, the order

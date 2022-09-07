@@ -9,9 +9,9 @@
 Proximal coordinate descent cannot be applied to \Cref{pb:slope} because it is not separable.
 However, if the clusters $\mathcal{C}_1, \ldots, \mathcal{C}_m$ of the solution $\hat \beta$ were known together with its sign, then the values $c_1, \ldots, c_m$ taken by $\hat \beta$ on the clusters could be equivalently computed by solving :
 \begin{problem}
- \min_{x \in \bbR^m}
-      F \left(\sum_{i=1}^m \tilde{X}_i x_i \right)
-      + \sum_{i=1}^m (\sum_{\lambda \in \lambda^{\mathcal{C}_i}} \lambda) x_i \enspace,
+\min_{x \in \bbR^m}
+F \left(\sum_{i=1}^m \tilde{X}_i x_i \right)
++ \sum_{i=1}^m (\sum_{\lambda \in \lambda^{\mathcal{C}_i}} \lambda) x_i \enspace,
 \end{problem}
 where $\tilde{X}_{\mathcal{C}_i} = \sum_{j \in \mathcal{C}_i} X_j \sign (\hat \beta_j)$.
 Hence, the idea of our algorithm is to intertwine steps that identify the clusters, and large coordinatewise steps on these clusters.
@@ -66,42 +66,46 @@ one-dimensional problem:
 
 \begin{equation}
   \label{eq:cluster-problem}
-  \operatorname*{minimize}_{z \in \mathbb{R}} \left( \frac{1}{2} \lVert \tilde r - \tilde x z \rVert_2^2 + J_k(z)\right)
+  \operatorname*{minimize}_{z \in \mathbb{R}} \left(P_k(z) = \frac{1}{2} \lVert \tilde r - \tilde x z \rVert_2^2 + J_k(z)\right)
 \end{equation}
-with
+where
 \[
   J_k(z) = |z| \sum_{j \in \mathcal{C}_k} \lambda_{(j)^-_z}
-  + \sum_{j \notin \mathcal{C}_k} |\beta_j| \lambda_{(j)^-_z},
+  + \sum_{j \notin \mathcal{C}_k} |\beta_j| \lambda_{(j)^-_z}
 \]
+is the \emph{partial sorted \(\ell_1\) norm} with respect to the \(k\)th cluster and
 where we write \(\lambda_{(j)^-_z}\) to indicate that the permutation operator \((j)^-_z\)
 is defined through \(\beta(z)\).
 
-The optimality condition for this problem is \(0 \in \partial_z P(\beta).\)
+The optimality condition for this problem is
+\[
+  P_k'(z; \delta) \geq 0,
+\]
+where \(P'_k(z; \delta)\) is the directional derivative of \(P_k\).
+Note that we have
+\[
+  P_k'(z; \delta) = \delta\big(\tilde x^T \tilde x z - \tilde r^T \tilde x\big) + J'_k(z; \delta)
+\]
+since \(\lVert \tilde{r} - \tilde{x}z\rVert_2^2\) is differentiable.
+
 Differentiating with respect to \(z\) yields
-\begin{equation}
-  \label{eq:cluster-grad}
-  \partial_{z} P(\beta) = \tilde x^T \tilde x z - \tilde r^T \tilde x + \partial_{z} J_k(z)
-\end{equation}
-where the last term is the partial subdifferential of the sorted \(\ell_1\)
-norm with respect to coefficient of the \(k\)th cluster.
 
-\subsection{The SLOPE Thresholding Operator}
-
-In this section we derive the SLOPE thresholding operator and show that it is a
-minimizer of \eqref{eq:cluster-problem}. To do so, we will introduce the
+Throughout the rest of this section section we will derive a minimizer
+solution to \eqref{eq:cluster-problem}. To do so, we will introduce the
 directional derivative for the sorted \(\ell_1\) norm with respect to the
-coefficient of the \(k\)th cluster. First, however, let \(C(z)\) be a function
-that returns the cluster corresponding to \(z\), that is
+coefficient of the \(k\)th cluster. First, however, let
+\(C(z)\) be a function that returns the cluster corresponding to \(z\), that is
 \[
   C(z) = \{j : |\beta(z)_j| = z\}.
 \]
 Secondly, we introduce \cref{def:limit-permutation}.
 \begin{definition}
   \label{def:limit-permutation}
-  Define \(\varepsilon > 0\) such that
+  Let there be an \(\varepsilon > 0\) such that
   \begin{equation*}
-    \big| c_i - c_j\big| > \varepsilon \quad \forall\, i \neq j.
+    \big| c_i - c_j\big| > \varepsilon \quad \forall\, i \neq j
   \end{equation*}
+  for a strictly decreasing sequence \(c_1, c_2, ..., c_m\).
 \end{definition}
 
 For an \(\varepsilon\) defined as in \cref{def:limit-permutation}, we have for
@@ -118,8 +122,7 @@ depends only on \(\delta\) in the limit as \(h\) tends to~\(0\).
 \begin{remark}
   As consequence of \cref{def:limit-permutation}, the order
   permutations for \(B(z)\) and \(B(z + \varepsilon \delta)\) differ only for a subset of
-  the permutation vectors. For \(z = 0\)
-  these permutations correspond to
+  the permutation vectors. The permutation for \(B(h\delta)\) corresponds to
   \[
     \begin{cases}
       \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, \tilde{\mathcal{C}}_m, C(\varepsilon\delta)                                          & \text{if } c_m > 0 \text{ and } \delta \neq 0, \\
@@ -127,7 +130,7 @@ depends only on \(\delta\) in the limit as \(h\) tends to~\(0\).
       \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, \underbrace{\tilde{\mathcal{C}}_k \cup \tilde{\mathcal{C}}_m}_{C(\varepsilon\delta)} & \text{if } c_m = 0 \text{ and } \delta = 0.    \\
     \end{cases}
   \]
-  In the case when \(z = c_i \neq 0\), \(i \neq k\), the corresponding permutations are
+  The permutation for \(B(z + \varepsilon \delta)\), \(z \neq 0\) corresponds to
   \[
     \begin{cases}
       \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, C(c_i + \varepsilon\delta), \tilde{\mathcal{C}}_i, \dots, \tilde{\mathcal{C}}_m                                          & \text{if } \delta = 1,  \\
@@ -137,7 +140,7 @@ depends only on \(\delta\) in the limit as \(h\) tends to~\(0\).
   \]
 \end{remark}
 
-We are now ready to define the directional derivative of \(J_k\)~(\cref{thm:sl1-directional-derivative}).
+We are now ready to state the directional derivative of \(J_k\).
 
 \begin{theorem}\label{thm:sl1-directional-derivative}
   The directional derivative of \(J_k\) in the direction \(\delta\) is
@@ -188,12 +191,12 @@ We are now ready to define the directional derivative of \(J_k\)~(\cref{thm:sl1-
   as a result of the definition of
   \(\varepsilon\)~(\cref{def:limit-permutation}), the following identities:
   \begin{align*}
+    C(c_i + \varepsilon\delta)          & \subseteq C(c_i),                                                                                                             \\
     \tilde{\mathcal{C}}_i               & = \widebar{C(c_i + \varepsilon \delta)} \cap C(c_i),                                                                          \\
     C(c_i)                              & = \tilde{C}_i \cup \big(C(c_i + \varepsilon\delta) \cap C(c_i)\big) = \tilde{\mathcal{C}}_i \cup C(c_i + \varepsilon \delta), \\
     \widebar{C(z + \varepsilon \delta)} & = \widebar{C(c_i)} \cup \tilde{\mathcal{C}}_i.
   \end{align*}
-  Using this, it turns out that we can rewrite \eqref{eq:directional-derivative-sl1}
-  as
+  Using this, we can rewrite \eqref{eq:directional-derivative-sl1} as
   \begin{equation*}
     \label{eq:directional-derivative-simplified}
     J'_k(z; \delta)
@@ -397,17 +400,17 @@ the SLOPE thresholding operator~\cref{thm:slope-thresholding}.
   \begin{multline*}
     T_k(\gamma, \omega; c, \lambda) = \\
     \begin{cases}
-        0                                                                      &
-        \splitfrac{
-          \text{if } \big(-\sum_{j = p - p_k + 1}^p \lambda_j < \gamma \leq \sum_{j = p - p_k + 1}^p \lambda_j
-          \text{ and } c_m \neq 0\big)
-        }{%
-          \text{ or } \big(  -\sum_{j = p - p_k - p_m + 1}^{p - p_m} \lambda_j < \gamma \leq \sum_{j = p - p_k + 1}^{p_m} \lambda_j \text{ and } c_m = 0\big),
-        }                                                                                                                                                                                                              \\
-        c_i                                                                    & \text{if } \exists\, i \neq k: \sum_{j = b_i - p_k + 1}^{b_i} \lambda_j \leq \gamma - \omega c_i \leq \sum_{j = a_i}^{p_k} \lambda_j,    \\
-        -c_i                                                                   & \text{if } \exists\, i \neq k : \sum_{j = b_i - p_k + 1}^{b_i} \lambda_j \leq - \gamma - \omega c_i \leq \sum_{j = a_i}^{p_k} \lambda_j, \\
-        \frac{1}{\omega}\left(\gamma - \sum_{j \in C(z)} \lambda_{(j)^-_z}\right) & \text{otherwise.}                                                                                                                     \\
-      \end{cases}
+      0                                                                         &
+      \splitfrac{
+        \text{if } \big(-\sum_{j = p - p_k + 1}^p \lambda_j < \gamma \leq \sum_{j = p - p_k + 1}^p \lambda_j
+        \text{ and } c_m \neq 0\big)
+      }{%
+        \text{ or } \big(  -\sum_{j = p - p_k - p_m + 1}^{p - p_m} \lambda_j < \gamma \leq \sum_{j = p - p_k + 1}^{p_m} \lambda_j \text{ and } c_m = 0\big),
+      }                                                                                                                                                                                                                    \\
+      c_i                                                                       & \text{if } \exists\, i \neq k: \sum_{j = b_i - p_k + 1}^{b_i} \lambda_j \leq \gamma - \omega c_i \leq \sum_{j = a_i}^{p_k} \lambda_j,    \\
+      -c_i                                                                      & \text{if } \exists\, i \neq k : \sum_{j = b_i - p_k + 1}^{b_i} \lambda_j \leq - \gamma - \omega c_i \leq \sum_{j = a_i}^{p_k} \lambda_j, \\
+      \frac{1}{\omega}\left(\gamma - \sum_{j \in C(z)} \lambda_{(j)^-_z}\right) & \text{otherwise.}                                                                                                                        \\
+    \end{cases}
   \end{multline*}
   A minimizer for \eqref{eq:cluster-problem} is given by \(T_k(\tilde{r}^T\tilde{x}, \tilde{x}^T\tilde{x}; c, \lambda)\).
 \end{theorem}
@@ -419,8 +422,8 @@ the SLOPE thresholding operator~\cref{thm:slope-thresholding}.
   \]
   \(z = c_i \neq 0\) is a minimizer of~\eqref{eq:cluster-problem} if and only if
   \[
-    0 \in \omega c_i - \gamma + 
-      \left[\sum_{j = b_i - p_k + 1}^{b_i} \lambda_j, \sum_{j=a_i}^{p_k}\lambda_j \right],
+    0 \in \omega c_i - \gamma +
+    \left[\sum_{j = b_i - p_k + 1}^{b_i} \lambda_j, \sum_{j=a_i}^{p_k}\lambda_j \right],
   \]
   which is equivalent to
   \[
@@ -428,8 +431,8 @@ the SLOPE thresholding operator~\cref{thm:slope-thresholding}.
   \]
   \(z = -c_i \neq 0\) is a minimizer of~\eqref{eq:cluster-problem} if and only if
   \[
-    0 \in -\omega c_i - \gamma + 
-  \left[-\sum_{j=a_i}^{p_k}\lambda_j, -\smashoperator{\sum_{j = b_i - p_k + 1}^{b_i}} \lambda_j\,\right],
+    0 \in -\omega c_i - \gamma +
+    \left[-\sum_{j=a_i}^{p_k}\lambda_j, -\smashoperator{\sum_{j = b_i - p_k + 1}^{b_i}} \lambda_j\,\right],
   \]
   which is equivalent to
   \[
@@ -437,8 +440,8 @@ the SLOPE thresholding operator~\cref{thm:slope-thresholding}.
   \]
   If \(c_m \neq 0\), then \(z = 0\) is a minimizer if
   \[
-    0 \in -\gamma + 
-      \left[-\sum_{j = p - p_k + 1}^{p} \lambda_j, \sum_{j=p - p_k + 1}^{p}\lambda_j \right],
+    0 \in -\gamma +
+    \left[-\sum_{j = p - p_k + 1}^{p} \lambda_j, \sum_{j=p - p_k + 1}^{p}\lambda_j \right],
   \]
   which is equivalent to
   \[
@@ -446,9 +449,9 @@ the SLOPE thresholding operator~\cref{thm:slope-thresholding}.
   \]
   Finally, if \(c_m = 0\), then \(z = 0\) is a minimizer if
   \[
-    0 \in -\gamma + 
-      \left[
-        -\sum_{j = p - p_k - p_m + 1}^{p - p_m} \lambda_j,
+    0 \in -\gamma +
+    \left[
+      -\sum_{j = p - p_k - p_m + 1}^{p - p_m} \lambda_j,
       \sum_{j=p - p_k - p_m + 1}^{p - p_m}\lambda_j
       \right],
   \]

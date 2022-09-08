@@ -149,11 +149,9 @@ We are now ready to state the directional derivative of \(J_k\).
   \[
     J'_k(z, \delta) =
     \begin{cases}
-      \sign(z)\delta\smashoperator{\sum_{j \in C(z + \varepsilon \delta)}}
-      \lambda_{(j)^-_{z + \varepsilon\delta}}                      & \text{if } z = c_i > 0, \\
-      \smashoperator[r]{\sum_{j \in C(\varepsilon \delta)}}
-      \lambda_{(j)^-_{\varepsilon\delta}}                          & \text{if } z = 0,       \\
-      \sign(z)\smashoperator[r]{\sum_{j \in C(z)}} \lambda_{(j)^-_z} & \text{otherwise}
+      \smashoperator[r]{\sum_{j \in C(\varepsilon \delta)}} \lambda_{(j)^-_{\varepsilon\delta}}                    & \text{if } z = 0,         \\
+      \sign(z)\delta\smashoperator{\sum_{j \in C(z + \varepsilon \delta)}} \lambda_{(j)^-_{z + \varepsilon\delta}} & \text{if } |z| = c_i > 0, \\
+      \sign(z)\delta\smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}                                          & \text{otherwise.}
     \end{cases}
   \]
   with \(\varepsilon\) defined as in \cref{def:limit-permutation}.

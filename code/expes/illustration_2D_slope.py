@@ -9,9 +9,9 @@ from slope.clusters import get_clusters, update_cluster
 from slope.solvers import prox_grad
 from slope.utils import ConvergenceMonitor, dual_norm_slope, prox_slope, slope_threshold
 
-dir_results = "../../figures/"
-savefig = False
-
+dir_results = "../figures/"
+savefig = True
+# plt.rcParams["font.size"] = 12
 
 def cd(X, y, alphas, max_iter, beta0, verbose=False):
     n_samples = X.shape[0]
@@ -222,13 +222,13 @@ beta_star, primals_star, gaps_star, _, _ = prox_grad(
     X, y, alphas, max_epochs=1000, verbose=False, fit_intercept=False
 )
 
-beta1 = np.linspace(xmin, xmax, 40)
-beta2 = np.linspace(ymin, ymax, 40)
-
 xmin = np.min([np.min(betas[i][0]) for i in range(3)]) - 0.1
 xmax = np.max([np.max(betas[i][0]) for i in range(3)]) + 0.1
 ymin = np.min([np.min(betas[i][1]) for i in range(3)]) - 0.1
 ymax = np.max([np.max(betas[i][1]) for i in range(3)]) + 0.1
+
+beta1 = np.linspace(xmin, xmax, 40)
+beta2 = np.linspace(ymin, ymax, 40)
 
 z = np.ndarray((40, 40))
 
@@ -248,7 +248,7 @@ labels = ["CD", "Hybrid", "PGD"]
 plt.close("all")
 
 fig, axarr = plt.subplots(
-    1, 3, sharey=True, sharex=True, figsize=[7, 2.5], constrained_layout=True
+    1, 3, sharey=True, sharex=True, figsize=(6.2, 3), constrained_layout=True
 )
 
 for i in range(3):
@@ -291,7 +291,12 @@ for i in range(3):
         ax.set_ylabel(r"$\beta_2$")
 
 if savefig:
-    fig.savefig(dir_results + "illustration_solvers.pdf")
-    fig.savefig(dir_results + "illustration_solvers.svg")
+    plt.rcParams["text.usetex"] = True
+    fig.savefig(
+        dir_results + "illustration_solvers.pdf", bbox_inches="tight", pad_inches=0.01
+    )
+    fig.savefig(
+        dir_results + "illustration_solvers.svg", bbox_inches="tight", pad_inches=0.01
+    )
 
 plt.show(block=False)

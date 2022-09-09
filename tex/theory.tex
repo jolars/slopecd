@@ -100,7 +100,7 @@ coefficient of the \(k\)th cluster. First, however, let
   C(z) = \{j : |\beta(z)_j| = z\}.
 \]
 Secondly, we introduce \cref{def:limit-permutation}.
-\begin{definition} \mm{cosmetic: I'm not sure this is a definition}
+\begin{definition} \mm{cosmetic: I'm not sure this is a definition}\jw{I agree with mm, and I prefer to have $\epsilon_c$ or for the clusters just use $C(z;\delta)=  \lim_{h \downarrow 0} \lambda_{(i)^-_{z + h\delta}}$ }
   \label{def:limit-permutation}
   Let there be an \(\varepsilon > 0\) such that
   \begin{equation*}
@@ -120,7 +120,7 @@ For an \(\varepsilon\) defined as in \cref{def:limit-permutation}, we have for
 \end{equation}
 In other words, the order permutation corresponding to \(B(z + h\delta)\)
 depends only on \(\delta\) in the limit as \(h\) tends to~\(0\). \mm{typo B for $\beta$?}
-
+\jw{When is B used, if they are going to help understanding we need to use them}
 \begin{remark}
   As consequence of \cref{def:limit-permutation}, the order
   permutations for \(B(z)\) and \(B(z + \varepsilon \delta)\) differ only for a subset of
@@ -180,9 +180,10 @@ We are now ready to state the directional derivative of \(J_k\).
     \right).
     \label{eq:directional-derivative-sl1}
   \end{align}
-
+\jw{Add a sentence that you will go through the cases $z=0,|z|=c_i$ and otherwise in the order you go through the cases.}
   First, note that \(J_k\) is differentiable for \(z \notin \{0, c_i\}\), \(i
-  \neq k\) and that \(C(z + \varepsilon\delta) = C(z)\), giving
+  \neq k\) and that \(C(z + \varepsilon\delta) = C(z)\)\jw{\(z \notin \{0, c_i\}\), \(i
+  \neq k\) is strange I suggest using \(\{0, c_1,c_2,\ldots c_m\} \setminus c_k\). Then and is a consequence of the first argument}, giving
   the directional derivative
   \[
     \delta \sign(z) \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}.
@@ -261,15 +262,14 @@ We are now ready to state the directional derivative of \(J_k\).
   In the case when \(z = c_i = 0\), that is, the cluster corresponding to
   zero coefficients in \(\beta\) is non-empty,
   then \eqref{eq:directional-derivative-simplified-again} is
-  simply
+  simply,  since \(|\delta| = 1\) by definition, 
   \begin{equation*}
     \label{eq:directional-derivative-zerocase}
     J'_k(0; \delta)
     = \lim_{h \downarrow 0} \frac{1}{h}
     |h\delta|\smashoperator{\sum_{j \in C(\varepsilon\delta)}} \lambda_{(j)^-_{\varepsilon\delta}}
-    = \smashoperator{\sum_{j \in C(\varepsilon\delta)}} \lambda_{(j)^-_{\varepsilon\delta}}
+    = \smashoperator{\sum_{j \in C(\varepsilon\delta)}} \lambda_{(j)^-_{\varepsilon\delta}}.
   \end{equation*}
-  since \(|\delta| = 1\) by definition.
 
   Proceeding, now, with the case when \(z = 0 \neq c_i\), \(i \neq k\),
   we see that \eqref{eq:directional-derivative-sl1} reduces to
@@ -300,23 +300,24 @@ We are now ready to state the directional derivative of \(J_k\).
 We are now ready to present the SLOPE thresholding operator.
 
 \begin{theorem}[The SLOPE Thresholding Operator]
-  Let
+\jw{I would prefer to keep the if statement more similar, also otherwise is very easy so I would write out what that is  explicitly.}
   \[
     T_k(\gamma, \omega; c, \lambda) =
     \begin{cases}
       0                                                                                                                                           & \text{if } |\gamma| < \smashoperator{\sum_{j \in C(\varepsilon)}} \lambda_{(j)^-_\varepsilon},                                                                                                                                       \\
-      \sign(\theta)c_i                                                                                                                            & \text{if } \omega c_i + \smashoperator{\sum_{j \in C(c_i - \varepsilon)}} \lambda_{(j)^-_{c_i - \varepsilon}} \leq |\gamma| \leq \omega c_i + \smashoperator{\sum_{j \in C(c_i + \varepsilon)}} \lambda_{(j)^-_{c_i + \varepsilon}}, \\
+      \sign(\gamma)c_i                                                                                                                            & \text{if } \omega c_i + \smashoperator{\sum_{j \in C(c_i - \varepsilon)}} \lambda_{(j)^-_{c_i - \varepsilon}} \leq |\gamma| \leq \omega c_i + \smashoperator{\sum_{j \in C(c_i + \varepsilon)}} \lambda_{(j)^-_{c_i + \varepsilon}}, \\
       \frac{\sign(\gamma)}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + \varepsilon)}} \lambda_{(j)^-_{c_i + \varepsilon}} \bigg) & \text{if } c_i < \frac{1}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + \varepsilon)}} \lambda_{(j)^-_{c_i + \varepsilon}} \bigg) < c_{i -1},                                                                         \\
       \frac{\sign(\gamma)}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_1 + \varepsilon)}} \lambda_{(j)^-_{c_1 + \varepsilon}} \bigg) & \text{otherwise}
     \end{cases}
   \]
   with \(\varepsilon\) defined as in \cref{def:limit-permutation}. Then
   \(T(\tilde{r}^T\tilde{x}, \tilde{x}^T\tilde{x}; c; \lambda) \in \argmin_{z
-  \in \mathbb{R}} J_k(z) \).
+  \in \mathbb{R}} J_k(z) \).\jw{We have room to define $\tilde{x}$, $\tilde{r}$}
 \end{theorem}
 \begin{proof}
-  Recall that \(J_k(z) : \mathbb{R} \mapsto \mathbb{R}\) is a convex, piecewise
-  continuous function with discontinuities whenever \(z \in \{0, c_i\}\), \(i
+\jw{Help the reader what you want todo. Also structure it clearer so it can be followed easier. Right now you start with $z$ conditions then move to $\gamma$ conditions.}
+  Recall that \(J_k(z) : \mathbb{R} \mapsto \mathbb{R}\) is a convex,
+  continuous piecewise-differentiable function with kinks whenever \(z \in \{0, c_i\}\), \(i
   \neq k\). Let \(\gamma =
   \tilde{r}^T\tilde{x}\) and \(\omega = \tilde{x}^T\tilde{x}\) and note that
   the optimality criterion for \eqref{eq:cluster-problem} is
@@ -378,7 +379,7 @@ We are now ready to present the SLOPE thresholding operator.
     =
     \frac{1}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}} \bigg),
   \]
-  which is exactly the optimum for \(P_k(z)\) since it is
+  which is exactly the optimum for \(P_k(z)\) \jw{P?} since it is
   differentiable for \(|z| \in (c_i, c_{i -1})\) and \(|z| > c_1\) and has a
   unique minimizer
   \[
@@ -386,6 +387,7 @@ We are now ready to present the SLOPE thresholding operator.
     \implies
     z = \frac{\sign(\gamma)}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}} \bigg)
   \]
+  \jw{To me the arrow should be in the opposite direction.}
   given that \(\sign(z) = \sign(\gamma)\) for there to exist a solution since \(\omega > 0\).
 
   The cases \(|z| > c_1\) and \(z \in (-c_{i-1}, c_i)\) follow analogously.

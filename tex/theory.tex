@@ -91,11 +91,10 @@ since \(\lVert \tilde{r} - \tilde{x}z\rVert_2^2\) is differentiable.
 
 \mathurin{One key aspect of such updates that for me deserves to be emphasized: the clusters will almost all remain the same: they can only change order, or two of them merge.}
 
-Throughout the rest of this section section we will derive a minimizer
-solution to \eqref{eq:cluster-problem}. To do so, we will introduce the
-directional derivative for the sorted \(\ell_1\) norm with respect to the
-coefficient of the \(k\)th cluster. First, however, let
-\(C(z)\) be a function that returns the cluster corresponding to \(z\), that is
+Throughout the rest of this section section we will derive a minimizer solution to
+\eqref{eq:cluster-problem}. To do so, we will introduce the directional derivative for the
+sorted \(\ell_1\) norm with respect to the coefficient of the \(k\)th cluster. First,
+however, let \(C(z)\) be a function that returns the cluster corresponding to \(z\), that is
 \[
   C(z) = \{j : |\beta(z)_j| = z\}.
 \]
@@ -106,7 +105,11 @@ Next, let there be an \({\varepsilon_c} > 0\) such that
 \end{equation}
 for a strictly decreasing sequence \(c_1, c_2, ..., c_m\).
 
-For a\({\varepsilon_c}\) and \(\delta \in \{-1, 1\}\)\mathurin{This can be hard to parse: $C$ implicitly depends on a vector that determines clusters. We can emphasize that  In all this section $\beta$ is fixed and we update only in the direction given by the sign of one cluster. Clusters $C_i$ and $c_i$ are fixed.}
+For a\({\varepsilon_c}\) and \(\delta \in \{-1, 1\}\)
+\mathurin{This can be hard to parse: $C$ implicitly depends on a vector that determines clusters. We can emphasize that  In all this section $\beta$ is fixed and we update only in the direction given by the sign of one cluster. Clusters $C_i$ and $c_i$ are fixed.}
+\JL{Yes, but I don't think there's any way around this since we must use this
+  construction in the definitions and proofs for the directional derivative and the
+  thresholding operator.}
 we have
 \begin{equation}
   \lim_{h \downarrow 0} C(z + h\delta) = C(z + {\varepsilon_c} \delta)
@@ -308,14 +311,14 @@ We are now ready to present the SLOPE thresholding operator.
   \]
   with \({\varepsilon_c}\) defined as in \eqref{eq:epsilon-c} and let
   \(\gamma = \tilde{r}^Tx\), \(\omega = \tilde{x}^T\tilde{x}\). Then
-  \(T(\gamma, \omega; c; \lambda) \in \argmin_{z \in \mathbb{R}} J_k(z)\).
+  \(T(\gamma, \omega; c; \lambda) \in \argmin_{z \in \mathbb{R}} P_k(z)\).
 \end{theorem}
 \begin{proof}
-  \jw{Help the reader what you want todo. Also structure it clearer so it can be followed easier. Right now you start with $z$ conditions then move to $\gamma$ conditions.}
-  Recall that \(J_k(z) : \mathbb{R} \mapsto \mathbb{R}\) is a convex,
-  continuous piecewise-differentiable function with kinks whenever \(|z| = c_i\) or \(z = 0\). Let \(\gamma =
-  \tilde{r}^T\tilde{x}\) and \(\omega = \tilde{x}^T\tilde{x}\) and note that
-  the optimality criterion for \eqref{eq:cluster-problem} is
+  Recall that \(P_k(z) : \mathbb{R} \mapsto \mathbb{R}\) is a convex,
+  continuous piecewise-differentiable function with kinks whenever \(|z| =
+  c_i\) for \(i \neq k\) or \(z = 0\). Let \(\gamma = \tilde{r}^T\tilde{x}\)
+  and \(\omega = \tilde{x}^T\tilde{x}\) and note that the optimality criterion for
+  \eqref{eq:cluster-problem} is
   \[
     \delta(\omega z - \gamma) + J'_k(z; \delta) \geq 0, \quad
     \forall \delta \in \{-1, 1\},
@@ -325,69 +328,74 @@ We are now ready to present the SLOPE thresholding operator.
     \label{eq:optimality-inequality}
     \omega z - J'_k(z; -1) \leq \gamma \leq \omega z + J_k'(z; 1).
   \end{equation}
+  We now proceed to show that there is a solution \(z^* \in \argmin_{z \in
+    \mathbb{R}} J_k(z)\) for every interval over \(\gamma \in \mathbb{R}\).
 
-  Now observe that \(z = 0\) is a solution to \(\argmin_{z \in \mathbb{R}}
-  J_k(z)\) if and only if
+  First, assume that
   \begin{equation}
     \label{eq:case-zero}
-    - J'_k(0; -1) \leq \gamma \leq J_k'(0; 1) \implies
-    | \gamma | \leq \smashoperator{\sum_{j \in C({\varepsilon_c})}}\lambda_{(j)^-_{{\varepsilon_c}}}
+    |\gamma| \leq \smashoperator{\sum_{j \in C({\varepsilon_c})}}\lambda_{(j)^-_{{\varepsilon_c}}}
   \end{equation}
-  since \(C({\varepsilon_c}) = C(-{\varepsilon_c})\) and
-  \(\lambda_{(j)^-_{-{\varepsilon_c}}} = \lambda_{(j)^-_{{\varepsilon_c}}}\).
+  and note that this is equivalent to \eqref{eq:optimality-inequality} with \(z
+  = 0\) since \(C({\varepsilon_c}) = C(-{\varepsilon_c})\) and
+  \(\lambda_{(j)^-_{-{\varepsilon_c}}} = \lambda_{(j)^-_{{\varepsilon_c}}}\) in
+  this case, which is sufficient for \(z^* = 0\) to be the solution.
 
-  Next, \(z = c_i \neq 0\), \(i \neq k\) is a solution if and only if
+  Next, assume that
   \begin{equation}
     \label{eq:case-cluster}
     \omega c_i + \smashoperator{\sum_{j \in C(c_i - {\varepsilon_c})}} \lambda_{(j)^-_{c_i - {\varepsilon_c}}}
     \leq |\gamma| \leq
     \omega c_i + \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}}
   \end{equation}
-  since \(C(c_i + {\varepsilon_c}) = C(-c_i - {\varepsilon_c})\) and
-  \(C(-c_i + {\varepsilon_c}) = C(c_i - {\varepsilon_c})\).
+  and observe that this is equivalent to \eqref{eq:optimality-inequality} with
+  \(z = c_i\), \(i \neq k\), since
+  \(C(c_i + {\varepsilon_c}) = C(-c_i - {\varepsilon_c})\) and
+  \(C(-c_i + {\varepsilon_c}) = C(c_i - {\varepsilon_c})\). Then \(z^* = c_i\) must be
+  the solution.
 
-  If neither \eqref{eq:case-zero} nor \eqref{eq:case-cluster} hold, then it must either
-  be the case that
+  If neither \eqref{eq:case-zero} nor \eqref{eq:case-cluster} hold, then it must either be
+  the case that
   \begin{equation}
-    \label{eq:differentiable-inequality}
+    \label{eq:case-differentiable}
     \omega c_i + \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}}
     < |\gamma| <
     \omega c_{i - 1} + \smashoperator{\sum_{j \in C(c_{i - 1} - {\varepsilon_c})}} \lambda_{(j)^-_{c_{i - 1} - {\varepsilon_c}}},
   \end{equation}
   for some \(i > 1\), or that
-  \[
+  \begin{equation}
+    \label{eq:case-largest}
     |\gamma| > \omega c_1 + \smashoperator{\sum_{j \in C(c_1 + {\varepsilon_c})}} \lambda_{(j)^-_{c_1 + {\varepsilon_c}}}.
-  \]
+  \end{equation}
   In the first case, note that
   \[
     \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}}
     =
     \smashoperator[r]{\sum_{j \in C(c_{i-1} - {\varepsilon_c})}} \lambda_{(j)^-_{c_{i-1} - {\varepsilon_c}}}
   \]
-  and therefore \eqref{eq:differentiable-inequality} is equivalent to
+  and therefore \eqref{eq:case-differentiable} is equivalent to
   \[
     c_i < \frac{1}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} \bigg) < c_{i -1}.
   \]
-  Let
-  \[
+  Now let
+  \begin{equation}
+    \label{eq:differentiable-solution}
     z^* = \frac{\sign(\gamma)}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} \bigg)
-  \]
-  Note that \(|z^*| \in (c_i, c_{i-1})\) and
-  % for a \(z \in (c_i, c_{i-1})\), observe that
+  \end{equation}
+  and note that \(|z^*| \in (c_i, c_{i-1})\) and hence
   \[
     \frac{1}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} \bigg)
     =
     \frac{1}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(z^*)}} \lambda_{(j)^-_{z^*}} \bigg).
   \]
   Furthermore, since \(P_k\) is differentiable in \((c_i, c_{i-1})\), we have
-  % which is exactly the optimum for \(P_k(z)\) since it is
-  % differentiable for \(|z| \in (c_i, c_{i -1})\) and \(|z| > c_1\) and has a
-  % unique minimizer
   \[
     \frac{\partial}{\partial z} P_k(z) \Big|_{z = z^*}
-    = \omega z^* - \gamma + \sign(z^*) \smashoperator{\sum_{j \in C(z^*)}} \lambda_{(j)^-_{z^*}} = 0.
+    = \omega z^* - \gamma + \sign(z^*) \smashoperator{\sum_{j \in C(z^*)}} \lambda_{(j)^-_{z^*}} = 0,
   \]
-  The case \(|z| > c_1\) follow analogously.
+  and therefore \eqref{eq:differentiable-solution} must be the solution.
+
+  The case \eqref{eq:case-largest} follows analogously.
 \end{proof}
 
 \jl{Consider adding a remark showing that our operator generalizes the soft thresholding operator.}

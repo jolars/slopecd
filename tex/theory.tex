@@ -607,6 +607,22 @@ Hence the idea to alternate, PGD and PCD step to take advantage of the speed of 
   \Return{\(\beta\)}
 \end{algorithm}
 
+In \cref{fig:illustration-solver}, we show how \cref{alg:hybrid} works in practice on
+a two-dimensional SLOPE problem.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics{illustration_solvers}
+  \caption{Illustration of the proposed solver. These figures show ten epochs of
+    the coordinate descent (CD) solver that we use as part of the hybrid method,
+    our hybrid method, or proximal gradient descent (PGD). The orange cross marks
+    the optimum. The dotted lines indicate where the coefficients are equal
+    in absolute value. Each dot marks a complete epoch, which may correspond to only
+    a single coefficient update for the CD and hybrid solvers if the coefficients
+    flip order.}
+  \label{fig:illustration-solver}
+\end{figure}
+
 \begin{theorem}
   Iterates of \cref{alg:hybrid} converge towards \(\beta^*\).
 \end{theorem}

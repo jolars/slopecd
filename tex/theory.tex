@@ -115,7 +115,7 @@ we have
   = \lambda_{(i)^-_{z + {\varepsilon_c}\delta}}.
 \end{equation}
 In other words, the order permutation corresponding to \(\beta(z + h\delta)\)
-depends only on \(\delta\) in the limit as \(h\) tends to~\(0\). 
+depends only on \(\delta\) in the limit as \(h\) tends to~\(0\).
 \begin{remark}
   As consequence of the definition of \(\varepsilon_c\), the order permutations
   for \(\beta(z)\) and \(\beta(z + {\varepsilon_c} \delta)\) differ only for a
@@ -128,7 +128,7 @@ depends only on \(\delta\) in the limit as \(h\) tends to~\(0\).
       \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, \underbrace{\tilde{\mathcal{C}}_k \cup \tilde{\mathcal{C}}_m}_{C({\varepsilon_c}\delta)} & \text{if } c_m = 0 \text{ and } \delta = 0.    \\
     \end{cases}
   \]
-  The permutation for \(B(z + {\varepsilon_c} \delta)\), \(z \neq 0\) corresponds to
+  The permutation for \(\beta(z + {\varepsilon_c} \delta)\), \(z \neq 0\) corresponds to
   \[
     \begin{cases}
       \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, C(c_i + {\varepsilon_c}\delta), \tilde{\mathcal{C}}_i, \dots, \tilde{\mathcal{C}}_m                                          & \text{if } \delta = 1,  \\
@@ -147,7 +147,7 @@ We are now ready to state the directional derivative of \(J_k\).
     \begin{cases}
       \smashoperator[r]{\sum_{j \in C({\varepsilon_c} \delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}                    & \text{if } z = 0,         \\
       \sign(z)\delta\smashoperator{\sum_{j \in C(z + {\varepsilon_c} \delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}} & \text{if } |z| = c_i > 0, \\
-      \sign(z)\delta\smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}                                          & \text{otherwise.}
+      \sign(z)\delta\smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}                                                  & \text{otherwise,}
     \end{cases}
   \]
   with \({\varepsilon_c}\) defined as in \eqref{eq:epsilon-c}.
@@ -173,25 +173,19 @@ We are now ready to state the directional derivative of \(J_k\).
       + \smashoperator{\sum_{j \notin C(z + {\varepsilon_c}\delta)}} |\beta_j| \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
       - |z| \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}
       - \smashoperator{\sum_{j \notin C(z)}} |\beta_j| \lambda_{(j)^-_{z}}
-    \right).
+    \right)
     \label{eq:directional-derivative-sl1}
   \end{align}
-  \jw{Add a sentence that you will go through the cases $z=0,|z|=c_i$ and otherwise in the order you go through the cases.}
-  First, note that \(J_k\) is differentiable for \(z \notin \{0, c_i\}\), \(i
-  \neq k\) and that \(C(z + {\varepsilon_c}\delta) = C(z)\)\jw{\(z \notin \{0, c_i\}\), \(i
-    \neq k\) is strange I suggest using \(\{0, c_1,c_2,\ldots c_m\} \setminus c_k\). Then and is a consequence of the first argument}, giving
-  the directional derivative
-  \[
-    \delta \sign(z) \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}.
-  \]
+  We have the following cases to consider: \(|z| = c_i\) for \(i \neq k\),
+  \(|z| = 0\), and \(z \notin \{0, c_i\}\) for \(i \neq k\).
 
-  Turning to the case of \(z = \pm c_i\), \(i \neq k\) now, note that we have,
+  Turning first to the case when \(|z| = c_i\) for \(i \neq k\), note that we have,
   as a result of the definition of
-  \({\varepsilon_c}\)~(\eqref{eq:epsilon-c}), the following identities:
+  \({\varepsilon_c}\), the following identities:
   \begin{align*}
-    C(c_i + {\varepsilon_c}\delta)          & \subseteq C(c_i),                                                                                                             \\
-    \tilde{\mathcal{C}}_i               & = \widebar{C(c_i + {\varepsilon_c} \delta)} \cap C(c_i),                                                                          \\
-    C(c_i)                              & = \tilde{C}_i \cup \big(C(c_i + {\varepsilon_c}\delta) \cap C(c_i)\big) = \tilde{\mathcal{C}}_i \cup C(c_i + {\varepsilon_c} \delta), \\
+    C(c_i + {\varepsilon_c}\delta)          & \subseteq C(c_i),                                                                                                                     \\
+    \tilde{\mathcal{C}}_i                   & = \widebar{C(c_i + {\varepsilon_c} \delta)} \cap C(c_i),                                                                              \\
+    C(c_i)                                  & = \tilde{C}_i \cup \big(C(c_i + {\varepsilon_c}\delta) \cap C(c_i)\big) = \tilde{\mathcal{C}}_i \cup C(c_i + {\varepsilon_c} \delta), \\
     \widebar{C(z + {\varepsilon_c} \delta)} & = \widebar{C(c_i)} \cup \tilde{\mathcal{C}}_i.
   \end{align*}
   Using this, we can rewrite \eqref{eq:directional-derivative-sl1} as
@@ -249,23 +243,23 @@ We are now ready to state the directional derivative of \(J_k\).
     \left(
       \big(|z| + \sign(z)h\delta\big)\smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
       - |c_i| \smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z}}.
-    \right)                                                                                                          \\
+    \right)                                                                                                                  \\
      & = \lim_{h \downarrow 0} \frac{1}{h}
     \sign(z)h\delta\smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}     \\
      & = \sign(z)\delta\smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}} \\
   \end{align*}
 
-  In the case when \(z = c_i = 0\), that is, the cluster corresponding to
-  zero coefficients in \(\beta\) is non-empty,
-  then \eqref{eq:directional-derivative-simplified-again} is
-  simply,  since \(|\delta| = 1\) by definition,
+  In the case when \(z = c_i = 0\), that is, we have \(\beta_k = 0\) for some \(k\),
+  then
+  \eqref{eq:directional-derivative-simplified-again} is simply
   \begin{equation*}
     \label{eq:directional-derivative-zerocase}
     J'_k(0; \delta)
     = \lim_{h \downarrow 0} \frac{1}{h}
     |h\delta|\smashoperator{\sum_{j \in C({\varepsilon_c}\delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}
-    = \smashoperator{\sum_{j \in C({\varepsilon_c}\delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}.
+    = \smashoperator{\sum_{j \in C({\varepsilon_c}\delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}
   \end{equation*}
+  since \(|\delta| = 1\) by definition,
 
   Proceeding, now, with the case when \(z = 0 \neq c_i\), \(i \neq k\),
   we see that \eqref{eq:directional-derivative-sl1} reduces to
@@ -291,6 +285,13 @@ We are now ready to state the directional derivative of \(J_k\).
     = |\delta|\smashoperator{\sum_{j \in C({\varepsilon_c}\delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}
     = \smashoperator{\sum_{j \in C(0)}} \lambda_{(j)^-_{0}}.
   \end{equation*}
+
+  Finally, note that \(J_k\) is differentiable in every other case, that is,
+  \(|z| \notin \{0, c_i\}\) for \(i \neq k\) and, since since \(C(z +
+  {\varepsilon_c}\delta) = C(z)\), has the directional derivative
+  \[
+    J_k'(z; \delta) = \delta \sign(z) \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}.
+  \]
 \end{proof}
 
 We are now ready to present the SLOPE thresholding operator.
@@ -299,8 +300,8 @@ We are now ready to present the SLOPE thresholding operator.
   \[
     T_k(\gamma, \omega; c, \lambda) =
     \begin{cases}
-      0                                                                                                                                           & \text{if } |\gamma| \leq \smashoperator{\sum_{j \in C({\varepsilon_c})}} \lambda_{(j)^-_{\varepsilon_c}},                                                                                                                                                \\
-      \sign(\gamma)c_i                                                                                                                            & \text{if } \omega c_i + \smashoperator{\sum_{j \in C(c_i - {\varepsilon_c})}} \lambda_{(j)^-_{c_i - {\varepsilon_c}}} \leq |\gamma| \leq \omega c_i + \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}},             \\
+      0                                                                                                                                                   & \text{if } |\gamma| \leq \smashoperator{\sum_{j \in C({\varepsilon_c})}} \lambda_{(j)^-_{\varepsilon_c}},                                                                                                                                                        \\
+      \sign(\gamma)c_i                                                                                                                                    & \text{if } \omega c_i + \smashoperator{\sum_{j \in C(c_i - {\varepsilon_c})}} \lambda_{(j)^-_{c_i - {\varepsilon_c}}} \leq |\gamma| \leq \omega c_i + \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}},             \\
       \frac{\sign(\gamma)}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} \bigg) & \text{if } \omega c_i + \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} < |\gamma| < \omega c_{i - 1} + \smashoperator{\sum_{j \in C(c_{i - 1} - {\varepsilon_c})}} \lambda_{(j)^-_{c_{i - 1} - {\varepsilon_c}}}, \\
       \frac{\sign(\gamma)}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_1 + {\varepsilon_c})}} \lambda_{(j)^-_{c_1 + {\varepsilon_c}}} \bigg) & \text{if } |\gamma| \geq \omega c_1 + \smashoperator{\sum_{j \in C(c_1 + {\varepsilon_c})}} \lambda_{(j)^-_{c_1 + {\varepsilon_c}}}.
     \end{cases}
@@ -371,7 +372,7 @@ We are now ready to present the SLOPE thresholding operator.
   \[
     z^* = \frac{\sign(\gamma)}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} \bigg)
   \]
-  Note that \(|z^*| \in (c_i, c_{i-1})\) and 
+  Note that \(|z^*| \in (c_i, c_{i-1})\) and
   % for a \(z \in (c_i, c_{i-1})\), observe that
   \[
     \frac{1}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} \bigg)

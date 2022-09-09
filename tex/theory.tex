@@ -297,12 +297,103 @@ We are now ready to state the directional derivative of \(J_k\).
   \end{equation*}
 \end{proof}
 
-Using \cref{thm:sl1-directional-derivative}, we define the subgradient for
-\(J_k\), \(\partial J_k\) in \cref{thm:cluster-subdifferential}.
+We are now ready to present the SLOPE thresholding operator.
 
+\begin{theorem}[The SLOPE Thresholding Operator]
+  Let
+  \[
+    T_k(\gamma, \omega; c, \lambda) =
+    \begin{cases}
+      0                                                                                                                                           & \text{if } |\gamma| < \smashoperator{\sum_{j \in C(\varepsilon)}} \lambda_{(j)^-_\varepsilon},                                                                                                                                       \\
+      \sign(\theta)c_i                                                                                                                            & \text{if } \omega c_i + \smashoperator{\sum_{j \in C(c_i - \varepsilon)}} \lambda_{(j)^-_{c_i - \varepsilon}} \leq |\gamma| \leq \omega c_i + \smashoperator{\sum_{j \in C(c_i + \varepsilon)}} \lambda_{(j)^-_{c_i + \varepsilon}}, \\
+      \frac{\sign(\gamma)}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + \varepsilon)}} \lambda_{(j)^-_{c_i + \varepsilon}} \bigg) & \text{if } c_i < \frac{1}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + \varepsilon)}} \lambda_{(j)^-_{c_i + \varepsilon}} \bigg) < c_{i -1},                                                                         \\
+      \frac{\sign(\gamma)}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_1 + \varepsilon)}} \lambda_{(j)^-_{c_1 + \varepsilon}} \bigg) & \text{otherwise}
+    \end{cases}
+  \]
+  with \(\varepsilon\) defined as in \cref{def:limit-permutation}. Then
+  \(T(\tilde{r}^T\tilde{x}, \tilde{x}^T\tilde{x}; c; \lambda) \in \argmin_{z
+  \in \mathbb{R}} J_k(z) \).
+\end{theorem}
+\begin{proof}
+  Recall that \(J_k(z) : \mathbb{R} \mapsto \mathbb{R}\) is a convex, piecewise
+  continuous function with discontinuities whenever \(z \in \{0, c_i\}\), \(i
+  \neq k\). Let \(\gamma =
+  \tilde{r}^T\tilde{x}\) and \(\omega = \tilde{x}^T\tilde{x}\) and note that
+  the optimality criterion for \eqref{eq:cluster-problem} is
+  \[
+    \delta(\omega z - \gamma) + J'_k(z; \delta) \geq 0, \quad
+    \forall \delta \in \{-1, 1\},
+  \]
+  which is equivalent to
+  \begin{equation}
+    \label{eq:optimality-inequality}
+    \omega z - J'_k(z; -1) \leq \gamma \leq \omega z + J_k'(z; 1).
+  \end{equation}
+
+  Now observe that \(z = 0\) is a solution to \(\argmin_{z \in \mathbb{R}}
+  J_k(z)\) if and only if
+  \begin{equation}
+    \label{eq:case-zero}
+    - J'_k(0; -1) \leq \gamma \leq J_k'(0; 1) \implies
+    | \gamma | \leq \smashoperator{\sum_{j \in C(\varepsilon)}}\lambda_{(j)^-_{\varepsilon}}
+  \end{equation}
+  since \(C(\varepsilon) = C(-\varepsilon)\) and
+  \(\lambda_{(j)^-_{-\varepsilon}} = \lambda_{(j)^-_{\varepsilon}}\).
+
+  Next, \(z = c_i \neq 0\), \(i \neq k\) is a solution if and only if
+  \begin{equation}
+    \label{eq:case-cluster}
+    \omega c_i + \smashoperator{\sum_{j \in C(c_i - \varepsilon)}} \lambda_{(j)^-_{c_i - \varepsilon}}
+    \leq |\gamma| \leq
+    \omega c_i + \smashoperator{\sum_{j \in C(c_i + \varepsilon)}} \lambda_{(j)^-_{c_i + \varepsilon}}
+  \end{equation}
+  since \(C(c_i + \varepsilon) = C(-c_i - \varepsilon)\) and
+  \(C(-c_i + \varepsilon) = C(c_i - \varepsilon)\).
+
+  If neither \eqref{eq:case-zero} nor \eqref{eq:case-cluster} hold, then it must either
+  be the case that
+  \begin{equation}
+    \label{eq:differentiable-inequality}
+    \omega c_i + \smashoperator{\sum_{j \in C(c_i + \varepsilon)}} \lambda_{(j)^-_{c_i + \varepsilon}}
+    < |\gamma| <
+    \omega c_{i - 1} + \smashoperator{\sum_{j \in C(c_{i - 1} - \varepsilon)}} \lambda_{(j)^-_{c_{i - 1} - \varepsilon}},
+  \end{equation}
+  for some \(i > 1\), or that
+  \[
+    |\gamma| > \omega c_1 + \smashoperator{\sum_{j \in C(c_1 + \varepsilon)}} \lambda_{(j)^-_{c_1 + \varepsilon}}.
+  \]
+  In the first case, note that
+  \[
+    \smashoperator{\sum_{j \in C(c_i + \varepsilon)}} \lambda_{(j)^-_{c_i + \varepsilon}}
+    =
+    \smashoperator[r]{\sum_{j \in C(c_{i-1} - \varepsilon)}} \lambda_{(j)^-_{c_{i-1} - \varepsilon}}
+  \]
+  and therefore \eqref{eq:differentiable-inequality} is equivalent to
+  \[
+    c_i < \frac{1}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + \varepsilon)}} \lambda_{(j)^-_{c_i + \varepsilon}} \bigg) < c_{i -1}.
+  \]
+  Now, for some \(z \in (c_i, c_{i-1})\), observe that
+  \[
+    \frac{1}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + \varepsilon)}} \lambda_{(j)^-_{c_i + \varepsilon}} \bigg)
+    =
+    \frac{1}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}} \bigg),
+  \]
+  which is exactly the optimum for \(P_k(z)\) since it is
+  differentiable for \(|z| \in (c_i, c_{i -1})\) and \(|z| > c_1\) and has a
+  unique minimizer
+  \[
+    \omega z - \gamma + \sign(z) \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}} = 0
+    \implies
+    z = \frac{\sign(\gamma)}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}} \bigg)
+  \]
+  given that \(\sign(z) = \sign(\gamma)\) for there to exist a solution since \(\omega > 0\).
+
+  The cases \(|z| > c_1\) and \(z \in (-c_{i-1}, c_i)\) follow analogously.
 \end{proof}
 
-In \cref{fig:slope-thresholding}, we visualize the operator.
+\jl{Consider adding a remark showing that our operator generalizes the soft thresholding operator.}
+
+In \cref{fig:slope-thresholding}, we visualize the SLOPE thresholding operator.
 
 \begin{figure}[htbp]
   \centering

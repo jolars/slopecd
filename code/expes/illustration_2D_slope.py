@@ -2,6 +2,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from numpy.linalg import norm
+from numpy.random import default_rng
 from scipy import stats
 
 from slope.solvers import prox_grad
@@ -11,7 +12,6 @@ from slope.utils import ConvergenceMonitor
 
 dir_results = "../../figures/"
 savefig = False
-
 
 # def abline(slope, intercept):
 #     axes = plt.gca()
@@ -99,6 +99,10 @@ def hybrid_cd(X, y, alphas, max_iter, beta0):
 
                 c, c_ptr, c_ind, c_perm, n_clusters = get_clusters(beta)
 
+                if c[j] == 0:
+                    j += 1
+                    continue
+
                 cluster = c_ind[c_ptr[j]: c_ptr[j + 1]]
                 sign_w = np.sign(beta[cluster]) if c[j] != 0 else np.ones(len(cluster))
                 sum_X = X[:, cluster] @ sign_w
@@ -113,7 +117,7 @@ def hybrid_cd(X, y, alphas, max_iter, beta0):
                     R += (c_old - beta_tilde) * sum_X
 
                 ind_old = j
-                _ = update_cluster(
+                n_clusters = update_cluster(
                     c, c_ptr, c_ind, c_perm, n_clusters,
                     abs(beta_tilde), c_old, ind_old, ind_new, beta,
                     X, np.zeros([X.shape[0], 2]), np.zeros(1),
@@ -153,27 +157,32 @@ def pgd(X, y, alphas, max_iter, beta0):
     return beta1s, beta2s
 
 
-np.random.seed(0)
-n_samples = 20
+n_samples = 10
 
-X = np.random.rand(n_samples, 2)
-beta_true = np.array([0.15, -0.15])
+rng = default_rng(4)
+
+# X = np.random.rand(n_samples, 2)
+cov = [[1, 0.85], [0.85, 1]]
+X = rng.multivariate_normal(size = n_samples, mean = [0.0, 0.0], cov = cov)
+beta_true = np.array([0.25, -0.25])
 
 y = X @ beta_true
 
 randnorm = stats.norm(loc=0, scale=1)
-q = 0.1
-reg = 0.05
+q = 0.4
+reg = 0.3
 
 alphas_seq = randnorm.ppf(1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1]))
 alpha_max = dual_norm_slope(X, y / len(y), alphas_seq)
 alphas = alpha_max * alphas_seq * reg
 
-beta0 = np.array([-0.8, 0.8])  # try to make beta slope have 1 cluster
+beta0 = np.array([-0.8, 0.3])  # try to make beta slope have 1 cluster
 
-beta1s_cd, beta2s_cd = cd(X, y, alphas, 20, beta0)
-beta1s_hybrid, beta2s_hybrid = hybrid_cd(X, y, alphas, 20, beta0)
-beta1s_pgd, beta2s_pgd = pgd(X, y, alphas, 50, beta0)
+n_it = 20
+
+beta1s_cd, beta2s_cd = cd(X, y, alphas, n_it, beta0)
+beta1s_hybrid, beta2s_hybrid = hybrid_cd(X, y, alphas, n_it, beta0)
+beta1s_pgd, beta2s_pgd = pgd(X, y, alphas, n_it, beta0)
 betas = (
     (beta1s_cd, beta2s_cd), (beta1s_hybrid, beta2s_hybrid), (beta1s_pgd, beta2s_pgd))
 beta_star, primals_star, gaps_star, _, _ = prox_grad(
@@ -196,11 +205,11 @@ for i in range(40):
         z[j][i] = gap
 
 
-labels = ['cd', 'hybrid', 'pgd']
+labels = ['Naive CD', 'Hybrid', 'PGD']
 
 plt.close('all')
-fig, axarr = plt.subplots(
-    1, 3, sharey=True, figsize=[7, 2.5], constrained_layout=True)
+
+fig, axarr = plt.subplots( 1, 3, sharey=True, figsize=[7, 2.5], constrained_layout=True)
 for i in range(3):
     ax = axarr[i]
     ax.contour(beta1, beta2, z, levels=30)
@@ -211,10 +220,10 @@ for i in range(3):
     y_vals = x_vals
     ax.plot(x_vals, y_vals, "--", color="grey")
     ax.set_title(labels[i])
-    ax.plot(beta_star[0], beta_star[1], color="red", marker="x", markersize=16)
+    ax.plot(beta_star[0], beta_star[1], color="darkorange", marker="x", markersize=10, mew=2)
     ax.plot(
         betas[i][0], betas[i][1], marker="o",
-        color="blue", label=labels[i], markersize=4)
+        color="cornflowerblue", label=labels[i], markersize=4)
     ax.set_aspect("equal")
     ax.set_xlabel(r"$\beta_1$")
     if i == 0:

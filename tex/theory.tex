@@ -179,7 +179,7 @@ We are now ready to state the directional derivative of \(J_k\).
     \right)
     \label{eq:directional-derivative-sl1}
   \end{align}
-  We have the following cases to consider: \(|z| = c_i\) for \(i \neq k\),
+  We have the following cases to consider: \(|z| = c_i\) for \(i \neq k\) \jw{I prefer \(|z| \in \{c_1,c_2,\ldots,c_m\} \), I don't like having a loose $i$ in $i\neq k$ } ,
   \(|z| = 0\), and \(z \notin \{0, c_i\}\) for \(i \neq k\).
 
   Turning first to the case when \(|z| = c_i\) for \(i \neq k\), note that we have,
@@ -252,8 +252,8 @@ We are now ready to state the directional derivative of \(J_k\).
      & = \sign(z)\delta\smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}} \\
   \end{align*}
 
-  In the case when \(z = c_i = 0\), that is, we have \(\beta_k = 0\) for some \(k\),
-  then
+For the case when $z=0$ there are two sub cases.
+  First case is when \(c_m = 0\)  then
   \eqref{eq:directional-derivative-simplified-again} is simply
   \begin{equation*}
     \label{eq:directional-derivative-zerocase}
@@ -264,8 +264,7 @@ We are now ready to state the directional derivative of \(J_k\).
   \end{equation*}
   since \(|\delta| = 1\) by definition,
 
-  Proceeding, now, with the case when \(z = 0 \neq c_i\), \(i \neq k\),
-  we see that \eqref{eq:directional-derivative-sl1} reduces to
+ The other sub case is when \(c_m \neq 0\). Here \eqref{eq:directional-derivative-sl1} reduces to
   \begin{equation*}
     J_k'(0; \delta) = \lim_{h \downarrow 0}
     \frac{1}{h}
@@ -290,7 +289,7 @@ We are now ready to state the directional derivative of \(J_k\).
   \end{equation*}
 
   Finally, note that \(J_k\) is differentiable in every other case, that is,
-  \(|z| \notin \{0, c_i\}\) for \(i \neq k\) and, since since \(C(z +
+  \(|z| \notin \{0, c_i\}\) for \(i \neq k\) \jw{Same notational issue here}and, since since \(C(z +
   {\varepsilon_c}\delta) = C(z)\), has the directional derivative
   \[
     J_k'(z; \delta) = \delta \sign(z) \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}.
@@ -316,7 +315,7 @@ We are now ready to present the SLOPE thresholding operator.
 \begin{proof}
   Recall that \(P_k(z) : \mathbb{R} \mapsto \mathbb{R}\) is a convex,
   continuous piecewise-differentiable function with kinks whenever \(|z| =
-  c_i\) for \(i \neq k\) or \(z = 0\). Let \(\gamma = \tilde{r}^T\tilde{x}\)
+  c_i\) for \(i \neq k\) or \(z = 0\) \jw{whenever \(|z| \in \{0,c_1,c_2,\ldots,c_m\}\)}. Let \(\gamma = \tilde{r}^T\tilde{x}\)
   and \(\omega = \tilde{x}^T\tilde{x}\) and note that the optimality criterion for
   \eqref{eq:cluster-problem} is
   \[
@@ -351,7 +350,7 @@ We are now ready to present the SLOPE thresholding operator.
   and observe that this is equivalent to \eqref{eq:optimality-inequality} with
   \(z = c_i\), \(i \neq k\), since
   \(C(c_i + {\varepsilon_c}) = C(-c_i - {\varepsilon_c})\) and
-  \(C(-c_i + {\varepsilon_c}) = C(c_i - {\varepsilon_c})\). Then \(z^* = c_i\) must be
+  \(C(-c_i + {\varepsilon_c}) = C(c_i - {\varepsilon_c})\). Thus \(z^* = \sign(\gamma)c_i\) must be
   the solution.
 
   If neither \eqref{eq:case-zero} nor \eqref{eq:case-cluster} hold, then it must either be
@@ -362,6 +361,7 @@ We are now ready to present the SLOPE thresholding operator.
     < |\gamma| <
     \omega c_{i - 1} + \smashoperator{\sum_{j \in C(c_{i - 1} - {\varepsilon_c})}} \lambda_{(j)^-_{c_{i - 1} - {\varepsilon_c}}},
   \end{equation}
+  \jw{Can we cite this conditions through the cases in $T_k$ then we don't need that many equations?}
   for some \(i > 1\), or that
   \begin{equation}
     \label{eq:case-largest}

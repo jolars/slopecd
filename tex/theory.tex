@@ -530,18 +530,22 @@ Hence the idea to alternate, PGD and PCD step to take advantage of the speed of 
 \end{algorithm}
 
 In \cref{fig:illustration-solver}, we show how \cref{alg:hybrid} works in practice on
-a two-dimensional SLOPE problem.
+a two-dimensional SLOPE problem. 
 
 \begin{figure}[htbp]
   \centering
   \includegraphics{illustration_solvers}
-  \caption{Illustration of the proposed solver. These figures show ten epochs of
-    the coordinate descent (CD) solver that we use as part of the hybrid method,
-    our hybrid method, or proximal gradient descent (PGD). The orange cross marks
-    the optimum. The dotted lines indicate where the coefficients are equal
-    in absolute value. Each dot marks a complete epoch, which may correspond to only
-    a single coefficient update for the CD and hybrid solvers if the coefficients
-    flip order.}
+  \caption{Illustration of the proposed solver. The figures show progress
+    until convergence for the coordinate descent (CD) solver that we use as part
+    of the hybrid method, our hybrid method, and  proximal gradient descent
+    (PGD). The orange cross marks the optimum. Dotted lines indicate where the
+    coefficients are equal in absolute value. The dashed lines indicate PGD
+    steps and solid lines CD steps. Each dot marks a complete epoch, which may
+    correspond to only a single coefficient update for the CD and hybrid
+    solvers if the coefficients flip order. Each solver was run until the duality
+    gap was smaller than \(10^{-10}\). Note that the CD algorithm cannot split clusters
+    and is therefore stuck after the third epoch. The hybrid and PGD algorithms,
+    meanwhile, reach convergence after 67 and 156 epochs respectively.}
   \label{fig:illustration-solver}
 \end{figure}
 

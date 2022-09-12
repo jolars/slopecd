@@ -11,41 +11,45 @@ from slope.utils import ConvergenceMonitor, dual_norm_slope, prox_slope, slope_t
 
 dir_results = "../figures/"
 savefig = True
-# plt.rcParams["font.size"] = 12
+
 
 def cd(X, y, alphas, max_iter, beta0, verbose=False):
     n_samples = X.shape[0]
     beta = beta0.copy()
     R = y - X @ beta
 
-    beta1s = []
-    beta2s = []
+    betas_epoch = []
+    betas_cd = []
+
+    betas_epoch.append(beta.copy())
+    betas_cd.append(beta.copy())
 
     monitor = ConvergenceMonitor(
-        X, y, alphas, 1e-12, 1, np.inf, verbose, intercept_column=False
+        X, y, alphas, 1e-10, 1, np.inf, verbose, intercept_column=False
     )
     c, c_ptr, c_ind, c_perm, n_clusters = get_clusters(beta)
 
     for it in range(max_iter):
         j = 0
+        beta_prev = beta.copy()
         while j < n_clusters:
             c, c_ptr, c_ind, c_perm, n_clusters = get_clusters(beta)
-            beta1s.append(beta[0])
-            beta2s.append(beta[1])
 
             cluster = c_ind[c_ptr[j] : c_ptr[j + 1]]
             sign_w = np.sign(beta[cluster]) if c[j] != 0 else np.ones(len(cluster))
-            sum_X = X[:, cluster] @ sign_w
-            L_j = sum_X.T @ sum_X / n_samples
-            c_old = abs(c[j])
-            x = c_old + (sum_X.T @ R) / (L_j * n_samples)
-            beta_tilde, ind_new = slope_threshold(
+            x_tilde = X[:, cluster] @ sign_w
+            L_j = x_tilde.T @ x_tilde / n_samples
+            c_old = c[c_perm[j]]
+            x = c_old + (x_tilde.T @ R) / (L_j * n_samples)
+            z, ind_new = slope_threshold(
                 x, alphas / L_j, c_ptr, c_perm, c, n_clusters, j
             )
 
-            beta[cluster] = beta_tilde * sign_w
-            if c_old != beta_tilde:
-                R += (c_old - beta_tilde) * sum_X
+            c_new = np.abs(z)
+
+            beta[cluster] = z * sign_w
+            if c_old != z:
+                R += (c_old - z) * x_tilde
 
             ind_old = j
             n_clusters = update_cluster(
@@ -54,7 +58,7 @@ def cd(X, y, alphas, max_iter, beta0, verbose=False):
                 c_ind,
                 c_perm,
                 n_clusters,
-                abs(beta_tilde),
+                c_new,
                 c_old,
                 ind_old,
                 ind_new,
@@ -67,10 +71,19 @@ def cd(X, y, alphas, max_iter, beta0, verbose=False):
 
             j += 1
 
+            betas_cd.append(beta.copy())
+
+        betas_epoch.append(beta.copy())
+
         converged = monitor.check_convergence(beta, 0.0, it)
         if converged:
             break
-    return beta1s, beta2s
+
+        # stop if we get stuck
+        if np.array_equal(beta, beta_prev):
+            break
+
+    return np.vstack(betas_epoch), np.vstack(betas_cd)
 
 
 def hybrid_cd(X, y, alphas, max_iter, beta0, verbose=False):
@@ -88,7 +101,7 @@ def hybrid_cd(X, y, alphas, max_iter, beta0, verbose=False):
     L = norm(X, ord=2) ** 2 / n_samples
 
     monitor = ConvergenceMonitor(
-        X, y, alphas, 1e-12, 1, np.inf, verbose, intercept_column=False
+        X, y, alphas, 1e-10, 1, np.inf, verbose, intercept_column=False
     )
 
     c, c_ptr, c_ind, c_perm, n_clusters = get_clusters(beta)
@@ -100,44 +113,50 @@ def hybrid_cd(X, y, alphas, max_iter, beta0, verbose=False):
                 beta_cd.append(beta_tmp.copy())
                 beta_tmp.clear()
             beta_prev = beta.copy()
-            beta = prox_slope(beta + X.T @ R / (L * n_samples), alphas)
+            beta = prox_slope(beta + X.T @ R / (L * n_samples), alphas / L)
             R = y - X @ beta
             beta_pgd.append(np.array([beta_prev, beta.copy()]))
             beta_tmp.append(beta.copy())
             betas.append(beta.copy())
+            c, c_ptr, c_ind, c_perm, n_clusters = get_clusters(beta)
         else:
             j = 0
 
             while j < n_clusters:
-
-                c, c_ptr, c_ind, c_perm, n_clusters = get_clusters(beta)
-
-                # if c[j] == 0:
-                #     j += 1
-                #     continue
+                if j >= n_clusters:
+                    continue
 
                 cluster = c_ind[c_ptr[j] : c_ptr[j + 1]]
-                sign_w = np.sign(beta[cluster]) if c[j] != 0 else np.ones(len(cluster))
-                sum_X = X[:, cluster] @ sign_w
-                L_j = sum_X.T @ sum_X / n_samples
-                c_old = abs(c[j])
-                x = c_old + (sum_X.T @ R) / (L_j * n_samples)
-                beta_tilde, ind_new = slope_threshold(
+                sign_beta = (
+                    np.sign(beta[cluster])
+                    if c[c_perm[j]] != 0
+                    else np.ones(len(cluster))
+                )
+
+                x_tilde = X[:, cluster] @ sign_beta
+                L_j = x_tilde.T @ x_tilde / n_samples
+                c_old = c[c_perm[j]]
+
+                x = c_old + (x_tilde.T @ R) / (L_j * n_samples)
+                z, ind_new = slope_threshold(
                     x, alphas / L_j, c_ptr, c_perm, c, n_clusters, j
                 )
 
-                beta[cluster] = beta_tilde * sign_w
-                if c_old != beta_tilde:
-                    R += (c_old - beta_tilde) * sum_X
+                c_new = np.abs(z)
+                beta[cluster] = z * sign_beta
+
+                if c_old != z:
+                    R += (c_old - z) * x_tilde
 
                 ind_old = j
+
                 n_clusters = update_cluster(
                     c,
                     c_ptr,
                     c_ind,
                     c_perm,
                     n_clusters,
-                    abs(beta_tilde),
+                    c_new,
                     c_old,
                     ind_old,
                     ind_new,
@@ -151,8 +170,11 @@ def hybrid_cd(X, y, alphas, max_iter, beta0, verbose=False):
                 beta_tmp.append(beta.copy())
 
                 j += 1
+
             betas.append(beta.copy())
+
         converged = monitor.check_convergence(beta, 0.0, it)
+
         if converged:
             if it % 5 != 0:
                 beta_cd.append(beta_tmp.copy())
@@ -172,7 +194,7 @@ def pgd(X, y, alphas, max_iter, beta0, verbose=False):
     L = norm(X, ord=2) ** 2 / n_samples
 
     monitor = ConvergenceMonitor(
-        X, y, alphas, 1e-12, 1, np.inf, verbose, intercept_column=False
+        X, y, alphas, 1e-10, 1, np.inf, verbose, intercept_column=False
     )
 
     for it in range(max_iter):
@@ -207,14 +229,14 @@ alphas = alpha_max * alphas_seq * reg
 
 beta0 = np.array([-0.8, 0.3])  # try to make beta slope have 1 cluster
 
-n_it = 10
+n_it = 200
 
 betas_hybrid, betas_hybrid_pgd, betas_hybrid_cd = hybrid_cd(X, y, alphas, n_it, beta0)
 
-beta1s_cd, beta2s_cd = cd(X, y, alphas, n_it, beta0)
+betas_cd, betas_cd_cd = cd(X, y, alphas, n_it, beta0)
 beta1s_pgd, beta2s_pgd = pgd(X, y, alphas, n_it, beta0)
 betas = (
-    (beta1s_cd, beta2s_cd),
+    (betas_cd_cd[:, 0], betas_cd_cd[:, 1]),
     (betas_hybrid[:, 0], betas_hybrid[:, 1]),
     (beta1s_pgd, beta2s_pgd),
 )
@@ -239,8 +261,7 @@ for i in range(40):
         theta = -r / max(1, dual_norm_slope(X, r, alphas))
         primal = 0.5 * norm(r) ** 2 + np.sum(alphas * np.sort(np.abs(betax))[::-1])
         dual = 0.5 * (norm(y) ** 2 - norm(y - theta) ** 2)
-        gap = primal  # - dual
-        z[j][i] = gap
+        z[j][i] = primal
 
 
 labels = ["CD", "Hybrid", "PGD"]
@@ -264,16 +285,38 @@ for i in range(3):
     ax.plot(
         beta_star[0], beta_star[1], color="darkorange", marker="x", markersize=10, mew=2
     )
-    linestyle = "" if i == 1 else "-"
+
+    if i == 0:
+        linestyle = "-"
+        marker = ""
+    elif i == 1:
+        linestyle = ""
+        marker = "."
+    else:
+        linestyle = "--"
+        marker = "."
+
     ax.plot(
         betas[i][0],
         betas[i][1],
-        marker=".",
+        marker=marker,
         color="black",
         label=labels[i],
         linestyle=linestyle,
-        markersize=8,
+        markersize=6,
     )
+
+    if i == 0:
+        # Plot epochs as points
+        ax.plot(
+            betas_cd[:, 0],
+            betas_cd[:, 1],
+            marker=".",
+            color="black",
+            label=labels[i],
+            linestyle="",
+            markersize=8,
+        )
 
     if i == 1:
         # Plot separate linestyles for CD and hybrid steps

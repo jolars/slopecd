@@ -25,7 +25,6 @@
 \usepackage{siunitx}
 \usepackage{enumitem}
 
-\DeclareMathOperator*{\minimize}{minimize}
 
 \usepackage{algorithm,algpseudocode}
 \usepackage[titlenumbered,linesnumbered,ruled,noend,algo2e]{algorithm2e}
@@ -105,6 +104,7 @@
 \setlength{\emergencystretch}{3em} % prevent overfull lines
 
 % operators
+\DeclareMathOperator*{\minimize}{minimize}
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
 \DeclareMathOperator{\tr}{tr}
@@ -115,9 +115,13 @@
 \DeclareMathOperator{\card}{card}
 \DeclareMathOperator{\sign}{sign}
 
-
+% macros
 \newcommand{\abs}[1]{\lvert {#1} \rvert}
 \newcommand{\norm}[1]{\lVert {#1} \rVert}
+\newcommand{\bbR}{\mathbb{R}}
+\newcommand{\cB}{\mathcal{B}}
+\newcommand{\cC}{\mathcal{C}}
+
 % theorems
 \theoremstyle{plain}
 \newtheorem{theorem}{Theorem}[section]
@@ -130,11 +134,6 @@
 \theoremstyle{remark}
 \newtheorem{remark}[theorem]{Remark}
 \newtheorem{example}{Example}
-
-% mathbb and mathcal letters
-\newcommand{\bbR}{\mathbb{R}}
-\newcommand{\cB}{\mathcal{B}}
-\newcommand{\cC}{\mathcal{C}}
 
 % title block
 \title{Coordinate Descent for SLOPE}

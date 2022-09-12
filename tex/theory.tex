@@ -91,53 +91,51 @@ since \(\lVert \tilde{r} - \tilde{x}z\rVert_2^2\) is differentiable.
 
 \mathurin{One key aspect of such updates that for me deserves to be emphasized: the clusters will almost all remain the same: they can only change order, or two of them merge.}
 
-Throughout the rest of this section section we will derive a minimizer
-solution to \eqref{eq:cluster-problem}. To do so, we will introduce the
-directional derivative for the sorted \(\ell_1\) norm with respect to the
-coefficient of the \(k\)th cluster. First, however, let
-\(C(z)\) be a function that returns the cluster corresponding to \(z\), that is
+Throughout the rest of this section section we will derive a minimizer solution to
+\eqref{eq:cluster-problem}. To do so, we will introduce the directional derivative for the
+sorted \(\ell_1\) norm with respect to the coefficient of the \(k\)th cluster. First,
+however, let \(C(z)\) be a function that returns the cluster corresponding to \(z\), that is
 \[
   C(z) = \{j : |\beta(z)_j| = z\}.
 \]
-Secondly, we introduce \cref{def:limit-permutation}.
-\begin{definition} \mm{cosmetic: I'm not sure this is a definition}
-  \label{def:limit-permutation}
-  Let there be an \(\varepsilon > 0\) such that
-  \begin{equation*}
-    \big| c_i - c_j\big| > \varepsilon \quad \forall\, i \neq j
-  \end{equation*}
-  for a strictly decreasing sequence \(c_1, c_2, ..., c_m\).
-  \mm{should the inequality be in the other direction?}
-\end{definition}
-
-For an \(\varepsilon\) defined as in \cref{def:limit-permutation}, we have for
-\(\delta \in \{-1, 1\}\)\mathurin{This can be hard to parse: $C$ implicitely depends on a vector that determiens clsuters. We can emphasize that  In all this section $\beta$ is fixed and we update only in the direction given by the sign of one cluster. Clusters $C_i$ and $c_i$ are fixed.}
+Next, for a  strictly decreasing sequence \(c_1, c_2, ..., c_m\) we let $\varepsilon_c$ be an arbitrary positive value such that 
 \begin{equation}
-  \lim_{h \downarrow 0} C(z + h\delta) = C(z + \varepsilon \delta)
+  \label{eq:epsilon-c}
+  \big| c_i - c_j\big| > {\varepsilon_c} \quad \forall\, i \neq j.
+\end{equation}
+
+For a \({\varepsilon_c}\) and \(\delta \in \{-1, 1\}\)
+\mathurin{This can be hard to parse: $C$ implicitly depends on a vector that determines clusters. We can emphasize that  In all this section $\beta$ is fixed and we update only in the direction given by the sign of one cluster. Clusters $C_i$ and $c_i$ are fixed.}
+\JL{Yes, but I don't think there's any way around this since we must use this
+  construction in the definitions and proofs for the directional derivative and the
+  thresholding operator.}
+we have
+\begin{equation}
+  \lim_{h \downarrow 0} C(z + h\delta) = C(z + {\varepsilon_c} \delta)
   \quad\text{and}\quad
   \lim_{h \downarrow 0} \lambda_{(i)^-_{z + h\delta}}
-  = \lambda_{(i)^-_{z + \varepsilon\delta}}.
+  = \lambda_{(i)^-_{z + {\varepsilon_c}\delta}}.
 \end{equation}
-In other words, the order permutation corresponding to \(B(z + h\delta)\)
-depends only on \(\delta\) in the limit as \(h\) tends to~\(0\). \mm{typo B for $\beta$?}
-
+In other words, the order permutation corresponding to \(\beta(z + h\delta)\)
+depends only on \(\delta\) in the limit as \(h\) tends to~\(0\).
 \begin{remark}
-  As consequence of \cref{def:limit-permutation}, the order
-  permutations for \(B(z)\) and \(B(z + \varepsilon \delta)\) differ only for a subset of
-  the permutation vectors. The permutation for \(B(h\delta)\) corresponds to
+  As consequence of the definition of \(\varepsilon_c\), the order permutations
+  for \(\beta(z)\) and \(\beta(z + {\varepsilon_c} \delta)\) differ only for a
+  subset of the permutation vectors. The permutation for \(\beta(h\delta)\)
+  corresponds to
   \[
     \begin{cases}
-      \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, \tilde{\mathcal{C}}_m, C(\varepsilon\delta)                                          & \text{if } c_m > 0 \text{ and } \delta \neq 0, \\
-      \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, C(\varepsilon\delta), \tilde{\mathcal{C}}_m                                          & \text{if } c_m = 0 \text{ and } \delta \neq 0, \\
-      \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, \underbrace{\tilde{\mathcal{C}}_k \cup \tilde{\mathcal{C}}_m}_{C(\varepsilon\delta)} & \text{if } c_m = 0 \text{ and } \delta = 0.    \\
+      \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, \tilde{\mathcal{C}}_m, C({\varepsilon_c}\delta)                                          & \text{if } c_m > 0 \text{ and } \delta \neq 0, \\
+      \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, C({\varepsilon_c}\delta), \tilde{\mathcal{C}}_m                                          & \text{if } c_m = 0 \text{ and } \delta \neq 0, \\
+      \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, \underbrace{\tilde{\mathcal{C}}_k \cup \tilde{\mathcal{C}}_m}_{C({\varepsilon_c}\delta)} & \text{if } c_m = 0 \text{ and } \delta = 0.    \\
     \end{cases}
   \]
-  The permutation for \(B(z + \varepsilon \delta)\), \(z \neq 0\) corresponds to
+  The permutation for \(\beta(z + {\varepsilon_c} \delta)\), \(z \neq 0\) corresponds to
   \[
     \begin{cases}
-      \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, C(c_i + \varepsilon\delta), \tilde{\mathcal{C}}_i, \dots, \tilde{\mathcal{C}}_m                                          & \text{if } \delta = 1,  \\
-      \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, \tilde{\mathcal{C}}_i, C(c_i + \varepsilon\delta), \dots, \tilde{\mathcal{C}}_m                                          & \text{if } \delta = -1, \\
-      \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, \underbrace{\tilde{\mathcal{C}}_i \cup \tilde{\mathcal{C}}_k}_{C(c_i + \varepsilon\delta)}, \dots, \tilde{\mathcal{C}}_m & \text{if } \delta = 0.  \\
+      \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, C(c_i + {\varepsilon_c}\delta), \tilde{\mathcal{C}}_i, \dots, \tilde{\mathcal{C}}_m                                          & \text{if } \delta = 1,  \\
+      \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, \tilde{\mathcal{C}}_i, C(c_i + {\varepsilon_c}\delta), \dots, \tilde{\mathcal{C}}_m                                          & \text{if } \delta = -1, \\
+      \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, \underbrace{\tilde{\mathcal{C}}_i \cup \tilde{\mathcal{C}}_k}_{C(c_i + {\varepsilon_c}\delta)}, \dots, \tilde{\mathcal{C}}_m & \text{if } \delta = 0.  \\
     \end{cases}
   \]
 \end{remark}
@@ -149,17 +147,16 @@ We are now ready to state the directional derivative of \(J_k\).
   \[
     J'_k(z, \delta) =
     \begin{cases}
-      \sign(z)\delta\smashoperator{\sum_{j \in C(z + \varepsilon \delta)}}
-      \lambda_{(j)^-_{z + \varepsilon\delta}}                      & \text{if } z = c_i > 0, \\
-      |\delta|\smashoperator{\sum_{j \in C(\varepsilon \delta)}}
-      \lambda_{(j)^-_{\varepsilon\delta}}                          & \text{if } z = 0,       \\
-      |\delta| \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_z} & \text{otherwise}
+      \smashoperator[r]{\sum_{j \in C({\varepsilon_c} \delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}                    & \text{if } z = 0,         \\
+      \sign(z)\delta\smashoperator{\sum_{j \in C(z + {\varepsilon_c} \delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}} & \text{if } |z| = c_i > 0, \\
+      \sign(z)\delta\smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}                                                  & \text{otherwise,}
     \end{cases}
   \]
-  with \(\varepsilon\) defined as in \cref{def:limit-permutation}.
+  with \({\varepsilon_c}\) defined as in \eqref{eq:epsilon-c}.
 \end{theorem}
 \begin{proof}
-  The directional derivative of \(J_k\) in the direction \(\delta\) is defined as
+  The directional derivative of \(J_k\) in the direction \(\delta\), with
+  \(|\delta| = 1\), is defined as
   \begin{align}
     J_k'(z; \delta)
     = & \lim_{h \downarrow 0} \frac{J_k(z + h \delta) - J_k(z)}{h} \nonumber \\
@@ -174,29 +171,24 @@ We are now ready to state the directional derivative of \(J_k\).
     = & \lim_{h \downarrow 0}
     \frac{1}{h}
     \left(
-      |z + h \delta| \smashoperator{\sum_{j \in C(z + \varepsilon\delta)}} \lambda_{(j)^-_{z + \varepsilon\delta}}
-      + \smashoperator{\sum_{j \notin C(z + \varepsilon\delta)}} |\beta_j| \lambda_{(j)^-_{z + \varepsilon\delta}}
+      |z + h \delta| \smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
+      + \smashoperator{\sum_{j \notin C(z + {\varepsilon_c}\delta)}} |\beta_j| \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
       - |z| \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}
       - \smashoperator{\sum_{j \notin C(z)}} |\beta_j| \lambda_{(j)^-_{z}}
-    \right).
+    \right)
     \label{eq:directional-derivative-sl1}
   \end{align}
+  We have the following cases to consider: \(|z| = c_i\) for \(i \neq k\) \jw{I prefer \(|z| \in \{c_1,c_2,\ldots,c_m\} \), I don't like having a loose $i$ in $i\neq k$ } ,
+  \(|z| = 0\), and \(z \notin \{0, c_i\}\) for \(i \neq k\).
 
-  First, note that \(J_k\) is differentiable for \(z \notin \{0, c_i\}\), \(i
-  \neq k\) and that \(C(z + \varepsilon\delta) = C(z)\), giving
-  the directional derivative
-  \[
-    \delta \sign(z) \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}.
-  \]
-
-  Turning to the case of \(z = \pm c_i\), \(i \neq k\) now, note that we have,
+  Turning first to the case when \(|z| = c_i\) for \(i \neq k\), note that we have,
   as a result of the definition of
-  \(\varepsilon\)~(\cref{def:limit-permutation}), the following identities:
+  \({\varepsilon_c}\), the following identities:
   \begin{align*}
-    C(c_i + \varepsilon\delta)          & \subseteq C(c_i),                                                                                                             \\
-    \tilde{\mathcal{C}}_i               & = \widebar{C(c_i + \varepsilon \delta)} \cap C(c_i),                                                                          \\
-    C(c_i)                              & = \tilde{C}_i \cup \big(C(c_i + \varepsilon\delta) \cap C(c_i)\big) = \tilde{\mathcal{C}}_i \cup C(c_i + \varepsilon \delta), \\
-    \widebar{C(z + \varepsilon \delta)} & = \widebar{C(c_i)} \cup \tilde{\mathcal{C}}_i.
+    C(c_i + {\varepsilon_c}\delta)          & \subseteq C(c_i),                                                                                                                     \\
+    \tilde{\mathcal{C}}_i                   & = \widebar{C(c_i + {\varepsilon_c} \delta)} \cap C(c_i),                                                                              \\
+    C(c_i)                                  & = \tilde{C}_i \cup \big(C(c_i + {\varepsilon_c}\delta) \cap C(c_i)\big) = \tilde{\mathcal{C}}_i \cup C(c_i + {\varepsilon_c} \delta), \\
+    \widebar{C(z + {\varepsilon_c} \delta)} & = \widebar{C(c_i)} \cup \tilde{\mathcal{C}}_i.
   \end{align*}
   Using this, we can rewrite \eqref{eq:directional-derivative-sl1} as
   \begin{equation*}
@@ -205,26 +197,26 @@ We are now ready to state the directional derivative of \(J_k\).
     = \lim_{h \downarrow 0} \frac{1}{h}
     \left(
       \splitfrac{
-      |z + h\delta|\smashoperator{\sum_{j \in C(z + \varepsilon\delta)}} \lambda_{(j)^-_{z + \varepsilon\delta}}
-      + |c_i|\smashoperator{\sum_{j \in \tilde{C}_i}} \lambda_{(j)^-_{z + \varepsilon\delta}}
-      + \smashoperator{\sum_{j \in \widebar{C(z)}}} |\beta_j|\lambda_{(j)^-_{z + \varepsilon\delta}}
+      |z + h\delta|\smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
+      + |c_i|\smashoperator{\sum_{j \in \tilde{C}_i}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
+      + \smashoperator{\sum_{j \in \widebar{C(z)}}} |\beta_j|\lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
       }{%
       - |z| \smashoperator{\sum_{j \in \tilde{\mathcal{C}}_i}} \lambda_{(j)^-_{z}}
-      - |c_i| \smashoperator{\sum_{j \in C(z + \varepsilon\delta)}} \lambda_{(j)^-_{z}}
+      - |c_i| \smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z}}
       - \smashoperator{\sum_{j \in \widebar{C(z)}}} |\beta_j| \lambda_{(j)^-_{z}}
       }
     \right).
   \end{equation*}
-  Next, observe that \(\lambda_{(j)^-_{z + \varepsilon\delta}} =
+  Next, observe that \(\lambda_{(j)^-_{z + {\varepsilon_c}\delta}} =
   \lambda_{(j)^-_{z}}\) for all \(j \in \widebar{C(z)}\) and consequently
   \[
-    \smashoperator{\sum_{j \in \widebar{C(z)}}} |\beta_j|\lambda_{(j)^-_{z + \varepsilon\delta}} =
+    \smashoperator{\sum_{j \in \widebar{C(z)}}} |\beta_j|\lambda_{(j)^-_{z + {\varepsilon_c}\delta}} =
     \smashoperator{\sum_{j \in \widebar{C(z)}}} |\beta_j|\lambda_{(j)^-_{z}}.
   \]
   Moreover, note that, since \(z = \pm c_i\), there exists a permutation corresponding to
   \(\lambda_{(j)^-_{z}}\) such that
   \[
-    |z|\smashoperator{\sum_{j \in \tilde{C}_i}} \lambda_{(j)^-_{z + \varepsilon\delta}}
+    |z|\smashoperator{\sum_{j \in \tilde{C}_i}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
     = |c_i| \smashoperator{\sum_{j \in \tilde{C}_i}} \lambda_{(j)^-_{z}}
   \]
   and consequently
@@ -233,8 +225,8 @@ We are now ready to state the directional derivative of \(J_k\).
     J'_k(z; \delta)
     = \lim_{h \downarrow 0} \frac{1}{h}
     \left(
-      |z + h\delta|\smashoperator{\sum_{j \in C(z + \varepsilon\delta)}} \lambda_{(j)^-_{z + \varepsilon\delta}}
-      - |c_i| \smashoperator{\sum_{j \in C(z + \varepsilon\delta)}} \lambda_{(j)^-_{z}}.
+      |z + h\delta|\smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
+      - |c_i| \smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z}}.
     \right).
   \end{equation}
   Now, since \(c_i + h \delta > 0\) and \(-c_i + h \delta < 0\) in the limit as
@@ -251,233 +243,163 @@ We are now ready to state the directional derivative of \(J_k\).
     J'_k(z; \delta)
      & = \lim_{h \downarrow 0} \frac{1}{h}
     \left(
-      \big(|z| + \sign(z)h\delta\big)\smashoperator{\sum_{j \in C(z + \varepsilon\delta)}} \lambda_{(j)^-_{z + \varepsilon\delta}}
-      - |c_i| \smashoperator{\sum_{j \in C(z + \varepsilon\delta)}} \lambda_{(j)^-_{z}}.
-    \right)                                                                                                          \\
+      \big(|z| + \sign(z)h\delta\big)\smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
+      - |c_i| \smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z}}.
+    \right)                                                                                                                  \\
      & = \lim_{h \downarrow 0} \frac{1}{h}
-    \sign(z)h\delta\smashoperator{\sum_{j \in C(z + \varepsilon\delta)}} \lambda_{(j)^-_{z + \varepsilon\delta}}     \\
-     & = \sign(z)\delta\smashoperator{\sum_{j \in C(z + \varepsilon\delta)}} \lambda_{(j)^-_{z + \varepsilon\delta}} \\
+    \sign(z)h\delta\smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}     \\
+     & = \sign(z)\delta\smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}} \\
   \end{align*}
 
-  In the case when \(z = c_i = 0\), that is, the cluster corresponding to
-  zero coefficients in \(\beta\) is non-empty,
-  then \eqref{eq:directional-derivative-simplified-again} is
-  simply
+For the case when $z=0$ there are two sub cases.
+  First case is when \(c_m = 0\)  then
+  \eqref{eq:directional-derivative-simplified-again} is simply
   \begin{equation*}
     \label{eq:directional-derivative-zerocase}
     J'_k(0; \delta)
     = \lim_{h \downarrow 0} \frac{1}{h}
-    |h\delta|\smashoperator{\sum_{j \in C(\varepsilon\delta)}} \lambda_{(j)^-_{\varepsilon\delta}}
-    = |\delta|\smashoperator{\sum_{j \in C(\varepsilon\delta)}} \lambda_{(j)^-_{\varepsilon\delta}}.
+    |h\delta|\smashoperator{\sum_{j \in C({\varepsilon_c}\delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}
+    = \smashoperator{\sum_{j \in C({\varepsilon_c}\delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}
   \end{equation*}
+  since \(|\delta| = 1\) by definition,
 
-  Proceeding, now, with the case when \(z = 0 \neq c_i\), \(i \neq k\),
-  we see that \eqref{eq:directional-derivative-sl1} reduces to
+ The other sub case is when \(c_m \neq 0\). Here \eqref{eq:directional-derivative-sl1} reduces to
   \begin{equation*}
     J_k'(0; \delta) = \lim_{h \downarrow 0}
     \frac{1}{h}
     \left(
-      |h \delta| \smashoperator{\sum_{j \in C(\varepsilon\delta)}} \lambda_{(j)^-_{\varepsilon\delta}}
-      + \smashoperator{\sum_{j \notin C(\varepsilon\delta)}} |\beta_j| \lambda_{(j)^-_{\varepsilon\delta}}
+      |h \delta| \smashoperator{\sum_{j \in C({\varepsilon_c}\delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}
+      + \smashoperator{\sum_{j \notin C({\varepsilon_c}\delta)}} |\beta_j| \lambda_{(j)^-_{{\varepsilon_c}\delta}}
       - \smashoperator{\sum_{j \notin C(0)}} |\beta_j| \lambda_{(j)^-_{0}}
     \right).
   \end{equation*}
-  In this case, we have \(C(0) = C(\varepsilon\delta)\) since \(c_m \neq 0\), and therefore
+  In this case, we have \(C(0) = C({\varepsilon_c}\delta)\) since \(c_m \neq 0\), and therefore
   \[
-    \smashoperator{\sum_{j \notin C(\varepsilon\delta)}} |\beta_j| \lambda_{(j)^-_{\varepsilon\delta}}
+    \smashoperator{\sum_{j \notin C({\varepsilon_c}\delta)}} |\beta_j| \lambda_{(j)^-_{{\varepsilon_c}\delta}}
     = \smashoperator{\sum_{j \notin C(0)}} |\beta_j| \lambda_{(j)^-_{0}},
   \]
   which means that
   \begin{equation*}
     J_k'(0; \delta) = \lim_{h \downarrow 0}
     \frac{1}{h}
-    |h \delta| \smashoperator{\sum_{j \in C(\varepsilon\delta)}} \lambda_{(j)^-_{\varepsilon\delta}}
-    = |\delta|\smashoperator{\sum_{j \in C(\varepsilon\delta)}} \lambda_{(j)^-_{\varepsilon\delta}}
-    = |\delta|\smashoperator{\sum_{j \in C(0)}} \lambda_{(j)^-_{0}}.
+    |h \delta| \smashoperator{\sum_{j \in C({\varepsilon_c}\delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}
+    = |\delta|\smashoperator{\sum_{j \in C({\varepsilon_c}\delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}
+    = \smashoperator{\sum_{j \in C(0)}} \lambda_{(j)^-_{0}}.
   \end{equation*}
+
+  Finally, note that \(J_k\) is differentiable in every other case, that is,
+  \(|z| \notin \{0, c_i\}\) for \(i \neq k\) \jw{Same notational issue here}and, since since \(C(z +
+  {\varepsilon_c}\delta) = C(z)\), has the directional derivative
+  \[
+    J_k'(z; \delta) = \delta \sign(z) \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}.
+  \]
 \end{proof}
 
-Using \cref{thm:sl1-directional-derivative}, we define the subgradient for
-\(J_k\), \(\partial J_k\) in \cref{thm:cluster-subdifferential}.
+We are now ready to present the SLOPE thresholding operator.
 
-\begin{theorem}\label{thm:cluster-subdifferential}
-  Let \(\beta\) be a fixed vector and \(p_i\) and \(c_i\) be the size and
-  coefficient, respectively, of the \(i\)th cluster in \(\beta\).
-  Next, let \(\beta(z)\) be defined as in \eqref{eq:coordinate-update-beta}
-  and \(a\) and \(b\) be vectors of indexes, such that
-  \(a_i\) and \(b_i\) are the first and last indexes, respectively,
-  of the \(\lambda\) sequence associated with the \(i\)th cluster
-  in \(B(z)\). The subdifferential for \(J_k(z)\) at \(z\) is
-  then
+\begin{theorem}[The SLOPE Thresholding Operator]
   \[
-    \partial_{z} J_k(z) =
+    T_k(\gamma, \omega; c, \lambda) =
     \begin{cases}
-      \big[-\sum_{j = p - p_k + 1}^{p}\lambda_j, \sum_{j = p - p_k + 1}^{p}\lambda_j\big]                         & \text{if } z = 0 \neq c_m,  \\
-      \big[-\sum_{j = p - p_m + 1}^{p - p_m + p_k}\lambda_j, \sum_{j = p - p_m + 1}^{p - p_m + p_k}\lambda_j\big] & \text{if } z = 0 = c_m,     \\
-      \big[\sum_{j = b_i - p_k + 1}^{b_i}\lambda_j, \sum_{j = a_i}^{a_i + p_k} \lambda_j\big]                     & \text{if } z = c_i \neq 0,  \\
-      \big[-\sum_{j = a_i}^{a_i + p_k} \lambda_j, -\sum_{j = b_i - p_k + 1}^{b_i}\lambda_j\big]                   & \text{if } z = -c_i \neq 0, \\
-      \sign(z)\sum_{j \in C(z)} \lambda_{(j)^-_z}                                                                 & \text{otherwise.}           \\
+      0                                                                                                                                                   & \text{if } |\gamma| \leq \smashoperator{\sum_{j \in C({\varepsilon_c})}} \lambda_{(j)^-_{\varepsilon_c}},                                                                                                                                                        \\
+      \sign(\gamma)c_i                                                                                                                                    & \text{if } \omega c_i + \smashoperator{\sum_{j \in C(c_i - {\varepsilon_c})}} \lambda_{(j)^-_{c_i - {\varepsilon_c}}} \leq |\gamma| \leq \omega c_i + \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}},             \\
+      \frac{\sign(\gamma)}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} \bigg) & \text{if } \omega c_i + \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} < |\gamma| < \omega c_{i - 1} + \smashoperator{\sum_{j \in C(c_{i - 1} - {\varepsilon_c})}} \lambda_{(j)^-_{c_{i - 1} - {\varepsilon_c}}}, \\
+      \frac{\sign(\gamma)}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_1 + {\varepsilon_c})}} \lambda_{(j)^-_{c_1 + {\varepsilon_c}}} \bigg) & \text{if } |\gamma| \geq \omega c_1 + \smashoperator{\sum_{j \in C(c_1 + {\varepsilon_c})}} \lambda_{(j)^-_{c_1 + {\varepsilon_c}}}.
     \end{cases}
   \]
+  with \({\varepsilon_c}\) defined as in \eqref{eq:epsilon-c} and let
+  \(\gamma = \tilde{r}^Tx\), \(\omega = \tilde{x}^T\tilde{x}\). Then
+  \(T(\gamma, \omega; c; \lambda) \in \argmin_{z \in \mathbb{R}} P_k(z)\).
 \end{theorem}
 \begin{proof}
-  Since \(J_k(z)\) is convex, \(g \in \mathbb{R}\) is a
-  subgradient at \(z\) if and only if~\cite[Theorem 23.2]{rockafellar1970}
+  Recall that \(P_k(z) : \mathbb{R} \mapsto \mathbb{R}\) is a convex,
+  continuous piecewise-differentiable function with kinks whenever \(|z| =
+  c_i\) for \(i \neq k\) or \(z = 0\) \jw{whenever \(|z| \in \{0,c_1,c_2,\ldots,c_m\}\)}. Let \(\gamma = \tilde{r}^T\tilde{x}\)
+  and \(\omega = \tilde{x}^T\tilde{x}\) and note that the optimality criterion for
+  \eqref{eq:cluster-problem} is
+  \[
+    \delta(\omega z - \gamma) + J'_k(z; \delta) \geq 0, \quad
+    \forall \delta \in \{-1, 1\},
+  \]
+  which is equivalent to
   \begin{equation}
-    \label{eq:subgrad-ineq}
-    J'(x; \delta) \geq g\delta \qquad \forall\,\delta \in \{-1, 1\}.
+    \label{eq:optimality-inequality}
+    \omega z - J'_k(z; -1) \leq \gamma \leq \omega z + J_k'(z; 1).
   \end{equation}
-  Starting with the case \(z = 0 \neq c_m\), we have
-  \[
-    \begin{aligned}
-       & |\delta| \smashoperator{\sum_{j \in C(\varepsilon\delta)}} \lambda_{(j)^-_{\varepsilon\delta}} \geq \delta g     & \implies \\
-       & \sign(\delta) \smashoperator{\sum_{j \in C(\varepsilon\delta)}} \lambda_{(j)^-_{\varepsilon\delta}} \geq g       & \implies \\
-       & -\smashoperator{\sum_{j = p - p_k + 1}^p} \lambda_j \leq g \leq \smashoperator{\sum_{j=p - p_k + 1}^p} \lambda_j
-    \end{aligned}
-  \]
-  since \(C(\varepsilon\delta) = C(0)\) in this case.
+  We now proceed to show that there is a solution \(z^* \in \argmin_{z \in
+    \mathbb{R}} J_k(z)\) for every interval over \(\gamma \in \mathbb{R}\).
 
-  In the case \(z = 0 = c_m\), the cluster \(C(\varepsilon\delta)\) will occupy the
-  next-to-last spot in the order permutation, and hence
-  \[
-    -\smashoperator{\sum_{j = p - p_k - p_m + 1}^{p - p_m}} \lambda_j
-    \quad \leq g \leq \quad
-    \smashoperator{\sum_{j=p - p_k - p_m + 1}^{p - p_m}} \lambda_j.
-  \]
-
-  In the case \(z = c_i\),~\eqref{eq:subgrad-ineq} corresponds to
+  First, assume that
   \begin{equation}
-    \label{eq:subgrad-ineq-nonzero}
-    \sign(z)\delta \smashoperator{\sum_{j \in C(z + \varepsilon\delta)}} \lambda_{(j)^-_{z + \varepsilon\delta}} \geq \delta g.
+    \label{eq:case-zero}
+    |\gamma| \leq \smashoperator{\sum_{j \in C({\varepsilon_c})}}\lambda_{(j)^-_{{\varepsilon_c}}}
   \end{equation}
-  For \(z > 0\), \(\delta = 1\), \(C(z + \varepsilon\delta)\) will occupy the position
-  in the order permutation of \(B(z + \varepsilon\delta)\) that precedes the \(i\)th
-  cluster, and hence
-  \begin{equation*}
-    \sign(z)\delta \smashoperator{\sum_{j \in C(z + \varepsilon\delta)}} \lambda_{(j)^-_{z + \varepsilon\delta}} \geq \delta g
-    \implies
-    \smashoperator{\sum_{j \in C(z + \varepsilon\delta)}} \lambda_{(j)^-_{z + \varepsilon\delta}} \geq g \implies
-    \smashoperator{\sum_{j = a_i}^{a_i + p_k}} \lambda_j \geq g.
-  \end{equation*}
-  If \(\delta = -1\), then \(C(z + \varepsilon\delta)\) instead occupies the
-  position succeeding the \(i\)th cluster, and we have
-  \begin{equation*}
-    \sign(z)\delta \smashoperator{\sum_{j \in C(z + \varepsilon\delta)}} \lambda_{(j)^-_{z + \varepsilon\delta}} \geq \delta g
-    \implies
-    -\smashoperator{\sum_{j \in C(z + \varepsilon\delta)}} \lambda_{(j)^-_{z + \varepsilon\delta}} \geq -g \implies
-    \smashoperator{\sum_{j = b_i - p_k + 1}^{b_i}} \lambda_j \leq g.
-  \end{equation*}
-  It is easy to see that for \(z_i = c_i < 0\), we must analogously have
+  and note that this is equivalent to \eqref{eq:optimality-inequality} with \(z
+  = 0\) since \(C({\varepsilon_c}) = C(-{\varepsilon_c})\) and
+  \(\lambda_{(j)^-_{-{\varepsilon_c}}} = \lambda_{(j)^-_{{\varepsilon_c}}}\) in
+  this case, which is sufficient for \(z^* = 0\) to be the solution.
+
+  Next, assume that
+  \begin{equation}
+    \label{eq:case-cluster}
+    \omega c_i + \smashoperator{\sum_{j \in C(c_i - {\varepsilon_c})}} \lambda_{(j)^-_{c_i - {\varepsilon_c}}}
+    \leq |\gamma| \leq
+    \omega c_i + \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}}
+  \end{equation}
+  and observe that this is equivalent to \eqref{eq:optimality-inequality} with
+  \(z = c_i\), \(i \neq k\), since
+  \(C(c_i + {\varepsilon_c}) = C(-c_i - {\varepsilon_c})\) and
+  \(C(-c_i + {\varepsilon_c}) = C(c_i - {\varepsilon_c})\). Thus \(z^* = \sign(\gamma)c_i\) must be
+  the solution.
+
+  If neither \eqref{eq:case-zero} nor \eqref{eq:case-cluster} hold, then it must either be
+  the case that
+  \begin{equation}
+    \label{eq:case-differentiable}
+    \omega c_i + \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}}
+    < |\gamma| <
+    \omega c_{i - 1} + \smashoperator{\sum_{j \in C(c_{i - 1} - {\varepsilon_c})}} \lambda_{(j)^-_{c_{i - 1} - {\varepsilon_c}}},
+  \end{equation}
+  \jw{Can we cite this conditions through the cases in $T_k$ then we don't need that many equations?}
+  for some \(i > 1\), or that
+  \begin{equation}
+    \label{eq:case-largest}
+    |\gamma| > \omega c_1 + \smashoperator{\sum_{j \in C(c_1 + {\varepsilon_c})}} \lambda_{(j)^-_{c_1 + {\varepsilon_c}}}.
+  \end{equation}
+  In the first case, note that
   \[
-    -\smashoperator{\sum_{j = b_i - p_k + 1}^{b_i}} \lambda_j
-    \leq g \leq
-    \smashoperator{\sum_{j = a_i}^{a_i + p_k}} \lambda_j.
+    \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}}
+    =
+    \smashoperator[r]{\sum_{j \in C(c_{i-1} - {\varepsilon_c})}} \lambda_{(j)^-_{c_{i-1} - {\varepsilon_c}}}
   \]
-  For all other \(z\), \(J_k\) is differentiable and therefore
+  and therefore \eqref{eq:case-differentiable} is equivalent to
   \[
-    \partial J_k(z) = \sign(z) \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_z}.
+    c_i < \frac{1}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} \bigg) < c_{i -1}.
   \]
+  Now let
+  \begin{equation}
+    \label{eq:differentiable-solution}
+    z^* = \frac{\sign(\gamma)}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} \bigg)
+  \end{equation}
+  and note that \(|z^*| \in (c_i, c_{i-1})\) and hence
+  \[
+    \frac{1}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} \bigg)
+    =
+    \frac{1}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(z^*)}} \lambda_{(j)^-_{z^*}} \bigg).
+  \]
+  Furthermore, since \(P_k\) is differentiable in \((c_i, c_{i-1})\), we have
+  \[
+    \frac{\partial}{\partial z} P_k(z) \Big|_{z = z^*}
+    = \omega z^* - \gamma + \sign(z^*) \smashoperator{\sum_{j \in C(z^*)}} \lambda_{(j)^-_{z^*}} = 0,
+  \]
+  and therefore \eqref{eq:differentiable-solution} must be the solution.
+
+  The case \eqref{eq:case-largest} follows analogously.
 \end{proof}
 
-The objective and subgradient for the cluster-wise problem are shown in
-\cref{fig:cluster-grad-obj}.
+\jl{Consider adding a remark showing that our operator generalizes the soft thresholding operator.}
 
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[]{clusterupdate-grad-obj}
-  \caption{%
-    Objective and gradient under the constraint that we have a fixed
-    cluster.
-    The optimum is found at \(\alpha = 0.3\).
-  }%
-  \label{fig:cluster-grad-obj}
-\end{figure}
-
-We are now ready to introduce a solution to~\eqref{eq:cluster-problem}, using
-the SLOPE thresholding operator~\cref{thm:slope-thresholding}.
-
-\begin{theorem}
-  \label{thm:slope-thresholding}
-  Let
-  \begin{multline*}
-    T_k(\gamma, \omega; c, \lambda) = \\
-    \begin{cases}
-      0                                                                         &
-      \splitfrac{
-        \text{if } \big(-\sum_{j = p - p_k + 1}^p \lambda_j < \gamma \leq \sum_{j = p - p_k + 1}^p \lambda_j
-        \text{ and } c_m \neq 0\big)
-      }{%
-        \text{ or } \big(  -\sum_{j = p - p_k - p_m + 1}^{p - p_m} \lambda_j < \gamma \leq \sum_{j = p - p_k + 1}^{p_m} \lambda_j \text{ and } c_m = 0\big),
-      }                                                                                                                                                                                                                    \\
-      c_i                                                                       & \text{if } \exists\, i \neq k: \sum_{j = b_i - p_k + 1}^{b_i} \lambda_j \leq \gamma - \omega c_i \leq \sum_{j = a_i}^{p_k} \lambda_j,    \\
-      -c_i                                                                      & \text{if } \exists\, i \neq k : \sum_{j = b_i - p_k + 1}^{b_i} \lambda_j \leq - \gamma - \omega c_i \leq \sum_{j = a_i}^{p_k} \lambda_j, \\
-      \frac{1}{\omega}\left(\gamma - \sum_{j \in C(z)} \lambda_{(j)^-_z}\right) & \text{otherwise.}                                                                                                                        \\
-    \end{cases}
-  \end{multline*}
-  A minimizer for \eqref{eq:cluster-problem} is given by \(T_k(\tilde{r}^T\tilde{x}, \tilde{x}^T\tilde{x}; c, \lambda)\).
-\end{theorem}
-\begin{proof}
-  Let \(\gamma = \tilde{r}^T\tilde{x}\) and \(\omega = \tilde{x}^T\tilde{x}\).
-  For a minimizer to~\eqref{eq:cluster-problem}, the optimality condition is
-  \[
-    0 \in \tilde{x}^T\tilde{x} z - \tilde{r}^T \tilde{x} + \partial J_k(z).
-  \]
-  \(z = c_i \neq 0\) is a minimizer of~\eqref{eq:cluster-problem} if and only if
-  \[
-    0 \in \omega c_i - \gamma +
-    \left[\sum_{j = b_i - p_k + 1}^{b_i} \lambda_j, \sum_{j=a_i}^{p_k}\lambda_j \right],
-  \]
-  which is equivalent to
-  \[
-    \smashoperator[r]{\sum_{j = b_i - p_k + 1}^{b_i}} \lambda_j \leq \gamma - \omega c_i \leq \sum_{j = a_i}^{p_k} \lambda_j.
-  \]
-  \(z = -c_i \neq 0\) is a minimizer of~\eqref{eq:cluster-problem} if and only if
-  \[
-    0 \in -\omega c_i - \gamma +
-    \left[-\sum_{j=a_i}^{p_k}\lambda_j, -\smashoperator{\sum_{j = b_i - p_k + 1}^{b_i}} \lambda_j\,\right],
-  \]
-  which is equivalent to
-  \[
-    \smashoperator[r]{\sum_{j = b_i - p_k + 1}^{b_i}} \lambda_j \leq -\gamma - \omega c_i \leq \sum_{j = a_i}^{p_k} \lambda_j.
-  \]
-  If \(c_m \neq 0\), then \(z = 0\) is a minimizer if
-  \[
-    0 \in -\gamma +
-    \left[-\sum_{j = p - p_k + 1}^{p} \lambda_j, \sum_{j=p - p_k + 1}^{p}\lambda_j \right],
-  \]
-  which is equivalent to
-  \[
-    -\sum_{j = p - p_k + 1}^{p} \lambda_j \leq \gamma \leq \sum_{j = p - p_k + 1}^{p} \lambda_j.
-  \]
-  Finally, if \(c_m = 0\), then \(z = 0\) is a minimizer if
-  \[
-    0 \in -\gamma +
-    \left[
-      -\sum_{j = p - p_k - p_m + 1}^{p - p_m} \lambda_j,
-      \sum_{j=p - p_k - p_m + 1}^{p - p_m}\lambda_j
-      \right],
-  \]
-  which is equivalent to
-  \[
-    -\sum_{j = p - p_k + 1}^{p} \lambda_j \leq \gamma \leq \sum_{j = p - p_k + 1}^{p} \lambda_j.
-  \]
-
-
-\end{proof}
-
-\begin{equation}
-  \label{eq:slope-thresholding}
-  T(a, \lambda,k,\tilde \beta, \mathcal{C}) =
-  \begin{cases}
-    0                                                                 & \text{if } |a| \leq \sum_{i=1}^{|\mathcal{C}_k|}\lambda^{C_0}_i                                                                                                                               \\
-    \sign(a)|\tilde \beta_i|                                          & \text{if } \sum_{j= |\mathcal{C}_i| - |\mathcal{C}_k| + 1}^{|\mathcal{C}_i|} \lambda^{\mathcal{C}_i}_j \leq |a| - |\tilde \beta_i| \leq \sum_{j=1}^{|\mathcal{C}_k|}\lambda^{\mathcal{C}_i}_j \\
-    \sign(a)\big(|a| - \sum_{j \in \mathcal{C}_k}\lambda_{(j)^-}\big) & \text{otherwise.
-    }
-  \end{cases}
-\end{equation}
-To emphasize the connection between \(T\) and the soft-thresholding operator
-for the lasso, we call this operator the SLOPE-thresholding operator.
-In \cref{fig:slope-thresholding}, we visualize the operator.
+In \cref{fig:slope-thresholding}, we visualize the SLOPE thresholding operator.
 
 \begin{figure}[htbp]
   \centering

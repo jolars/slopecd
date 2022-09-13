@@ -173,8 +173,8 @@ class ConvergenceMonitor:
         self, X, y, lambdas, tol, gap_freq, max_time, verbose, intercept_column
     ):
         self.X = X
-        self.y = y
-        self.lambdas = lambdas
+        self.y = np.ravel(y)
+        self.lambdas = np.ravel(lambdas)
         self.tol = tol
         self.gap_freq = gap_freq
         self.max_time = max_time
@@ -193,6 +193,7 @@ class ConvergenceMonitor:
         self.times.append(0.0)
 
     def check_convergence(self, w, intercept, epoch):
+        w = np.ravel(w)
         n_samples = self.X.shape[0]
 
         times_up = timer() - self.time_start > self.max_time

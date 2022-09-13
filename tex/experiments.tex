@@ -1,20 +1,40 @@
 \section{Experiments}\label{sec:experiments}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\textbf{Competitors}:
+The proposed algorithm is part of a python package relying on numpy and numba.
+It will made open-source upon publication. To compare its efficiency, we used several public datasets described in \cref{table:datasets}.
+We performed an extensive benchmark with the following competitors:
 \begin{itemize}[noitemsep]
-    \item ADMM:
-    \item Anderson acceleration for PGD
-    \item Proximal Gradient Descent (PGD):
-    \item A la Nesterov acceleration PGD:
-    \item Newton alm solver: \cite{Ziyan2019}
-    \item Oracle:
-    \item Hybrid (ours):
+    \item Alterning Direction Method of Multipliers (\texttt{admm}) \cite{boyd2010}
+    \item Anderson acceleration for proximal gradient descent (\texttt{anderson}) \cite{zhang2020}
+    \item Proximal Gradient Descent (\texttt{pgd}) \cite{combettes2005}
+    \item Fast Iterative Shrinkage-Thresholding Algorithm (\texttt{fista}) \cite{beck2009}
+    \item Semismooth Newton-Based Augmented Lagrangian (\texttt{newt-alt}) \cite{Ziyan2019}
+    \item The Oracle solver (\texttt{oracle}) uses the clusters obtained via another
+     solver to compute coordinate descent updates from the known solver.
+    \item The Hybrid (ours) (\texttt{hybrid}) solver (see \cref{alg:hybrid}) combines proximal gradient descent
+     and coordinate descent to overcome the non-separability of the SLOPE problem.
 \end{itemize}
 
-\textbf{Datasets}:
-ADD table with datasets information
+\begin{table}[]
+    \centering
+    \label{table:datasets}
+    \begin{tabular}{cccc}
+    \hline
+    Datasets    & \#samples n & \#features p & density \\ \hline
+    Rhee2006    & 842         & 361          & ?       \\ 
+    bcTCGA      & 536         & \num{17322}        & 1       \\
+    Scheetz2006 & 120         & \num{18975}        & ?       \\ \hline
+    \end{tabular}
+\end{table}
 
+We used the \texttt{benchopt} \cite{moreau2022benchopt} tool to obtain the convergence curves for the different solvers.
+\texttt{Benchopt} launches each solver several times increasing the number of iterations and store the objective value, dual gap and time to reach it.
+The repository to reproduce the benchmark is available at XXX.
+
+\subsection{Benchmark on simulated data}
+
+\subsection{Benchmark on real datasets}
 \begin{figure}[htbp]
     \centering
     \includegraphics[scale=0.47]{Rhee2006_legend.pdf}

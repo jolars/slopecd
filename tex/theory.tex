@@ -20,16 +20,17 @@ Conditionally to the knowledge of the clusters and the signs of the coefficients
 Hence, the idea of our algorithm is to intertwine steps that identify the clusters, and large coordinatewise steps on these clusters.
 
 Based on this observation, we derive a coordinate descent algorithm for minimizing the SLOPE problem~\eqref{pb:slope} with respect to the coefficients of a single cluster at a time.
-First observe that we can write \Cref{pb:slope} as \mathurin{To discuss:  we restrict to quadratic datafit? in the intro there's a generic df and our strategy would be adapted to it, it's just block coordinate descent with varying blocks}
+First observe that in the case of a quadratic datafit, $F = \frac{1}{2} \norm{y - \cdot}^2$, we can write \Cref{pb:slope} as
 \[
   \begin{aligned}
-    P(\beta)
-     & =  \frac{1}{2} \lVert y - X\beta\rVert_2^2 + J(\beta)                        \\
-     & = \frac{1}{2} \lVert y - X_{\bar{\mathcal{C}_k}} \beta_{\bar{\mathcal{C}_k}}
+    % P(\beta)
+    %  & =
+     \frac{1}{2} \lVert y - X\beta\rVert_2^2 + J(\beta)                        %\\
+     & = \frac{1}{2} \lVert y - X_{\bar{\mathcal{C}}_k} \beta_{\bar{\mathcal{C}_k}}
     - \big(X_{\mathcal{C}_k} s_{\mathcal{C}_k}\big)c_k  \rVert_2^2
     + |c_k|\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}
     + \sum_{j \notin {\mathcal{C}_k}} |\beta_j|\lambda_{(j)^-}                      \\
-     & = \frac{1}{2} \lVert \tilde r - \tilde x c_k \rVert_2^2
+     & = \frac{1}{2} \lVert \tilde r_k - \tilde x c_k \rVert_2^2
     + |c_k|\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}
     + \sum_{j \notin {\mathcal{C}_k}} |\beta_j|\lambda_{(j)^-}                      \\
   \end{aligned}
@@ -37,14 +38,13 @@ First observe that we can write \Cref{pb:slope} as \mathurin{To discuss:  we res
 with \( \tilde x_k = X_{\mathcal{C}_k} s_{\mathcal{C}_k}\) and
 \(\tilde r_k = y - \tilde y_k = y - X_{\bar{\mathcal{C}}_k} \beta_{\bar{\mathcal{C}}_k} \in \bbR^n\).
 \mm{do we need $\tilde y _k$ ?}
-\mathurin{What is tricky here is that $\beta$ varies so the $C_k$ and $c_k$ vary too. THe notation $C_k(\beta)$ would be too heavy (most of all because $m$ also depends on $\beta$, but so I would avoid writing such computations that are confusing IMO - at least they confused me to be honest)}
 
-\mathurin{I would just say we perform block coordinate descent update/directional updates in the direction of $(\sign \beta)_{\mathcal{C_i}}$
-}
+
 We propose a coordinate-wise update that minimizes \(P(\beta)\) with respect to the
 clusters' corresponding coefficients one at a time, keeping the relative signs
 of the coordinates within each cluster fixed but allowing all of the signs to
 flip (simultaneously).
+% In other words, we minimize the objective in the direction of $\sign (\beta)_{\mathcal{C}_k}$.
 
 Letting \(\beta\) correspond to a fixed vector, note that
 \(\beta_i = s_i c_{(j)^-}\), \(i \in \mathcal{C}_j\) for all
@@ -56,32 +56,28 @@ Next, we let
   \label{eq:coordinate-update-beta}
   \beta_i(z) =
   \begin{cases}
-    s_k z   & \text{if } i \in \mathcal{C}_k, \\
-    \beta_i & \text{otherwise.}
+    s_k z   \enspace, & \text{if } i \in \mathcal{C}_k \enspace, \\
+    \beta_i \enspace, & \text{otherwise} \enspace.
   \end{cases}
 \end{equation}
 \mathurin{maybe we can write $\beta + z \sign(\beta)_{\mathcal{C}_i}$, where $\sign$ is the sign vector, and restricting indices keeps the dimension (and puts 0 as value of excluded indices).}
-This means that \(\beta(x)\) corresponds to a version of \(\beta\) with a
-coordinate update for the \(k\)th cluster.
-
-This corresponds to solving the following
+This means that \(\beta(z)\) corresponds to a version of \(\beta\) with a
+coordinate update for the \(k\)-th cluster.
+Minimizing the objective in this directions amounts to solving the following
 one-dimensional problem:
 
-\begin{equation}
-  \label{eq:cluster-problem}
+\begin{problem}
+  \label{pb:cluster-problem}
   \operatorname*{minimize}_{z \in \mathbb{R}} \left(P_k(z) = \frac{1}{2} \lVert \tilde r - \tilde x z \rVert_2^2 + J_k(z)\right)
-\end{equation}
+\end{problem}
 where
 \[
   J_k(z) = |z| \sum_{j \in \mathcal{C}_k} \lambda_{(j)^-_z}
   + \sum_{j \notin \mathcal{C}_k} |\beta_j| \lambda_{(j)^-_z}
 \]
-is the \emph{partial sorted \(\ell_1\) norm} with respect to the \(k\)th cluster and
-\mm{new notation; we could write $(j; \beta(z))$ or $(j; \beta + z d)$, $d$ being the direction}
-where we write \(\lambda_{(j)^-_z}\) to indicate that the permutation operator \((j)^-_z\)
-is defined through \(\beta(z)\).
-
-The optimality condition for this problem is
+is the \emph{partial sorted \(\ell_1\) norm} with respect to the \(k\)-th cluster and where we write \(\lambda_{(j)^-_z}\) to indicate that the inverse sorting permutation \((j)^-_z\)
+is defined with respect \(\beta(z)\).
+The optimality condition for \Cref{pb:cluster-problem} is
 \[
   P_k'(z; \delta) \geq 0,
 \]
@@ -95,23 +91,25 @@ since \(\lVert \tilde{r} - \tilde{x}z\rVert_2^2\) is differentiable.
 \mathurin{One key aspect of such updates that for me deserves to be emphasized: the clusters will almost all remain the same: they can only change order, or two of them merge.}
 
 Throughout the rest of this section section we will derive a minimizer solution to
-\eqref{eq:cluster-problem}. To do so, we will introduce the directional derivative for the
-sorted \(\ell_1\) norm with respect to the coefficient of the \(k\)th cluster. First,
+\eqref{pb:cluster-problem}. To do so, we will introduce the directional derivative for the
+sorted \(\ell_1\) norm with respect to the coefficient of the \(k\)-th cluster. First,
 however, let \(C(z)\) be a function that returns the cluster corresponding to \(z\), that is
 \[
   C(z) = \{j : |\beta(z)_j| = z\}.
 \]
-Next, for a  strictly decreasing sequence \(c_1, c_2, ..., c_m\) we let $\varepsilon_c$ be an arbitrary positive value such that
-\begin{equation}
-  \label{eq:epsilon-c}
-  \big| c_i - c_j\big| > {\varepsilon_c} \quad \forall\, i \neq j.
-\end{equation}
-
-For a \({\varepsilon_c}\) and \(\delta \in \{-1, 1\}\)
-\mathurin{This can be hard to parse: $C$ implicitly depends on a vector that determines clusters. We can emphasize that  In all this section $\beta$ is fixed and we update only in the direction given by the sign of one cluster. Clusters $C_i$ and $c_i$ are fixed.}
-\JL{Yes, but I don't think there's any way around this since we must use this
-  construction in the definitions and proofs for the directional derivative and the
-  thresholding operator.}
+Next, for a  strictly decreasing sequence \(c_1, c_2, ..., c_m\) we let $\varepsilon_c$ be an arbitrary positive value such that the $c_i$'s are at least $\varepsilon_c$ apart:
+% \begin{equation}
+  % \label{eq:epsilon-c}
+  $
+  \big| c_i - c_j \big| > {\varepsilon_c}, \, \forall\, i \neq j \enspace.
+  $
+% \end{equation}
+Then for %an \({\varepsilon_c}\) and
+\(\delta \in \{-1, 1\}\)
+% \mathurin{This can be hard to parse: $C$ implicitly depends on a vector that determines clusters. We can emphasize that  In all this section $\beta$ is fixed and we update only in the direction given by the sign of one cluster. Clusters $C_i$ and $c_i$ are fixed.}
+% \JL{Yes, but I don't think there's any way around this since we must use this
+%   construction in the definitions and proofs for the directional derivative and the
+%   thresholding operator.}
 we have
 \begin{equation}
   \lim_{h \downarrow 0} C(z + h\delta) = C(z + {\varepsilon_c} \delta)
@@ -319,7 +317,7 @@ We are now ready to present the SLOPE thresholding operator.
   continuous piecewise-differentiable function with kinks whenever \(|z| =
   c_i\) for \(i \neq k\) or \(z = 0\) \jw{whenever \(|z| \in \{0,c_1,c_2,\ldots,c_m\}\)}. Let \(\gamma = \tilde{r}^T\tilde{x}\)
   and \(\omega = \tilde{x}^T\tilde{x}\) and note that the optimality criterion for
-  \eqref{eq:cluster-problem} is
+  \eqref{pb:cluster-problem} is
   \[
     \delta(\omega z - \gamma) + J'_k(z; \delta) \geq 0, \quad
     \forall \delta \in \{-1, 1\},

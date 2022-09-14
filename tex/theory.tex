@@ -46,6 +46,7 @@ of the coordinates within each cluster fixed but allowing all of the signs to
 flip (simultaneously).
 % In other words, we minimize the objective in the direction of $\sign (\beta)_{\mathcal{C}_k}$.
 
+\mm{remove tilde, remind notation here?}
 Letting \(\beta\) correspond to a fixed vector, note that
 \(\beta_i = s_i c_{(j)^-}\), \(i \in \mathcal{C}_j\) for all
 \(i\). Now let \(\tilde{\mathcal{C}}_i\)
@@ -60,7 +61,6 @@ Next, we let
     \beta_i \enspace, & \text{otherwise} \enspace.
   \end{cases}
 \end{equation}
-\mathurin{maybe we can write $\beta + z \sign(\beta)_{\mathcal{C}_i}$, where $\sign$ is the sign vector, and restricting indices keeps the dimension (and puts 0 as value of excluded indices).}
 This means that \(\beta(z)\) corresponds to a version of \(\beta\) with a
 coordinate update for the \(k\)-th cluster.
 Minimizing the objective in this directions amounts to solving the following
@@ -90,10 +90,10 @@ since \(\lVert \tilde{r} - \tilde{x}z\rVert_2^2\) is differentiable.
 
 \mathurin{One key aspect of such updates that for me deserves to be emphasized: the clusters will almost all remain the same: they can only change order, or two of them merge.}
 
-Throughout the rest of this section section we will derive a minimizer solution to
-\eqref{pb:cluster-problem}. To do so, we will introduce the directional derivative for the
-sorted \(\ell_1\) norm with respect to the coefficient of the \(k\)-th cluster. First,
-however, let \(C(z)\) be a function that returns the cluster corresponding to \(z\), that is
+Throughout the rest of this section we derive a minimizer solution to \eqref{pb:cluster-problem}.
+To do so, we will introduce the directional derivative for the
+sorted \(\ell_1\) norm with respect to the coefficient of the \(k\)-th cluster.
+First, let \(C(z)\) be a function that returns the cluster corresponding to \(z\), that is
 \[
   C(z) = \{j : |\beta(z)_j| = z\}.
 \]
@@ -119,6 +119,7 @@ depends only on \(\delta\) as \(h\) tends to~\(0\).
   subset of the permutation vectors.
   The permutation for \(\beta(h\delta)\)
   corresponds to
+  \mm{tilde?}
   \[
     \begin{cases}
       \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, \tilde{\mathcal{C}}_m, C({\varepsilon_c}\delta)                                          & \text{if } c_m > 0 \text{ and } \delta \neq 0, \\
@@ -136,6 +137,7 @@ depends only on \(\delta\) as \(h\) tends to~\(0\).
   \]
 \end{remark}
 
+\mm{use $c_1, ..., c_{k-1}, c_{k+1}, ..., c_m$ as above for $\mathcal{C}_i$?}
 Next, let \(c^{(k)}\) be a \(m - 1\) length vector, defined as
 \(c^{(k)} = \{c_1, c_2, \dots, c_m\} \setminus c_k\), such that
 \[
@@ -149,13 +151,16 @@ Next, let \(c^{(k)}\) be a \(m - 1\) length vector, defined as
 We are now ready to state the directional derivative of \(J_k\).
 
 \begin{theorem}\label{thm:sl1-directional-derivative}
-  The directional derivative of \(J_k\) in the direction \(\delta\) is
+  The directional derivative of the partial sorted $\ell_1$ norm with respect to the $k$-th cluster \(J_k\), in the direction \(\delta\) is
   \[
     J'_k(z, \delta) =
     \begin{cases}
-      \smashoperator[r]{\sum_{j \in C({\varepsilon_c} \delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}                    & \text{if } z = 0,               \\
-      \sign(z)\delta\smashoperator{\sum_{j \in C(z + {\varepsilon_c} \delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}} & \text{if } |z| = c^{(k)}_i > 0, \\
-      \sign(z)\delta\smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}                                                  & \text{otherwise,}
+      \smashoperator[r]{\sum_{j \in C({\varepsilon_c} \delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}
+          & \text{if } z = 0 \enspace,               \\
+      \sign(z)\delta\smashoperator{\sum_{j \in C(z + {\varepsilon_c} \delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
+          & \text{if } |z| = c^{(k)}_i > 0 \enspace, \\
+      \sign(z)\delta\smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}
+          & \text{otherwise} \enspace,
     \end{cases}
   \]
   with \({\varepsilon_c}\) defined as in \eqref{eq:epsilon-c}.

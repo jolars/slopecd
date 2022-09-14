@@ -6,12 +6,12 @@
 \label{sec:coordinate-updates}
 
 Proximal coordinate descent cannot be applied to \Cref{pb:slope} because it is not separable.
-However, if the clusters $\mathcal{C}_1, \ldots, \mathcal{C}_m$ of the solution $\hat \beta$ were known together with their signs, then the values $c_1, \ldots, c_m$ taken by $\hat \beta$ on the clusters could be equivalently computed by solving:
+However, if the clusters $\hat{\mathcal{C}}_1, \ldots, \hat{\mathcal{C}}_{\hat m}$ of the solution $\hat \beta$ were known together with their signs, then the values $\hat{c}_1, \ldots, \hat{c}_{\hat{m}}$ taken by $\hat \beta$ on the clusters could be equivalently computed by solving:
 \mm{TODO MM: put in prop and write proof?}
 \begin{problem}
-  \min_{x \in \bbR^m}
-  F \left(\sum_{i=1}^m \tilde{X}_{\mathcal{C}_i} x_i \right)
-  + \sum_{i=1}^m (\sum_{\lambda \in \lambda^{\mathcal{C}_i}} \lambda) x_i \enspace,
+  \min_{x \in \bbR^{\hat m}}
+  F \left(\sum_{i=1}^{\hat m} \tilde{X}_{\mathcal{C}_i} x_i \right)
+  + \sum_{i=1}^{\hat m} (\sum_{\lambda \in \lambda^{\hat{\mathcal{C}}_i}} \lambda) x_i \enspace,
 \end{problem}
 \klopfe{Clarify what $F$ is here}
 
@@ -20,39 +20,11 @@ Conditionally to the knowledge of the clusters and the signs of the coefficients
 Hence, the idea of our algorithm is to intertwine steps that identify the clusters, and large coordinatewise steps on these clusters.
 
 Based on this observation, we derive a coordinate descent algorithm for minimizing the SLOPE problem~\eqref{pb:slope} with respect to the coefficients of a single cluster at a time.
-First observe that in the case of a quadratic datafit, $F = \frac{1}{2} \norm{y - \cdot}^2$, we can write \Cref{pb:slope} as
-\[
-  \begin{aligned}
-    % P(\beta)
-    %  & =
-     \frac{1}{2} \lVert y - X\beta\rVert_2^2 + J(\beta)                        %\\
-     & = \frac{1}{2} \lVert y - X_{\bar{\mathcal{C}}_k} \beta_{\bar{\mathcal{C}_k}}
-    - \big(X_{\mathcal{C}_k} s_{\mathcal{C}_k}\big)c_k  \rVert_2^2
-    + |c_k|\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}
-    + \sum_{j \notin {\mathcal{C}_k}} |\beta_j|\lambda_{(j)^-}                      \\
-     & = \frac{1}{2} \lVert \tilde r_k - \tilde x c_k \rVert_2^2
-    + |c_k|\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}
-    + \sum_{j \notin {\mathcal{C}_k}} |\beta_j|\lambda_{(j)^-}                      \\
-  \end{aligned}
-\]
-with \( \tilde x_k = X_{\mathcal{C}_k} s_{\mathcal{C}_k}\) and
-\(\tilde r_k = y - \tilde y_k = y - X_{\bar{\mathcal{C}}_k} \beta_{\bar{\mathcal{C}}_k} \in \bbR^n\).
-\mm{do we need $\tilde y _k$ ?}
 
-
-We propose a coordinate-wise update that minimizes \(P(\beta)\) with respect to the
-clusters' corresponding coefficients one at a time, keeping the relative signs
-of the coordinates within each cluster fixed but allowing all of the signs to
-flip (simultaneously).
-% In other words, we minimize the objective in the direction of $\sign (\beta)_{\mathcal{C}_k}$.
-
-\mm{remove tilde, remind notation here?}
-Letting \(\beta\) correspond to a fixed vector, note that
-\(\beta_i = s_i c_{(j)^-}\), \(i \in \mathcal{C}_j\) for all
-\(i\). Now let \(\tilde{\mathcal{C}}_i\)
-correspond to the indices of the \(i\)th cluster for \(\beta\), that is,
-\(|\beta_j| = c_i\) for all \(j \in \tilde{\mathcal{C}}_i\).
-Next, we let
+In all the sequel, $\beta$ is fixed, with $m$ clusters $\mathcal{C}_1, \ldots, \mathcal{C}_m$ corresponding to values $c_1, \ldots, c_m$.
+Let also $k \in [m]$ be fixed, let $s = \sign \beta_{\mathcal{C}_k}$.
+We are interested in updating $\beta$ by changing only the value taken on the $k$-th cluster.
+To this end, we let
 \begin{equation}
   \label{eq:coordinate-update-beta}
   \beta_i(z) =
@@ -61,44 +33,47 @@ Next, we let
     \beta_i \enspace, & \text{otherwise} \enspace.
   \end{cases}
 \end{equation}
-This means that \(\beta(z)\) corresponds to a version of \(\beta\) with a
-coordinate update for the \(k\)-th cluster.
+% This means that \(\beta(z)\) corresponds to a version of \(\beta\) with a
+% coordinate update for the \(k\)-th cluster.
 Minimizing the objective in this directions amounts to solving the following
 one-dimensional problem:
 
 \begin{problem}
   \label{pb:cluster-problem}
-  \operatorname*{minimize}_{z \in \mathbb{R}} \left(P_k(z) = \frac{1}{2} \lVert \tilde r - \tilde x z \rVert_2^2 + J_k(z)\right)
+  \min_{z \in \mathbb{R}} \Big(
+    \mathcal{P}(z) = P(\beta(z))  = F(\beta(z)) + \phi(z)
+  \Big) \enspace ,
 \end{problem}
 where
 \[
-  J_k(z) = |z| \sum_{j \in \mathcal{C}_k} \lambda_{(j)^-_z}
+  \phi(z) = |z| \sum_{j \in \mathcal{C}_k} \lambda_{(j)^-_z}
   + \sum_{j \notin \mathcal{C}_k} |\beta_j| \lambda_{(j)^-_z}
 \]
 is the \emph{partial sorted \(\ell_1\) norm} with respect to the \(k\)-th cluster and where we write \(\lambda_{(j)^-_z}\) to indicate that the inverse sorting permutation \((j)^-_z\)
-is defined with respect \(\beta(z)\).
+is defined with respect to \(\beta(z)\).
 The optimality condition for \Cref{pb:cluster-problem} is
 \[
-  P_k'(z; \delta) \geq 0,
+  % P_k'(z; \delta) \geq 0,
+  \mathcal{P}'(z; \delta) \geq 0,
 \]
-where \(P'_k(z; \delta)\) is the directional derivative of \(P_k\).
+where $\mathcal{P}'(z; \delta) $ is the directional derivative in the direction $\delta$.
 Note that we have
 \[
-  P_k'(z; \delta) = \delta\big(\tilde x^T \tilde x z - \tilde r^T \tilde x\big) + J'_k(z; \delta)
+  \mathcal{P}'(z; \delta)  = \delta \nabla F(\beta(z)) + \phi'(z; \delta) \enspace,
 \]
-since \(\lVert \tilde{r} - \tilde{x}z\rVert_2^2\) is differentiable.
+% since \(\lVert \tilde{r} - \tilde{x}z\rVert_2^2\) is differentiable.
+since \(F \) is differentiable.
 
-\mathurin{One key aspect of such updates that for me deserves to be emphasized: the clusters will almost all remain the same: they can only change order, or two of them merge.}
 
-Throughout the rest of this section we derive a minimizer solution to \eqref{pb:cluster-problem}.
+
+Throughout the rest of this section we derive a \mm{the?} solution to \eqref{pb:cluster-problem}.
 To do so, we will introduce the directional derivative for the
 sorted \(\ell_1\) norm with respect to the coefficient of the \(k\)-th cluster.
 First, let \(C(z)\) be a function that returns the cluster corresponding to \(z\), that is
 \[
   C(z) = \{j : |\beta(z)_j| = z\}.
 \]
-Next, %for a strictly decreasing sequence \(c_1, c_2, ..., c_m\) we
-let $\varepsilon_c$ be an arbitrary positive value such that
+Next, let $\varepsilon_c$ be an arbitrary positive value such that
 \begin{equation}
   \label{eq:epsilon-c}
   \varepsilon_c < \big| c_i - c_j\big| , \quad \forall\, i \neq j \text{ and } \varepsilon_c < c_m \text{ if } c_m \neq 0 \enspace.
@@ -122,17 +97,17 @@ depends only on \(\delta\) as \(h\) tends to~\(0\).
   \mm{tilde?}
   \[
     \begin{cases}
-      \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, \tilde{\mathcal{C}}_m, C({\varepsilon_c}\delta)                                          & \text{if } c_m > 0 \text{ and } \delta \neq 0, \\
-      \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, C({\varepsilon_c}\delta), \tilde{\mathcal{C}}_m                                          & \text{if } c_m = 0 \text{ and } \delta \neq 0, \\
-      \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, \underbrace{\tilde{\mathcal{C}}_k \cup \tilde{\mathcal{C}}_m}_{C({\varepsilon_c}\delta)} & \text{if } c_m = 0 \text{ and } \delta = 0.    \\
+      \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \mathcal{C}_m, C({\varepsilon_c}\delta)                                          & \text{if } c_m > 0 \text{ and } \delta \neq 0, \\
+      \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, C({\varepsilon_c}\delta), \mathcal{C}_m                                          & \text{if } c_m = 0 \text{ and } \delta \neq 0, \\
+      \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \underbrace{\mathcal{C}_k \cup \mathcal{C}_m}_{C({\varepsilon_c}\delta)} & \text{if } c_m = 0 \text{ and } \delta = 0.    \\
     \end{cases}
   \]
   The permutation for \(\beta(z + {\varepsilon_c} \delta)\), \(z \neq 0\) corresponds to
   \[
     \begin{cases}
-      \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, C(c_i + {\varepsilon_c}\delta), \tilde{\mathcal{C}}_i, \dots, \tilde{\mathcal{C}}_m                                          & \text{if } \delta = 1,  \\
-      \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, \tilde{\mathcal{C}}_i, C(c_i + {\varepsilon_c}\delta), \dots, \tilde{\mathcal{C}}_m                                          & \text{if } \delta = -1, \\
-      \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, \underbrace{\tilde{\mathcal{C}}_i \cup \tilde{\mathcal{C}}_k}_{C(c_i + {\varepsilon_c}\delta)}, \dots, \tilde{\mathcal{C}}_m & \text{if } \delta = 0.  \\
+      \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, C(c_i + {\varepsilon_c}\delta), \mathcal{C}_i, \dots, \mathcal{C}_m                                          & \text{if } \delta = 1,  \\
+      \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \mathcal{C}_i, C(c_i + {\varepsilon_c}\delta), \dots, \mathcal{C}_m                                          & \text{if } \delta = -1, \\
+      \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \underbrace{\mathcal{C}_i \cup \mathcal{C}_k}_{C(c_i + {\varepsilon_c}\delta)}, \dots, \mathcal{C}_m & \text{if } \delta = 0.  \\
     \end{cases}
   \]
 \end{remark}
@@ -148,7 +123,7 @@ Next, let \(c^{(k)}\) be a \(m - 1\) length vector, defined as
   \end{cases}
 \]
 
-We are now ready to state the directional derivative of \(J_k\).
+We are now ready to state the directional derivative of $\phi$. % \(J_k\).
 
 \begin{theorem}\label{thm:sl1-directional-derivative}
   The directional derivative of the partial sorted $\ell_1$ norm with respect to the $k$-th cluster \(J_k\), in the direction \(\delta\) is

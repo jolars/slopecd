@@ -164,17 +164,17 @@ We are now ready to state the directional derivative of $\phi$. % \(J_k\).
     \right)
     \label{eq:directional-derivative-sl1}
   \end{align}
-  We have the following cases to consider: \(|z| = c_i^{(k)}\),
-  \(|z| = 0\), and \(z \notin \{0, c_i^{(k)}\}\).
+  We have the following cases to consider: \(|z| \in \{c_i^{(k)}\}_{i=1}^{m-1}\),
+  \(|z| = 0\), and \(|z| \notin \{0, \{c_i^{(k)}\}_{i=1}^{m-1}\}\).
 
   Starting with\(|z| = c_i^{(k)}\), note that we have,
   as a result of the definition of
   \({\varepsilon_c}\), the following identities:
   \begin{align*}
-    C(c_i + {\varepsilon_c}\delta)          & \subseteq C(c_i),                                                                                                                     \\
-    \tilde{\mathcal{C}}_i                   & = \widebar{C(c_i + {\varepsilon_c} \delta)} \cap C(c_i),                                                                              \\
-    C(c_i)                                  & = \tilde{C}_i \cup \big(C(c_i + {\varepsilon_c}\delta) \cap C(c_i)\big) = \tilde{\mathcal{C}}_i \cup C(c_i + {\varepsilon_c} \delta), \\
-    \widebar{C(z + {\varepsilon_c} \delta)} & = \widebar{C(c_i)} \cup \tilde{\mathcal{C}}_i.
+    C(c_i^{(k)} + {\varepsilon_c}\delta)          & \subseteq C(c_i^{(k)}),                                                                                                                     \\
+    \tilde{\mathcal{C}}_i                   & = \widebar{C(c_i^{(k)} + {\varepsilon_c} \delta)} \cap C(c_i^{(k)}),                                                                              \\
+    C(c_i^{(k)})                                  & = \tilde{C}_i \cup \big(C(c_i^{(k)} + {\varepsilon_c}\delta) \cap C(c_i^{(k)})\big) = \tilde{\mathcal{C}}_i \cup C(c_i^{(k)} + {\varepsilon_c} \delta), \\
+    \widebar{C(c_i^{(k)} + {\varepsilon_c} \delta)} & = \widebar{C(c_i^{(k)})} \cup \tilde{\mathcal{C}}_i.
   \end{align*}
   Using this, we can rewrite \eqref{eq:directional-derivative-sl1} as
   \begin{equation*}
@@ -184,11 +184,11 @@ We are now ready to state the directional derivative of $\phi$. % \(J_k\).
     \left(
       \splitfrac{
       |z + h\delta|\smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
-      + |c_i|\smashoperator{\sum_{j \in \tilde{C}_i}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
+      + |c_i^{(k)}|\smashoperator{\sum_{j \in \tilde{C}_i}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
       + \smashoperator{\sum_{j \in \widebar{C(z)}}} |\beta_j|\lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
       }{%
       - |z| \smashoperator{\sum_{j \in \tilde{\mathcal{C}}_i}} \lambda_{(j)^-_{z}}
-      - |c_i| \smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z}}
+      - |c_i^{(k)}| \smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z}}
       - \smashoperator{\sum_{j \in \widebar{C(z)}}} |\beta_j| \lambda_{(j)^-_{z}}
       }
     \right).
@@ -203,7 +203,7 @@ We are now ready to state the directional derivative of $\phi$. % \(J_k\).
   \(\lambda_{(j)^-_{z}}\) such that
   \[
     |z|\smashoperator{\sum_{j \in \tilde{C}_i}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
-    = |c_i| \smashoperator{\sum_{j \in \tilde{C}_i}} \lambda_{(j)^-_{z}}
+    = |c^{(k)}_i| \smashoperator{\sum_{j \in \tilde{C}_i}} \lambda_{(j)^-_{z}}
   \]
   and consequently
   \begin{equation}
@@ -212,17 +212,17 @@ We are now ready to state the directional derivative of $\phi$. % \(J_k\).
     = \lim_{h \downarrow 0} \frac{1}{h}
     \left(
       |z + h\delta|\smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
-      - |c_i| \smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z}}.
+      - |c_i^{(k)}| \smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z}}.
     \right).
   \end{equation}
-  Now, since \(c_i + h \delta > 0\) and \(-c_i + h \delta < 0\) in the limit as
+  Now, since \(c_i^{(k)} + h \delta > 0\) and \(-c_i^{(k)} + h \delta < 0\) in the limit as
   \(h\) goes to \(0\) for \(c_i \neq 0\), we have
   \[
     \lim_{h\downarrow 0} |-c_i + h \delta|
-    = \lim_{h\downarrow 0}\big( |c_i| -h \delta\big)
+    = \lim_{h\downarrow 0}\big( |c_i^{(k)}| -h \delta\big)
     \quad\text{and}\quad
-    \lim_{h\downarrow 0} |c_i + h \delta|
-    = \lim_{h\downarrow 0}(|c_i| + h \delta)
+    \lim_{h\downarrow 0} |c_i^{(k)} + h \delta|
+    = \lim_{h\downarrow 0}(|c_i^{(k)}| + h \delta)
   \]
   which means that
   \begin{align*}
@@ -274,8 +274,8 @@ We are now ready to state the directional derivative of $\phi$. % \(J_k\).
     = \smashoperator{\sum_{j \in C(0)}} \lambda_{(j)^-_{0}}.
   \end{equation*}
 
-  Finally, note that \(J_k\) is differentiable in every other case, that is,
-  \(|z| \notin \{0, c^{(k)}_i\}\) and, since \(C(z +
+  Finally, note that \(J_k\) is differentiable in every other case, i.e.
+ \(|z| \notin \{0, \{c_i^{(k)}\}_{i=1}^{m-1}\}\). Here since \(C(z +
   {\varepsilon_c}\delta) = C(z)\), has the directional derivative
   \[
     J_k'(z; \delta) = \delta \sign(z) \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}.

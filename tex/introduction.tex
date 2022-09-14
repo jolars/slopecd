@@ -54,10 +54,26 @@ On the other hand, current SLOPE solvers rely on proximal gradient descent
 algorithms such as FISTA~\cite{beck2009} and the
 alternating direction method of multipliers method (ADMM)~\cite{boyd2010}, that in ML scenario are slower than coordinate descent \cite{moreau2022benchopt}.
 % which are both used in the current version of the SLOPE package.
-Applying coordinate descent to SLOPE is, however, not straightforward
-because convergence guarantees for coordinate descent require the
-objective to be separable, which %, as we can see from \eqref{eq:sorted-l1-norm}
-is not the case for SLOPE.
+But applying coordinate descent to SLOPE is not straightforward because
+convergence guarantees for coordinate descent require the objective to be
+separable, which case for SLOPE. In \cref{fig:naive-cd-stuck}, we see an
+example of a naive coordinate descent algorithm getting stuck on a
+two-dimensional SLOPE problem.
+
+\begin{figure}[htpb]
+  \centering
+  \includegraphics[]{naive-cd-stuck.pdf}
+  \caption{%
+    An example of naive coordinate descent getting stuck. This figure shows
+    level curves of the objective for a two-dimensional SLOPE problem with the
+    optimum indicated by the orange cross. At the point highlighted in the
+    graph around \([0.201,0.201]^T\), a naive coordinate descent algorithm can
+    only move in the directions indicated by the dashed lines---neither of which
+    are descent directions for the objective. As a result, the algorithm is
+    stuck.
+  }
+  \label{fig:naive-cd-stuck}
+\end{figure}
 
 % The resulting solution \(\hat{\beta}\) has the property that it can cluster the
 % coefficients by their magnitudes, such that \(\mathcal{C}=

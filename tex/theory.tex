@@ -5,17 +5,19 @@
 \subsection{Coordinate Descent for SLOPE}%
 \label{sec:coordinate-updates}
 
-\mathurin{Suggestion: \\
 Proximal coordinate descent cannot be applied to \Cref{pb:slope} because it is not separable.
-However, if the clusters $\mathcal{C}_1, \ldots, \mathcal{C}_m$ of the solution $\hat \beta$ were known together with its sign, then the values $c_1, \ldots, c_m$ taken by $\hat \beta$ on the clusters could be equivalently computed by solving :
+However, if the clusters $\mathcal{C}_1, \ldots, \mathcal{C}_m$ of the solution $\hat \beta$ were known together with their signs, then the values $c_1, \ldots, c_m$ taken by $\hat \beta$ on the clusters could be equivalently computed by solving :
 \begin{problem}
 \min_{x \in \bbR^m}
-F \left(\sum_{i=1}^m \tilde{X}_i x_i \right)
+F \left(\sum_{i=1}^m \tilde{X}_{\mathcal{C}_i} x_i \right)
 + \sum_{i=1}^m (\sum_{\lambda \in \lambda^{\mathcal{C}_i}} \lambda) x_i \enspace,
 \end{problem}
+\klopfe{Clarify what $F$ is here}
+
 where $\tilde{X}_{\mathcal{C}_i} = \sum_{j \in \mathcal{C}_i} X_j \sign (\hat \beta_j)$.
+Conditionally to the knowledge of the clusters and the signs of the coefficients, the problem becomes separable and coordinate descent could be used.
 Hence, the idea of our algorithm is to intertwine steps that identify the clusters, and large coordinatewise steps on these clusters.
-}
+
 Based on this observation, we derive a coordinate descent algorithm for minimizing the SLOPE problem~\eqref{pb:slope} with respect to the coefficients of a single cluster at a time.
 First observe that we can write \Cref{pb:slope} as \mathurin{To discuss:  we restrict to quadratic datafit? in the intro there's a generic df and our strategy would be adapted to it, it's just block coordinate descent with varying blocks}
 \[

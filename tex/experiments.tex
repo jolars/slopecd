@@ -22,6 +22,9 @@ We performed an extensive benchmark with the following competitors:
     \begin{tabular}{cccc}
     \hline
     Datasets    & \#samples n & \#features p & density \\ \hline
+    Simulated 1 & 200 & \num{20000} & 1 \\
+    Simulated 2 & \num{20000} & \num{200} & 1 \\
+    Simulated 3 & 200 & \num{2000000} & 0.001 \\ 
     Rhee2006    & 842         & 361          & ?       \\ 
     bcTCGA      & 536         & \num{17322}        & 1       \\
     Scheetz2006 & 120         & \num{18975}        & ?       \\ \hline
@@ -32,9 +35,12 @@ We used the \texttt{benchopt} \cite{moreau2022benchopt} tool to obtain the conve
 \texttt{Benchopt} launches each solver several times increasing the number of iterations and store the objective value, dual gap and time to reach it.
 The repository to reproduce the benchmark is available at XXX.
 
-\subsection{Benchmark on simulated data}
+\subsection{Simulated data}
+The design matrix $X$ is simulated with correlation between features $j$ and $j'$ equal to $\rho^{|j-j'|}$ where $\rho$ is a parameter that can be chosen in $[0, 1[$. 
+The true regression vector $\beta^\star$ contains a certain number of non-zero entries that are obtained by simulating a gaussian distribution with zero mean and unit variance.
+The observations are equal to $y=X\beta^\star + \varepsilon$ where $\varepsilon$ is a centered gaussian distribution with variance such that $\lVert X\beta^\star\rVert / \lVert \varepsilon \rVert = 3$.
 
-\subsection{Benchmark on real datasets}
+\subsection{Real data}
 \klopfe{Do we keep the three different values for $q$ that changes the sequence of lambas?}
 \begin{figure}[htbp]
     \centering

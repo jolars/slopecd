@@ -11,9 +11,9 @@ example of this operator for a particular \(\beta\).
     \toprule
     \(i\) & \(\beta_i\) & \((i)\) & \((i)^-\) \\
     \midrule
-    1     & 0.5       & 2              & 3                \\
-    2     & -5        & 3              & 1                \\
-    3     & 4         & 1              & 2                \\
+    1     & 0.5         & 2       & 3         \\
+    2     & -5          & 3       & 1         \\
+    3     & 4           & 1       & 2         \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -31,4 +31,15 @@ clusters of $\beta$, such that
   c_1 > c_2 > \cdots > c_m \geq 0.
 \]
 We also let \(\bar{\mathcal{C}}\) denote the complement of \(\mathcal{C}\).
+
+Finally, let
+\[
+  \sign(x) =
+  \begin{cases}
+    \phantom{-}1 & \text{if } x \geq 0 ,\\
+    -1           & \text{if } x < 0,
+  \end{cases}
+\]
+and allow \(\sign(x)\) to be overloaded for vectors.
+
 

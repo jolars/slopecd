@@ -6,11 +6,12 @@
 \label{sec:coordinate-updates}
 
 Proximal coordinate descent cannot be applied to \Cref{pb:slope} because it is not separable.
-However, if the clusters $\mathcal{C}_1, \ldots, \mathcal{C}_m$ of the solution $\hat \beta$ were known together with their signs, then the values $c_1, \ldots, c_m$ taken by $\hat \beta$ on the clusters could be equivalently computed by solving :
+However, if the clusters $\mathcal{C}_1, \ldots, \mathcal{C}_m$ of the solution $\hat \beta$ were known together with their signs, then the values $c_1, \ldots, c_m$ taken by $\hat \beta$ on the clusters could be equivalently computed by solving:
+\mm{TODO MM: put in prop and write proof?}
 \begin{problem}
-\min_{x \in \bbR^m}
-F \left(\sum_{i=1}^m \tilde{X}_{\mathcal{C}_i} x_i \right)
-+ \sum_{i=1}^m (\sum_{\lambda \in \lambda^{\mathcal{C}_i}} \lambda) x_i \enspace,
+  \min_{x \in \bbR^m}
+  F \left(\sum_{i=1}^m \tilde{X}_{\mathcal{C}_i} x_i \right)
+  + \sum_{i=1}^m (\sum_{\lambda \in \lambda^{\mathcal{C}_i}} \lambda) x_i \enspace,
 \end{problem}
 \klopfe{Clarify what $F$ is here}
 

@@ -96,55 +96,59 @@ depends only on \(\delta\) as \(h\) tends to~\(0\).
   corresponds to
   \begin{equation*}
     \begin{cases}
-      \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \mathcal{C}_m, C({\varepsilon_c}\delta)                                          & \text{if } c_m > 0 \text{ and } \delta \neq 0, \\
-      \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, C({\varepsilon_c}\delta), \mathcal{C}_m                                          & \text{if } c_m = 0 \text{ and } \delta \neq 0, \\
-      \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \underbrace{\mathcal{C}_k \cup \mathcal{C}_m}_{C({\varepsilon_c}\delta)} & \text{if } c_m = 0 \text{ and } \delta = 0.    \\
+      \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \mathcal{C}_m, C({\varepsilon_c}\delta)
+              & \text{if } c_m > 0 \, , \\ % \text{ and } \delta \neq 0 \, , \\
+      \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, C({\varepsilon_c}\delta), \mathcal{C}_m
+              & \text{if } c_m = 0 \, . %\text{ and } \delta \neq 0 \, . \\
+      % \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \underbrace{\mathcal{C}_k \cup \mathcal{C}_m}_{C({\varepsilon_c}\delta)} & \text{if } c_m = 0 \text{ and } \delta = 0.    \\
     \end{cases}
   \end{equation*}
-  The permutation for \(\beta(z + {\varepsilon_c} \delta)\), \(z \neq 0\) corresponds to
+  If \(z \neq 0\), the permutation for \(\beta(z + {\varepsilon_c} \delta)\) corresponds to
   \[
     \begin{cases}
-      \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, C(c_i + {\varepsilon_c}\delta), \mathcal{C}_i, \dots, \mathcal{C}_m                                          & \text{if } \delta = 1,  \\
-      \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \mathcal{C}_i, C(c_i + {\varepsilon_c}\delta), \dots, \mathcal{C}_m                                          & \text{if } \delta = -1, \\
-      \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \underbrace{\mathcal{C}_i \cup \mathcal{C}_k}_{C(c_i + {\varepsilon_c}\delta)}, \dots, \mathcal{C}_m & \text{if } \delta = 0.  \\
+      \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, C(c_i + {\varepsilon_c}\delta), \mathcal{C}_i, \dots, \mathcal{C}_m
+               & \text{if } \delta = 1 \,,  \\
+      \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \mathcal{C}_i, C(c_i + {\varepsilon_c}\delta), \dots, \mathcal{C}_m
+                & \text{if } \delta = -1 \, . \\
+      % \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \underbrace{\mathcal{C}_i \cup \mathcal{C}_k}_{C(c_i + {\varepsilon_c}\delta)}, \dots, \mathcal{C}_m & \text{if } \delta = 0.  \\
     \end{cases}
   \]
 \end{remark}
-
-\mm{use $c_1, ..., c_{k-1}, c_{k+1}, ..., c_m$ as above for $\mathcal{C}_i$?}
-Next, let \(c^{(k)}\) be a \(m - 1\) length vector, defined as
-\(c^{(k)} = \{c_1, c_2, \dots, c_m\} \setminus c_k\), such that
-\[
-  c_i^{(k)} =
-  \begin{cases}
-    c_i     & \text{if } i < k,    \\
-    c_{i+1} & \text{if } i \geq k.
-  \end{cases}
-\]
+ %, defined as
+% \(c^{(k)} = \{c_1, c_2, \dots, c_m\} \setminus c_k\), such that
+% \[
+%   c_i^{(k)} =
+%   \begin{cases}
+%     c_i     & \text{if } i < k,    \\
+%     c_{i+1} & \text{if } i \geq k.
+%   \end{cases}
+% \]
 
 We are now ready to state the directional derivative of $\phi$. % \(J_k\).
 
 \begin{theorem}\label{thm:sl1-directional-derivative}
-  The directional derivative of the partial sorted $\ell_1$ norm with respect to the $k$-th cluster \(J_k\), in the direction \(\delta\) is
+  Let \(c^{\setminus k}\) be the \(m - 1\) length version of $c$ where the $k$-th coordinate has been removed: $c^{\setminus k} = (c_1, \ldots c_{k-1}, c_{k+1}, \ldots, c_m)$.
+  Let \({\varepsilon_c}\) defined as in \eqref{eq:epsilon-c}.
+  The directional derivative of the partial sorted $\ell_1$ norm with respect to the $k$-th cluster \(\phi\), in the direction \(\delta\) is
   \[
-    J'_k(z, \delta) =
+    \phi'(z; \delta) =
     \begin{cases}
-      \smashoperator[r]{\sum_{j \in C({\varepsilon_c} \delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}
+      \smashoperator[r]{\sum_{j \in C(\varepsilon_c )}} \lambda_{(j)^-_{\varepsilon_c }}
           & \text{if } z = 0 \, ,               \\
       \sign(z)\delta\smashoperator{\sum_{j \in C(z + {\varepsilon_c} \delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
           & \text{if } |z| = c^{(k)}_i > 0 \, , \\
       \sign(z)\delta\smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}
-          & \text{otherwise} \, ,
+          & \text{otherwise} \, .
     \end{cases}
   \]
-  with \({\varepsilon_c}\) defined as in \eqref{eq:epsilon-c}.
 \end{theorem}
 \begin{proof}
-  The directional derivative of \(J_k\) in the direction \(\delta\), with
-  \(|\delta| = 1\), is defined as
+  % The directional derivative of \(J_k\) in the direction \(\delta\), with
+  % \(|\delta| = 1\), is defined as
+  By definition of the directional derivative,
   \begin{align}
-    J_k'(z; \delta)
-    = & \lim_{h \downarrow 0} \frac{J_k(z + h \delta) - J_k(z)}{h} \nonumber \\
+    \phi'(z; \delta)
+    = & \lim_{h \downarrow 0} \frac{\phi(z + h \delta) - \phi(z)}{h} \nonumber \\
     = &
     \lim_{h \downarrow 0} \frac{1}{h}
     \left(

@@ -11,7 +11,7 @@ However, if the clusters $\hat{\mathcal{C}}_1, \ldots, \hat{\mathcal{C}}_{\hat m
 \begin{problem}
   \min_{x \in \bbR^{\hat m}}
   F \left(\sum_{i=1}^{\hat m} \tilde{X}_{\mathcal{C}_i} x_i \right)
-  + \sum_{i=1}^{\hat m} (\sum_{\lambda \in \lambda^{\hat{\mathcal{C}}_i}} \lambda) x_i \enspace,
+  + \sum_{i=1}^{\hat m} (\sum_{\lambda \in \lambda^{\hat{\mathcal{C}}_i}} \lambda) x_i \, ,
 \end{problem}
 \klopfe{Clarify what $F$ is here}\jw{should be |x| in the last}
 
@@ -29,8 +29,8 @@ To this end, we let
   \label{eq:coordinate-update-beta}
   \beta_i(z) =
   \begin{cases}
-    s_k z   \enspace, & \text{if } i \in \mathcal{C}_k \enspace, \\
-    \beta_i \enspace, & \text{otherwise} \enspace.
+    s_k z   \, , & \text{if } i \in \mathcal{C}_k \, , \\
+    \beta_i \, , & \text{otherwise} \, .
   \end{cases}
 \end{equation}
 % This means that \(\beta(z)\) corresponds to a version of \(\beta\) with a
@@ -42,7 +42,7 @@ one-dimensional problem:
   \label{pb:cluster-problem}
   \min_{z \in \mathbb{R}} \Big(
     \mathcal{P}(z) = P(\beta(z))  = F(\beta(z)) + \phi(z)
-  \Big) \enspace ,
+  \Big) \,  ,
 \end{problem}
 where
 \[
@@ -59,7 +59,7 @@ The optimality condition for \Cref{pb:cluster-problem} is
 where $\mathcal{P}'(z; \delta) $ is the directional derivative in the direction $\delta$.
 Note that we have
 \[
-  \mathcal{P}'(z; \delta)  = \delta \nabla F(\beta(z)) + \phi'(z; \delta) \enspace,
+  \mathcal{P}'(z; \delta)  = \delta \nabla F(\beta(z)) + \phi'(z; \delta) \, ,
 \]
 % since \(\lVert \tilde{r} - \tilde{x}z\rVert_2^2\) is differentiable.
 since \(F \) is differentiable.
@@ -76,7 +76,7 @@ First, let \(C(z)\) be a function that returns the cluster corresponding to \(z\
 Next, let $\varepsilon_c$ be an arbitrary positive value such that
 \begin{equation}
   \label{eq:epsilon-c}
-  \varepsilon_c < \big| c_i - c_j\big| , \quad \forall\, i \neq j \text{ and } \varepsilon_c < c_m \text{ if } c_m \neq 0 \enspace.
+  \varepsilon_c < \big| c_i - c_j\big| , \quad \forall\, i \neq j \text{ and } \varepsilon_c < c_m \text{ if } c_m \neq 0 \, .
 \end{equation}
 % For a \({\varepsilon_c}\) and
 Then for \(\delta \in \{-1, 1\}\) we have
@@ -94,14 +94,13 @@ depends only on \(\delta\) as \(h\) tends to~\(0\).
   subset of the permutation vectors.
   The permutation for \(\beta(h\delta)\)
   corresponds to
-  \mm{tilde?}
-  \[
+  \begin{equation*}
     \begin{cases}
       \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \mathcal{C}_m, C({\varepsilon_c}\delta)                                          & \text{if } c_m > 0 \text{ and } \delta \neq 0, \\
       \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, C({\varepsilon_c}\delta), \mathcal{C}_m                                          & \text{if } c_m = 0 \text{ and } \delta \neq 0, \\
       \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \underbrace{\mathcal{C}_k \cup \mathcal{C}_m}_{C({\varepsilon_c}\delta)} & \text{if } c_m = 0 \text{ and } \delta = 0.    \\
     \end{cases}
-  \]
+  \end{equation*}
   The permutation for \(\beta(z + {\varepsilon_c} \delta)\), \(z \neq 0\) corresponds to
   \[
     \begin{cases}
@@ -131,11 +130,11 @@ We are now ready to state the directional derivative of $\phi$. % \(J_k\).
     J'_k(z, \delta) =
     \begin{cases}
       \smashoperator[r]{\sum_{j \in C({\varepsilon_c} \delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}
-          & \text{if } z = 0 \enspace,               \\
+          & \text{if } z = 0 \, ,               \\
       \sign(z)\delta\smashoperator{\sum_{j \in C(z + {\varepsilon_c} \delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
-          & \text{if } |z| = c^{(k)}_i > 0 \enspace, \\
+          & \text{if } |z| = c^{(k)}_i > 0 \, , \\
       \sign(z)\delta\smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}
-          & \text{otherwise} \enspace,
+          & \text{otherwise} \, ,
     \end{cases}
   \]
   with \({\varepsilon_c}\) defined as in \eqref{eq:epsilon-c}.

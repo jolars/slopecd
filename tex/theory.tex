@@ -9,9 +9,9 @@ Proximal coordinate descent cannot be applied to \Cref{pb:slope} because it is n
 However, if the clusters $\hat{\mathcal{C}}_1, \ldots, \hat{\mathcal{C}}_{\hat m}$ of the solution $\hat \beta$ were known together with their signs, then the values $\hat{c}_1, \ldots, \hat{c}_{\hat{m}}$ taken by $\hat \beta$ on the clusters could be equivalently computed by solving:
 \mm{TODO MM: put in prop and write proof?}
 \begin{problem}
-  \min_{x \in \bbR^{\hat m}}
-  F \left(\sum_{i=1}^{\hat m} \tilde{X}_{\mathcal{C}_i} x_i \right)
-  + \sum_{i=1}^{\hat m} (\sum_{\lambda \in \lambda^{\hat{\mathcal{C}}_i}} \lambda) x_i \, ,
+\min_{x \in \bbR^{\hat m}}
+F \left(\sum_{i=1}^{\hat m} \tilde{X}_{\mathcal{C}_i} x_i \right)
++ \sum_{i=1}^{\hat m} (\sum_{\lambda \in \lambda^{\hat{\mathcal{C}}_i}} \lambda) x_i \, ,
 \end{problem}
 \klopfe{Clarify what $F$ is here}\jw{should be |x| in the last}
 
@@ -39,10 +39,10 @@ Minimizing the objective in this directions amounts to solving the following
 one-dimensional problem:
 
 \begin{problem}
-  \label{pb:cluster-problem}
-  \min_{z \in \mathbb{R}} \Big(
-    \mathcal{P}(z) = P(\beta(z))  = F(\beta(z)) + \phi(z)
-  \Big) \,  ,
+\label{pb:cluster-problem}
+\min_{z \in \mathbb{R}} \Big(
+\mathcal{P}(z) = P(\beta(z))  = F(\beta(z)) + \phi(z)
+\Big) \,  ,
 \end{problem}
 where
 \[
@@ -57,7 +57,7 @@ The optimality condition for \Cref{pb:cluster-problem} is
   \mathcal{P}'(z; \delta) \geq 0,
 \]
 where $\mathcal{P}'(z; \delta) $ is the directional derivative in the direction $\delta$.
-Since \(F \) is differentiable we have 
+Since \(F \) is differentiable we have
 \[
   \mathcal{P}'(z; \delta)  = \delta \nabla F(\beta(z)) + \phi'(z; \delta) \, ,
 \]
@@ -97,9 +97,9 @@ depends only on \(\delta\) as \(h\) tends to~\(0\).
   \begin{equation*}
     \begin{cases}
       \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \mathcal{C}_m, C({\varepsilon_c}\delta)
-              & \text{if } c_m > 0 \, , \\ % \text{ and } \delta \neq 0 \, , \\
+       & \text{if } c_m > 0 \, , \\ % \text{ and } \delta \neq 0 \, , \\
       \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, C({\varepsilon_c}\delta), \mathcal{C}_m
-              & \text{if } c_m = 0 \, . %\text{ and } \delta \neq 0 \, . \\
+       & \text{if } c_m = 0 \, . %\text{ and } \delta \neq 0 \, . \\
       % \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \underbrace{\mathcal{C}_k \cup \mathcal{C}_m}_{C({\varepsilon_c}\delta)} & \text{if } c_m = 0 \text{ and } \delta = 0.    \\
     \end{cases}
   \end{equation*}
@@ -107,14 +107,14 @@ depends only on \(\delta\) as \(h\) tends to~\(0\).
   \[
     \begin{cases}
       \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, C(c_i + {\varepsilon_c}\delta), \mathcal{C}_i, \dots, \mathcal{C}_m
-               & \text{if } \delta = 1 \,,  \\
+       & \text{if } \delta = 1 \,,   \\
       \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \mathcal{C}_i, C(c_i + {\varepsilon_c}\delta), \dots, \mathcal{C}_m
-                & \text{if } \delta = -1 \, . \\
+       & \text{if } \delta = -1 \, . \\
       % \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \underbrace{\mathcal{C}_i \cup \mathcal{C}_k}_{C(c_i + {\varepsilon_c}\delta)}, \dots, \mathcal{C}_m & \text{if } \delta = 0.  \\
     \end{cases}
   \]
 \end{remark}
- %, defined as
+%, defined as
 % \(c^{(k)} = \{c_1, c_2, \dots, c_m\} \setminus c_k\), such that
 % \[
 %   c_i^{(k)} =
@@ -134,11 +134,11 @@ We are now ready to state the directional derivative of $\phi$. % \(J_k\).
     \phi'(z; \delta) =
     \begin{cases}
       \smashoperator[r]{\sum_{j \in C(\varepsilon_c )}} \lambda_{(j)^-_{\varepsilon_c }}
-          & \text{if } z = 0 \, ,               \\
+       & \text{if } z = 0 \, ,               \\
       \sign(z)\delta\smashoperator{\sum_{j \in C(z + {\varepsilon_c} \delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
-          & \text{if } |z| = c^{(k)}_i > 0 \, , \\
+       & \text{if } |z| = c^{(k)}_i > 0 \, , \\
       \sign(z)\delta\smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}
-          & \text{otherwise} \, .
+       & \text{otherwise} \, .
     \end{cases}
   \]
 \end{theorem}
@@ -156,7 +156,7 @@ We are now ready to state the directional derivative of $\phi$. % \(J_k\).
       + \smashoperator{\sum_{j \notin C(z + h\delta)}} |\beta_j| \lambda_{(j)^-_{z + h \delta}}
       - |z| \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_z}
       - \smashoperator{\sum_{j \notin C(z)}} |\beta_j| \lambda_{(j)^-_z}
-    \right) \nonumber                                                        \\
+    \right) \nonumber                                                          \\
     = & \lim_{h \downarrow 0}
     \frac{1}{h}
     \left(
@@ -174,9 +174,9 @@ We are now ready to state the directional derivative of $\phi$. % \(J_k\).
   as a result of the definition of
   \({\varepsilon_c}\), the following identities:
   \begin{align*}
-    C(c_i^{(k)} + {\varepsilon_c}\delta)          & \subseteq C(c_i^{(k)}),                                                                                                                     \\
-    \tilde{\mathcal{C}}_i                   & = \widebar{C(c_i^{(k)} + {\varepsilon_c} \delta)} \cap C(c_i^{(k)}),                                                                              \\
-    C(c_i^{(k)})                                  & = \tilde{C}_i \cup \big(C(c_i^{(k)} + {\varepsilon_c}\delta) \cap C(c_i^{(k)})\big) = \tilde{\mathcal{C}}_i \cup C(c_i^{(k)} + {\varepsilon_c} \delta), \\
+    C(c_i^{(k)} + {\varepsilon_c}\delta)            & \subseteq C(c_i^{(k)}),                                                                                                                                 \\
+    \tilde{\mathcal{C}}_i                           & = \widebar{C(c_i^{(k)} + {\varepsilon_c} \delta)} \cap C(c_i^{(k)}),                                                                                    \\
+    C(c_i^{(k)})                                    & = \tilde{C}_i \cup \big(C(c_i^{(k)} + {\varepsilon_c}\delta) \cap C(c_i^{(k)})\big) = \tilde{\mathcal{C}}_i \cup C(c_i^{(k)} + {\varepsilon_c} \delta), \\
     \widebar{C(c_i^{(k)} + {\varepsilon_c} \delta)} & = \widebar{C(c_i^{(k)})} \cup \tilde{\mathcal{C}}_i.
   \end{align*}
   Using this, we can rewrite \eqref{eq:directional-derivative-sl1} as
@@ -278,7 +278,7 @@ We are now ready to state the directional derivative of $\phi$. % \(J_k\).
   \end{equation*}
 
   Finally, note that \(J_k\) is differentiable in every other case, i.e.
- \(|z| \notin \{0, \{c_i^{(k)}\}_{i=1}^{m-1}\}\). Here since \(C(z +
+  \(|z| \notin \{0, \{c_i^{(k)}\}_{i=1}^{m-1}\}\). Here since \(C(z +
   {\varepsilon_c}\delta) = C(z)\), has the directional derivative
   \[
     J_k'(z; \delta) = \delta \sign(z) \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}.
@@ -288,6 +288,7 @@ We are now ready to state the directional derivative of $\phi$. % \(J_k\).
 We are now ready to present the SLOPE thresholding operator.
 
 \begin{theorem}[The SLOPE Thresholding Operator]
+  \label{thm:thresholding-operator}
   \[
     T_k(\gamma; \omega, c, \lambda) =
     \begin{cases}
@@ -372,13 +373,13 @@ In \cref{fig:slope-thresholding}, we visualize the SLOPE thresholding operator.
   \centering
   \includegraphics[]{slope-thresholding.pdf}
   \caption{%
-    An example of the SLOPE thresholding operator. The result corresponds to an 
-    example for \(\beta = [0.5, -0.5, 0.3, 0.7]^T\), \(c = [0.7, 0.5, 0.3]^T\)
-    with an update for the second cluster (\(k = 2\)), such that
-    \(c^{\setminus k} = [0.5, 0.3]^T\). Across regions where the function is constant,
-    the operator sets the result to be either exactly 0 or to the value of one
-    of the elements of \(c^{\setminus k}\).
-  }
+  An example of the SLOPE thresholding operator. The result corresponds to an
+  example for \(\beta = [0.5, -0.5, 0.3, 0.7]^T\), \(c = [0.7, 0.5, 0.3]^T\)
+  with an update for the second cluster (\(k = 2\)), such that
+  \(c^{\setminus k} = [0.5, 0.3]^T\). Across regions where the function is constant,
+      the operator sets the result to be either exactly 0 or to the value of one
+      of the elements of \(c^{\setminus k}\).
+    }
   \label{fig:slope-thresholding}
 \end{figure}
 
@@ -524,20 +525,42 @@ a two-dimensional SLOPE problem.
 \end{figure}
 
 \begin{theorem}
-  Iterates of \cref{alg:hybrid} converge towards \(\beta^*\).
+  Let \(\beta^{(1)}, \beta^{(2)}, \dots, \beta^{(k)}\) be a sequence of
+  iterates generated by \cref{alg:hybrid}, \(1/t\) the frequency of proximal gradient
+  descent iterates in \cref{alg:hybrid}, and \(L\) the Lipschitz constant of
+  \(\nabla \ell\). Then
+  \[
+    P(\beta^{(k)}) - P(\beta^*) \leq \frac{L \lVert \beta^{(0)} - \beta^* \rVert_2^2}{2\lfloor k/t \rfloor }\,,
+    \quad \beta^* \in \argmin_{\beta \in \mathbb{R}^p} P.
+  \]
 \end{theorem}
 \begin{proof}
-  First note that convergence properties of proximal gradient descent on convex
-  problems such as SLOPE are well-established
-  \parencite{beck2009,daubechies2004}, which certifies that updates via
-  \cref{alg:hybrid-istastep} make progress towards \(\beta^*\).
+  Assume that we are at iteration \(k + 1\) of \cref{alg:hybrid} and observe
+  that \cref{pb:cluster-problem} can be written as a constrained form of \cref{pb:slope}:
+  \[
+    \begin{aligned}
+       & \min_{\beta \in \mathbb{R}^p} &  & P(\beta),                                                                                                     \\
+       & \operatorname{subject\;to}    &  & |\beta_i| = |\beta_j|                                                   &  & i,j \in \mathcal{C}_k, i \neq j, \\
+       &                               &  & \sign(\beta_i)\sign(\beta_i^{(k)}) = \sign(\beta_j)\sign(\beta_j^{(k)}) &  & i,j \in \mathcal{C}_k,           \\
+       &                               &  & \beta_i = \beta_i^{(k)}                                                 &  & i \notin \mathcal{C}_k.
+    \end{aligned}
+  \]
+  And note that these constraints hold for any \(\beta^{(k)}\) used as input to this
+  problem.
+  In \cref{thm:thresholding-operator}, we showed that the thresholding operator
+  \(T\) minimizes this problem for any \(\beta^{(k)}\), which means that
+  \(P(\beta^{(k)}) \leq P(\beta^{(k + 1)})\) for any coordinate descent iteration
+  \(k + 1\) in \cref{alg:hybrid}.
 
-  Next note that the objectives of \eqref{pb:slope} and
-  \eqref{eq:subproblem} are equal and that \eqref{eq:subproblem} can be seen
-  viewed as a version of \eqref{pb:slope} with added linear constraints
-  that is also convex. And, finally, because the coordinate updates of
-  \cref{alg:hybrid} minimize the sub-problem, we in the worst case make no
-  progress and therefore have guaranteed converge rate no less than \(1/m\)
-  of that of proximal gradient descent.
+  The convergence properties of proximal gradient descent are well
+  known~\parencite{beck2009,daubechies2004}, and hence we know that for a
+  sequence of iterates of the proximal gradient step~(\cref{alg:hybrid-istastep}),
+  \(\beta^{(t)}, \beta^{(2t)}, \dots, \beta^{(\lfloor k / t \rfloor)}\), it holds that
+  \[
+    P(\beta^{(\lfloor k / t \rfloor)}) - P(\beta^*)
+    \leq \frac{L \lVert \beta^{(0)} - \beta^* \rVert_2^2}{2\lfloor k / t \rfloor}.
+  \]
+  Combining this and the result from the previous paragraph yields the desired
+  result.
 \end{proof}
 

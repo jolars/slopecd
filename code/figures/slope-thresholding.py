@@ -185,4 +185,5 @@ ax2_y.set_yticks(y2_vals, y2_labs)
 
 # plt.show(block=False)
 
+plt.rcParams["text.usetex"] = True
 plt.savefig("../figures/slope-thresholding.pdf", bbox_inches="tight", pad_inches=0.01)

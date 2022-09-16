@@ -17,21 +17,6 @@ def get_clusters(w):
     return clusters[::-1], counts[::-1], indices[::-1], unique[::-1]
 
 
-def ann(ax, label, coord):
-    ax.annotate(
-        label,
-        coord,
-        xycoords="axes fraction",
-        verticalalignment="bottom",
-        horizontalalignment="left",
-        rotation=60,
-    )
-
-
-def identity(x):
-    return x
-
-
 np.random.seed(10)
 
 n = 10

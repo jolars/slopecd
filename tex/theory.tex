@@ -371,7 +371,14 @@ In \cref{fig:slope-thresholding}, we visualize the SLOPE thresholding operator.
 \begin{figure}[htbp]
   \centering
   \includegraphics[]{slope-thresholding.pdf}
-  \caption{The result of the SLOPE thresholding update.}
+  \caption{%
+    An example of the SLOPE thresholding operator. The result corresponds to an 
+    example for \(\beta = [0.5, -0.5, 0.3, 0.7]^T\), \(c = [0.7, 0.5, 0.3]^T\)
+    with an update for the second cluster (\(k = 2\)), such that
+    \(c^{\setminus k} = [0.5, 0.3]^T\). Across regions where the function is constant,
+    the operator sets the result to be either exactly 0 or to the value of one
+    of the elements of \(c^{\setminus k}\).
+  }
   \label{fig:slope-thresholding}
 \end{figure}
 

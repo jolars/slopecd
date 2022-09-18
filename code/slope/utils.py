@@ -41,6 +41,11 @@ def sl1_norm(beta, lambdas):
 
 
 @njit
+def primal(beta, X, y, lambdas):
+    return (0.5 / len(y)) * norm(y - X @ beta) ** 2 + sl1_norm(beta, lambdas)
+
+
+@njit
 def prox_slope(beta, lambdas):
     """Compute the sorted L1 proximal operator.
 

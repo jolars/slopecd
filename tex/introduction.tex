@@ -1,4 +1,4 @@
-%!TEX root = ./slopecd.tex
+%!TEX root = ./main.tex
 \section{Introduction}\label{sec:introduction}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -55,17 +55,15 @@ require the objective to be separable, which is not the case for SLOPE. As a
 result, naive coordinate descent schemes can get
 stuck~(\cref{fig:naive-cd-stuck}).
 
-\begin{figure}[htpb]
+\begin{figure}[htb]
   \centering
   \includegraphics[]{naive-cd-stuck.pdf}
   \caption{%
-    An example of naive coordinate descent getting stuck. This figure shows
-    level curves of the objective for a two-dimensional SLOPE problem with the
-    optimum indicated by the orange cross. At the point highlighted in the
-    graph around \([0.201,0.201]^T\), a naive coordinate descent algorithm can
-    only move in the directions indicated by the dashed lines---neither of which
-    are descent directions for the objective. As a result, the algorithm is
-    stuck.
+    An example of (standard) coordinate descent getting stuck on a two-dimensional SLOPE problem.
+    The main plot shows level curves for the primal objective~\eqref{pb:slope}, with the optimum \(\beta^* = [0, 0]^T\) indicated by the orange cross.
+    The marginal plots displays objective values at \(\beta_1 = 0.2\) when optimizing over \(\beta_2\) and vice versa.
+    At \(\beta = [0.2,0.2]^T\), a naive coordinate descent algorithm can only move in the directions indicated by the dashed lines---neither of which are descent directions for the objective.
+    As a result, the algorithm is stuck.
   }
   \label{fig:naive-cd-stuck}
 \end{figure}

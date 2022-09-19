@@ -7,6 +7,7 @@ from scipy import stats
 
 from slope.solvers import hybrid_cd
 from slope.utils import lambda_sequence, sl1_norm
+from figures import figspec
 
 n = 10
 p = 2
@@ -27,11 +28,11 @@ lambdas = np.array([0.5, 0.1])
 
 beta_star, _, _, _, _ = hybrid_cd(X, y, lambdas, False)
 
-betas = np.linspace(-0.05, 0.4, m)
+lims = (-0.05, 0.45)
+
+betas = np.linspace(lims[0], lims[1], m)
 
 f = np.zeros((m, m))
-
-plt.close("all")
 
 for i in range(m):
     for j in range(m):
@@ -40,32 +41,73 @@ for i in range(m):
 
 b1s, b2s = np.meshgrid(betas, betas)
 
-fig, ax = plt.subplots(figsize=(3, 3), constrained_layout=True)
+beta_stuck = 0.2
+beta_stuck_2d = np.array([beta_stuck, beta_stuck])
+f_stuck = (0.5 / n) * norm(y - X @ beta_stuck_2d) ** 2 + sl1_norm(
+    beta_stuck_2d, lambdas
+)
+
+# univariate problems
+beta_in = np.sort(np.hstack((beta_stuck, np.linspace(lims[0], lims[1], 200))))
+
+f1 = np.zeros(len(beta_in))
+f2 = np.zeros(len(beta_in))
+
+for i in range(len(beta_in)):
+    beta1 = np.hstack((beta_in[i], beta_stuck))
+    beta2 = np.hstack((beta_stuck, beta_in[i]))
+    f1[i] = (0.5 / n) * norm(y - X @ beta1) ** 2 + sl1_norm(beta1, lambdas)
+    f2[i] = (0.5 / n) * norm(y - X @ beta2) ** 2 + sl1_norm(beta2, lambdas)
+
+fs = (f1, f2)
+
+plt.close("all")
+fig = plt.figure(figsize=(figspec.HALF_WIDTH, figspec.FULL_WIDTH), constrained_layout=True)
+ax = fig.add_gridspec(top=0.4, right=0.4).subplots()
+
+# contours
 ax.set_aspect("equal")
 
-levels = np.geomspace(np.min(f), np.max(f), 15)
-ax.contour(betas, betas, f, levels=levels, colors="darkgrey")
+n_levels = 15
+levels = np.zeros(n_levels)
+for i in range(n_levels):
+    b = beta_star + 0.05 * i
+    levels[i] = (0.5 / n) * norm(y - X @ b) ** 2 + sl1_norm(b, lambdas)
 
-# optimum
-ax.plot(
-    beta_star[0], beta_star[1], color="darkorange", marker="x", markersize=7, mew=2
-)
+
+ax_beta1 = ax.inset_axes([0, 1.05, 1, 0.25], sharex=ax)
+ax_beta2 = ax.inset_axes([1.05, 0, 0.25, 1], sharey=ax)
+
+ax.contour(betas, betas, f, levels=levels, colors="darkgrey")
+ax.plot(beta_star[0], beta_star[1], color="darkorange", marker="x", markersize=7, mew=2)
 
 # where we are stuck
 xlim = ax.get_xlim()
 ylim = ax.get_ylim()
 
-beta_step = np.array([0.2015, 0.2015])
-
-ax.hlines(beta_step[0], xlim[0], xlim[1], linestyle="--")
-ax.vlines(beta_step[1], ylim[0], ylim[1], linestyle="--")
-ax.plot(beta_step[0], beta_step[1], color="black", marker=".", markersize=10)
+ax.hlines(beta_stuck, xlim[0], xlim[1], linestyle="dotted")
+ax.vlines(beta_stuck, ylim[0], ylim[1], linestyle="dotted")
+ax.plot(beta_stuck, beta_stuck, color="black", marker=".", markersize=6)
 
 # labels
 ax.set_xlabel(r"$\beta_1$")
 ax.set_ylabel(r"$\beta_2$")
 
+ax_beta1.tick_params(axis="x", labelbottom=False)
+ax_beta1.plot(beta_in, f1, color="black")
+ax_ylim = ax_beta1.get_ylim()
+ax_beta1.vlines(beta_stuck, ax_ylim[0], ax_ylim[1], linestyle="dotted")
+ax_beta1.set_ylabel(r"$P(\beta)$")
+
+ax_beta2.tick_params(axis="y", labelleft=False)
+ax_beta2.plot(f2, beta_in, color="black")
+ax_xlim = ax_beta2.get_xlim()
+ax_beta2.hlines(beta_stuck, ax_xlim[0], ax_xlim[1], linestyle="dotted")
+ax_beta2.set_xlabel(r"$P(\beta)$")
+
 plt.rcParams["text.usetex"] = True
-plt.savefig("../figures/naive-cd-stuck.pdf", bbox_inches="tight", pad_inches=0.01)
 
 plt.show(block=False)
+
+plt.savefig("../figures/naive-cd-stuck.pdf", bbox_inches="tight", pad_inches=0.01)
+

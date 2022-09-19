@@ -8,6 +8,7 @@ from numpy.linalg import norm
 from numpy.random import default_rng
 from scipy import stats
 
+from figures import figspec
 from slope.clusters import get_clusters, update_cluster
 from slope.solvers import hybrid_cd
 from slope.utils import (
@@ -181,7 +182,14 @@ def plot_dirder(delta, ax):
 
 plt.close("all")
 
-fig, axs = plt.subplots(1, 2, figsize=(6.2, 3.5), constrained_layout=True, sharex=True)
+fig, axs = plt.subplots(
+    2,
+    1,
+    figsize=(figspec.HALF_WIDTH, figspec.HALF_WIDTH * 1.5),
+    constrained_layout=True,
+    sharex=True,
+    height_ratios = (0.3, 0.7)
+)
 
 x_min = -max(c) - 0.5
 x_max = max(c) + 0.5
@@ -201,9 +209,8 @@ legend_symbols = [
 ]
 legend_labels = [r"$1$", r"$-1$"]
 
-axs[1].set_ylabel(r"$P'_k(z)$")
+axs[1].set_ylabel(r"$G'(z)$")
 axs[1].set_xlabel(r"$z$")
-
 axs[1].legend(legend_symbols, legend_labels, title=r"$\delta$")
 
 zs = np.sort(np.hstack((-c_k, [0.0], c_k, np.linspace(x_lim[0], x_lim[1], 100))))
@@ -215,12 +222,14 @@ ps = np.hstack((-c_k, [0.0], c_k[::-1]))
 axs[0].vlines(ps, np.min(obj), np.max(obj), color="darkgrey", linestyle="dotted")
 axs[0].plot(zs, obj, color="black")
 
-axs[0].set_ylabel(r"$P_k(z)$")
-axs[0].set_xlabel(r"$z$")
+axs[0].set_ylabel(r"$G(z)$")
+# axs[0].set_xlabel(r"$z$")
 
 plt.rcParams["text.usetex"] = True
+
+plt.show(block=False)
+
 plt.savefig(
     "../figures/directional-derivative.pdf", bbox_inches="tight", pad_inches=0.01
 )
 
-plt.show(block=False)

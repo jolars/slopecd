@@ -445,7 +445,7 @@ Then, each time a new predictor becomes non-zero, we compute its inner product w
 \subsection{Hybrid proximal coordinate descent strategy}
 
 We propose an iterative solver that alternates between proximal gradient step and proximal coordinate descent.
-Since the regularization term for SLOPE is not separable, applying PCD does not guarantee convergence (show example where CD gets stuck).
+Since the regularization term for SLOPE is not separable, applying PCD does not guarantee convergence.
 However, \cite{dupuis2021} showed that once the clusters are known, the subdifferential of $J$ can be written as the cartesian product of the subdifferential of $J$ restricted to the clusters.
 Hence, if one knew the clusters, PCD updates could be applied on each cluster.
 

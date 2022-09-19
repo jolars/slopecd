@@ -11,9 +11,9 @@ However, if the clusters $\mathcal{C}_1^*, \ldots, \mathcal{C}_{m^*}^*$ of the s
 \begin{problem}
 \min_{z \in \bbR^{m^*}}
 F \left(\sum_{i=1}^{m^*} \tilde{x}_{\mathcal{C}_i} z_i \right)
-+ \sum_{i=1}^{m^*} z_i \sum_{\lambda \in \lambda^{\mathcal{C}_i^*}} \lambda \, ,
++ \sum_{i=1}^{m^*} | z_i | \sum_{\lambda \in \lambda^{\mathcal{C}_i^*}} \lambda \, ,
 \end{problem}
-\klopfe{Clarify what $F$ is here}\jw{should be |x| in the last}
+\klopfe{Clarify what $F$ is here}
 where $\tilde{x}_{\mathcal{C}_i} = \sum_{j \in \mathcal{C}_i} x_j \sign (\beta_j^*)$.
 Conditionally on the knowledge of the clusters and the signs of the coefficients, the problem becomes separable and coordinate descent could be used.
 Hence, the idea of our algorithm is to intertwine steps that identify the clusters, and large coordinate-wise steps on these clusters.

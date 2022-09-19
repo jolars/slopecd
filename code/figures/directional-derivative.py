@@ -8,6 +8,7 @@ from numpy.linalg import norm
 from numpy.random import default_rng
 from scipy import stats
 
+from figures import figspec
 from slope.clusters import get_clusters, update_cluster
 from slope.solvers import hybrid_cd
 from slope.utils import (
@@ -181,7 +182,14 @@ def plot_dirder(delta, ax):
 
 plt.close("all")
 
-fig, axs = plt.subplots(1, 2, figsize=(6.2, 3.5), constrained_layout=True, sharex=True)
+fig, axs = plt.subplots(
+    2,
+    1,
+    figsize=(figspec.HALF_WIDTH, figspec.HALF_WIDTH * 1.5),
+    constrained_layout=True,
+    sharex=True,
+    height_ratios = (0.3, 0.7)
+)
 
 x_min = -max(c) - 0.5
 x_max = max(c) + 0.5
@@ -215,11 +223,13 @@ axs[0].vlines(ps, np.min(obj), np.max(obj), color="darkgrey", linestyle="dotted"
 axs[0].plot(zs, obj, color="black")
 
 axs[0].set_ylabel(r"$G(z)$")
-axs[0].set_xlabel(r"$z$")
+# axs[0].set_xlabel(r"$z$")
 
 plt.rcParams["text.usetex"] = True
+
+plt.show(block=False)
+
 plt.savefig(
     "../figures/directional-derivative.pdf", bbox_inches="tight", pad_inches=0.01
 )
 
-plt.show(block=False)

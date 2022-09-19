@@ -7,6 +7,7 @@ from scipy import stats
 
 from slope.solvers import hybrid_cd
 from slope.utils import lambda_sequence, sl1_norm
+from figures import figspec
 
 n = 10
 p = 2
@@ -61,8 +62,8 @@ for i in range(len(beta_in)):
 fs = (f1, f2)
 
 plt.close("all")
-fig = plt.figure(figsize=(4, 4), constrained_layout=True)
-ax = fig.add_gridspec(top=0.6, right=0.6).subplots()
+fig = plt.figure(figsize=(figspec.HALF_WIDTH, figspec.FULL_WIDTH), constrained_layout=True)
+ax = fig.add_gridspec(top=0.4, right=0.4).subplots()
 
 # contours
 ax.set_aspect("equal")
@@ -84,9 +85,9 @@ ax.plot(beta_star[0], beta_star[1], color="darkorange", marker="x", markersize=7
 xlim = ax.get_xlim()
 ylim = ax.get_ylim()
 
-ax.hlines(beta_step[0], xlim[0], xlim[1], linestyle="dotted")
-ax.vlines(beta_step[1], ylim[0], ylim[1], linestyle="dotted")
-ax.plot(beta_step[0], beta_step[1], color="black", marker=".", markersize=6)
+ax.hlines(beta_stuck, xlim[0], xlim[1], linestyle="dotted")
+ax.vlines(beta_stuck, ylim[0], ylim[1], linestyle="dotted")
+ax.plot(beta_stuck, beta_stuck, color="black", marker=".", markersize=6)
 
 # labels
 ax.set_xlabel(r"$\beta_1$")

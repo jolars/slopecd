@@ -207,3 +207,23 @@
   The solution for the last case follows using reasoning analogous to that of the
   third case.
 \end{proof}
+
+\subsection{Proof of \Cref{lem:convergence}}
+
+\begin{proof}
+  From \cref{thm:thresholding-operator}, we know that lines 9--14 in \cref{alg:hybrid} correspond to minimizing \(G(z)\) for a given \(\beta \coloneqq \beta^{(t + k / |\mathcal{C}|)}\), and therefore that
+  \[
+    G\big(\beta^{(t + (k - 1) / |\mathcal{C}|)}\big) \leq G\big(\beta^{(t + k / |\mathcal{C}|)}\big)
+  \]
+  since \(G(z) = P\big(\beta(z)\big)\).
+
+  Moreover, for a sequence of iterates of the proximal gradient descent step, 
+  \(\beta^{(v)}, \beta^{(2v)}, \dots, \beta^{(\lfloor k / v \rfloor)}\), 
+  we know from~\textcite[Theorem 3.1]{beck2009} that it holds that
+  \[
+    P(\beta^{(\lfloor k / v \rfloor)}) - P(\beta^*)
+    \leq \frac{L \lVert \beta^{(0)} - \beta^* \rVert_2^2}{2\lfloor k / v \rfloor}.
+  \]
+  Combining this and the result from the previous paragraph yields the desired
+  result.
+\end{proof}

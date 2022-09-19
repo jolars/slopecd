@@ -280,10 +280,9 @@ Hence the idea to alternate, PGD and PCD step to take advantage of the speed of 
   \(t \gets t + 1\)
 
   \If{\(t \bmod v = 0\)}{
+    \(\beta \leftarrow \operatorname{prox}_{J}(\beta - \frac{1}{L}\nabla f(\beta); \lambda / L)\) \label{alg:hybrid-istastep}
 
-  \(\beta \leftarrow \operatorname{prox}_{J / L}(\beta - \frac{1}{L}\nabla f(\beta))\) \label{alg:hybrid-istastep}
-
-  % \(C_1, \hdots, C_m \leftarrow \mathtt{get\_clusters}(\beta)\)
+    Update \(c\), \(\mathcal{C}\)
   }
   \Else{
     \(k \gets 0\)
@@ -293,31 +292,19 @@ Hence the idea to alternate, PGD and PCD step to take advantage of the speed of 
 
       \(s \leftarrow \mathrm{sign}(\beta_{\mathcal{C}_k})\)
 
-      % \If{\(s \neq 0\)}{
-        % \(L_k \gets (X_{:, \mathcal{C}_k}s)^\top  X_{:, \mathcal{C}_k}s\)
+      \(\tilde x_k \gets X_{\mathcal{C}_k}s\)
 
+      % \(\tilde y_k \gets X_{\widebar{\mathcal{C}}_k}\beta_{\widebar{\mathcal{C}}_k}\)
 
-        % \(\tilde{\beta} \gets T(|\beta_{\mathcal{C}_k}| - \frac{1}{L_k} \nabla_{\mathcal{C}_k}f(\beta)^\top s, \frac{\lambda}{L_k})\)
+      \(\tilde r_k \gets y - X_{\widebar{\mathcal{C}}_k}\beta_{\widebar{\mathcal{C}}_k}\)
 
-        % \(\beta_{\mathcal{C}_k} \leftarrow \tilde{\beta} s\)
-        \(\tilde x_k \gets X_{\mathcal{C}_k}s\)
+      % \(\gamma \gets \tilde{r}^T \tilde{x}_k\)
+      
+      % \(\omega \gets \tilde{x}_k^T \tilde{x}_k\)
 
-        \(\tilde y_k \gets X_{\widebar{\mathcal{C}}_k}\beta_{\widebar{\mathcal{C}}_k}\)
+      \(\beta \gets T(\tilde{r}^T \tilde{x}_k; \tilde{x}_k^T \tilde{x}_k, c^{\setminus k}, \lambda)\)
 
-        \(\tilde r_k \gets y - \tilde y_k\)
-
-        \( \beta_{\mathcal{C}_k} \gets s T \left(
-          \frac{\tilde r^T_k \tilde x_k}{ \tilde x_k^T \tilde x_k},
-          \frac{\lambda}{ \tilde x_k^T \tilde x_k},
-          k,
-          \tilde \beta,
-          \mathcal{C}
-        \right)
-        \)
-        % \Comment{\(\mathcal{C}\) is updated at this step.}
-
-      % }
-
+      Update \(c\), \(\mathcal{C}\)
     }
   }
 

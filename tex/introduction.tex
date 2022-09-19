@@ -3,7 +3,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 In this paper we present a novel numerical algorithm for Sorted L-One Penalized
-Estimation (SLOPE)~\cite{bogdan2013,bogdan2015,zeng2014ordered}, defined as
+Estimation (SLOPE)~\parencite{bogdan2013,bogdan2015,zeng2014ordered}, defined as
 \begin{problem}\label{pb:slope}
   \min_{\beta \in \mathbb{R}^p}
   P(\beta) = \ell(\beta) + J(\beta)
@@ -23,14 +23,14 @@ with \(\lambda\) being a fixed non-increasing and non-negative sequence.
 
 The sorted $\ell_1$ norm is a sparsity-enforcing penalty that has become
 increasingly popular due to several appealing properties, such as its ability
-to control false discovery rate~\cite{bogdan2015,kos2020}, cluster
-coefficients~\cite{figueiredo2016, schneider2020a}, and recover sparsity and
-ordering patterns in the solution~\cite{bogdan2022}. Unlike other competing
-sparse regularization methods such as MCP~\cite{zhang2010} and
-SCAD~\cite{fan2001}, SLOPE is also a convex problem~\cite{bogdan2015}.
+to control false discovery rate~\parencite{bogdan2015,kos2020}, cluster
+coefficients~\parencite{figueiredo2016, schneider2020a}, and recover sparsity and
+ordering patterns in the solution~\parencite{bogdan2022}. Unlike other competing
+sparse regularization methods such as MCP~\parencite{zhang2010} and
+SCAD~\parencite{fan2001}, SLOPE is also a convex problem~\parencite{bogdan2015}.
 
 In spite of the availability of predictor screening
-rules~\cite{larsson2020c,elvira2022}, which help speed up SLOPE in the
+rules~\parencite{larsson2020c,elvira2022}, which help speed up SLOPE in the
 high-dimensional regime, current state-of-the-art algorithms for SLOPE perform
 poorly in comparison to those of more established penalization methods such as
 the lasso (\(\ell_1\)-norm regularization) and ridge regression
@@ -44,12 +44,12 @@ This lackluster performance has hampered the applicability of SLOPE to many
 real-world applications. A major reason for why algorithms for solving
 $\ell_1$-, MCP-, or SCAD-regularized problems enjoy better performance is that
 they use coordinate
-descent~\cite{tseng2001convergence,friedman2010,breheny2011}. Current SLOPE
+descent~\parencite{tseng2001convergence,friedman2010,breheny2011}. Current SLOPE
 solvers, on the other hand, rely on proximal gradient descent algorithms such
-as FISTA~\cite{beck2009} and the alternating direction method of multipliers
-method (ADMM)~\cite{boyd2010}, which have proven to be less inefficient than
+as FISTA~\parencite{beck2009} and the alternating direction method of multipliers
+method (ADMM)~\parencite{boyd2010}, which have proven to be less inefficient than
 coordinate descent in empirical benchmarks on related problems, such as the
-lasso~\cite{moreau2022benchopt}. Applying coordinate descent to SLOPE is not,
+lasso~\parencite{moreau2022benchopt}. Applying coordinate descent to SLOPE is not,
 however, straightforward since convergence guarantees for coordinate descent
 require the objective to be separable, which is not the case for SLOPE. As a
 result, naive coordinate descent schemes can get

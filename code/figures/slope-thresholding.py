@@ -106,7 +106,7 @@ plt.rcParams["text.usetex"] = True
 
 plt.close("all")
 
-fig, ax = plt.subplots(figsize=(figspec.FULL_WIDTH, 4.8), constrained_layout=True)
+fig, ax = plt.subplots(figsize=(figspec.FULL_WIDTH, 3.5), constrained_layout=True)
 
 ax.hlines(0, xmin=min(a_list), xmax=max(a_list), color="lightgrey")
 
@@ -132,16 +132,26 @@ xy = np.stack(
 )
 
 x2_labs = (
-    r"\(-\omega c^{\setminus k}_1 - \sum_{j \in C(c^{\setminus k}_1 + \varepsilon_c)} \lambda_{(j)^-_{c^{\setminus k}_1 + \varepsilon_c}}\)",
-    r"\(-\omega c^{\setminus k}_1 - \sum_{j \in C(c^{\setminus k}_1 - \varepsilon_c)} \lambda_{(j)^-_{c^{\setminus k}_1 - \varepsilon_c}}\)",
-    r"\(-\omega c^{\setminus k}_2 - \sum_{j \in C(c^{\setminus k}_2 + \varepsilon_c)} \lambda_{(j)^-_{c^{\setminus k}_2 + \varepsilon_c}}\)",
-    r"\(-\omega c^{\setminus k}_2 - \sum_{j \in C(c^{\setminus k}_2 - \varepsilon_c)} \lambda_{(j)^-_{c^{\setminus k}_2 - \varepsilon_c}}\)",
-    r"-\(\sum_{j \in C(0)} \lambda_{(j)^-_{\varepsilon_c}}\)",
-    r"\(\sum_{j \in C(0)} \lambda_{(j)^-_{\varepsilon_c}}\)",
-    r"\(\omega c^{\setminus k}_2 + \sum_{j \in C(c^{\setminus k}_2 - \varepsilon_c)} \lambda_{(j)^-_{c^{\setminus k}_2 - \varepsilon_c}}\)",
-    r"\(\omega c^{\setminus k}_2 + \sum_{j \in C(c^{\setminus k}_2 + \varepsilon_c)} \lambda_{(j)^-_{c^{\setminus k}_2 + \varepsilon_c}}\)",
-    r"\(\omega c^{\setminus k}_1 + \sum_{j \in C(c^{\setminus k}_1 - \varepsilon_c)} \lambda_{(j)^-_{c^{\setminus k}_1 - \varepsilon_c}}\)",
-    r"\(\omega c^{\setminus k}_1 + \sum_{j \in C(c^{\setminus k}_1 + \varepsilon_c)} \lambda_{(j)^-_{c^{\setminus k}_1 + \varepsilon_c}}\)",
+    # r"$-\omega c^{\setminus k}_1 - \sum_{j \in C(c^{\setminus k}_1 + \varepsilon_c)} \lambda_{(j)^-_{c^{\setminus k}_1 + \varepsilon_c}}$",
+    # r"$-\omega c^{\setminus k}_1 - \sum_{j \in C(c^{\setminus k}_1 - \varepsilon_c)} \lambda_{(j)^-_{c^{\setminus k}_1 - \varepsilon_c}}$",
+    # r"$-\omega c^{\setminus k}_2 - \sum_{j \in C(c^{\setminus k}_2 + \varepsilon_c)} \lambda_{(j)^-_{c^{\setminus k}_2 + \varepsilon_c}}$",
+    # r"$-\omega c^{\setminus k}_2 - \sum_{j \in C(c^{\setminus k}_2 - \varepsilon_c)} \lambda_{(j)^-_{c^{\setminus k}_2 - \varepsilon_c}}$",
+    # r"-$\sum_{j \in C(0)} \lambda_{(j)^-_{\varepsilon_c}}$",
+    # r"$\sum_{j \in C(0)} \lambda_{(j)^-_{\varepsilon_c}}$",
+    # r"$\omega c^{\setminus k}_2 + \sum_{j \in C(c^{\setminus k}_2 - \varepsilon_c)} \lambda_{(j)^-_{c^{\setminus k}_2 - \varepsilon_c}}$",
+    # r"$\omega c^{\setminus k}_2 + \sum_{j \in C(c^{\setminus k}_2 + \varepsilon_c)} \lambda_{(j)^-_{c^{\setminus k}_2 + \varepsilon_c}}$",
+    # r"$\omega c^{\setminus k}_1 + \sum_{j \in C(c^{\setminus k}_1 - \varepsilon_c)} \lambda_{(j)^-_{c^{\setminus k}_1 - \varepsilon_c}}$",
+    # r"$\omega c^{\setminus k}_1 + \sum_{j \in C(c^{\setminus k}_1 + \varepsilon_c)} \lambda_{(j)^-_{c^{\setminus k}_1 + \varepsilon_c}}$",
+    r"$-\omega c^{\setminus k}_1 - S(c^{\setminus k}_1 + \varepsilon_c)$",
+    r"$-\omega c^{\setminus k}_1 - S(c^{\setminus k}_1 - \varepsilon_c)$",
+    r"$-\omega c^{\setminus k}_2 - S(c^{\setminus k}_2 + \varepsilon_c)$",
+    r"$-\omega c^{\setminus k}_2 - S(c^{\setminus k}_2 - \varepsilon_c)$",
+    r"-$S(0)$",
+    r"$S(0)$",
+    r"$\omega c^{\setminus k}_2 + S(c^{\setminus k}_2 - \varepsilon_c)$",
+    r"$\omega c^{\setminus k}_2 + S(c^{\setminus k}_2 + \varepsilon_c)$",
+    r"$\omega c^{\setminus k}_1 + S(c^{\setminus k}_1 - \varepsilon_c)$",
+    r"$\omega c^{\setminus k}_1 + S(c^{\setminus k}_1 + \varepsilon_c)$",
 )
 
 ax.plot(a_list, res, "-", color="black")
@@ -169,7 +179,7 @@ y2_vals = np.sort(np.hstack((-np.delete(c, 1), np.delete(c, 1))))
 ax2_y = ax.secondary_yaxis("right")
 ax2_y.set_yticks(y2_vals, y2_labs)
 
-# plt.show(block=False)
+plt.show(block=False)
 
 plt.rcParams["text.usetex"] = True
 plt.savefig("../figures/slope-thresholding.pdf", bbox_inches="tight", pad_inches=0.01)

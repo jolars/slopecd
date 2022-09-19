@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats
 from slope.utils import dual_norm_slope
+from figures import figspec
 
 
 def get_clusters(w):
@@ -105,7 +106,7 @@ plt.rcParams["text.usetex"] = True
 
 plt.close("all")
 
-fig, ax = plt.subplots(figsize=(6.2, 4.8), constrained_layout=True)
+fig, ax = plt.subplots(figsize=(figspec.FULL_WIDTH, 4.8), constrained_layout=True)
 
 ax.hlines(0, xmin=min(a_list), xmax=max(a_list), color="lightgrey")
 

@@ -6,18 +6,17 @@
 \label{sec:coordinate-updates}
 
 Proximal coordinate descent cannot be applied to \Cref{pb:slope} because it is not separable.
-However, if the clusters $\hat{\mathcal{C}}_1, \ldots, \hat{\mathcal{C}}_{\hat m}$ of the solution $\hat \beta$ were known together with their signs, then the values $\hat{c}_1, \ldots, \hat{c}_{\hat{m}}$ taken by $\hat \beta$ on the clusters could be equivalently computed by solving:
+However, if the clusters $\mathcal{C}_1^*, \ldots, \mathcal{C}_{m^*}^*$ of the solution $\beta^*$ were known together with their signs, then the values $c_1^*, \ldots, c_{\hat{m}}^*$ taken by $\beta^*$ on the clusters could be equivalently computed by solving:
 \mm{TODO MM: put in prop and write proof?}
 \begin{problem}
-\min_{x \in \bbR^{\hat m}}
-F \left(\sum_{i=1}^{\hat m} \tilde{X}_{\mathcal{C}_i} x_i \right)
-+ \sum_{i=1}^{\hat m} (\sum_{\lambda \in \lambda^{\hat{\mathcal{C}}_i}} \lambda) x_i \, ,
+\min_{z \in \bbR^{m^*}}
+F \left(\sum_{i=1}^{m^*} \tilde{x}_{\mathcal{C}_i} z_i \right)
++ \sum_{i=1}^{m^*} z_i \sum_{\lambda \in \lambda^{\mathcal{C}_i^*}} \lambda \, ,
 \end{problem}
 \klopfe{Clarify what $F$ is here}\jw{should be |x| in the last}
-
-where $\tilde{X}_{\mathcal{C}_i} = \sum_{j \in \mathcal{C}_i} X_j \sign (\hat \beta_j)$.
-Conditionally to the knowledge of the clusters and the signs of the coefficients, the problem becomes separable and coordinate descent could be used.
-Hence, the idea of our algorithm is to intertwine steps that identify the clusters, and large coordinatewise steps on these clusters.
+where $\tilde{x}_{\mathcal{C}_i} = \sum_{j \in \mathcal{C}_i} x_j \sign (\beta_j^*)$.
+Conditionally on the knowledge of the clusters and the signs of the coefficients, the problem becomes separable and coordinate descent could be used.
+Hence, the idea of our algorithm is to intertwine steps that identify the clusters, and large coordinate-wise steps on these clusters.
 
 Based on this observation, we derive a coordinate descent algorithm for minimizing the SLOPE problem~\eqref{pb:slope} with respect to the coefficients of a single cluster at a time.
 
@@ -41,7 +40,7 @@ one-dimensional problem:
 \begin{problem}
 \label{pb:cluster-problem}
 \min_{z \in \mathbb{R}} \Big(
-\mathcal{P}(z) = P(\beta(z))  = F(\beta(z)) + \phi(z)
+G(z) = P(\beta(z))  = F(\beta(z)) + \phi(z)
 \Big) \,  ,
 \end{problem}
 where
@@ -54,12 +53,12 @@ is defined with respect to \(\beta(z)\).
 The optimality condition for \Cref{pb:cluster-problem} is
 \[
   % P_k'(z; \delta) \geq 0,
-  \mathcal{P}'(z; \delta) \geq 0,
+  G'(z; \delta) \geq 0,
 \]
-where $\mathcal{P}'(z; \delta) $ is the directional derivative in the direction $\delta$.
-Since \(F \) is differentiable we have
+where $G'(z; \delta) $ is the directional derivative in the direction $\delta$.
+Since \(F\) is differentiable we have
 \[
-  \mathcal{P}'(z; \delta)  = \delta \nabla F(\beta(z)) + \phi'(z; \delta) \, ,
+  G'(z; \delta)  = \delta \nabla F(\beta(z)) + \phi'(z; \delta) \, ,
 \]
 % since \(\lVert \tilde{r} - \tilde{x}z\rVert_2^2\) is differentiable.
 where \(\phi'(z; \delta)\) is the directional derivative of $\phi$.

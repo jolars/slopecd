@@ -201,9 +201,8 @@ legend_symbols = [
 ]
 legend_labels = [r"$1$", r"$-1$"]
 
-axs[1].set_ylabel(r"$P'_k(z)$")
+axs[1].set_ylabel(r"$G'(z)$")
 axs[1].set_xlabel(r"$z$")
-
 axs[1].legend(legend_symbols, legend_labels, title=r"$\delta$")
 
 zs = np.sort(np.hstack((-c_k, [0.0], c_k, np.linspace(x_lim[0], x_lim[1], 100))))
@@ -215,7 +214,7 @@ ps = np.hstack((-c_k, [0.0], c_k[::-1]))
 axs[0].vlines(ps, np.min(obj), np.max(obj), color="darkgrey", linestyle="dotted")
 axs[0].plot(zs, obj, color="black")
 
-axs[0].set_ylabel(r"$P_k(z)$")
+axs[0].set_ylabel(r"$G(z)$")
 axs[0].set_xlabel(r"$z$")
 
 plt.rcParams["text.usetex"] = True

@@ -1,0 +1,134 @@
+
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath,amsthm,mathtools,isomath}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{textcomp} % provide euro and other symbols
+\usepackage{babel}
+
+\usepackage{upquote} % straight quotes in verbatim environments
+\usepackage{nicefrac}	% compact symbols for 1/2, etc.
+\usepackage[]{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+
+\usepackage{xcolor}
+\usepackage{xurl}
+\usepackage{bookmark}
+\usepackage{csquotes}
+\usepackage{siunitx}
+\usepackage{enumitem}
+
+
+\usepackage{algorithm,algpseudocode}
+\usepackage[titlenumbered,linesnumbered,ruled,noend,algo2e]{algorithm2e}
+
+\usepackage[textsize=scriptsize]{todonotes}
+\newcommand{\mathurin}[1]{\textcolor{purple}{[MM: #1]}}
+\newcommand{\johan}[1]{\textcolor{RoyalBlue}{[JL: #1]}}
+\newcommand{\jonas}[1]{\textcolor{red!20}{[JW: #1]}}
+\newcommand{\jw}[1]{\todo[color=red!20]{{\bf JW:} #1}}
+\newcommand{\mm}[1]{\todo[color=purple!20]{{\bf Mathurin:} #1}}
+\newcommand{\klopfe}[1]{\todo[color=orange]{{\bf Klopfe:} #1}}
+\newcommand{\qk}[1]{\textcolor{orange}{#1}}
+\newcommand{\jl}[1]{\todo[color=black!30]{{\bf JL:} #1}}
+\newcommand{\JL}[1]{{\todo[inline,color=black!30]{{\bf JL:} #1}}}
+
+\newcommand{\widebar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
+
+\usepackage[noabbrev,nameinlink]{cleveref}
+
+%%%% problem environment
+\usepackage{aliascnt}
+\newaliascnt{problem}{equation}
+\aliascntresetthe{problem}
+\creflabelformat{problem}{#2\textup{(#1)}#3}
+\makeatletter
+\def\problem{$$\refstepcounter{problem}}
+\def\endproblem{\eqno \hbox{\@eqnnum}$$\@ignoretrue}
+\makeatother
+\Crefname{problem}{Problem}{Problems}
+%%%%%%%%%%%%%%%%%
+
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks = true,
+  linkcolor  = RoyalBlue4,
+  filecolor  = RoyalBlue4,
+  citecolor  = VioletRed4,
+  urlcolor   = RoyalBlue4
+}
+
+\usepackage{longtable}
+\usepackage{booktabs}
+
+\usepackage{etoolbox}
+
+% Allow footnotes in longtable head/foot
+\usepackage{footnotehyper}
+\makesavenoteenv{longtable}
+
+\usepackage{graphicx}
+\graphicspath{{../figures/}}
+\usepackage{subcaption}
+
+% % tikz
+% \usepackage{pgfplots}
+% \pgfplotsset{width=7cm,compat=1.16}
+% \usepgfplotslibrary{external}
+% \tikzexternalize
+
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+\usepackage{pdfpages}
+
+\usepackage[]{authblk}
+\renewcommand\Affilfont{\itshape\small}
+
+% bibliography
+\makeatletter
+\def\blx@nowarnpolyglossia{}
+\makeatother
+\usepackage[citestyle=alphabetic,bibstyle=alphabetic,language=english]{biblatex}
+\addbibresource{slopecd.bib}
+
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+
+% operators
+\DeclareMathOperator*{\minimize}{minimize}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\range}{range}
+\DeclareMathOperator{\nullspace}{null}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\card}{card}
+\DeclareMathOperator{\sign}{sign}
+
+% delimiters
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+% macros
+\newcommand{\abs}[1]{\lvert {#1} \rvert}
+\newcommand{\norm}[1]{\lVert {#1} \rVert}
+\newcommand{\bbR}{\mathbb{R}}
+\newcommand{\cB}{\mathcal{B}}
+\newcommand{\cC}{\mathcal{C}}
+
+% theorems
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}[theorem]{Assumption}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}{Example}

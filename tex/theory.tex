@@ -10,12 +10,14 @@ However, if the clusters $\mathcal{C}_1^*, \ldots, \mathcal{C}_{m^*}^*$ of the s
 \mm{TODO MM: put in prop and write proof?}
 \begin{problem}
 \min_{z \in \bbR^{m^*}}
-F \left(\sum_{i=1}^{m^*} \tilde{x}_{\mathcal{C}_i} z_i \right)
-+ \sum_{i=1}^{m^*} z_i \sum_{\lambda \in \lambda^{\mathcal{C}_i^*}} \lambda \, ,
+\ell \left(\sum_{i=1}^{m^*} \sum_{j \in \mathcal{C}_i} z_i \sign(\beta_j^*) e_j \right)
+%\tilde{x}_{\mathcal{C}_i} z_i \right)
++ \sum_{i=1}^{m^*} | z_i | \sum_{\lambda \in \lambda^{\mathcal{C}_i^*}} \lambda \, ,
 \end{problem}
-\klopfe{Clarify what $F$ is here}\jw{should be |x| in the last}
-where $\tilde{x}_{\mathcal{C}_i} = \sum_{j \in \mathcal{C}_i} x_j \sign (\beta_j^*)$.
-Conditionally on the knowledge of the clusters and the signs of the coefficients, the problem becomes separable and coordinate descent could be used.
+% \klopfe{Clarify what $F$ is here}
+% MM: removed F and used the form (ell(beta) instead of F(Xbeta)) : more general
+% where $\tilde{x}_{\mathcal{C}_i} = \sum_{j \in \mathcal{C}_i} x_j \sign (\beta_j^*)$.
+Conditionally on the knowledge of the clusters and the signs of the coefficients, the penalty becomes separable and coordinate descent could be used.
 Hence, the idea of our algorithm is to intertwine steps that identify the clusters, and large coordinate-wise steps on these clusters.
 
 Based on this observation, we derive a coordinate descent algorithm for minimizing the SLOPE problem~\eqref{pb:slope} with respect to the coefficients of a single cluster at a time.

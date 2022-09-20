@@ -68,11 +68,21 @@ where \(\phi'(z; \delta)\) is the directional derivative of $\phi$.
 Throughout the rest of this section we derive the solution to \eqref{pb:cluster-problem}.
 To do so, we will introduce the directional derivative for the
 sorted \(\ell_1\) norm with respect to the coefficient of the \(k\)-th cluster.
-First, let \(C(z)\) be the function that returns the cluster of $\beta(z)$ corresponding to \(z\), that is
+First, as illustrated on \Cref{fig:partial_slope}, note that $\phi$ is piecewise affine, with breakpoints at 0 and all $\pm c_i$'s for $i \neq k$.
+Hence, the partial derivative is piecewise constant, with jumps at these points; in addition, $\phi'(\cdot; 1) = \phi'(\cdot, -1)$ except at these points.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{partial_slope.pdf}
+  \caption{Graph of the partial sorted $\ell_1$ norm with \(\beta = [-3.0, 1.0, 3.0, 2.0]^T\), \(k = 1\).}
+  \label{fig:partial_slope}
+\end{figure}
+
+Let \(C(z)\) be the function that returns the cluster of $\beta(z)$ corresponding to \(z\), that is
 \[
   C(z) = \{j : |\beta(z)_j| = z\} \,.
 \]
-\mm{add remark: it always contains $\mathcal{C}_k$, but it can contains mor if $z$ is equal to one of the other $c_i$'s ?}
+% \mm{add remark: it always contains $\mathcal{C}_k$, but it can contains mor if $z$ is equal to one of the other $c_i$'s ?}
 Next, let $\varepsilon_c$ be an arbitrary positive value such that
 \begin{equation}
   \label{eq:epsilon-c}

@@ -35,8 +35,8 @@ high-dimensional regime, current state-of-the-art algorithms for SLOPE perform
 poorly in comparison to those of more established penalization methods such as
 the lasso (\(\ell_1\)-norm regularization) and ridge regression
 (\(\ell_2\)-norm regularization).
-As a small illustration of this issue, we compared the speed at which the SLOPE and glmnet packages solve a SLOPE and lasso problem, respectively, for the bcTCGA data set.
-In this small experiment, the SLOPE package takes 42.7 seconds to reach convergence, whilst glmnet requires only 0.143 seconds\footnote{See~\Cref{sec:slope-vs-glmnet} for details on how this experiment was run.}.
+As a small illustration of this issue, we compared the speed at which the \pkg{SLOPE}~\parencite{friedman2022} and \pkg{glmnet}~\parencite{friedman2022} packages solve a SLOPE and lasso problem, respectively, for the \dataset{bcTCGA} data set.
+In this small experiment, \pkg{SLOPE} takes 42.7 seconds to reach convergence, whilst \pkg{glmnet} requires only 0.143 seconds\footnote{See~\Cref{sec:slope-vs-glmnet} for details on how this experiment was run.}.
 
 This lackluster performance has hampered the applicability of SLOPE to many
 real-world applications. A major reason for why algorithms for solving

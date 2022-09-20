@@ -55,9 +55,7 @@ def get_cluster(z, beta, k):
 
 def directional_derivative(z, delta, k, beta, lambdas):
     c, c_ptr, c_ind, c_perm, n_c = get_clusters(beta)
-
-    ind = c_ind[c_ptr[k] : c_ptr[k + 1]]
-
+    ind = c_ind[c_ptr[k]: c_ptr[k + 1]]
     c_k = np.delete(c[:n_c], k)
     epsilon_c = get_epsilon_c(c_k)
 
@@ -70,12 +68,9 @@ def directional_derivative(z, delta, k, beta, lambdas):
 
     beta_clust = beta_update(beta, upd, ind)
     c, c_ptr, c_ind, c_perm, n_c = get_clusters(beta_clust)
-
     new_pos = n_c - 1 - bisect_right(c_k[::-1], abs(upd))
-
-    lambda_sum = np.sum(lambdas[c_ptr[new_pos] : c_ptr[new_pos + 1]])
-
-    new_ind = c_ind[c_ptr[new_pos] : c_ptr[new_pos + 1]]
+    lambda_sum = np.sum(lambdas[c_ptr[new_pos]: c_ptr[new_pos + 1]])
+    new_ind = c_ind[c_ptr[new_pos]: c_ptr[new_pos + 1]]
 
     if z == 0:
         out = lambda_sum
@@ -83,7 +78,6 @@ def directional_derivative(z, delta, k, beta, lambdas):
         out = np.sign(z) * delta * lambda_sum
 
     beta_new = beta_update(beta, z, ind)
-
     x_tilde = X[:, ind] @ np.sign(beta[ind])
     r = X @ beta_new - y
     grad = x_tilde.T @ r / n
@@ -125,7 +119,7 @@ eps = 1e-6
 c, c_ptr, c_ind, c_perm, n_c = get_clusters(beta)
 c_k = np.delete(c[:n_c], k)
 
-ind = c_ind[c_ptr[k] : c_ptr[k + 1]]
+ind = c_ind[c_ptr[k]: c_ptr[k + 1]]
 
 
 def plot_dirder(delta, ax):
@@ -182,13 +176,15 @@ def plot_dirder(delta, ax):
 
 plt.close("all")
 
+plt.rcParams["text.usetex"] = True
+
 fig, axs = plt.subplots(
     2,
     1,
     figsize=(figspec.HALF_WIDTH, figspec.HALF_WIDTH * 1.5),
     constrained_layout=True,
     sharex=True,
-    height_ratios = (0.3, 0.7)
+    gridspec_kw=dict(height_ratios=(0.3, 0.7)),
 )
 
 x_min = -max(c) - 0.5
@@ -221,15 +217,16 @@ ps = np.hstack((-c_k, [0.0], c_k[::-1]))
 
 axs[0].vlines(ps, np.min(obj), np.max(obj), color="darkgrey", linestyle="dotted")
 axs[0].plot(zs, obj, color="black")
-
 axs[0].set_ylabel(r"$G(z)$")
 # axs[0].set_xlabel(r"$z$")
 
-plt.rcParams["text.usetex"] = True
+axs[1].vlines(ps, *axs[1].get_ylim(), color="darkgrey", linestyle="dotted")
 
 plt.show(block=False)
 
-plt.savefig(
-    "../figures/directional-derivative.pdf", bbox_inches="tight", pad_inches=0.01
-)
 
+savefig = False
+if savefig:
+    plt.savefig(
+        "../figures/directional-derivative.pdf", bbox_inches="tight", pad_inches=0.01
+    )

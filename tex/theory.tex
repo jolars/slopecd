@@ -1,412 +1,211 @@
-%!TEX root = ./slopecd.tex
+%!TEX root = ./main.tex
 
 \section{Theory}\label{sec:theory}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Coordinate Descent for SLOPE}%
 \label{sec:coordinate-updates}
 
-\mathurin{Suggestion: \\
 Proximal coordinate descent cannot be applied to \Cref{pb:slope} because it is not separable.
-However, if the clusters $\mathcal{C}_1, \ldots, \mathcal{C}_m$ of the solution $\hat \beta$ were known together with its sign, then the values $c_1, \ldots, c_m$ taken by $\hat \beta$ on the clusters could be equivalently computed by solving :
+However, if the clusters $\mathcal{C}_1^*, \ldots, \mathcal{C}_{m^*}^*$ of the solution $\beta^*$ were known together with their signs, then the values $c_1^*, \ldots, c_{\hat{m}}^*$ taken by $\beta^*$ on the clusters could be equivalently computed by solving:
+\mm{TODO MM: put in prop and write proof?}
 \begin{problem}
-\min_{x \in \bbR^m}
-F \left(\sum_{i=1}^m \tilde{X}_i x_i \right)
-+ \sum_{i=1}^m (\sum_{\lambda \in \lambda^{\mathcal{C}_i}} \lambda) x_i \enspace,
+\min_{z \in \bbR^{m^*}}
+\ell \left(\sum_{i=1}^{m^*} \sum_{j \in \mathcal{C}_i} z_i \sign(\beta_j^*) e_j \right)
+%\tilde{x}_{\mathcal{C}_i} z_i \right)
++ \sum_{i=1}^{m^*} | z_i | \sum_{\lambda \in \lambda^{\mathcal{C}_i^*}} \lambda \, ,
 \end{problem}
-where $\tilde{X}_{\mathcal{C}_i} = \sum_{j \in \mathcal{C}_i} X_j \sign (\hat \beta_j)$.
-Hence, the idea of our algorithm is to intertwine steps that identify the clusters, and large coordinatewise steps on these clusters.
-}
+% \klopfe{Clarify what $F$ is here}
+% MM: removed F and used the form (ell(beta) instead of F(Xbeta)) : more general
+% where $\tilde{x}_{\mathcal{C}_i} = \sum_{j \in \mathcal{C}_i} x_j \sign (\beta_j^*)$.
+Conditionally on the knowledge of the clusters and the signs of the coefficients, the penalty becomes separable and coordinate descent could be used.
+Hence, the idea of our algorithm is to intertwine steps that identify the clusters, and large coordinate-wise steps on these clusters.
+
 Based on this observation, we derive a coordinate descent algorithm for minimizing the SLOPE problem~\eqref{pb:slope} with respect to the coefficients of a single cluster at a time.
-First observe that we can write \Cref{pb:slope} as \mathurin{To discuss:  we restrict to quadratic datafit? in the intro there's a generic df and our strategy would be adapted to it, it's just block coordinate descent with varying blocks}
-\[
-  \begin{aligned}
-    P(\beta)
-     & =  \frac{1}{2} \lVert y - X\beta\rVert_2^2 + J(\beta)                        \\
-     & = \frac{1}{2} \lVert y - X_{\bar{\mathcal{C}_k}} \beta_{\bar{\mathcal{C}_k}}
-    - \big(X_{\mathcal{C}_k} s_{\mathcal{C}_k}\big)c_k  \rVert_2^2
-    + |c_k|\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}
-    + \sum_{j \notin {\mathcal{C}_k}} |\beta_j|\lambda_{(j)^-}                      \\
-     & = \frac{1}{2} \lVert \tilde r - \tilde x c_k \rVert_2^2
-    + |c_k|\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}
-    + \sum_{j \notin {\mathcal{C}_k}} |\beta_j|\lambda_{(j)^-}                      \\
-  \end{aligned}
-\]
-with \( \tilde x_k = X_{\mathcal{C}_k} s_{\mathcal{C}_k}\) and
-\(\tilde r_k = y - \tilde y_k = y - X_{\bar{\mathcal{C}}_k} \beta_{\bar{\mathcal{C}}_k} \in \bbR^n\).
-\mm{do we need $\tilde y _k$ ?}
-\mathurin{What is tricky here is that $\beta$ varies so the $C_k$ and $c_k$ vary too. THe notation $C_k(\beta)$ would be too heavy (most of all because $m$ also depends on $\beta$, but so I would avoid writing such computations that are confusing IMO - at least they confused me to be honest)}
 
-\mathurin{I would just say we perform block coordinate descent update/directional updates in the direction of $(\sign \beta)_{\mathcal{C_i}}$
-}
-We propose a coordinate-wise update that minimizes \(P(\beta)\) with respect to the
-clusters' corresponding coefficients one at a time, keeping the relative signs
-of the coordinates within each cluster fixed but allowing all of the signs to
-flip (simultaneously).
-
-Letting \(\beta\) correspond to a fixed vector, note that
-\(\beta_i = s_i c_{(j)^-}\), \(i \in \mathcal{C}_j\) for all
-\(i\). Now let \(\tilde{\mathcal{C}}_i\)
-correspond to the indices of the \(i\)th cluster for \(\beta\), that is,
-\(|\beta_j| = c_i\) for all \(j \in \tilde{\mathcal{C}}_i\).
-Next, we let
+In all the sequel, $\beta$ is fixed, with $m$ clusters $\mathcal{C}_1, \ldots, \mathcal{C}_m$ corresponding to values $c_1, \ldots, c_m$.
+Let also $k \in [m]$ be fixed, let $s = \sign \beta_{\mathcal{C}_k}$.
+We are interested in updating $\beta$ by changing only the value taken on the $k$-th cluster.
+To this end, we let
 \begin{equation}
   \label{eq:coordinate-update-beta}
   \beta_i(z) =
   \begin{cases}
-    s_k z   & \text{if } i \in \mathcal{C}_k, \\
-    \beta_i & \text{otherwise.}
+    s_k z   \, , & \text{if } i \in \mathcal{C}_k \, , \\
+    \beta_i \, , & \text{otherwise} \, .
   \end{cases}
 \end{equation}
-\mathurin{maybe we can write $\beta + z \sign(\beta)_{\mathcal{C}_i}$, where $\sign$ is the sign vector, and restricting indices keeps the dimension (and puts 0 as value of excluded indices).}
-This means that \(\beta(x)\) corresponds to a version of \(\beta\) with a
-coordinate update for the \(k\)th cluster.
-
-This corresponds to solving the following
+% This means that \(\beta(z)\) corresponds to a version of \(\beta\) with a
+% coordinate update for the \(k\)-th cluster.
+Minimizing the objective in this directions amounts to solving the following
 one-dimensional problem:
 
-\begin{equation}
-  \label{eq:cluster-problem}
-  \operatorname*{minimize}_{z \in \mathbb{R}} \left(P_k(z) = \frac{1}{2} \lVert \tilde r - \tilde x z \rVert_2^2 + J_k(z)\right)
-\end{equation}
+\begin{problem}
+\label{pb:cluster-problem}
+\min_{z \in \mathbb{R}} \Big(
+G(z) = P(\beta(z))  = F(\beta(z)) + \phi(z)
+\Big) \,  ,
+\end{problem}
 where
 \[
-  J_k(z) = |z| \sum_{j \in \mathcal{C}_k} \lambda_{(j)^-_z}
+  \phi(z) = |z| \sum_{j \in \mathcal{C}_k} \lambda_{(j)^-_z}
   + \sum_{j \notin \mathcal{C}_k} |\beta_j| \lambda_{(j)^-_z}
 \]
-is the \emph{partial sorted \(\ell_1\) norm} with respect to the \(k\)th cluster and
-\mm{new notation; we could write $(j; \beta(z))$ or $(j; \beta + z d)$, $d$ being the direction}
-where we write \(\lambda_{(j)^-_z}\) to indicate that the permutation operator \((j)^-_z\)
-is defined through \(\beta(z)\).
-
-The optimality condition for this problem is
+is the \emph{partial sorted \(\ell_1\) norm} with respect to the \(k\)-th cluster and where we write \(\lambda_{(j)^-_z}\) to indicate that the inverse sorting permutation \((j)^-_z\)
+is defined with respect to \(\beta(z)\).
+The optimality condition for \Cref{pb:cluster-problem} is
 \[
-  P_k'(z; \delta) \geq 0,
+  % P_k'(z; \delta) \geq 0,
+  G'(z; \delta) \geq 0,
 \]
-where \(P'_k(z; \delta)\) is the directional derivative of \(P_k\).
-Note that we have
+where $G'(z; \delta) $ is the directional derivative in the direction $\delta$.
+Since \(F\) is differentiable we have
 \[
-  P_k'(z; \delta) = \delta\big(\tilde x^T \tilde x z - \tilde r^T \tilde x\big) + J'_k(z; \delta)
+  G'(z; \delta)  = \delta \nabla F(\beta(z)) + \phi'(z; \delta) \, ,
 \]
-since \(\lVert \tilde{r} - \tilde{x}z\rVert_2^2\) is differentiable.
+% since \(\lVert \tilde{r} - \tilde{x}z\rVert_2^2\) is differentiable.
+where \(\phi'(z; \delta)\) is the directional derivative of $\phi$.
 
-\mathurin{One key aspect of such updates that for me deserves to be emphasized: the clusters will almost all remain the same: they can only change order, or two of them merge.}
-
-Throughout the rest of this section section we will derive a minimizer solution to
-\eqref{eq:cluster-problem}. To do so, we will introduce the directional derivative for the
-sorted \(\ell_1\) norm with respect to the coefficient of the \(k\)th cluster. First,
-however, let \(C(z)\) be a function that returns the cluster corresponding to \(z\), that is
+Throughout the rest of this section we derive the solution to \eqref{pb:cluster-problem}.
+To do so, we will introduce the directional derivative for the
+sorted \(\ell_1\) norm with respect to the coefficient of the \(k\)-th cluster.
+First, let \(C(z)\) be a function that returns the cluster corresponding to \(z\), that is
 \[
   C(z) = \{j : |\beta(z)_j| = z\}.
 \]
-Next, for a  strictly decreasing sequence \(c_1, c_2, ..., c_m\) we let $\varepsilon_c$ be an arbitrary positive value such that 
+Next, let $\varepsilon_c$ be an arbitrary positive value such that
 \begin{equation}
   \label{eq:epsilon-c}
-  \big| c_i - c_j\big| > {\varepsilon_c} \quad \forall\, i \neq j.
+  \varepsilon_c < \big| c_i - c_j\big| , \quad \forall\, i \neq j \text{ and } \varepsilon_c < c_m \text{ if } c_m \neq 0 \, .
 \end{equation}
-
-For a \({\varepsilon_c}\) and \(\delta \in \{-1, 1\}\)
-\mathurin{This can be hard to parse: $C$ implicitly depends on a vector that determines clusters. We can emphasize that  In all this section $\beta$ is fixed and we update only in the direction given by the sign of one cluster. Clusters $C_i$ and $c_i$ are fixed.}
-\JL{Yes, but I don't think there's any way around this since we must use this
-  construction in the definitions and proofs for the directional derivative and the
-  thresholding operator.}
-we have
+% For a \({\varepsilon_c}\) and
+Then for \(\delta \in \{-1, 1\}\) we have
 \begin{equation}
-  \lim_{h \downarrow 0} C(z + h\delta) = C(z + {\varepsilon_c} \delta)
-  \quad\text{and}\quad
-  \lim_{h \downarrow 0} \lambda_{(i)^-_{z + h\delta}}
-  = \lambda_{(i)^-_{z + {\varepsilon_c}\delta}}.
+  \begin{aligned}
+    \lim_{h \downarrow 0} C(z + h\delta)                & = C(z + {\varepsilon_c} \delta),               \\
+    \lim_{h \downarrow 0} \lambda_{(i)^-_{z + h\delta}} & = \lambda_{(i)^-_{z + {\varepsilon_c}\delta}}.
+  \end{aligned}
 \end{equation}
 In other words, the order permutation corresponding to \(\beta(z + h\delta)\)
-depends only on \(\delta\) in the limit as \(h\) tends to~\(0\).
+depends only on \(\delta\) as \(h\) tends to~\(0\).
 \begin{remark}
   As consequence of the definition of \(\varepsilon_c\), the order permutations
   for \(\beta(z)\) and \(\beta(z + {\varepsilon_c} \delta)\) differ only for a
-  subset of the permutation vectors. The permutation for \(\beta(h\delta)\)
+  subset of the permutation vectors.
+  The permutation for \(\beta(h\delta)\)
   corresponds to
-  \[
+  \begin{equation*}
     \begin{cases}
-      \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, \tilde{\mathcal{C}}_m, C({\varepsilon_c}\delta)                                          & \text{if } c_m > 0 \text{ and } \delta \neq 0, \\
-      \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, C({\varepsilon_c}\delta), \tilde{\mathcal{C}}_m                                          & \text{if } c_m = 0 \text{ and } \delta \neq 0, \\
-      \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, \underbrace{\tilde{\mathcal{C}}_k \cup \tilde{\mathcal{C}}_m}_{C({\varepsilon_c}\delta)} & \text{if } c_m = 0 \text{ and } \delta = 0.    \\
+      \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \mathcal{C}_m, C({\varepsilon_c}\delta)
+       & \text{if } c_m > 0 \, , \\ % \text{ and } \delta \neq 0 \, , \\
+      \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, C({\varepsilon_c}\delta), \mathcal{C}_m
+       & \text{if } c_m = 0 \, . %\text{ and } \delta \neq 0 \, . \\
+      % \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \underbrace{\mathcal{C}_k \cup \mathcal{C}_m}_{C({\varepsilon_c}\delta)} & \text{if } c_m = 0 \text{ and } \delta = 0.    \\
     \end{cases}
-  \]
-  The permutation for \(\beta(z + {\varepsilon_c} \delta)\), \(z \neq 0\) corresponds to
+  \end{equation*}
+  If \(z \neq 0\), the permutation for \(\beta(z + {\varepsilon_c} \delta)\) corresponds to
   \[
     \begin{cases}
-      \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, C(c_i + {\varepsilon_c}\delta), \tilde{\mathcal{C}}_i, \dots, \tilde{\mathcal{C}}_m                                          & \text{if } \delta = 1,  \\
-      \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, \tilde{\mathcal{C}}_i, C(c_i + {\varepsilon_c}\delta), \dots, \tilde{\mathcal{C}}_m                                          & \text{if } \delta = -1, \\
-      \tilde{\mathcal{C}}_1, \dots, \tilde{\mathcal{C}}_{k-1}, \tilde{\mathcal{C}}_{k+1}, \dots, \underbrace{\tilde{\mathcal{C}}_i \cup \tilde{\mathcal{C}}_k}_{C(c_i + {\varepsilon_c}\delta)}, \dots, \tilde{\mathcal{C}}_m & \text{if } \delta = 0.  \\
+      \splitfrac{\mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, }{C(c_i + {\varepsilon_c}\delta), \mathcal{C}_k, \dots, \mathcal{C}_m} & \text{if } \delta = 1 \,,   \\
+      \splitfrac{\mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots,}{ \mathcal{C}_k, C(c_k + {\varepsilon_c}\delta), \dots, \mathcal{C}_m} & \text{if } \delta = -1 \, . \\
+      % \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \underbrace{\mathcal{C}_i \cup \mathcal{C}_k}_{C(c_i + {\varepsilon_c}\delta)}, \dots, \mathcal{C}_m & \text{if } \delta = 0.  \\
     \end{cases}
   \]
 \end{remark}
+%, defined as
+% \(c^{(k)} = \{c_1, c_2, \dots, c_m\} \setminus c_k\), such that
+% \[
+%   c_i^{(k)} =
+%   \begin{cases}
+%     c_i     & \text{if } i < k,    \\
+%     c_{i+1} & \text{if } i \geq k.
+%   \end{cases}
+% \]
 
-We are now ready to state the directional derivative of \(J_k\).
+We are now ready to state the directional derivative of $\phi$. % \(J_k\).
 
 \begin{theorem}\label{thm:sl1-directional-derivative}
-  The directional derivative of \(J_k\) in the direction \(\delta\) is
+  Let \(c^{\setminus k}\) be the \(m - 1\) length version of $c$ where the $k$-th coordinate has been removed: $c^{\setminus k} = (c_1, \ldots c_{k-1}, c_{k+1}, \ldots, c_m)$.
+  Let \({\varepsilon_c}\) defined as in \eqref{eq:epsilon-c}.
+  The directional derivative of the partial sorted $\ell_1$ norm with respect to the $k$-th cluster \(\phi\), in the direction \(\delta\) is
   \[
-    J'_k(z, \delta) =
+    \phi'(z; \delta) =
     \begin{cases}
-      \smashoperator[r]{\sum_{j \in C({\varepsilon_c} \delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}                    & \text{if } z = 0,         \\
-      \sign(z)\delta\smashoperator{\sum_{j \in C(z + {\varepsilon_c} \delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}} & \text{if } |z| = c_i > 0, \\
-      \sign(z)\delta\smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}                                                  & \text{otherwise,}
+      \smashoperator[r]{\sum_{j \in C(\varepsilon_c )}} \lambda_{(j)^-_{\varepsilon_c }}
+       & \text{if } z = 0 \, ,               \\
+      \sign(z)\delta\smashoperator{\sum_{j \in C(z + {\varepsilon_c} \delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
+       & \text{if } |z| = c^{(k)}_i > 0 \, , \\
+      \sign(z)\delta\smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}
+       & \text{otherwise} \, .
     \end{cases}
   \]
-  with \({\varepsilon_c}\) defined as in \eqref{eq:epsilon-c}.
 \end{theorem}
-\begin{proof}
-  The directional derivative of \(J_k\) in the direction \(\delta\), with
-  \(|\delta| = 1\), is defined as
-  \begin{align}
-    J_k'(z; \delta)
-    = & \lim_{h \downarrow 0} \frac{J_k(z + h \delta) - J_k(z)}{h} \nonumber \\
-    = &
-    \lim_{h \downarrow 0} \frac{1}{h}
-    \left(
-      |z + h \delta| \smashoperator{\sum_{j \in C(z + h \delta)}} \lambda_{(j)^-_{z + h \delta}}
-      + \smashoperator{\sum_{j \notin C(z + h\delta)}} |\beta_j| \lambda_{(j)^-_{z + h \delta}}
-      - |z| \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_z}
-      - \smashoperator{\sum_{j \notin C(z)}} |\beta_j| \lambda_{(j)^-_z}
-    \right) \nonumber                                                        \\
-    = & \lim_{h \downarrow 0}
-    \frac{1}{h}
-    \left(
-      |z + h \delta| \smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
-      + \smashoperator{\sum_{j \notin C(z + {\varepsilon_c}\delta)}} |\beta_j| \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
-      - |z| \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}
-      - \smashoperator{\sum_{j \notin C(z)}} |\beta_j| \lambda_{(j)^-_{z}}
-    \right)
-    \label{eq:directional-derivative-sl1}
-  \end{align}
-  We have the following cases to consider: \(|z| = c_i\) for \(i \neq k\) \jw{I prefer \(|z| \in \{c_1,c_2,\ldots,c_m\} \), I don't like having a loose $i$ in $i\neq k$ } ,
-  \(|z| = 0\), and \(z \notin \{0, c_i\}\) for \(i \neq k\).
 
-  Turning first to the case when \(|z| = c_i\) for \(i \neq k\), note that we have,
-  as a result of the definition of
-  \({\varepsilon_c}\), the following identities:
-  \begin{align*}
-    C(c_i + {\varepsilon_c}\delta)          & \subseteq C(c_i),                                                                                                                     \\
-    \tilde{\mathcal{C}}_i                   & = \widebar{C(c_i + {\varepsilon_c} \delta)} \cap C(c_i),                                                                              \\
-    C(c_i)                                  & = \tilde{C}_i \cup \big(C(c_i + {\varepsilon_c}\delta) \cap C(c_i)\big) = \tilde{\mathcal{C}}_i \cup C(c_i + {\varepsilon_c} \delta), \\
-    \widebar{C(z + {\varepsilon_c} \delta)} & = \widebar{C(c_i)} \cup \tilde{\mathcal{C}}_i.
-  \end{align*}
-  Using this, we can rewrite \eqref{eq:directional-derivative-sl1} as
-  \begin{equation*}
-    \label{eq:directional-derivative-simplified}
-    J'_k(z; \delta)
-    = \lim_{h \downarrow 0} \frac{1}{h}
-    \left(
-      \splitfrac{
-      |z + h\delta|\smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
-      + |c_i|\smashoperator{\sum_{j \in \tilde{C}_i}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
-      + \smashoperator{\sum_{j \in \widebar{C(z)}}} |\beta_j|\lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
-      }{%
-      - |z| \smashoperator{\sum_{j \in \tilde{\mathcal{C}}_i}} \lambda_{(j)^-_{z}}
-      - |c_i| \smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z}}
-      - \smashoperator{\sum_{j \in \widebar{C(z)}}} |\beta_j| \lambda_{(j)^-_{z}}
-      }
-    \right).
-  \end{equation*}
-  Next, observe that \(\lambda_{(j)^-_{z + {\varepsilon_c}\delta}} =
-  \lambda_{(j)^-_{z}}\) for all \(j \in \widebar{C(z)}\) and consequently
-  \[
-    \smashoperator{\sum_{j \in \widebar{C(z)}}} |\beta_j|\lambda_{(j)^-_{z + {\varepsilon_c}\delta}} =
-    \smashoperator{\sum_{j \in \widebar{C(z)}}} |\beta_j|\lambda_{(j)^-_{z}}.
-  \]
-  Moreover, note that, since \(z = \pm c_i\), there exists a permutation corresponding to
-  \(\lambda_{(j)^-_{z}}\) such that
-  \[
-    |z|\smashoperator{\sum_{j \in \tilde{C}_i}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
-    = |c_i| \smashoperator{\sum_{j \in \tilde{C}_i}} \lambda_{(j)^-_{z}}
-  \]
-  and consequently
-  \begin{equation}
-    \label{eq:directional-derivative-simplified-again}
-    J'_k(z; \delta)
-    = \lim_{h \downarrow 0} \frac{1}{h}
-    \left(
-      |z + h\delta|\smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
-      - |c_i| \smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z}}.
-    \right).
-  \end{equation}
-  Now, since \(c_i + h \delta > 0\) and \(-c_i + h \delta < 0\) in the limit as
-  \(h\) goes to \(0\) for \(c_i \neq 0\), we have
-  \[
-    \lim_{h\downarrow 0} |-c_i + h \delta|
-    = \lim_{h\downarrow 0}\big( |c_i| -h \delta\big)
-    \quad\text{and}\quad
-    \lim_{h\downarrow 0} |c_i + h \delta|
-    = \lim_{h\downarrow 0}(|c_i| + h \delta)
-  \]
-  which means that
-  \begin{align*}
-    J'_k(z; \delta)
-     & = \lim_{h \downarrow 0} \frac{1}{h}
-    \left(
-      \big(|z| + \sign(z)h\delta\big)\smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
-      - |c_i| \smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z}}.
-    \right)                                                                                                                  \\
-     & = \lim_{h \downarrow 0} \frac{1}{h}
-    \sign(z)h\delta\smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}     \\
-     & = \sign(z)\delta\smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}} \\
-  \end{align*}
+In \cref{fig:directional-derivative}, we show an example of the directional
+derivative and the objective function.
 
-For the case when $z=0$ there are two sub cases.
-  First case is when \(c_m = 0\)  then
-  \eqref{eq:directional-derivative-simplified-again} is simply
-  \begin{equation*}
-    \label{eq:directional-derivative-zerocase}
-    J'_k(0; \delta)
-    = \lim_{h \downarrow 0} \frac{1}{h}
-    |h\delta|\smashoperator{\sum_{j \in C({\varepsilon_c}\delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}
-    = \smashoperator{\sum_{j \in C({\varepsilon_c}\delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}
-  \end{equation*}
-  since \(|\delta| = 1\) by definition,
-
- The other sub case is when \(c_m \neq 0\). Here \eqref{eq:directional-derivative-sl1} reduces to
-  \begin{equation*}
-    J_k'(0; \delta) = \lim_{h \downarrow 0}
-    \frac{1}{h}
-    \left(
-      |h \delta| \smashoperator{\sum_{j \in C({\varepsilon_c}\delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}
-      + \smashoperator{\sum_{j \notin C({\varepsilon_c}\delta)}} |\beta_j| \lambda_{(j)^-_{{\varepsilon_c}\delta}}
-      - \smashoperator{\sum_{j \notin C(0)}} |\beta_j| \lambda_{(j)^-_{0}}
-    \right).
-  \end{equation*}
-  In this case, we have \(C(0) = C({\varepsilon_c}\delta)\) since \(c_m \neq 0\), and therefore
-  \[
-    \smashoperator{\sum_{j \notin C({\varepsilon_c}\delta)}} |\beta_j| \lambda_{(j)^-_{{\varepsilon_c}\delta}}
-    = \smashoperator{\sum_{j \notin C(0)}} |\beta_j| \lambda_{(j)^-_{0}},
-  \]
-  which means that
-  \begin{equation*}
-    J_k'(0; \delta) = \lim_{h \downarrow 0}
-    \frac{1}{h}
-    |h \delta| \smashoperator{\sum_{j \in C({\varepsilon_c}\delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}
-    = |\delta|\smashoperator{\sum_{j \in C({\varepsilon_c}\delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}
-    = \smashoperator{\sum_{j \in C(0)}} \lambda_{(j)^-_{0}}.
-  \end{equation*}
-
-  Finally, note that \(J_k\) is differentiable in every other case, that is,
-  \(|z| \notin \{0, c_i\}\) for \(i \neq k\) \jw{Same notational issue here}and, since since \(C(z +
-  {\varepsilon_c}\delta) = C(z)\), has the directional derivative
-  \[
-    J_k'(z; \delta) = \delta \sign(z) \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}.
-  \]
-\end{proof}
+\begin{figure}[htb]
+  \centering
+  \includegraphics[]{directional-derivative.pdf}
+  \caption{%
+  The function \(P_k(z)\) and its directional derivative \(P'_k(z; \delta)\) for
+  an example with \(\beta = [-3.0, 1.0, 3.0, 2.0]^T\), \(k = 1\), and consequently
+  \(c^{\setminus k} = [2, 1]^T\). The solution corresponds to the value of \(z\) for
+      which \(P'_k(z; \delta) \geq 0 \) for \(\delta \in \{-1, 1\}\), which holds only
+      at \(z = 2\), which must therefore be the solution.
+    }
+  \label{fig:directional-derivative}
+\end{figure}
 
 We are now ready to present the SLOPE thresholding operator.
 
 \begin{theorem}[The SLOPE Thresholding Operator]
+  \label{thm:thresholding-operator}
+  Define \(S(x) = \sum_{j \in C(x)}\lambda_{(j)^-_{x}}\) and
+  let
   \[
-    T_k(\gamma, \omega; c, \lambda) =
-    \begin{cases}
-      0                                                                                                                                                   & \text{if } |\gamma| \leq \smashoperator{\sum_{j \in C({\varepsilon_c})}} \lambda_{(j)^-_{\varepsilon_c}},                                                                                                                                                        \\
-      \sign(\gamma)c_i                                                                                                                                    & \text{if } \omega c_i + \smashoperator{\sum_{j \in C(c_i - {\varepsilon_c})}} \lambda_{(j)^-_{c_i - {\varepsilon_c}}} \leq |\gamma| \leq \omega c_i + \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}},             \\
-      \frac{\sign(\gamma)}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} \bigg) & \text{if } \omega c_i + \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} < |\gamma| < \omega c_{i - 1} + \smashoperator{\sum_{j \in C(c_{i - 1} - {\varepsilon_c})}} \lambda_{(j)^-_{c_{i - 1} - {\varepsilon_c}}}, \\
-      \frac{\sign(\gamma)}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_1 + {\varepsilon_c})}} \lambda_{(j)^-_{c_1 + {\varepsilon_c}}} \bigg) & \text{if } |\gamma| \geq \omega c_1 + \smashoperator{\sum_{j \in C(c_1 + {\varepsilon_c})}} \lambda_{(j)^-_{c_1 + {\varepsilon_c}}}.
-    \end{cases}
+    \begin{multlined}
+      T_k(\gamma; \omega, c, \lambda) = \\
+      % \begin{cases}
+      %   0                                                                                                                                                   & \text{if } |\gamma| \leq \smashoperator{\sum_{j \in C({\varepsilon_c})}} \lambda_{(j)^-_{\varepsilon_c}},                                                                                                                                                        \\
+      %   \sign(\gamma)c_i                                                                                                                                    & \text{if } \omega c_i + \smashoperator{\sum_{j \in C(c_i - {\varepsilon_c})}} \lambda_{(j)^-_{c_i - {\varepsilon_c}}} \leq |\gamma| \leq \omega c_i + \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}},             \\
+      %   \frac{\sign(\gamma)}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} \bigg) & \text{if } \omega c_i + \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} < |\gamma| < \omega c_{i - 1} + \smashoperator{\sum_{j \in C(c_{i - 1} - {\varepsilon_c})}} \lambda_{(j)^-_{c_{i - 1} - {\varepsilon_c}}}, \\
+      %   \frac{\sign(\gamma)}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_1 + {\varepsilon_c})}} \lambda_{(j)^-_{c_1 + {\varepsilon_c}}} \bigg) & \text{if } |\gamma| \geq \omega c_1 + \smashoperator{\sum_{j \in C(c_1 + {\varepsilon_c})}} \lambda_{(j)^-_{c_1 + {\varepsilon_c}}}.
+      % \end{cases}
+      \begin{cases}
+        0                                                                            & \text{if } |\gamma| \leq S(\varepsilon_c),               \\
+        \sign(\gamma)c_i                                                             & \text{if } \omega c_i + S(c_i - \varepsilon_c)           \\
+                                                                                     & \quad \leq |\gamma| \leq                                 \\
+                                                                                     & \quad \omega c_i + S(c_i + \varepsilon_c),               \\
+        \frac{\sign(\gamma)}{\omega} \big( |\gamma| - S(c_i + \varepsilon_c) \big)   & \text{if } \omega c_i + S(c_i + {\varepsilon_c})         \\
+                                                                                     & \quad < |\gamma| <                                       \\
+                                                                                     & \quad \omega c_{i - 1} + S(c_{i - 1} - {\varepsilon_c}), \\
+        \frac{\sign(\gamma)}{\omega} \big( |\gamma| - S(c_1 + {\varepsilon_c}) \big) & \text{if } |\gamma| \geq                                 \\
+                                                                                     & \quad \omega c_1 + S(c_1 + {\varepsilon_c}).
+      \end{cases}
+    \end{multlined}
   \]
   with \({\varepsilon_c}\) defined as in \eqref{eq:epsilon-c} and let
   \(\gamma = \tilde{r}^Tx\), \(\omega = \tilde{x}^T\tilde{x}\). Then
-  \(T(\gamma, \omega; c; \lambda) \in \argmin_{z \in \mathbb{R}} P_k(z)\).
+  \(T(\gamma; \omega, c^{(k)}, \lambda) \in \argmin_{z \in \mathbb{R}} P_k(z)\).
 \end{theorem}
-\begin{proof}
-  Recall that \(P_k(z) : \mathbb{R} \mapsto \mathbb{R}\) is a convex,
-  continuous piecewise-differentiable function with kinks whenever \(|z| =
-  c_i\) for \(i \neq k\) or \(z = 0\) \jw{whenever \(|z| \in \{0,c_1,c_2,\ldots,c_m\}\)}. Let \(\gamma = \tilde{r}^T\tilde{x}\)
-  and \(\omega = \tilde{x}^T\tilde{x}\) and note that the optimality criterion for
-  \eqref{eq:cluster-problem} is
-  \[
-    \delta(\omega z - \gamma) + J'_k(z; \delta) \geq 0, \quad
-    \forall \delta \in \{-1, 1\},
-  \]
-  which is equivalent to
-  \begin{equation}
-    \label{eq:optimality-inequality}
-    \omega z - J'_k(z; -1) \leq \gamma \leq \omega z + J_k'(z; 1).
-  \end{equation}
-  We now proceed to show that there is a solution \(z^* \in \argmin_{z \in
-    \mathbb{R}} J_k(z)\) for every interval over \(\gamma \in \mathbb{R}\).
-
-  First, assume that
-  \begin{equation}
-    \label{eq:case-zero}
-    |\gamma| \leq \smashoperator{\sum_{j \in C({\varepsilon_c})}}\lambda_{(j)^-_{{\varepsilon_c}}}
-  \end{equation}
-  and note that this is equivalent to \eqref{eq:optimality-inequality} with \(z
-  = 0\) since \(C({\varepsilon_c}) = C(-{\varepsilon_c})\) and
-  \(\lambda_{(j)^-_{-{\varepsilon_c}}} = \lambda_{(j)^-_{{\varepsilon_c}}}\) in
-  this case, which is sufficient for \(z^* = 0\) to be the solution.
-
-  Next, assume that
-  \begin{equation}
-    \label{eq:case-cluster}
-    \omega c_i + \smashoperator{\sum_{j \in C(c_i - {\varepsilon_c})}} \lambda_{(j)^-_{c_i - {\varepsilon_c}}}
-    \leq |\gamma| \leq
-    \omega c_i + \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}}
-  \end{equation}
-  and observe that this is equivalent to \eqref{eq:optimality-inequality} with
-  \(z = c_i\), \(i \neq k\), since
-  \(C(c_i + {\varepsilon_c}) = C(-c_i - {\varepsilon_c})\) and
-  \(C(-c_i + {\varepsilon_c}) = C(c_i - {\varepsilon_c})\). Thus \(z^* = \sign(\gamma)c_i\) must be
-  the solution.
-
-  If neither \eqref{eq:case-zero} nor \eqref{eq:case-cluster} hold, then it must either be
-  the case that
-  \begin{equation}
-    \label{eq:case-differentiable}
-    \omega c_i + \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}}
-    < |\gamma| <
-    \omega c_{i - 1} + \smashoperator{\sum_{j \in C(c_{i - 1} - {\varepsilon_c})}} \lambda_{(j)^-_{c_{i - 1} - {\varepsilon_c}}},
-  \end{equation}
-  \jw{Can we cite this conditions through the cases in $T_k$ then we don't need that many equations?}
-  for some \(i > 1\), or that
-  \begin{equation}
-    \label{eq:case-largest}
-    |\gamma| > \omega c_1 + \smashoperator{\sum_{j \in C(c_1 + {\varepsilon_c})}} \lambda_{(j)^-_{c_1 + {\varepsilon_c}}}.
-  \end{equation}
-  In the first case, note that
-  \[
-    \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}}
-    =
-    \smashoperator[r]{\sum_{j \in C(c_{i-1} - {\varepsilon_c})}} \lambda_{(j)^-_{c_{i-1} - {\varepsilon_c}}}
-  \]
-  and therefore \eqref{eq:case-differentiable} is equivalent to
-  \[
-    c_i < \frac{1}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} \bigg) < c_{i -1}.
-  \]
-  Now let
-  \begin{equation}
-    \label{eq:differentiable-solution}
-    z^* = \frac{\sign(\gamma)}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} \bigg)
-  \end{equation}
-  and note that \(|z^*| \in (c_i, c_{i-1})\) and hence
-  \[
-    \frac{1}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} \bigg)
-    =
-    \frac{1}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(z^*)}} \lambda_{(j)^-_{z^*}} \bigg).
-  \]
-  Furthermore, since \(P_k\) is differentiable in \((c_i, c_{i-1})\), we have
-  \[
-    \frac{\partial}{\partial z} P_k(z) \Big|_{z = z^*}
-    = \omega z^* - \gamma + \sign(z^*) \smashoperator{\sum_{j \in C(z^*)}} \lambda_{(j)^-_{z^*}} = 0,
-  \]
-  and therefore \eqref{eq:differentiable-solution} must be the solution.
-
-  The case \eqref{eq:case-largest} follows analogously.
-\end{proof}
 
 \jl{Consider adding a remark showing that our operator generalizes the soft thresholding operator.}
 
 In \cref{fig:slope-thresholding}, we visualize the SLOPE thresholding operator.
 
-\begin{figure}[htbp]
+\begin{figure*}[htb]
   \centering
   \includegraphics[]{slope-thresholding.pdf}
-  \caption{The result of the SLOPE thresholding update.}
+  \caption{%
+  An example of the SLOPE thresholding operator. The result corresponds to an
+  example for \(\beta = [0.5, -0.5, 0.3, 0.7]^T\), \(c = [0.7, 0.5, 0.3]^T\)
+  with an update for the second cluster (\(k = 2\)), such that
+  \(c^{\setminus k} = [0.5, 0.3]^T\). Across regions where the function is constant,
+      the operator sets the result to be either exactly 0 or to the value of one
+      of the elements of \(c^{\setminus k}\).
+    }
   \label{fig:slope-thresholding}
-\end{figure}
+\end{figure*}
 
 \subsubsection{Naive Updates}
 
@@ -455,7 +254,7 @@ Then, each time a new predictor becomes non-zero, we compute its inner product w
 \subsection{Hybrid proximal coordinate descent strategy}
 
 We propose an iterative solver that alternates between proximal gradient step and proximal coordinate descent.
-Since the regularization term for SLOPE is not separable, applying PCD does not guarantee convergence (show example where CD gets stuck).
+Since the regularization term for SLOPE is not separable, applying PCD does not guarantee convergence.
 However, \cite{dupuis2021} showed that once the clusters are known, the subdifferential of $J$ can be written as the cartesian product of the subdifferential of $J$ restricted to the clusters.
 Hence, if one knew the clusters, PCD updates could be applied on each cluster.
 
@@ -466,25 +265,24 @@ Talk about Partly Smooth functions, related Manifold and that support transpose 
 Then identification of this underlying structure occurs when applying PGD.
 Hence the idea to alternate, PGD and PCD step to take advantage of the speed of PCD and ensure convergence via the identification of the right structure with PGD steps.
 
-\begin{algorithm}[tb]
+\begin{algorithm}[htb]
   \SetKwInOut{Init}{init}
   \SetKwInOut{Input}{input}
   \caption{%
     Hybrid coordinate descent and proximal gradient descent algorithm
     for SLOPE\label{alg:hybrid}}
   \Input{
-    \(X \in \mathbb{R}^{n\times p}, y\in \mathbb{R}^n, \beta\in \mathbb{R}^p, \lambda \in \{\mathbb{R}^p : \lambda_1 \geq \lambda_2 \geq \cdots > 0\}\), \(m \in \mathbb{N}\)}
+    \(X \in \mathbb{R}^{n\times p}, y\in \mathbb{R}^n, \lambda \in \{\mathbb{R}^p : \lambda_1 \geq \lambda_2 \geq \cdots > 0\}\), \(v \in \mathbb{N}\)}
 
   \Init{\(t \gets 0\), \(\beta \gets 0\), \(L \gets \lVert X \rVert_2^2\)}
 
   \Repeat{convergence}{
   \(t \gets t + 1\)
 
-  \If{\(t \bmod m = 0\)}{
+  \If{\(t \bmod v = 0\)}{
+    \(\beta \leftarrow \operatorname{prox}_{J}(\beta - \frac{1}{L}\nabla f(\beta); \lambda / L)\) \label{alg:hybrid-istastep}
 
-  \(\beta \leftarrow \operatorname{prox}_{J / L}(\beta - \frac{1}{L}\nabla f(\beta))\) \label{alg:hybrid-istastep}
-
-  % \(C_1, \hdots, C_m \leftarrow \mathtt{get\_clusters}(\beta)\)
+    Update \(c\), \(\mathcal{C}\)
   }
   \Else{
     \(k \gets 0\)
@@ -494,34 +292,19 @@ Hence the idea to alternate, PGD and PCD step to take advantage of the speed of 
 
       \(s \leftarrow \mathrm{sign}(\beta_{\mathcal{C}_k})\)
 
-      \If{\(s \neq 0\)}{
-        % \(L_k \gets (X_{:, \mathcal{C}_k}s)^\top  X_{:, \mathcal{C}_k}s\)
+      \(\tilde x_k \gets X_{\mathcal{C}_k}s\)
 
+      % \(\tilde y_k \gets X_{\widebar{\mathcal{C}}_k}\beta_{\widebar{\mathcal{C}}_k}\)
 
-        % \(\tilde{\beta} \gets T(|\beta_{\mathcal{C}_k}| - \frac{1}{L_k} \nabla_{\mathcal{C}_k}f(\beta)^\top s, \frac{\lambda}{L_k})\)
+      \(\tilde r_k \gets y - X_{\widebar{\mathcal{C}}_k}\beta_{\widebar{\mathcal{C}}_k}\)
 
-        % \(\beta_{\mathcal{C}_k} \leftarrow \tilde{\beta} s\)
-        \(\tilde x_k \gets X_{\mathcal{C}_k}s\)
+      % \(\gamma \gets \tilde{r}^T \tilde{x}_k\)
+      
+      % \(\omega \gets \tilde{x}_k^T \tilde{x}_k\)
 
-        \(\tilde y_k \gets X_{\widebar{\mathcal{C}}_k}\beta_{\widebar{\mathcal{C}}_k}\)
+      \(\beta \gets T(\tilde{r}^T \tilde{x}_k; \tilde{x}_k^T \tilde{x}_k, c^{\setminus k}, \lambda)\)
 
-        \(\tilde r_k \gets y - \tilde y_k\)
-
-        \(
-        \beta_{\mathcal{C}_k} \gets
-        s T \left(
-        \frac{\tilde r^T_k \tilde x_k, }{ \tilde x_k^T \tilde x_k},
-        \frac{\lambda}{ \tilde x_k^T \tilde x_k},
-        k,
-        \tilde \beta,
-        \mathcal{C}
-        \right)
-        \)
-        \Comment{\(\mathcal{C}\) is updated at this step.}
-
-
-      }
-
+      Update \(c\), \(\mathcal{C}\)
     }
   }
 
@@ -530,9 +313,9 @@ Hence the idea to alternate, PGD and PCD step to take advantage of the speed of 
 \end{algorithm}
 
 In \cref{fig:illustration-solver}, we show how \cref{alg:hybrid} works in practice on
-a two-dimensional SLOPE problem. 
+a two-dimensional SLOPE problem.
 
-\begin{figure}[htbp]
+\begin{figure*}[htb]
   \centering
   \includegraphics{illustration_solvers}
   \caption{Illustration of the proposed solver. The figures show progress
@@ -547,23 +330,17 @@ a two-dimensional SLOPE problem.
     and is therefore stuck after the third epoch. The hybrid and PGD algorithms,
     meanwhile, reach convergence after 67 and 156 epochs respectively.}
   \label{fig:illustration-solver}
-\end{figure}
+\end{figure*}
 
-\begin{theorem}
-  Iterates of \cref{alg:hybrid} converge towards \(\beta^*\).
-\end{theorem}
-\begin{proof}
-  First note that convergence properties of proximal gradient descent on convex
-  problems such as SLOPE are well-established
-  \parencite{beck2009,daubechies2004}, which certifies that updates via
-  \cref{alg:hybrid-istastep} make progress towards \(\beta^*\).
-
-  Next note that the objectives of \eqref{pb:slope} and
-  \eqref{eq:subproblem} are equal and that \eqref{eq:subproblem} can be seen
-  viewed as a version of \eqref{pb:slope} with added linear constraints
-  that is also convex. And, finally, because the coordinate updates of
-  \cref{alg:hybrid} minimize the sub-problem, we in the worst case make no
-  progress and therefore have guaranteed converge rate no less than \(1/m\)
-  of that of proximal gradient descent.
-\end{proof}
+\begin{lemma}
+  \label{lem:convergence}
+  Let \(\beta^{(1)}, \beta^{(2)}, \dots, \beta^{(k)}\) be a sequence of
+  iterates generated by \cref{alg:hybrid}, \(1/v\) the frequency of proximal gradient
+  descent iterates in \cref{alg:hybrid}, and \(L\) the Lipschitz constant of
+  \(\nabla \ell\). Then
+  \[
+    P(\beta^{(k)}) - P(\beta^*) \leq \frac{L \lVert \beta^{(0)} - \beta^* \rVert_2^2}{2\lfloor k/v \rfloor }\, ,
+  \]
+  where \(\beta^* \in \argmin_{\beta \in \mathbb{R}^p} P.\)
+\end{lemma}
 

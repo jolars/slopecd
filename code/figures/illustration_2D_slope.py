@@ -5,6 +5,7 @@ from numpy.linalg import norm
 from numpy.random import default_rng
 from scipy import stats
 
+from figures import figspec
 from slope.clusters import get_clusters, update_cluster
 from slope.solvers import prox_grad
 from slope.utils import ConvergenceMonitor, dual_norm_slope, prox_slope, slope_threshold
@@ -269,7 +270,12 @@ labels = ["CD", "Hybrid", "PGD"]
 plt.close("all")
 
 fig, axarr = plt.subplots(
-    1, 3, sharey=True, sharex=True, figsize=(6.2, 3), constrained_layout=True
+    1,
+    3,
+    sharey=True,
+    sharex=True,
+    figsize=(figspec.FULL_WIDTH, 3),
+    constrained_layout=True,
 )
 
 for i in range(3):

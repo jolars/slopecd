@@ -1,1 +1,229 @@
 \section{Proofs}\label{sec:proofs}
+
+\subsection{Proof of \Cref{thm:sl1-directional-derivative}}
+
+\begin{proof}
+  By the definition of the directional derivative,
+  \begin{align}
+    \phi'(z; \delta)
+    = & \lim_{h \downarrow 0} \frac{\phi(z + h \delta) - \phi(z)}{h} \nonumber \\
+    = &
+    \lim_{h \downarrow 0} \frac{1}{h}
+    \left(
+      |z + h \delta| \smashoperator{\sum_{j \in C(z + h \delta)}} \lambda_{(j)^-_{z + h \delta}}
+      + \smashoperator{\sum_{j \notin C(z + h\delta)}} |\beta_j| \lambda_{(j)^-_{z + h \delta}}
+      - |z| \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_z}
+      - \smashoperator{\sum_{j \notin C(z)}} |\beta_j| \lambda_{(j)^-_z}
+    \right) \nonumber                                                          \\
+    = & \lim_{h \downarrow 0}
+    \frac{1}{h}
+    \left(
+      |z + h \delta| \smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
+      + \smashoperator{\sum_{j \notin C(z + {\varepsilon_c}\delta)}} |\beta_j| \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
+      - |z| \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}
+      - \smashoperator{\sum_{j \notin C(z)}} |\beta_j| \lambda_{(j)^-_{z}}
+    \right)
+    \label{eq:directional-derivative-sl1}
+  \end{align}
+  We have the following cases to consider: \(|z| \in \{c_i^{(k)}\}_{i=1}^{m-1}\),
+  \(|z| = 0\), and \(|z| \notin \{0, \{c_i^{(k)}\}_{i=1}^{m-1}\}\).
+
+  Starting with\(|z| = c_i^{(k)}\), note that we have,
+  as a result of the definition of
+  \({\varepsilon_c}\), the following identities:
+  \begin{align*}
+    C(c_i^{(k)} + {\varepsilon_c}\delta)            & \subseteq C(c_i^{(k)}),                                                                                                                                 \\
+    \tilde{\mathcal{C}}_i                           & = \widebar{C(c_i^{(k)} + {\varepsilon_c} \delta)} \cap C(c_i^{(k)}),                                                                                    \\
+    C(c_i^{(k)})                                    & = \tilde{C}_i \cup \big(C(c_i^{(k)} + {\varepsilon_c}\delta) \cap C(c_i^{(k)})\big) = \tilde{\mathcal{C}}_i \cup C(c_i^{(k)} + {\varepsilon_c} \delta), \\
+    \widebar{C(c_i^{(k)} + {\varepsilon_c} \delta)} & = \widebar{C(c_i^{(k)})} \cup \tilde{\mathcal{C}}_i.
+  \end{align*}
+  Using this, we can rewrite \eqref{eq:directional-derivative-sl1} as
+  \begin{equation*}
+    \label{eq:directional-derivative-simplified}
+    J'_k(z; \delta)
+    = \lim_{h \downarrow 0} \frac{1}{h}
+    \left(
+      \splitfrac{
+      |z + h\delta|\smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
+      + |c_i^{(k)}|\smashoperator{\sum_{j \in \tilde{C}_i}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
+      + \smashoperator{\sum_{j \in \widebar{C(z)}}} |\beta_j|\lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
+      }{%
+      - |z| \smashoperator{\sum_{j \in \tilde{\mathcal{C}}_i}} \lambda_{(j)^-_{z}}
+      - |c_i^{(k)}| \smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z}}
+      - \smashoperator{\sum_{j \in \widebar{C(z)}}} |\beta_j| \lambda_{(j)^-_{z}}
+      }
+    \right).
+  \end{equation*}
+  Next, observe that \(\lambda_{(j)^-_{z + {\varepsilon_c}\delta}} =
+  \lambda_{(j)^-_{z}}\) for all \(j \in \widebar{C(z)}\) and consequently
+  \[
+    \smashoperator{\sum_{j \in \widebar{C(z)}}} |\beta_j|\lambda_{(j)^-_{z + {\varepsilon_c}\delta}} =
+    \smashoperator{\sum_{j \in \widebar{C(z)}}} |\beta_j|\lambda_{(j)^-_{z}}.
+  \]
+  Moreover, note that, since \(z = \pm c_i\), there exists a permutation corresponding to
+  \(\lambda_{(j)^-_{z}}\) such that
+  \[
+    |z|\smashoperator{\sum_{j \in \tilde{C}_i}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
+    = |c^{(k)}_i| \smashoperator{\sum_{j \in \tilde{C}_i}} \lambda_{(j)^-_{z}}
+  \]
+  and consequently
+  \begin{equation}
+    \label{eq:directional-derivative-simplified-again}
+    J'_k(z; \delta)
+    = \lim_{h \downarrow 0} \frac{1}{h}
+    \left(
+      |z + h\delta|\smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
+      - |c_i^{(k)}| \smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z}}.
+    \right).
+  \end{equation}
+  Now, since \(c_i^{(k)} + h \delta > 0\) and \(-c_i^{(k)} + h \delta < 0\) in the limit as
+  \(h\) goes to \(0\) for \(c_i \neq 0\), we have
+  \[
+    \lim_{h\downarrow 0} |-c_i + h \delta|
+    = \lim_{h\downarrow 0}\big( |c_i^{(k)}| -h \delta\big)
+    \quad\text{and}\quad
+    \lim_{h\downarrow 0} |c_i^{(k)} + h \delta|
+    = \lim_{h\downarrow 0}(|c_i^{(k)}| + h \delta)
+  \]
+  which means that
+  \begin{align*}
+    J'_k(z; \delta)
+     & = \lim_{h \downarrow 0} \frac{1}{h}
+    \left(
+      \big(|z| + \sign(z)h\delta\big)\smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
+      - |c_i| \smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z}}.
+    \right)                                                                                                                  \\
+     & = \lim_{h \downarrow 0} \frac{1}{h}
+    \sign(z)h\delta\smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}     \\
+     & = \sign(z)\delta\smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}} \\
+  \end{align*}
+
+  For the case when \(z=0\) there are two sub-cases to consider. First, when \(c_m^{(k)} = 0\) then
+  \eqref{eq:directional-derivative-simplified-again} is simply
+  \begin{equation*}
+    \label{eq:directional-derivative-zerocase}
+    J'_k(0; \delta)
+    = \lim_{h \downarrow 0} \frac{1}{h}
+    |h\delta|\smashoperator{\sum_{j \in C({\varepsilon_c}\delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}
+    = \smashoperator{\sum_{j \in C({\varepsilon_c}\delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}
+  \end{equation*}
+  since \(|\delta| = 1\) by definition.
+
+  The other sub-case is \(c_m^{(k)} \neq 0\). Here
+  \eqref{eq:directional-derivative-sl1} reduces to
+  \begin{equation*}
+    J_k'(0; \delta) = \lim_{h \downarrow 0}
+    \frac{1}{h}
+    \left(
+      |h \delta| \smashoperator{\sum_{j \in C({\varepsilon_c}\delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}
+      + \smashoperator{\sum_{j \notin C({\varepsilon_c}\delta)}} |\beta_j| \lambda_{(j)^-_{{\varepsilon_c}\delta}}
+      - \smashoperator{\sum_{j \notin C(0)}} |\beta_j| \lambda_{(j)^-_{0}}
+    \right).
+  \end{equation*}
+  In this case, we have \(C(0) = C({\varepsilon_c}\delta)\) since \(c_m^{(k)}
+  \neq 0\), and therefore
+  \[
+    \smashoperator{\sum_{j \notin C({\varepsilon_c}\delta)}} |\beta_j| \lambda_{(j)^-_{{\varepsilon_c}\delta}}
+    = \smashoperator{\sum_{j \notin C(0)}} |\beta_j| \lambda_{(j)^-_{0}},
+  \]
+  which means that
+  \begin{equation*}
+    J_k'(0; \delta) = \lim_{h \downarrow 0}
+    \frac{1}{h}
+    |h \delta| \smashoperator{\sum_{j \in C({\varepsilon_c}\delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}
+    = |\delta|\smashoperator{\sum_{j \in C({\varepsilon_c}\delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}
+    = \smashoperator{\sum_{j \in C(0)}} \lambda_{(j)^-_{0}}.
+  \end{equation*}
+
+  Finally, note that \(J_k\) is differentiable in every other case, i.e.
+  \(|z| \notin \{0, \{c_i^{(k)}\}_{i=1}^{m-1}\}\). Here since \(C(z +
+  {\varepsilon_c}\delta) = C(z)\), has the directional derivative
+  \[
+    J_k'(z; \delta) = \delta \sign(z) \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}.
+  \]
+\end{proof}
+
+\subsection{Proof of \Cref{thm:thresholding-operator}}
+
+\begin{proof}
+  Recall that \(P_k(z) : \mathbb{R} \mapsto \mathbb{R}\) is a convex,
+  continuous piecewise-differentiable function with kinks whenever \(|z| =
+  c_i^{(k)}\) or \(z = 0\). Let \(\gamma = \tilde{r}^T\tilde{x}\)
+  and \(\omega = \tilde{x}^T\tilde{x}\) and note that the optimality criterion for
+  \eqref{pb:cluster-problem} is
+  \[
+    \delta(\omega z - \gamma) + J'_k(z; \delta) \geq 0, \quad
+    \forall \delta \in \{-1, 1\},
+  \]
+  which is equivalent to
+  \begin{equation}
+    \label{eq:optimality-inequality}
+    \omega z - J'_k(z; -1) \leq \gamma \leq \omega z + J_k'(z; 1).
+  \end{equation}
+  We now proceed to show that there is a solution \(z^* \in \argmin_{z \in
+    \mathbb{R}} J_k(z)\) for every interval over \(\gamma \in \mathbb{R}\).
+
+  First, assume that the first case in the definition of \(T_k\) holds
+  and note that this is equivalent to \eqref{eq:optimality-inequality} with \(z
+  = 0\) since \(C({\varepsilon_c}) = C(-{\varepsilon_c})\) and
+  \(\lambda_{(j)^-_{-{\varepsilon_c}}} = \lambda_{(j)^-_{{\varepsilon_c}}}\).
+  This is sufficient for \(z^* = 0\).
+
+  Next, assume that the second case holds and observe that this is equivalent
+  to \eqref{eq:optimality-inequality} with
+  \(z = c_i^{(k)}\), since
+  \(C(c_i + {\varepsilon_c}) = C(-c_i - {\varepsilon_c})\) and
+  \(C(-c_i + {\varepsilon_c}) = C(c_i - {\varepsilon_c})\). Thus \(z^* =
+  \sign(\gamma)c_i^{(k)}\).
+
+  For the third case, we have
+  \[
+    \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}}
+    =
+    \smashoperator[r]{\sum_{j \in C(c_{i-1} - {\varepsilon_c})}} \lambda_{(j)^-_{c_{i-1} - {\varepsilon_c}}}
+  \]
+  and therefore \eqref{eq:optimality-inequality} is equivalent to
+  \[
+    c_i < \frac{1}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} \bigg) < c_{i -1}.
+  \]
+  Now let
+  \begin{equation}
+    \label{eq:differentiable-solution}
+    z^* = \frac{\sign(\gamma)}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} \bigg)
+  \end{equation}
+  and note that \(|z^*| \in \big(c_i^{(k)}, c_{i-1}^{(k)}\big)\) and hence
+  \[
+    \frac{1}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} \bigg)
+    =
+    \frac{1}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(z^*)}} \lambda_{(j)^-_{z^*}} \bigg).
+  \]
+  Furthermore, since \(P_k\) is differentiable in \(\big(c_i^{(k)}, c_{i-1}^{(k)}\big)\), we have
+  \[
+    \frac{\partial}{\partial z} P_k(z) \Big|_{z = z^*}
+    = \omega z^* - \gamma + \sign(z^*) \smashoperator{\sum_{j \in C(z^*)}} \lambda_{(j)^-_{z^*}} = 0,
+  \]
+  and therefore \eqref{eq:differentiable-solution} must be the solution.
+
+  The solution for the last case follows using reasoning analogous to that of the
+  third case.
+\end{proof}
+
+\subsection{Proof of \Cref{lem:convergence}}
+
+\begin{proof}
+  From \cref{thm:thresholding-operator}, we know that lines 9--14 in \cref{alg:hybrid} correspond to minimizing \(G(z)\) for a given \(\beta \coloneqq \beta^{(t + k / |\mathcal{C}|)}\), and therefore that
+  \[
+    G\big(\beta^{(t + (k - 1) / |\mathcal{C}|)}\big) \leq G\big(\beta^{(t + k / |\mathcal{C}|)}\big)
+  \]
+  since \(G(z) = P\big(\beta(z)\big)\).
+
+  Moreover, for a sequence of iterates of the proximal gradient descent step, 
+  \(\beta^{(v)}, \beta^{(2v)}, \dots, \beta^{(\lfloor k / v \rfloor)}\), 
+  we know from~\textcite[Theorem 3.1]{beck2009} that it holds that
+  \[
+    P(\beta^{(\lfloor k / v \rfloor)}) - P(\beta^*)
+    \leq \frac{L \lVert \beta^{(0)} - \beta^* \rVert_2^2}{2\lfloor k / v \rfloor}.
+  \]
+  Combining this and the result from the previous paragraph yields the desired
+  result.
+\end{proof}

@@ -1,0 +1,68 @@
+First observe that in the case of a quadratic datafit, $F = \frac{1}{2} \norm{y - \cdot}^2$, we can write \Cref{pb:slope} as
+\[
+  \begin{aligned}
+    % P(\beta)
+    %  & =
+     \frac{1}{2} \lVert y - X\beta\rVert_2^2 + J(\beta)                        %\\
+     & = \frac{1}{2} \lVert y - X_{\bar{\mathcal{C}}_k} \beta_{\bar{\mathcal{C}_k}}
+    - \big(X_{\mathcal{C}_k} s_{\mathcal{C}_k}\big)c_k  \rVert_2^2
+    + |c_k|\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}
+    + \sum_{j \notin {\mathcal{C}_k}} |\beta_j|\lambda_{(j)^-}                      \\
+     & = \frac{1}{2} \lVert \tilde r_k - \tilde x c_k \rVert_2^2
+    + |c_k|\sum_{j \in {\mathcal{C}_k}} \lambda_{(j)^-}
+    + \sum_{j \notin {\mathcal{C}_k}} |\beta_j|\lambda_{(j)^-}                      \\
+  \end{aligned}
+\]
+with \( \tilde x_k = X_{\mathcal{C}_k} s_{\mathcal{C}_k}\) and
+\(\tilde r_k = y - \tilde y_k = y - X_{\bar{\mathcal{C}}_k} \beta_{\bar{\mathcal{C}}_k} \in \bbR^n\).
+
+
+We propose a coordinate-wise update that minimizes \(P(\beta)\) with respect to the
+clusters' corresponding coefficients one at a time, keeping the relative signs
+of the coordinates within each cluster fixed but allowing all of the signs to
+flip (simultaneously).
+In other words, we minimize the objective in the direction of $\sign (\beta)_{\mathcal{C}_k}$.
+
+\mm{remove tilde, remind notation here?}
+Letting \(\beta\) correspond to a fixed vector, note that
+\(\beta_i = s_i c_{(j)^-}\), \(i \in \mathcal{C}_j\) for all
+\(i\). Now let \(\tilde{\mathcal{C}}_i\)
+correspond to the indices of the \(i\)th cluster for \(\beta\), that is,
+\(|\beta_j| = c_i\) for all \(j \in \tilde{\mathcal{C}}_i\).
+Next, we let
+\begin{equation}
+  \label{eq:coordinate-update-beta}
+  \beta_i(z) =
+  \begin{cases}
+    s_k z   \enspace, & \text{if } i \in \mathcal{C}_k \enspace, \\
+    \beta_i \enspace, & \text{otherwise} \enspace.
+  \end{cases}
+\end{equation}
+This means that \(\beta(z)\) corresponds to a version of \(\beta\) with a
+coordinate update for the \(k\)-th cluster.
+Minimizing the objective in this directions amounts to solving the following
+one-dimensional problem:
+
+\begin{problem}
+  \label{pb:cluster-problem}
+  \operatorname*{minimize}_{z \in \mathbb{R}} \left(P_k(z) = \frac{1}{2} \lVert \tilde r - \tilde x z \rVert_2^2 + J_k(z)\right)
+\end{problem}
+where
+\[
+  J_k(z) = |z| \sum_{j \in \mathcal{C}_k} \lambda_{(j)^-_z}
+  + \sum_{j \notin \mathcal{C}_k} |\beta_j| \lambda_{(j)^-_z}
+\]
+is the \emph{partial sorted \(\ell_1\) norm} with respect to the \(k\)-th cluster and where we write \(\lambda_{(j)^-_z}\) to indicate that the inverse sorting permutation \((j)^-_z\)
+is defined with respect \(\beta(z)\).
+The optimality condition for \Cref{pb:cluster-problem} is
+\[
+  P_k'(z; \delta) \geq 0,
+\]
+where \(P'_k(z; \delta)\) is the directional derivative of \(P_k\).
+Note that we have
+\[
+  P_k'(z; \delta) = \delta\big(\tilde x^T \tilde x z - \tilde r^T \tilde x\big) + J'_k(z; \delta)
+\]
+since \(\lVert \tilde{r} - \tilde{x}z\rVert_2^2\) is differentiable.
+
+\mathurin{One key aspect of such updates that for me deserves to be emphasized: the clusters will almost all remain the same: they can only change order, or two of them merge.}

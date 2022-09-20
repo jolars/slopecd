@@ -36,6 +36,16 @@ def lambda_sequence(X, y, fit_intercept, reg=0.1, q=0.1):
 
 
 @njit
+def sl1_norm(beta, lambdas):
+    return np.sum(lambdas * np.sort(np.abs(beta))[::-1])
+
+
+@njit
+def primal(beta, X, y, lambdas):
+    return (0.5 / len(y)) * norm(y - X @ beta) ** 2 + sl1_norm(beta, lambdas)
+
+
+@njit
 def prox_slope(beta, lambdas):
     """Compute the sorted L1 proximal operator.
 

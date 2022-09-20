@@ -11,9 +11,9 @@ example of this operator for a particular \(\beta\).
     \toprule
     \(i\) & \(\beta_i\) & \((i)\) & \((i)^-\) \\
     \midrule
-    1     & 0.5       & 2              & 3                \\
-    2     & -5        & 3              & 1                \\
-    3     & 4         & 1              & 2                \\
+    1     & 0.5         & 2       & 3         \\
+    2     & -5          & 3       & 1         \\
+    3     & 4           & 1       & 2         \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -22,12 +22,26 @@ This means that
   J(\beta) = \sum_{j=1}^p \lambda_j |\beta_{(j)}|
   = \sum_{j=1}^p \lambda_{(j)^-}|\beta_j|.
 \]
-\mathurin{For a fixed $\beta$}, let \(\mathcal{C}_1, \mathcal{C}_2\, \dots, \mathcal{C}_m\) and \(c_1,
-c_2, \dots, c_m\) be the indices and coefficients, respectively, for the \(m\)
-clusters of $\beta$ such that
-\[
-  \mathcal{C}_i = \{j : |\beta_j| = c_i\} \quad \text{and} \quad
+Sorted $\ell_1$ norm penalization produces vectors with clustered coefficients.
+To this end, for a fixed $\beta$ such that $|\beta_j|$ takes $m$ values, we introduce \(\mathcal{C}_1, \mathcal{C}_2\, \dots, \mathcal{C}_m\) and \(c_1,
+c_2, \dots, c_m\) for the indices and coefficients respectively of the \(m\)
+clusters of $\beta$, such that
+% \[
+  $
+  \mathcal{C}_i = \{j : |\beta_j| = c_i\} \text{ and }%\quad \text{and} \quad
   c_1 > c_2 > \cdots > c_m \geq 0.
-\]
-We also let \(\bar{\mathcal{C}}\) note the complement of \(\mathcal{C}\).
+  $
+% \]
+We also let \(\bar{\mathcal{C}}\) denote the complement of \(\mathcal{C}\).
+Let $(e_i)_{i \in [d]}$ denote the canonical basis of $\bbR^d$.
+Finally, let $\sign(x) = x / |x|$ (with the convention 0/0 = 1) be the scalar sign, that acts entrywise on vectors.
+% \[
+%   \sign(x) =
+%   \begin{cases}
+%     \phantom{-}1 & \text{if } x \geq 0 ,\\
+%     -1           & \text{if } x < 0,
+%   \end{cases}
+% \]
+% and allow \(\sign(x)\) to be overloaded for vectors.
+
 

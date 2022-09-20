@@ -1,0 +1,37 @@
+\PassOptionsToPackage{unicode,pdfusetitle}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+
+\documentclass[english,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+
+\include{preamble}
+
+
+\title{Coordinate Descent for SLOPE}
+% \author[1,*]{}
+% \affil[1]{Department of Statistics, Lund University}
+% \affil[*]{Corresponding author: \href{}{}}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+  \input{abstract}
+\end{abstract}
+
+\input{introduction}
+\input{notation}
+\input{theory}
+\input{experiments}
+\input{discussion}
+
+\printbibliography
+
+\appendix
+
+\input{proofs}
+
+\end{document}

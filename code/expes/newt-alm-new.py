@@ -22,7 +22,7 @@ p = 100
 rho = 0.3
 seed = 14
 
-dataset = "bcTCGA"
+dataset = "Rhee2006"
 if dataset == "simulated":
     X, y, _ = make_correlated_data(
         n_samples=n, n_features=p, random_state=seed, rho=rho
@@ -36,29 +36,29 @@ A = X.copy()
 b = np.expand_dims(y, -1)
 
 randnorm = stats.norm(loc=0, scale=1)
-q = 0.2
-reg = 0.2
-fit_intercept = False
+q = 0.05
+reg = 0.01
+fit_intercept = True
 
 max_epochs = 10_00
 gap_freq = 10
-tol = 1e-6
+tol = 1e-8
 verbose = True
 solver = "standard"
 
 lambdas = lambda_sequence(X, y, fit_intercept, reg, q)
 
-w_newt2, intercept_newt2, primals_newt2, gaps_newt2, times_newt2 = newt_alm2(
-    X,
-    y,
-    lambdas,
-    fit_intercept=fit_intercept,
-    preposs=False,
-    gap_freq=1,
-    max_epochs=max_epochs,
-    tol=tol,
-    verbose=verbose,
-)
+# w_newt2, intercept_newt2, primals_newt2, gaps_newt2, times_newt2 = newt_alm2(
+#     X,
+#     y,
+#     lambdas,
+#     fit_intercept=fit_intercept,
+#     preposs=False,
+#     gap_freq=1,
+#     max_epochs=max_epochs,
+#     tol=tol,
+#     verbose=verbose,
+# )
 
 w_cd, intercept_primals, primals_cd, gaps_cd, times_cd = hybrid_cd(
     X,
@@ -81,6 +81,7 @@ w_newt, intercept_newt, primals_newt, gaps_newt, times_newt = newt_alm(
     solver=solver,
     tol=tol,
     verbose=verbose,
+    local_param={"epsilon": 1.0, "delta": 1.0, "delta_prime": 1.0, "sigma": 0.001}
 )
 
 title = f"{dataset}, n: {n}, p: {p}, q: {q}, reg: {reg}"
@@ -92,15 +93,19 @@ plt.clf()
 plt.title(title)
 
 primals_newt = np.array(primals_newt)
-primals_newt2 = np.array(primals_newt2)
+# primals_newt2 = np.array(primals_newt2)
 primals_cd = np.array(primals_cd)
 
-p_star = min(np.min(primals_newt), np.min(primals_newt2), np.min(primals_cd))
+p_star = min(
+    np.min(primals_newt),
+    # np.min(primals_newt2),
+    np.min(primals_cd)
+)
 
 plt.semilogy(times_newt, primals_newt - p_star, c=cm(1), label="primal subopt NEWT-ALM")
-plt.semilogy(
-    times_newt2, primals_newt2 - p_star, c=cm(2), label="primal subopt NEWT-ALM (new)"
-)
+# plt.semilogy(
+#     times_newt2, primals_newt2 - p_star, c=cm(2), label="primal subopt NEWT-ALM (new)"
+# )
 plt.semilogy(times_cd, primals_cd - p_star, c=cm(3), label="primal subopt cd")
 
 plt.legend()

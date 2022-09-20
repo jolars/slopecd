@@ -243,6 +243,13 @@ def newt_alm(
 
     m, n = A.shape
 
+    if sparse.issparse(A):
+        L = sparse.linalg.svds(A, k=1)[1][0] ** 2
+    else:
+        L = norm(A, ord=2) ** 2
+
+    local_param["sigma"] = min(local_param["sigma"], 1.0)
+
     if fit_intercept:
         A = add_intercept_column(A)
         n += 1

@@ -79,7 +79,6 @@ Next, let $\varepsilon_c$ be an arbitrary positive value such that
   \varepsilon_c < \big| c_i - c_j\big| , \quad \forall\, i \neq j \text{ and } \varepsilon_c < c_m \text{ if } c_m \neq 0 \, .
 \end{equation}
 Then for \(\delta \in \{-1, 1\}\) we have
-\mm{Issue if $z$ is 0 in first equation? for $h \neq 0$ and $h = 0$ the argument of the limit jumps}
 \begin{equation}
   \begin{aligned}
     \lim_{h \downarrow 0} C(z + h\delta)
@@ -95,12 +94,12 @@ depends only on \(\delta\) as \(h\) tends to~\(0\).
   As consequence of the definition of \(\varepsilon_c\), the order permutations
   for \(\beta(z)\) and \(\beta(z + {\varepsilon_c} \delta)\) differ only for a
   subset of the permutation vectors.
-  The permutation for \(\beta(h\delta)\) is \mm{for $h \neq 0$, but if equal to 0, two clusters merge}
+  The permutation for \(\beta(h\delta)\) is %\mm{for $h \neq 0$, but if equal to 0, two clusters merge}
   \begin{equation*}
     \begin{cases}
-      \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \mathcal{C}_m, C({\varepsilon_c}\delta)
+      \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \mathcal{C}_m, C(\varepsilon_c)
        & \text{if } c_m > 0 \, , \\ % \text{ and } \delta \neq 0 \, , \\
-      \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, C({\varepsilon_c}\delta), \mathcal{C}_m
+      \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, C(\varepsilon_c), \mathcal{C}_m
        & \text{if } c_m = 0 \, . %\text{ and } \delta \neq 0 \, . \\
       % \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \underbrace{\mathcal{C}_k \cup \mathcal{C}_m}_{C({\varepsilon_c}\delta)} & \text{if } c_m = 0 \text{ and } \delta = 0.    \\
     \end{cases}
@@ -153,7 +152,7 @@ derivative and the objective function.
   \caption{%
   The function \(P_k(z)\) and its directional derivative \(P'_k(z; \delta)\) for
   an example with \(\beta = [-3.0, 1.0, 3.0, 2.0]^T\), \(k = 1\), and consequently
-  \(c^{\setminus k} = [2, 1]^T\). The solution corresponds to the value of \(z\) for
+  \(c^{\setminus k} = [2, 1]^T\). The solution of \Cref{pb:cluster-problem} is the value of \(z\) for
       which \(P'_k(z; \delta) \geq 0 \) for \(\delta \in \{-1, 1\}\), which holds only
       at \(z = 2\), which must therefore be the solution.
     }
@@ -169,22 +168,20 @@ Using the directional derivative, we can introduce the SLOPE thresholding operat
   \[
     \begin{multlined}
       T_k(\gamma; \omega, c, \lambda) = \\
-      % \begin{cases}
-      %   0                                                                                                                                                   & \text{if } |\gamma| \leq \smashoperator{\sum_{j \in C({\varepsilon_c})}} \lambda_{(j)^-_{\varepsilon_c}},                                                                                                                                                        \\
-      %   \sign(\gamma)c_i                                                                                                                                    & \text{if } \omega c_i + \smashoperator{\sum_{j \in C(c_i - {\varepsilon_c})}} \lambda_{(j)^-_{c_i - {\varepsilon_c}}} \leq |\gamma| \leq \omega c_i + \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}},             \\
-      %   \frac{\sign(\gamma)}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} \bigg) & \text{if } \omega c_i + \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} < |\gamma| < \omega c_{i - 1} + \smashoperator{\sum_{j \in C(c_{i - 1} - {\varepsilon_c})}} \lambda_{(j)^-_{c_{i - 1} - {\varepsilon_c}}}, \\
-      %   \frac{\sign(\gamma)}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_1 + {\varepsilon_c})}} \lambda_{(j)^-_{c_1 + {\varepsilon_c}}} \bigg) & \text{if } |\gamma| \geq \omega c_1 + \smashoperator{\sum_{j \in C(c_1 + {\varepsilon_c})}} \lambda_{(j)^-_{c_1 + {\varepsilon_c}}}.
-      % \end{cases}
       \begin{cases}
-        0                                                                            & \text{if } |\gamma| \leq S(\varepsilon_c),               \\
-        \sign(\gamma)c_i                                                             & \text{if } \omega c_i + S(c_i - \varepsilon_c)           \\
-                                                                                     & \quad \leq |\gamma| \leq                                 \\
-                                                                                     & \quad \omega c_i + S(c_i + \varepsilon_c),               \\
-        \frac{\sign(\gamma)}{\omega} \big( |\gamma| - S(c_i + \varepsilon_c) \big)   & \text{if } \omega c_i + S(c_i + {\varepsilon_c})         \\
-                                                                                     & \quad < |\gamma| <                                       \\
-                                                                                     & \quad \omega c_{i - 1} + S(c_{i - 1} - {\varepsilon_c}), \\
-        \frac{\sign(\gamma)}{\omega} \big( |\gamma| - S(c_1 + {\varepsilon_c}) \big) & \text{if } |\gamma| \geq                                 \\
-                                                                                     & \quad \omega c_1 + S(c_1 + {\varepsilon_c}).
+        0
+            & \text{if } |\gamma| \leq S(\varepsilon_c),               \\
+        \sign(\gamma)c_i
+            & \text{if } \omega c_i + S(c_i - \varepsilon_c)           \\
+            & \quad \leq |\gamma| \leq                                 \\
+            & \quad \omega c_i + S(c_i + \varepsilon_c),               \\
+        \frac{\sign(\gamma)}{\omega} \big( |\gamma| - S(c_i + \varepsilon_c) \big)
+            & \text{if } \omega c_i + S(c_i + {\varepsilon_c})         \\
+            & \quad < |\gamma| <                                       \\
+            & \quad \omega c_{i - 1} + S(c_{i - 1} - {\varepsilon_c}), \\
+        \frac{\sign(\gamma)}{\omega} \big( |\gamma| - S(c_1 + {\varepsilon_c}) \big)
+            & \text{if } |\gamma| \geq                                 \\
+            & \quad \omega c_1 + S(c_1 + {\varepsilon_c}).
       \end{cases}
     \end{multlined}
   \]

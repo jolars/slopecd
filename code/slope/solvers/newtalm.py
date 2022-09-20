@@ -150,9 +150,15 @@ def check_convegence(x_diff_norm, nabla_psi, epsilon_k, sigma, delta_k, delta_pr
     # check for convergence
     norm_nabla_psi = norm(nabla_psi)
 
-    crit_A = norm_nabla_psi <= epsilon_k / np.sqrt(sigma)
-    crit_B1 = norm_nabla_psi <= (delta_k / np.sqrt(sigma)) * x_diff_norm
-    crit_B2 = norm_nabla_psi <= (delta_prime_k / sigma) * x_diff_norm
+    eps = np.sqrt(np.finfo(float).eps)
+
+    a = epsilon_k / np.sqrt(sigma) + eps
+    b1 = (delta_k / np.sqrt(sigma)) * x_diff_norm + eps
+    b2 = (delta_prime_k / sigma) * x_diff_norm + eps
+
+    crit_A = norm_nabla_psi <= a
+    crit_B1 = norm_nabla_psi <= b1
+    crit_B2 = norm_nabla_psi <= b2
 
     return crit_A and crit_B1 and crit_B2
 
@@ -234,6 +240,13 @@ def newt_alm(
         raise ValueError("`solver` must be one of auto, standard, woodbury, and cg")
 
     m, n = A.shape
+
+    if sparse.issparse(A):
+        L = sparse.linalg.svds(A, k=1)[1][0] ** 2
+    else:
+        L = norm(A, ord=2) ** 2
+
+    local_param["sigma"] = min(local_param["sigma"], 1.0)
 
     if fit_intercept:
         A = add_intercept_column(A)

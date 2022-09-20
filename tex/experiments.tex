@@ -2,7 +2,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 The proposed algorithm is part of a python package relying on numpy and numba~\parencite{harris2020,lam2015}.
-It will be made open-source upon publication. To compare its efficiency, we used several public datasets described in \cref{table:datasets}.
+It will be made open-source upon publication. To compare its efficiency, we used several public datasets described in \Cref{table:datasets}.
 We performed an extensive benchmark with the following competitors:
 \begin{itemize}[noitemsep]
   \item Alternating Direction Method of Multipliers (\texttt{admm})~\parencite{boyd2010}
@@ -12,7 +12,7 @@ We performed an extensive benchmark with the following competitors:
   \item Semismooth Newton-Based Augmented Lagrangian (\texttt{newt-alt})~\parencite{Ziyan2019}
   \item The Oracle solver (\texttt{oracle}) uses the clusters obtained via another
         solver to compute coordinate descent updates from the known solver.
-  \item The Hybrid (ours) (\texttt{hybrid}) solver (see \cref{alg:hybrid}) combines proximal gradient descent
+  \item The Hybrid (ours) (\texttt{hybrid}) solver (see \Cref{alg:hybrid}) combines proximal gradient descent
         and coordinate descent to overcome the non-separability of the SLOPE problem.
 \end{itemize}
 

@@ -6,13 +6,11 @@
 \label{sec:coordinate-updates}
 
 Proximal coordinate descent cannot be applied to \Cref{pb:slope} because it is not separable.
-However, if the clusters $\mathcal{C}_1^*, \ldots, \mathcal{C}_{m^*}^*$ of the solution $\beta^*$ were known together with their signs, then the values $c_1^*, \ldots, c_{\hat{m}}^*$ taken by $\beta^*$ on the clusters could be equivalently computed by solving:
-\mm{TODO MM: put in prop and write proof?}
+However, if the clusters $\mathcal{C}_1^*, \ldots, \mathcal{C}_{m^*}^*$ of the solution $\beta^*$ were known together with their signs, then the values $c_1^*, \ldots, c_{m^*}^*$ taken by $\beta^*$ on the clusters could be equivalently computed by solving:
 \begin{problem}
 \min_{z \in \bbR^{m^*}}
-\ell \left(\sum_{i=1}^{m^*} \sum_{j \in \mathcal{C}_i} z_i \sign(\beta_j^*) e_j \right)
-%\tilde{x}_{\mathcal{C}_i} z_i \right)
-+ \sum_{i=1}^{m^*} | z_i | \sum_{\lambda \in \lambda^{\mathcal{C}_i^*}} \lambda \, ,
+\ell \left(\sum_{i=1}^{m^*} \sum_{j \in \mathcal{C}_i^*} z_i \sign(\beta_j^*) e_j \right)
++ \sum_{i=1}^{m^*} | z_i | \sum_{j \in \mathcal{C}_i^*} \lambda_j \, ,
 \end{problem}
 % \klopfe{Clarify what $F$ is here}
 % MM: removed F and used the form (ell(beta) instead of F(Xbeta)) : more general
@@ -36,9 +34,10 @@ To this end, we let
 \end{equation}
 % This means that \(\beta(z)\) corresponds to a version of \(\beta\) with a
 % coordinate update for the \(k\)-th cluster.
-Minimizing the objective in this directions amounts to solving the following
+Minimizing the objective in this direction amounts to solving the following
 one-dimensional problem:
 
+\mm{Above F has been replaced by $\ell$, OK to change everywhere?}
 \begin{problem}
 \label{pb:cluster-problem}
 \min_{z \in \mathbb{R}} \Big(
@@ -57,7 +56,8 @@ The optimality condition for \Cref{pb:cluster-problem} is
   % P_k'(z; \delta) \geq 0,
   G'(z; \delta) \geq 0,
 \]
-where $G'(z; \delta) $ is the directional derivative in the direction $\delta$.
+\mm{above, add: $\forall \delta$ or $\forall \delta \in \{-1, 1\}$ ?}
+where $G'(z; \delta) $ is the directional derivative of $G$ in the direction $\delta$.
 Since \(F\) is differentiable we have
 \[
   G'(z; \delta)  = \delta \nabla F(\beta(z)) + \phi'(z; \delta) \, ,
@@ -68,31 +68,34 @@ where \(\phi'(z; \delta)\) is the directional derivative of $\phi$.
 Throughout the rest of this section we derive the solution to \eqref{pb:cluster-problem}.
 To do so, we will introduce the directional derivative for the
 sorted \(\ell_1\) norm with respect to the coefficient of the \(k\)-th cluster.
-First, let \(C(z)\) be a function that returns the cluster corresponding to \(z\), that is
+First, let \(C(z)\) be the function that returns the cluster of $\beta(z)$ corresponding to \(z\), that is
 \[
-  C(z) = \{j : |\beta(z)_j| = z\}.
+  C(z) = \{j : |\beta(z)_j| = z\} \,.
 \]
+\mm{add remark: it always contains $\mathcal{C}_k$, but it can contains mor if $z$ is equal to one of the other $c_i$'s ?}
 Next, let $\varepsilon_c$ be an arbitrary positive value such that
 \begin{equation}
   \label{eq:epsilon-c}
   \varepsilon_c < \big| c_i - c_j\big| , \quad \forall\, i \neq j \text{ and } \varepsilon_c < c_m \text{ if } c_m \neq 0 \, .
 \end{equation}
-% For a \({\varepsilon_c}\) and
 Then for \(\delta \in \{-1, 1\}\) we have
+\mm{Issue if $z$ is 0 in first equation? for $h \neq 0$ and $h = 0$ the argument of the limit jumps}
 \begin{equation}
   \begin{aligned}
-    \lim_{h \downarrow 0} C(z + h\delta)                & = C(z + {\varepsilon_c} \delta),               \\
-    \lim_{h \downarrow 0} \lambda_{(i)^-_{z + h\delta}} & = \lambda_{(i)^-_{z + {\varepsilon_c}\delta}}.
+    \lim_{h \downarrow 0} C(z + h\delta)
+          & = C(z + {\varepsilon_c} \delta) \, ,  \\
+    \lim_{h \downarrow 0} \lambda_{(i)^-_{z + h\delta}}
+          & = \lambda_{(i)^-_{z + {\varepsilon_c}\delta}} \, .
   \end{aligned}
 \end{equation}
+\mm{nitpick: permutations are not unique because of potential ties, so the second limit may not be true if ties are not handled consistently. We can say when we introduce the sorting that we break ties by picking the lowest index}
 In other words, the order permutation corresponding to \(\beta(z + h\delta)\)
 depends only on \(\delta\) as \(h\) tends to~\(0\).
 \begin{remark}
   As consequence of the definition of \(\varepsilon_c\), the order permutations
   for \(\beta(z)\) and \(\beta(z + {\varepsilon_c} \delta)\) differ only for a
   subset of the permutation vectors.
-  The permutation for \(\beta(h\delta)\)
-  corresponds to
+  The permutation for \(\beta(h\delta)\) is \mm{for $h \neq 0$, but if equal to 0, two clusters merge}
   \begin{equation*}
     \begin{cases}
       \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \mathcal{C}_m, C({\varepsilon_c}\delta)
@@ -110,6 +113,7 @@ depends only on \(\delta\) as \(h\) tends to~\(0\).
       % \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \underbrace{\mathcal{C}_i \cup \mathcal{C}_k}_{C(c_i + {\varepsilon_c}\delta)}, \dots, \mathcal{C}_m & \text{if } \delta = 0.  \\
     \end{cases}
   \]
+  \mm{I don't get why $\mathcal{C_k}$ appears with $C$, isn't it contained in $C$ ?}
 \end{remark}
 %, defined as
 % \(c^{(k)} = \{c_1, c_2, \dots, c_m\} \setminus c_k\), such that
@@ -125,7 +129,7 @@ We are now ready to state the directional derivative of $\phi$. % \(J_k\).
 
 \begin{theorem}\label{thm:sl1-directional-derivative}
   Let \(c^{\setminus k}\) be the \(m - 1\) length version of $c$ where the $k$-th coordinate has been removed: $c^{\setminus k} = (c_1, \ldots c_{k-1}, c_{k+1}, \ldots, c_m)$.
-  Let \({\varepsilon_c}\) defined as in \eqref{eq:epsilon-c}.
+  Let \({\varepsilon_c} > 0\) satisfying \eqref{eq:epsilon-c}.
   The directional derivative of the partial sorted $\ell_1$ norm with respect to the $k$-th cluster \(\phi\), in the direction \(\delta\) is
   \[
     \phi'(z; \delta) =
@@ -156,7 +160,7 @@ derivative and the objective function.
   \label{fig:directional-derivative}
 \end{figure}
 
-We are now ready to present the SLOPE thresholding operator.
+Using the directional derivative, we can introduce the SLOPE thresholding operator.
 
 \begin{theorem}[The SLOPE Thresholding Operator]
   \label{thm:thresholding-operator}
@@ -299,7 +303,7 @@ Hence the idea to alternate, PGD and PCD step to take advantage of the speed of 
       \(\tilde r_k \gets y - X_{\widebar{\mathcal{C}}_k}\beta_{\widebar{\mathcal{C}}_k}\)
 
       % \(\gamma \gets \tilde{r}^T \tilde{x}_k\)
-      
+
       % \(\omega \gets \tilde{x}_k^T \tilde{x}_k\)
 
       \(\beta \gets T(\tilde{r}^T \tilde{x}_k; \tilde{x}_k^T \tilde{x}_k, c^{\setminus k}, \lambda)\)

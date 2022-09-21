@@ -2,7 +2,7 @@
 
 \subsection{Proof of \Cref{thm:sl1-directional-derivative}}
 
-\begin{proof}
+\begin{proof}\label{app:proof_directional_derivative}
   By the definition of the directional derivative,
   \begin{align}
     \phi'(z; \delta)
@@ -28,7 +28,16 @@
   We have the following cases to consider: \(|z| \in c^{(k)}\),
   \(|z| = 0\), and \(|z| \notin \{0\} \cup c^{(k)}\).
 
-  Starting with\(|z| = c_i^{(k)}\), note that we have,
+
+  Let us first consider the case
+  $z \neq 0$, $z \neq c_i$ for all $i \neq k$.
+  Here since \(C(z + \delta h) = C(z)\) for $h$ small enough,
+  %  has the directional derivative
+  % \[
+  %   J_k'(z; \delta) = \delta \sign(z) \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}.
+  % \]
+
+  Let us now treat the case \(|z| = c_i^{(k)}\), note that we have,
   as a result of the definition of
   \({\varepsilon_c}\), the following identities:
   \begin{align*}
@@ -134,13 +143,6 @@
     = |\delta|\smashoperator{\sum_{j \in C({\varepsilon_c}\delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}
     = \smashoperator{\sum_{j \in C(0)}} \lambda_{(j)^-_{0}}.
   \end{equation*}
-
-  Finally, note that \(J_k\) is differentiable in every other case, i.e.
-  \(|z| \notin \{0, \{c_i^{(k)}\}_{i=1}^{m-1}\}\). Here since \(C(z +
-  {\varepsilon_c}\delta) = C(z)\), has the directional derivative
-  \[
-    J_k'(z; \delta) = \delta \sign(z) \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}.
-  \]
 \end{proof}
 
 \subsection{Proof of \Cref{thm:thresholding-operator}}
@@ -217,8 +219,8 @@
   \]
   since \(G(z) = P\big(\beta(z)\big)\).
 
-  Moreover, for a sequence of iterates of the proximal gradient descent step, 
-  \(\beta^{(v)}, \beta^{(2v)}, \dots, \beta^{(\lfloor k / v \rfloor)}\), 
+  Moreover, for a sequence of iterates of the proximal gradient descent step,
+  \(\beta^{(v)}, \beta^{(2v)}, \dots, \beta^{(\lfloor k / v \rfloor)}\),
   we know from~\textcite[Theorem 3.1]{beck2009} that it holds that
   \[
     P(\beta^{(\lfloor k / v \rfloor)}) - P(\beta^*)

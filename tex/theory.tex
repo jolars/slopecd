@@ -169,28 +169,33 @@ We can now state the directional derivative of $\phi$. % \(J_k\).
     \end{cases}
   \]
 \end{theorem}
+The proof is in \Cref{app:proof_directional_slope}.
 
-\begin{proof}
-  Let $z$ such that $|z|$ is not one of the $c_i$'s and $z \neq 0$.
-  Then, for any $h$ smaller that $\dist(z, \{c_i\} \cup \{0\})$, the permutation for $z$, $z - h$ and $z + h$ are all equal to:
-  \begin{equation*}
-    \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \mathcal{C}_i, \mathcal{C}_k, \mathcal{C}_{i+1}, \dots, \mathcal{C}_m
-  \end{equation*}
+% \begin{proof}
+%   Let $z$ such that $|z|$ is not one of the $c_i$'s and $z \neq 0$.
+%   Then, for any $h$ smaller that $\dist(z, \{c_i\} \cup \{0\})$, the permutation for $z$, $z - h$ and $z + h$ are all equal to:
+%   \begin{equation*}
+%     \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \mathcal{C}_i, \mathcal{C}_k, \mathcal{C}_{i+1}, \dots, \mathcal{C}_m
+%   \end{equation*}
+%   Thus
+%   % \begin{align}
+%   %   \phi(z + h) - phi (z) = \sum_{j=1}^p |\beta(z + h)
+%   % \end{align}
 
 
-  If $z = 0$, then for $h$ small enough, $C(h)$ is the last/smallest cluster.
+%   If $z = 0$, then for $h$ small enough, $C(h)$ is the last/smallest cluster.
 
 
-  Finally if $z = c_i$, for $h$ small enough the permutation for $\beta(z + h)$ is:
-  \begin{equation}
-    \mathcal{C}_1, \dots, \mathcal{C}_k, \mathcal{C}_{i}, \dots, \mathcal{C}_m
-  \end{equation}
-  while the one for $\beta(z - h)$ is:
-  \begin{equation}
-    \mathcal{C}_1, \dots, \mathcal{C}_{i}, \mathcal{C}_k, \dots, \mathcal{C}_m \, .
-  \end{equation}
+%   Finally if $z = c_i$, for $h$ small enough the permutation for $\beta(z + h)$ is:
+%   \begin{equation}
+%     \mathcal{C}_1, \dots, \mathcal{C}_k, \mathcal{C}_{i}, \dots, \mathcal{C}_m
+%   \end{equation}
+%   while the one for $\beta(z - h)$ is:
+%   \begin{equation}
+%     \mathcal{C}_1, \dots, \mathcal{C}_{i}, \mathcal{C}_k, \dots, \mathcal{C}_m \, .
+%   \end{equation}
 
-\end{proof}
+% \end{proof}
 
 In \Cref{fig:directional-derivative}, we show an example of the directional
 derivative and the objective function.

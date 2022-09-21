@@ -109,10 +109,7 @@ k = 0
 delta = 1
 
 c, c_ptr, c_ind, c_perm, n_c = get_clusters(beta)
-
 lambdas = lambda_sequence(X, y, fit_intercept, reg, q)
-
-# zs = np.sort(np.hstack(([0.0], c[:n_c], np.linspace(-6, 6, 100))))
 
 eps = 1e-6
 
@@ -122,69 +119,15 @@ c_k = np.delete(c[:n_c], k)
 ind = c_ind[c_ptr[k]: c_ptr[k + 1]]
 
 
-def plot_dirder(delta, ax):
-    eps = 1e-6
-
-    x0 = np.hstack((-np.max(c) - 0.5, -c_k, [0.0], c_k[::-1]))
-    x1 = np.hstack((-c_k, [0.0], c_k[::-1], np.max(c) + 0.5))
-
-    if delta > 0:
-        starts = x0
-        ends = x1 - eps
-    else:
-        starts = x0 + eps
-        ends = x1
-
-    dir_der_starts = [
-        directional_derivative(z_i, delta, k, beta, lambdas) for z_i in starts
-    ]
-    dir_der_ends = [
-        directional_derivative(z_i, delta, k, beta, lambdas) for z_i in ends
-    ]
-
-    if delta == 1:
-        linecolor = "tab:orange"
-        label = r"$\delta = 1$"
-    else:
-        linecolor = "tab:blue"
-        label = r"$\delta = -1$"
-
-    for i in range(len(ends)):
-        x = (starts[i], ends[i])
-        y = (dir_der_starts[i], dir_der_ends[i])
-        ax.plot(x, y, color=linecolor, linestyle="-")
-
-    ax.plot(
-        starts[1:],
-        dir_der_starts[1:],
-        marker="o",
-        linestyle="",
-        markersize=5,
-        color=linecolor,
-        markerfacecolor=linecolor if delta == 1 else "white",
-    )
-    ax.plot(
-        ends[:-1],
-        dir_der_ends[:-1],
-        marker="o",
-        linestyle="",
-        markersize=5,
-        color=linecolor,
-        markerfacecolor="white" if delta == 1 else linecolor,
-    )
-
-
 plt.close("all")
 
 plt.rcParams["text.usetex"] = True
 
-fig, axs = plt.subplots(
-    2,
+fig, ax = plt.subplots(
     1,
-    figsize=(figspec.HALF_WIDTH, figspec.HALF_WIDTH * 1.5),
+    1,
+    figsize=(figspec.HALF_WIDTH, figspec.HALF_WIDTH * 0.6),
     constrained_layout=True,
-    sharex=True,
-    gridspec_kw=dict(height_ratios=(0.3, 0.7)),
 )
 
 x_min = -max(c) - 0.5
@@ -192,12 +135,6 @@ x_max = max(c) + 0.5
 x_margin = (x_max - x_min) * plt.margins()[1]
 x_lim = (x_min - x_margin, x_max + x_margin)
 
-plot_dirder(1, axs[1])
-plot_dirder(-1, axs[1])
-
-x_lim = axs[0].get_xlim()
-
-axs[1].hlines(0.0, x_lim[0], x_lim[1], color="grey", linestyle="dashed")
 
 legend_symbols = [
     Line2D([0], [0], color=c, linestyle="-", marker="o", markerfacecolor=c)
@@ -205,28 +142,37 @@ legend_symbols = [
 ]
 legend_labels = [r"$1$", r"$-1$"]
 
-axs[1].set_ylabel(r"$G'(z)$")
-axs[1].set_xlabel(r"$z$")
-axs[1].legend(legend_symbols, legend_labels, title=r"$\delta$")
 
 zs = np.sort(np.hstack((-c_k, [0.0], c_k, np.linspace(x_lim[0], x_lim[1], 100))))
 
-obj = [primal(beta_update(beta, z, ind), X, y, lambdas) for z in zs]
+obj = [sl1_norm(beta_update(beta, z, ind), lambdas) for z in zs]
 
 ps = np.hstack((-c_k, [0.0], c_k[::-1]))
+ax.plot(zs, obj, color="black")
+ax.set_ylabel(r"$\phi(z)$")
 
-axs[0].vlines(ps, np.min(obj), np.max(obj), color="darkgrey", linestyle="dotted")
-axs[0].plot(zs, obj, color="black")
-axs[0].set_ylabel(r"$G(z)$")
-# axs[0].set_xlabel(r"$z$")
+# ax.set_xlabel(r"$z$")
 
-axs[1].vlines(ps, *axs[1].get_ylim(), color="darkgrey", linestyle="dotted")
+ax.vlines(ps, *ax.get_ylim(), color="darkgrey", linestyle="dotted")
+
+ax.set_xlim(*x_lim)
+old_labels = ax.get_xticklabels()
+ax.set_xticks(np.hstack([ax.get_xticks(), -c_k, c_k]))
+ax.set_xticklabels(
+    np.hstack([old_labels,
+               [f"$-c_{k}$" for k in range(2, 4)],
+               [f"$c_{k}$" for k in range(2, 4)]
+               ])
+)
 
 plt.show(block=False)
 
 
-savefig = False
+savefig = True
 if savefig:
     plt.savefig(
-        "../figures/directional-derivative.pdf", bbox_inches="tight", pad_inches=0.01
+        "../../figures/partial_slope.pdf", bbox_inches="tight", pad_inches=0.01
+    )
+    plt.savefig(
+        "../../figures/partial_slope.svg", bbox_inches="tight", pad_inches=0.01
     )

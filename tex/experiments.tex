@@ -46,13 +46,19 @@ The repository to reproduce the benchmark is available at XXX.
 The design matrix $X$ is simulated with correlation between features $j$ and $j'$ equal to $\rho^{|j-j'|}$ where $\rho$ is a parameter that can be chosen in $[0, 1[$.
 The true regression vector $\beta^\star$ contains a certain number of non-zero entries that are obtained by simulating a gaussian distribution with zero mean and unit variance.
 The observations are equal to $y=X\beta^\star + \varepsilon$ where $\varepsilon$ is a centered gaussian distribution with variance such that $\lVert X\beta^\star\rVert / \lVert \varepsilon \rVert = 3$.
-
-\subsection{Real data}
-\klopfe{Do we keep the three different values for $q$ that changes the sequence of lambas?}
 \begin{figure*}[htb]
   \centering
-  \includegraphics[scale=0.47]{Rhee2006_legend.pdf}
-  \includegraphics[scale=0.5]{Rhee2006.pdf}
-  \caption{Benchmark on the Rhee2006 dataset.}
-  \label{fig:Rhee2006}
+  \includegraphics[scale=0.47]{simulated_legend.pdf}
+  \includegraphics[scale=0.5]{simulated.pdf}
+  \caption{Benchmark on simulated datasets.}
+  \label{fig:simaulted}
+\end{figure*}
+
+\subsection{Real data}
+\begin{figure*}[htb]
+  \centering
+  \includegraphics[scale=0.47]{real_legend.pdf}
+  \includegraphics[scale=0.5]{real.pdf}
+  \caption{Benchmark on real datasets.}
+  \label{fig:real}
 \end{figure*}

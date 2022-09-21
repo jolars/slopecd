@@ -6,10 +6,10 @@ In this paper we present a novel numerical algorithm for Sorted L-One Penalized
 Estimation (SLOPE)~\parencite{bogdan2013,bogdan2015,zeng2014ordered}, defined as
 \begin{problem}\label{pb:slope}
   \min_{\beta \in \mathbb{R}^p}
-  P(\beta) = \ell(\beta) + J(\beta)
+  P(\beta) = F(\beta) + J(\beta)
 \end{problem}
 % \mm{TODO change}
-where we take \(\ell\) to be smooth and twice differentiable and
+where we take \(F\) to be smooth and twice differentiable and
 % \mm{to discuss: $L(X\beta)$ doable? + some computation are sepcific to  the quadratic case}
 \begin{equation}
   \label{eq:sorted-l1-norm}
@@ -65,10 +65,6 @@ stuck~(\Cref{fig:naive-cd-stuck}).
   }
   \label{fig:naive-cd-stuck}
 \end{figure}
-
-% The resulting solution \(\hat{\beta}\) has the property that it can cluster the
-% coefficients by their magnitudes, such that \(\mathcal{C}=
-% \{j: |\beta_j|=c\}\) for some \(c\).
 
 In this article we address this problem by introducing a new, highly effective
 algorithm for SLOPE based on a hybrid proximal gradient and coordinate descent

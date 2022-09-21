@@ -37,7 +37,6 @@ To this end, we let
 Minimizing the objective in this direction amounts to solving the following
 one-dimensional problem:
 
-\mm{Above F has been replaced by $\ell$, OK to change everywhere?}
 \begin{problem}
 \label{pb:cluster-problem}
 \min_{z \in \mathbb{R}} \Big(
@@ -82,12 +81,25 @@ Let \(C(z)\) be the function that returns the cluster of $\beta(z)$ correspondin
 \[
   C(z) = \{j : |\beta(z)_j| = z\} \,.
 \]
-Note that, unless $z$ is equal to some $c_i$, $C(z)$ is equal to $\mathcal{C}_k$.
-Next, let $\varepsilon_c$ be an arbitrary positive value such that
-\begin{equation}
-  \label{eq:epsilon-c}
-  \varepsilon_c < \big| c_i - c_j\big| , \quad \forall\, i \neq j \text{ and } \varepsilon_c < c_m \text{ if } c_m \neq 0 \, .
-\end{equation}
+Note that, if $z$ is equal to some $c_i$ then $C(z) = \mathcal{C}_i \cup \mathcal{C}_k$ and otherwise $C(z) = \mathcal{C}_k$.
+
+\begin{remark}
+  Note  that the permutation corresponding to $\beta(z)$ is:
+  \begin{equation*}
+    \begin{cases}
+    \cC_k, \cC_m, \ldots, C_1 \, ,
+        &\text{ if } z \in \left]0, c_m\right[ \, \\
+    \cC_m, \ldots ,\cC_i, \cC_k, \cC_{i-1}, \ldots, C_1 \, ,
+        &\text{ if } z \in \left]c_{i}, c_{i-1} \right[, \, i \in \llbracket 2 , m \rrbracket \, \\
+    \cC_m, \ldots C_1,  \cC_k, \, ,
+        &\text{ if } z \in \left]c_1, +\infty \right[ \, , \\
+    \end{cases}
+  \end{equation*}
+  and that this permutation also reorders $\beta(z \pm h)$ for $z \neq c_i \; (i \neq k)$ and $h$ small enough.
+  The only change in permutation happens when $z = 0$ or $z = c_i \; (i \neq k)$.
+  Finally, the permutations differ between $\beta(z + h)$ and $\beta(z - h)$ for arbitrarily small $h$ if and only if $z = c_i$ and $z \neq 0$.
+\end{remark}
+
 % Then for \(\delta \in \{-1, 1\}\) we have
 % \begin{equation}
 %   \begin{aligned}
@@ -98,32 +110,32 @@ Next, let $\varepsilon_c$ be an arbitrary positive value such that
 %   \end{aligned}
 % \end{equation}
 % \mm{nitpick: permutations are not unique because of potential ties, so the second limit may not be true if ties are not handled consistently. We can say when we introduce the sorting that we break ties by picking the lowest index}
-In other words, the order permutation corresponding to \(\beta(z + h\delta)\)
-depends only on \(\delta\) as \(h\) tends to~\(0\).
-\begin{remark}
-  As consequence of the definition of \(\varepsilon_c\), the order permutations
-  for \(\beta(z)\) and \(\beta(z + {\varepsilon_c} \delta)\) differ only for a
-  subset of the permutation vectors.
-  The permutation for \(\beta(h\delta)\) is %\mm{for $h \neq 0$, but if equal to 0, two clusters merge}
-  \begin{equation*}
-    \begin{cases}
-      \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \mathcal{C}_m, C(\varepsilon_c)
-       & \text{if } c_m > 0 \, , \\ % \text{ and } \delta \neq 0 \, , \\
-      \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, C(\varepsilon_c), \mathcal{C}_m
-       & \text{if } c_m = 0 \, . %\text{ and } \delta \neq 0 \, . \\
-      % \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \underbrace{\mathcal{C}_k \cup \mathcal{C}_m}_{C({\varepsilon_c}\delta)} & \text{if } c_m = 0 \text{ and } \delta = 0.    \\
-    \end{cases}
-  \end{equation*}
-  If \(z \neq 0\), the permutation for \(\beta(z + {\varepsilon_c} \delta)\) corresponds to
-  \[
-    \begin{cases}
-      \splitfrac{\mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, }{C(c_i + {\varepsilon_c}\delta), \mathcal{C}_k, \dots, \mathcal{C}_m} & \text{if } \delta = 1 \,,   \\
-      \splitfrac{\mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots,}{ \mathcal{C}_k, C(c_k + {\varepsilon_c}\delta), \dots, \mathcal{C}_m} & \text{if } \delta = -1 \, . \\
-      % \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \underbrace{\mathcal{C}_i \cup \mathcal{C}_k}_{C(c_i + {\varepsilon_c}\delta)}, \dots, \mathcal{C}_m & \text{if } \delta = 0.  \\
-    \end{cases}
-  \]
-  \mm{I don't get why $\mathcal{C_k}$ appears with $C$, isn't it contained in $C$ ?}
-\end{remark}
+% In other words, the order permutation corresponding to \(\beta(z + h\delta)\)
+% depends only on \(\delta\) as \(h\) tends to~\(0\).
+% \begin{remark}
+%   As consequence of the definition of \(\varepsilon_c\), the order permutations
+%   for \(\beta(z)\) and \(\beta(z + {\varepsilon_c} \delta)\) differ only for a
+%   subset of the permutation vectors.
+%   The permutation for \(\beta(h\delta)\) is %\mm{for $h \neq 0$, but if equal to 0, two clusters merge}
+%   \begin{equation*}
+%     \begin{cases}
+%       \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \mathcal{C}_m, C(\varepsilon_c)
+%        & \text{if } c_m > 0 \, , \\ % \text{ and } \delta \neq 0 \, , \\
+%       \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, C(\varepsilon_c), \mathcal{C}_m
+%        & \text{if } c_m = 0 \, . %\text{ and } \delta \neq 0 \, . \\
+%       % \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \underbrace{\mathcal{C}_k \cup \mathcal{C}_m}_{C({\varepsilon_c}\delta)} & \text{if } c_m = 0 \text{ and } \delta = 0.    \\
+%     \end{cases}
+%   \end{equation*}
+%   If \(z \neq 0\), the permutation for \(\beta(z + {\varepsilon_c} \delta)\) corresponds to
+%   \[
+%     \begin{cases}
+%       \splitfrac{\mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, }{C(c_i + {\varepsilon_c}\delta), \mathcal{C}_k, \dots, \mathcal{C}_m} & \text{if } \delta = 1 \,,   \\
+%       \splitfrac{\mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots,}{ \mathcal{C}_k, C(c_k + {\varepsilon_c}\delta), \dots, \mathcal{C}_m} & \text{if } \delta = -1 \, . \\
+%       % \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \underbrace{\mathcal{C}_i \cup \mathcal{C}_k}_{C(c_i + {\varepsilon_c}\delta)}, \dots, \mathcal{C}_m & \text{if } \delta = 0.  \\
+%     \end{cases}
+%   \]
+%   \mm{I don't get why $\mathcal{C_k}$ appears with $C$, isn't it contained in $C$ ?}
+% \end{remark}
 %, defined as
 % \(c^{(k)} = \{c_1, c_2, \dots, c_m\} \setminus c_k\), such that
 % \[
@@ -134,11 +146,16 @@ depends only on \(\delta\) as \(h\) tends to~\(0\).
 %   \end{cases}
 % \]
 
-We are now ready to state the directional derivative of $\phi$. % \(J_k\).
+We can now state the directional derivative of $\phi$. % \(J_k\).
 
 \begin{theorem}\label{thm:sl1-directional-derivative}
+  Let $\varepsilon_c$ be an arbitrary positive value such that
+  \begin{equation}
+    \label{eq:epsilon-c}
+    \varepsilon_c < \big| c_i - c_j\big| , \quad \forall\, i \neq j \text{ and } \varepsilon_c < c_m \text{ if } c_m \neq 0 \, .
+  \end{equation}
   Let \(c^{\setminus k}\) be the \(m - 1\) length version of $c$ where the $k$-th coordinate has been removed: $c^{\setminus k} = (c_1, \ldots c_{k-1}, c_{k+1}, \ldots, c_m)$.
-  Let \({\varepsilon_c} > 0\) satisfying \eqref{eq:epsilon-c}.
+  % Let \({\varepsilon_c} > 0\) satisfying \eqref{eq:epsilon-c}.
   The directional derivative of the partial sorted $\ell_1$ norm with respect to the $k$-th cluster \(\phi\), in the direction \(\delta\) is
   \[
     \phi'(z; \delta) =
@@ -370,7 +387,7 @@ a two-dimensional SLOPE problem.
   Let \(\beta^{(1)}, \beta^{(2)}, \dots, \beta^{(k)}\) be a sequence of
   iterates generated by \Cref{alg:hybrid}, \(1/v\) the frequency of proximal gradient
   descent iterates in \Cref{alg:hybrid}, and \(L\) the Lipschitz constant of
-  \(\nabla \ell\). Then
+  \(\nabla F\). Then
   \[
     P(\beta^{(k)}) - P(\beta^*) \leq \frac{L \lVert \beta^{(0)} - \beta^* \rVert_2^2}{2\lfloor k/v \rfloor }\, ,
   \]

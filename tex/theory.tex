@@ -60,7 +60,7 @@ The optimality condition for \Cref{pb:cluster-problem} is
 where $G'(z; \delta) $ is the directional derivative of $G$ in the direction $\delta$.
 Since \(F\) is differentiable we have
 \[
-  G'(z; \delta)  = \delta \nabla F(\beta(z)) + \phi'(z; \delta) \, ,
+  G'(z; \delta)  = \delta \sum_{i \in \mathcal{C}_k}\nabla_i F(\beta(z)) + \phi'(z; \delta) \, ,
 \]
 % since \(\lVert \tilde{r} - \tilde{x}z\rVert_2^2\) is differentiable.
 where \(\phi'(z; \delta)\) is the directional derivative of $\phi$.
@@ -68,39 +68,48 @@ where \(\phi'(z; \delta)\) is the directional derivative of $\phi$.
 Throughout the rest of this section we derive the solution to \eqref{pb:cluster-problem}.
 To do so, we will introduce the directional derivative for the
 sorted \(\ell_1\) norm with respect to the coefficient of the \(k\)-th cluster.
-First, let \(C(z)\) be the function that returns the cluster of $\beta(z)$ corresponding to \(z\), that is
+First, as illustrated on \Cref{fig:partial_slope}, note that $\phi$ is piecewise affine, with breakpoints at 0 and all $\pm c_i$'s for $i \neq k$.
+Hence, the partial derivative is piecewise constant, with jumps at these points; in addition, $\phi'(\cdot; 1) = \phi'(\cdot, -1)$ except at these points.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{partial_slope.pdf}
+  \caption{Graph of the partial sorted $\ell_1$ norm with \(\beta = [-3.0, 1.0, 3.0, 2.0]^T\), \(k = 1\) and so $c_1, c_2, c_3 = (3, 2, 1)$.}
+  \label{fig:partial_slope}
+\end{figure}
+
+Let \(C(z)\) be the function that returns the cluster of $\beta(z)$ corresponding to \(z\), that is
 \[
   C(z) = \{j : |\beta(z)_j| = z\} \,.
 \]
-\mm{add remark: it always contains $\mathcal{C}_k$, but it can contains mor if $z$ is equal to one of the other $c_i$'s ?}
+Note that, unless $z$ is equal to some $c_i$, $C(z)$ is equal to $\mathcal{C}_k$.
 Next, let $\varepsilon_c$ be an arbitrary positive value such that
 \begin{equation}
   \label{eq:epsilon-c}
   \varepsilon_c < \big| c_i - c_j\big| , \quad \forall\, i \neq j \text{ and } \varepsilon_c < c_m \text{ if } c_m \neq 0 \, .
 \end{equation}
-Then for \(\delta \in \{-1, 1\}\) we have
-\mm{Issue if $z$ is 0 in first equation? for $h \neq 0$ and $h = 0$ the argument of the limit jumps}
-\begin{equation}
-  \begin{aligned}
-    \lim_{h \downarrow 0} C(z + h\delta)
-          & = C(z + {\varepsilon_c} \delta) \, ,  \\
-    \lim_{h \downarrow 0} \lambda_{(i)^-_{z + h\delta}}
-          & = \lambda_{(i)^-_{z + {\varepsilon_c}\delta}} \, .
-  \end{aligned}
-\end{equation}
-\mm{nitpick: permutations are not unique because of potential ties, so the second limit may not be true if ties are not handled consistently. We can say when we introduce the sorting that we break ties by picking the lowest index}
+% Then for \(\delta \in \{-1, 1\}\) we have
+% \begin{equation}
+%   \begin{aligned}
+%     \lim_{h \downarrow 0} C(z + h\delta)
+%           & = C(z + {\varepsilon_c} \delta) \, ,  \\
+%     \lim_{h \downarrow 0} \lambda_{(i)^-_{z + h\delta}}
+%           & = \lambda_{(i)^-_{z + {\varepsilon_c}\delta}} \, .
+%   \end{aligned}
+% \end{equation}
+% \mm{nitpick: permutations are not unique because of potential ties, so the second limit may not be true if ties are not handled consistently. We can say when we introduce the sorting that we break ties by picking the lowest index}
 In other words, the order permutation corresponding to \(\beta(z + h\delta)\)
 depends only on \(\delta\) as \(h\) tends to~\(0\).
 \begin{remark}
   As consequence of the definition of \(\varepsilon_c\), the order permutations
   for \(\beta(z)\) and \(\beta(z + {\varepsilon_c} \delta)\) differ only for a
   subset of the permutation vectors.
-  The permutation for \(\beta(h\delta)\) is \mm{for $h \neq 0$, but if equal to 0, two clusters merge}
+  The permutation for \(\beta(h\delta)\) is %\mm{for $h \neq 0$, but if equal to 0, two clusters merge}
   \begin{equation*}
     \begin{cases}
-      \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \mathcal{C}_m, C({\varepsilon_c}\delta)
+      \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \mathcal{C}_m, C(\varepsilon_c)
        & \text{if } c_m > 0 \, , \\ % \text{ and } \delta \neq 0 \, , \\
-      \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, C({\varepsilon_c}\delta), \mathcal{C}_m
+      \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, C(\varepsilon_c), \mathcal{C}_m
        & \text{if } c_m = 0 \, . %\text{ and } \delta \neq 0 \, . \\
       % \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \underbrace{\mathcal{C}_k \cup \mathcal{C}_m}_{C({\varepsilon_c}\delta)} & \text{if } c_m = 0 \text{ and } \delta = 0.    \\
     \end{cases}
@@ -144,16 +153,25 @@ We are now ready to state the directional derivative of $\phi$. % \(J_k\).
   \]
 \end{theorem}
 
-In \cref{fig:directional-derivative}, we show an example of the directional
+\begin{proof}
+  Let $z$ such that $|z|$ is not one of the $c_i$'s and $z \neq 0$.
+  Then, for any $h$ smaller that $\dist(z, \{c_i\} \cup \{0\})$, the permutation for $z$, $z - h$ and $z + h$ are all equal to:
+  \begin{equation*}
+    \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \mathcal{C}_i, \mathcal{C}_k, \mathcal{C}_{i+1}, \dots, \mathcal{C}_m
+  \end{equation*}
+
+\end{proof}
+
+In \Cref{fig:directional-derivative}, we show an example of the directional
 derivative and the objective function.
 
 \begin{figure}[htb]
   \centering
   \includegraphics[]{directional-derivative.pdf}
   \caption{%
-  The function \(P_k(z)\) and its directional derivative \(P'_k(z; \delta)\) for
+  The function \(G\) and its directional derivative \(G( \cdot ; \delta)\) for
   an example with \(\beta = [-3.0, 1.0, 3.0, 2.0]^T\), \(k = 1\), and consequently
-  \(c^{\setminus k} = [2, 1]^T\). The solution corresponds to the value of \(z\) for
+  \(c^{\setminus k} = [2, 1]^T\). The solution of \Cref{pb:cluster-problem} is the value of \(z\) for
       which \(P'_k(z; \delta) \geq 0 \) for \(\delta \in \{-1, 1\}\), which holds only
       at \(z = 2\), which must therefore be the solution.
     }
@@ -169,22 +187,20 @@ Using the directional derivative, we can introduce the SLOPE thresholding operat
   \[
     \begin{multlined}
       T_k(\gamma; \omega, c, \lambda) = \\
-      % \begin{cases}
-      %   0                                                                                                                                                   & \text{if } |\gamma| \leq \smashoperator{\sum_{j \in C({\varepsilon_c})}} \lambda_{(j)^-_{\varepsilon_c}},                                                                                                                                                        \\
-      %   \sign(\gamma)c_i                                                                                                                                    & \text{if } \omega c_i + \smashoperator{\sum_{j \in C(c_i - {\varepsilon_c})}} \lambda_{(j)^-_{c_i - {\varepsilon_c}}} \leq |\gamma| \leq \omega c_i + \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}},             \\
-      %   \frac{\sign(\gamma)}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} \bigg) & \text{if } \omega c_i + \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} < |\gamma| < \omega c_{i - 1} + \smashoperator{\sum_{j \in C(c_{i - 1} - {\varepsilon_c})}} \lambda_{(j)^-_{c_{i - 1} - {\varepsilon_c}}}, \\
-      %   \frac{\sign(\gamma)}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_1 + {\varepsilon_c})}} \lambda_{(j)^-_{c_1 + {\varepsilon_c}}} \bigg) & \text{if } |\gamma| \geq \omega c_1 + \smashoperator{\sum_{j \in C(c_1 + {\varepsilon_c})}} \lambda_{(j)^-_{c_1 + {\varepsilon_c}}}.
-      % \end{cases}
       \begin{cases}
-        0                                                                            & \text{if } |\gamma| \leq S(\varepsilon_c),               \\
-        \sign(\gamma)c_i                                                             & \text{if } \omega c_i + S(c_i - \varepsilon_c)           \\
-                                                                                     & \quad \leq |\gamma| \leq                                 \\
-                                                                                     & \quad \omega c_i + S(c_i + \varepsilon_c),               \\
-        \frac{\sign(\gamma)}{\omega} \big( |\gamma| - S(c_i + \varepsilon_c) \big)   & \text{if } \omega c_i + S(c_i + {\varepsilon_c})         \\
-                                                                                     & \quad < |\gamma| <                                       \\
-                                                                                     & \quad \omega c_{i - 1} + S(c_{i - 1} - {\varepsilon_c}), \\
-        \frac{\sign(\gamma)}{\omega} \big( |\gamma| - S(c_1 + {\varepsilon_c}) \big) & \text{if } |\gamma| \geq                                 \\
-                                                                                     & \quad \omega c_1 + S(c_1 + {\varepsilon_c}).
+        0
+            & \text{if } |\gamma| \leq S(\varepsilon_c),               \\
+        \sign(\gamma)c_i
+            & \text{if } \omega c_i + S(c_i - \varepsilon_c)           \\
+            & \quad \leq |\gamma| \leq                                 \\
+            & \quad \omega c_i + S(c_i + \varepsilon_c),               \\
+        \frac{\sign(\gamma)}{\omega} \big( |\gamma| - S(c_i + \varepsilon_c) \big)
+            & \text{if } \omega c_i + S(c_i + {\varepsilon_c})         \\
+            & \quad < |\gamma| <                                       \\
+            & \quad \omega c_{i - 1} + S(c_{i - 1} - {\varepsilon_c}), \\
+        \frac{\sign(\gamma)}{\omega} \big( |\gamma| - S(c_1 + {\varepsilon_c}) \big)
+            & \text{if } |\gamma| \geq                                 \\
+            & \quad \omega c_1 + S(c_1 + {\varepsilon_c}).
       \end{cases}
     \end{multlined}
   \]
@@ -195,7 +211,7 @@ Using the directional derivative, we can introduce the SLOPE thresholding operat
 
 \jl{Consider adding a remark showing that our operator generalizes the soft thresholding operator.}
 
-In \cref{fig:slope-thresholding}, we visualize the SLOPE thresholding operator.
+In \Cref{fig:slope-thresholding}, we visualize the SLOPE thresholding operator.
 
 \begin{figure*}[htb]
   \centering
@@ -316,7 +332,7 @@ Hence the idea to alternate, PGD and PCD step to take advantage of the speed of 
   \Return{\(\beta\)}
 \end{algorithm}
 
-In \cref{fig:illustration-solver}, we show how \cref{alg:hybrid} works in practice on
+In \Cref{fig:illustration-solver}, we show how \Cref{alg:hybrid} works in practice on
 a two-dimensional SLOPE problem.
 
 \begin{figure*}[htb]
@@ -339,8 +355,8 @@ a two-dimensional SLOPE problem.
 \begin{lemma}
   \label{lem:convergence}
   Let \(\beta^{(1)}, \beta^{(2)}, \dots, \beta^{(k)}\) be a sequence of
-  iterates generated by \cref{alg:hybrid}, \(1/v\) the frequency of proximal gradient
-  descent iterates in \cref{alg:hybrid}, and \(L\) the Lipschitz constant of
+  iterates generated by \Cref{alg:hybrid}, \(1/v\) the frequency of proximal gradient
+  descent iterates in \Cref{alg:hybrid}, and \(L\) the Lipschitz constant of
   \(\nabla \ell\). Then
   \[
     P(\beta^{(k)}) - P(\beta^*) \leq \frac{L \lVert \beta^{(0)} - \beta^* \rVert_2^2}{2\lfloor k/v \rfloor }\, ,

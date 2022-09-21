@@ -34,11 +34,9 @@ rules~\parencite{larsson2020c,elvira2022}, which help speed up SLOPE in the
 high-dimensional regime, current state-of-the-art algorithms for SLOPE perform
 poorly in comparison to those of more established penalization methods such as
 the lasso (\(\ell_1\)-norm regularization) and ridge regression
-(\(\ell_2\)-norm regularization). As a small illustration of this issue, we
-compared the speed at which the SLOPE and glmnet packages fit a complete
-regularization path for the bcTCGA data set. SLOPE takes x seconds to fit the
-full path, whilst glmnet requires only y seconds. \mm{put result here and
-details in experiment section}
+(\(\ell_2\)-norm regularization).
+As a small illustration of this issue, we compared the speed at which the \pkg{SLOPE}~\parencite{friedman2022} and \pkg{glmnet}~\parencite{friedman2022} packages solve a SLOPE and lasso problem, respectively, for the \dataset{bcTCGA} data set.
+In this small experiment, \pkg{SLOPE} takes 42.7 seconds to reach convergence, whilst \pkg{glmnet} requires only 0.143 seconds\footnote{See~\Cref{sec:slope-vs-glmnet} for details on how this experiment was run.}.
 
 This lackluster performance has hampered the applicability of SLOPE to many
 real-world applications. A major reason for why algorithms for solving
@@ -53,7 +51,7 @@ lasso~\parencite{moreau2022benchopt}. Applying coordinate descent to SLOPE is no
 however, straightforward since convergence guarantees for coordinate descent
 require the objective to be separable, which is not the case for SLOPE. As a
 result, naive coordinate descent schemes can get
-stuck~(\cref{fig:naive-cd-stuck}).
+stuck~(\Cref{fig:naive-cd-stuck}).
 
 \begin{figure}[htb]
   \centering

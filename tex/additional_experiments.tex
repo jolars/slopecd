@@ -1,0 +1,19 @@
+\section{Additional Experiments}\label{sec:add_expes}
+
+\subsection{Details of \textsf{glmnet} versus \textsf{SLOPE} Comparison}
+\label{sec:slope-vs-glmnet}
+
+In this experiment, we ran the \pkg{glmnet}~\parencite{friedman2022} and \pkg{SLOPE}~\parencite{larsson2022d} packages on the \dataset{bcTCGA} dataset, selecting the regularization sequence \(\lambda\) such that there were 100 nonzero coefficients at the optimum.
+We used a duality gap of \(10^{-6}\) as stopping criteria.
+The data was standardized.
+The code is available as a supplement.
+
+\subsection{Study on proximal gradient descent frequency}
+
+\begin{figure*}[htb]
+  \centering
+  \includegraphics[scale=0.47]{pgd_freq_legend.pdf}
+  \includegraphics[scale=0.5]{pgd_freq_expes.pdf}
+  \caption{Study on proximal gradient descent frequency.}
+  \label{fig:pgd_freq}
+\end{figure*}

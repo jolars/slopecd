@@ -30,16 +30,19 @@ We performed an extensive benchmark with the following competitors:
     Datasets    & \(n\) & \(p\)   & {Density} \\ \midrule
     Simulated 1 & 200   & 20000   & 1         \\
     Simulated 2 & 20000 & 200     & 1         \\
-    Simulated 3 & 200   & 2000000 & 0.001     \\
-    Rhee2006    & 842   & 361     & ?         \\
-    bcTCGA      & 536   & 17322   & 1         \\
-    Scheetz2006 & 120   & 18975   & ?         \\ \bottomrule
+    Simulated 3 & 200   & 2000000 & 0.001     \\ \hline
+    Rhee2006  & 842   & 361     & 0.025        \\
+    bcTCGA    & 536   & 17322   & 1         \\
+    rcv1 & 20242   & 19959   & ?\\
+    news20 & 19996 & 1355191 & ?  \\ \bottomrule
   \end{tabular}
 \end{table}
 
 We used the \texttt{benchopt}~\parencite{moreau2022benchopt} tool to obtain the convergence curves for the different solvers.
 \texttt{Benchopt} launches each solver several times increasing the number of iterations and store the objective value, dual gap and time to reach it.
 The repository to reproduce the benchmark is available at XXX.
+The datasets used for the experiments can be found in \Cref{table:datasets} and were downloaded from \dataset{libsvm}\footnote{\url{https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/}} and the university of iowa webpage\footnote{\url{https://myweb.uiowa.edu/pbreheny/7600/s16/data.html}}.
+
 
 \subsection{Simulated data}
 

@@ -309,16 +309,16 @@ Then, each time a new predictor becomes non-zero, we compute its inner product w
 \subsection{Hybrid proximal coordinate descent strategy}
 
 We propose an iterative solver that alternates between proximal gradient step and proximal coordinate descent.
-Since the regularization term for SLOPE is not separable, applying PCD does not guarantee convergence.
-However, \cite{dupuis2021} showed that once the clusters are known, the subdifferential of $J$ can be written as the cartesian product of the subdifferential of $J$ restricted to the clusters.
-Hence, if one knew the clusters, PCD updates could be applied on each cluster.
+Since the regularization term for SLOPE is not separable, applying PCD does not guarantee convergence and PCD updates can be stuck at points that are the not the solution of \cref{pb:slope}.
+However, \cite{dupuis2021} showed that once the clusters are known,  \cref{pb:slope} becomes separable with respect to the knowledge of the clusters of the solution $\hat{\beta}$.
+Practically, it is impossible to know these clusters in advance but we propose to take advantage of the proximal gradient descent to play the role of making sure that we identify the right clusters throughout the iterative updates.
 
-The notion of clusters for SLOPE extends the notion of sparsity coming from the LASSO.
-Identification of the sparsity pattern throughout the iterative algorithm have largely been studied.
-Talk about Partly Smooth functions, related Manifold and that support transpose to cluster for SLOPE regularization. DO the maths.
+\Cref{alg:hybrid} presents the proposed algorithm. 
+Every $v$ iterations, we perform a proximal gradient descent update to allows for clusters to split eventually. 
+The choice of the parameter $v$ that accounts for the frequency at which pgd steps are performed was set to $5$. 
+Our own experiments show that this parameter does not have a great impact on the speed of the algorithm as long as it is at least $3$ (see \Cref{fig:pgd_freq}).
 
-Then identification of this underlying structure occurs when applying PGD.
-Hence the idea to alternate, PGD and PCD step to take advantage of the speed of PCD and ensure convergence via the identification of the right structure with PGD steps.
+The combination of the proximal gradient steps and PCD allows us to overcome the problem of vanilla PCD getting stuck because of non-separability and allows us to enjoy the speed-up provided by making local updates on each cluster.
 
 \begin{algorithm}[htb]
   \SetKwInOut{Init}{init}
@@ -386,6 +386,8 @@ a two-dimensional SLOPE problem.
     meanwhile, reach convergence after 67 and 156 epochs respectively.}
   \label{fig:illustration-solver}
 \end{figure*}
+
+We now state that our proposed hybrid algorithm converges to a solution of \Cref{pb:slope}.
 
 \begin{lemma}
   \label{lem:convergence}

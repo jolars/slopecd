@@ -9,7 +9,7 @@ Proximal coordinate descent cannot be applied to \Cref{pb:slope} because it is n
 However, if the clusters $\mathcal{C}_1^*, \ldots, \mathcal{C}_{m^*}^*$ of the solution $\beta^*$ were known together with their signs, then the values $c_1^*, \ldots, c_{m^*}^*$ taken by $\beta^*$ on the clusters could be equivalently computed by solving:
 \begin{problem}
 \min_{z \in \bbR^{m^*}}
-\ell \left(\sum_{i=1}^{m^*} \sum_{j \in \mathcal{C}_i^*} z_i \sign(\beta_j^*) e_j \right)
+F \left(\sum_{i=1}^{m^*} \sum_{j \in \mathcal{C}_i^*} z_i \sign(\beta_j^*) e_j \right)
 + \sum_{i=1}^{m^*} | z_i | \sum_{j \in \mathcal{C}_i^*} \lambda_j \, ,
 \end{problem}
 % \klopfe{Clarify what $F$ is here}
@@ -40,12 +40,12 @@ one-dimensional problem:
 \begin{problem}
 \label{pb:cluster-problem}
 \min_{z \in \mathbb{R}} \Big(
-G(z) = P(\beta(z))  = F(\beta(z)) + \phi(z)
+G(z) = P(\beta(z))  = F\big(\beta(z)\big) + H(z)
 \Big) \,  ,
 \end{problem}
 where
 \[
-  \phi(z) = |z| \sum_{j \in \mathcal{C}_k} \lambda_{(j)^-_z}
+  H(z) = |z| \sum_{j \in \mathcal{C}_k} \lambda_{(j)^-_z}
   + \sum_{j \notin \mathcal{C}_k} |\beta_j| \lambda_{(j)^-_z}
 \]
 is the \emph{partial sorted \(\ell_1\) norm} with respect to the \(k\)-th cluster and where we write \(\lambda_{(j)^-_z}\) to indicate that the inverse sorting permutation \((j)^-_z\)
@@ -59,16 +59,16 @@ The optimality condition for \Cref{pb:cluster-problem} is
 where $G'(z; \delta) $ is the directional derivative of $G$ in the direction $\delta$.
 Since \(F\) is differentiable we have
 \[
-  G'(z; \delta)  = \delta \sum_{i \in \mathcal{C}_k}\nabla_i F(\beta(z)) + \phi'(z; \delta) \, ,
+  G'(z; \delta)  = \delta \sum_{i \in \mathcal{C}_k}\nabla_i F(\beta(z)) + H'(z; \delta) \, ,
 \]
 % since \(\lVert \tilde{r} - \tilde{x}z\rVert_2^2\) is differentiable.
-where \(\phi'(z; \delta)\) is the directional derivative of $\phi$.
+where \(H'(z; \delta)\) is the directional derivative of $H$.
 
 Throughout the rest of this section we derive the solution to \eqref{pb:cluster-problem}.
 To do so, we will introduce the directional derivative for the
 sorted \(\ell_1\) norm with respect to the coefficient of the \(k\)-th cluster.
-First, as illustrated on \Cref{fig:partial_slope}, note that $\phi$ is piecewise affine, with breakpoints at 0 and all $\pm c_i$'s for $i \neq k$.
-Hence, the partial derivative is piecewise constant, with jumps at these points; in addition, $\phi'(\cdot; 1) = \phi'(\cdot, -1)$ except at these points.
+First, as illustrated on \Cref{fig:partial_slope}, note that $H$ is piecewise affine, with breakpoints at 0 and all $\pm c_i$'s for $i \neq k$.
+Hence, the partial derivative is piecewise constant, with jumps at these points; in addition, $H'(\cdot; 1) = H'(\cdot, -1)$ except at these points.
 
 \begin{figure}[htbp]
   \centering
@@ -84,7 +84,7 @@ Let \(C(z)\) be the function that returns the cluster of $\beta(z)$ correspondin
 Note that, if $z$ is equal to some $c_i$ then $C(z) = \mathcal{C}_i \cup \mathcal{C}_k$ and otherwise $C(z) = \mathcal{C}_k$.
 
 \begin{remark}
-  Related to the piecewise affineness of $\phi$ is the fact that the permutation corresponding to $\beta(z)$ is:
+  Related to the piecewise affineness of $H$ is the fact that the permutation corresponding to $\beta(z)$ is:
   \begin{equation*}
     \begin{cases}
     \cC_k, \cC_m, \ldots, C_1 \, ,
@@ -146,7 +146,7 @@ Note that, if $z$ is equal to some $c_i$ then $C(z) = \mathcal{C}_i \cup \mathca
 %   \end{cases}
 % \]
 
-We can now state the directional derivative of $\phi$. % \(J_k\).
+We can now state the directional derivative of $H$. % \(J_k\).
 
 \begin{theorem}\label{thm:sl1-directional-derivative}
   Let $\varepsilon_c$ be an arbitrary positive value such that
@@ -156,9 +156,9 @@ We can now state the directional derivative of $\phi$. % \(J_k\).
   \end{equation}
   Let \(c^{\setminus k}\) be the \(m - 1\) length version of $c$ where the $k$-th coordinate has been removed: $c^{\setminus k} = (c_1, \ldots c_{k-1}, c_{k+1}, \ldots, c_m)$.
   % Let \({\varepsilon_c} > 0\) satisfying \eqref{eq:epsilon-c}.
-  The directional derivative of the partial sorted $\ell_1$ norm with respect to the $k$-th cluster \(\phi\), in the direction \(\delta\) is
+  The directional derivative of the partial sorted $\ell_1$ norm with respect to the $k$-th cluster, \(H\), in the direction \(\delta\) is
   \[
-    \phi'(z; \delta) =
+    H'(z; \delta) =
     \begin{cases}
       \smashoperator[r]{\sum_{j \in C(\varepsilon_c )}} \lambda_{(j)^-_{\varepsilon_c }}
        & \text{if } z = 0 \, ,               \\
@@ -179,7 +179,7 @@ The proof is in \Cref{app:proof_directional_slope}.
 %   \end{equation*}
 %   Thus
 %   % \begin{align}
-%   %   \phi(z + h) - phi (z) = \sum_{j=1}^p |\beta(z + h)
+%   %   H(z + h) - H(z) = \sum_{j=1}^p |\beta(z + h)
 %   % \end{align}
 
 
@@ -206,7 +206,7 @@ derivative and the objective function.
   \caption{%
   The function \(G\) and its directional derivative \(G( \cdot ; \delta)\) for
   an example with \(\beta = [-3.0, 1.0, 3.0, 2.0]^T\), \(k = 1\), and consequently
-  \(c^{\setminus k} = [2, 1]^T\). The solution of \Cref{pb:cluster-problem} is the value of \(z\) for
+  \(c^{\setminus k} = (2, 1)\). The solution of \Cref{pb:cluster-problem} is the value of \(z\) for
       which \(P'_k(z; \delta) \geq 0 \) for \(\delta \in \{-1, 1\}\), which holds only
       at \(z = 2\), which must therefore be the solution.
     }
@@ -241,7 +241,7 @@ Using the directional derivative, we can introduce the SLOPE thresholding operat
   \]
   with \({\varepsilon_c}\) defined as in \eqref{eq:epsilon-c} and let
   \(\gamma = \tilde{r}^Tx\), \(\omega = \tilde{x}^T\tilde{x}\). Then
-  \(T(\gamma; \omega, c^{(k)}, \lambda) \in \argmin_{z \in \mathbb{R}} P_k(z)\).
+  \(T(\gamma; \omega, c^{(k)}, \lambda) \in \argmin_{z \in \mathbb{R}} G(z)\).
 \end{theorem}
 
 \jl{Consider adding a remark showing that our operator generalizes the soft thresholding operator.}
@@ -253,9 +253,9 @@ In \Cref{fig:slope-thresholding}, we visualize the SLOPE thresholding operator.
   \includegraphics[]{slope-thresholding.pdf}
   \caption{%
   An example of the SLOPE thresholding operator. The result corresponds to an
-  example for \(\beta = [0.5, -0.5, 0.3, 0.7]^T\), \(c = [0.7, 0.5, 0.3]^T\)
+  example for \(\beta = [0.5, -0.5, 0.3, 0.7]^T\), \(c = (0.7, 0.5, 0.3)\)
   with an update for the second cluster (\(k = 2\)), such that
-  \(c^{\setminus k} = [0.5, 0.3]^T\). Across regions where the function is constant,
+  \(c^{\setminus k} = (0.5, 0.3)\). Across regions where the function is constant,
       the operator sets the result to be either exactly 0 or to the value of one
       of the elements of \(c^{\setminus k}\).
     }

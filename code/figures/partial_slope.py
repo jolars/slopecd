@@ -149,7 +149,7 @@ obj = [sl1_norm(beta_update(beta, z, ind), lambdas) for z in zs]
 
 ps = np.hstack((-c_k, [0.0], c_k[::-1]))
 ax.plot(zs, obj, color="black")
-ax.set_ylabel(r"$\phi(z)$")
+ax.set_ylabel(r"$H(z)$")
 
 # ax.set_xlabel(r"$z$")
 

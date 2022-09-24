@@ -3,146 +3,47 @@
 \subsection{Proof of \Cref{thm:sl1-directional-derivative}}
 
 \begin{proof}\label{app:proof_directional_derivative}
-  By the definition of the directional derivative,
-  \begin{align}
-    H'(z; \delta)
-    = & \lim_{h \downarrow 0} \frac{H(z + h \delta) - H(z)}{h} \nonumber \\
-    = &
-    \lim_{h \downarrow 0} \frac{1}{h}
-    \left(
-      |z + h \delta| \smashoperator{\sum_{j \in C(z + h \delta)}} \lambda_{(j)^-_{z + h \delta}}
-      + \smashoperator{\sum_{j \notin C(z + h\delta)}} |\beta_j| \lambda_{(j)^-_{z + h \delta}}
-      - |z| \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_z}
-      - \smashoperator{\sum_{j \notin C(z)}} |\beta_j| \lambda_{(j)^-_z}
-    \right) \nonumber                                                          \\
-    = & \lim_{h \downarrow 0}
-    \frac{1}{h}
-    \left(
-      |z + h \delta| \smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
-      + \smashoperator{\sum_{j \notin C(z + {\varepsilon_c}\delta)}} |\beta_j| \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
-      - |z| \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}
-      - \smashoperator{\sum_{j \notin C(z)}} |\beta_j| \lambda_{(j)^-_{z}}
-    \right)
-    \label{eq:directional-derivative-sl1}
-  \end{align}
+  \label{app:proof_directional_slope}
   We have the following cases to consider: \(|z| \in c^{\setminus k}\),
   \(|z| = 0\), and \(|z| \notin \{0\} \cup c^{\setminus k}\).
 
 
-  Let us first consider the case
-  $z \neq 0$, $z \neq c_i$ for all $i \neq k$.
-  Here since \(C(z + \delta h) = C(z)\) for $h$ small enough,
-  %  has the directional derivative
-  % \[
-  %   H'(z; \delta) = \delta \sign(z) \smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}.
-  % \]
+  Let us first consider the case $z \neq 0$, $|z| \neq c_i$ for all $i \neq k$.
+  Since \(C(z + \delta h) = C(z) = \cC_k\) and $\sign(z + \delta(h)) = \sign(z)$ for $h$ small enough,
+  \begin{align}
+    H(z + \delta h) - H(z)
+      &= \sum_{j =1}^p |\beta(z + \delta h)_j| \lambda_{(i)^-_{z + \delta h}}
+          - \sum_{j=1}^p |\beta(z)_j| \lambda_{(j)^-_z} \\
+      &= \sum_{j =1}^p (|\beta(z + \delta h)_j| - |\beta(z)_j|) \lambda_{(j)^-_z} \\
+      &= \sum_{j =1}^p (|\beta(z + \delta h)_j| - |\beta(z)_j|) \lambda_{(j)^-_z} \\
+      &= \sum_{j \in C(z)}^p (|\beta(z + \delta h)_j| - |\beta(z)_j|) \lambda_{(j)^-_z} \\
+      &= \sum_{j \in C(z)} \sign(\beta(z)_j) (z + \delta h - z) \lambda_{(j)^-_z} \\
+      &= \sum_{j \in C(z)} \sign(z) \delta h  \lambda_{(j)^-_z} \\
+  \end{align}
 
-  Let us now treat the case \(|z| = c_i^{\setminus k}\), note that we have,
-  as a result of the definition of
-  \({\varepsilon_c}\), the following identities:
-  \begin{align*}
-    C(c_i^{\setminus k} + {\varepsilon_c}\delta)            & \subseteq C(c_i^{\setminus k}),                                                                                                                                 \\
-    \tilde{\mathcal{C}}_i                           & = \widebar{C(c_i^{\setminus k} + {\varepsilon_c} \delta)} \cap C(c_i^{\setminus k}),                                                                                    \\
-    C(c_i^{\setminus k})                                    & = \tilde{C}_i \cup \big(C(c_i^{\setminus k} + {\varepsilon_c}\delta) \cap C(c_i^{\setminus k})\big) = \tilde{\mathcal{C}}_i \cup C(c_i^{\setminus k} + {\varepsilon_c} \delta), \\
-    \widebar{C(c_i^{\setminus k} + {\varepsilon_c} \delta)} & = \widebar{C(c_i^{\setminus k})} \cup \tilde{\mathcal{C}}_i.
-  \end{align*}
-  Using this, we can rewrite \eqref{eq:directional-derivative-sl1} as
-  \begin{equation*}
-    \label{eq:directional-derivative-simplified}
-    H'(z; \delta)
-    = \lim_{h \downarrow 0} \frac{1}{h}
-    \left(
-      \splitfrac{
-      |z + h\delta|\smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
-      + |c_i^{\setminus k}|\smashoperator{\sum_{j \in \tilde{C}_i}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
-      + \smashoperator{\sum_{j \in \widebar{C(z)}}} |\beta_j|\lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
-      }{%
-      - |z| \smashoperator{\sum_{j \in \tilde{\mathcal{C}}_i}} \lambda_{(j)^-_{z}}
-      - |c_i^{\setminus k}| \smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z}}
-      - \smashoperator{\sum_{j \in \widebar{C(z)}}} |\beta_j| \lambda_{(j)^-_{z}}
-      }
-    \right).
-  \end{equation*}
-  Next, observe that \(\lambda_{(j)^-_{z + {\varepsilon_c}\delta}} =
-  \lambda_{(j)^-_{z}}\) for all \(j \in \widebar{C(z)}\) and consequently
-  \[
-    \smashoperator{\sum_{j \in \widebar{C(z)}}} |\beta_j|\lambda_{(j)^-_{z + {\varepsilon_c}\delta}} =
-    \smashoperator{\sum_{j \in \widebar{C(z)}}} |\beta_j|\lambda_{(j)^-_{z}}.
-  \]
-  Moreover, note that, since \(z = \pm c_i\), there exists a permutation corresponding to
-  \(\lambda_{(j)^-_{z}}\) such that
-  \[
-    |z|\smashoperator{\sum_{j \in \tilde{C}_i}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
-    = |c^{\setminus k}_i| \smashoperator{\sum_{j \in \tilde{C}_i}} \lambda_{(j)^-_{z}}
-  \]
-  and consequently
-  \begin{equation}
-    \label{eq:directional-derivative-simplified-again}
-    H'(z; \delta)
-    = \lim_{h \downarrow 0} \frac{1}{h}
-    \left(
-      |z + h\delta|\smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
-      - |c_i^{\setminus k}| \smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z}}.
-    \right).
-  \end{equation}
-  Now, since \(c_i^{\setminus k} + h \delta > 0\) and \(-c_i^{\setminus k} + h \delta < 0\) in the limit as
-  \(h\) goes to \(0\) for \(c_i \neq 0\), we have
-  \[
-    \lim_{h\downarrow 0} |-c_i + h \delta|
-    = \lim_{h\downarrow 0}\big( |c_i^{\setminus k}| -h \delta\big)
-    \quad\text{and}\quad
-    \lim_{h\downarrow 0} |c_i^{\setminus k} + h \delta|
-    = \lim_{h\downarrow 0}(|c_i^{\setminus k}| + h \delta)
-  \]
-  which means that
-  \begin{align*}
-    H'(z; \delta)
-     & = \lim_{h \downarrow 0} \frac{1}{h}
-    \left(
-      \big(|z| + \sign(z)h\delta\big)\smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
-      - |c_i| \smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z}}.
-    \right)                                                                                                                  \\
-     & = \lim_{h \downarrow 0} \frac{1}{h}
-    \sign(z)h\delta\smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}     \\
-     & = \sign(z)\delta\smashoperator{\sum_{j \in C(z + {\varepsilon_c}\delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}} \\
-  \end{align*}
+  Then if  $z \neq 0$ and $|z|$ is equal to one of the $c_i$'s, $i \neq k$,  one has $C(z) = \cC_k \cup \cC_i$, $C(z + \delta h) = \cC_k$, and $\sign(z + \delta(h)) = \sign(z)$ for $h$ small enough.
+  Thus
+  \begin{align}
+    H(z + \delta h) - H(z)
+      &= \sum_{j =1}^p |\beta(z + \delta h)_j| \lambda_{(j)^-_{z + \delta h}}
+          - \sum_{i=1}^p |\beta(z)_j| \lambda_{(j)^-_z}  \nonumber \\
+      &= \sum_{j \in \cC_k \cup \cC_i} \left( |\beta(z + \delta h)_j| \lambda_{(j)^-_{z + \delta h}}
+         - |\beta(z)_j| \lambda_{(j)^-_z} \right)  \nonumber \\
+      &= \sum_{j \in \cC_k} \left( c_i + \delta h \lambda_{(i)^-_{z + \delta h}}
+           - c_i \lambda_{(i)^-_z} \right)
+           + \sum_{j \in \cC_i} \left( c_i \lambda_{(j)^-_{z + \delta h}}
+           - c_i \lambda_{(i)^-_z} \right) \nonumber \\
+  \end{align}
+  \mm{to conclude we need to mention there is an ambiguity in terms of permutation (the permutation reordering $\beta(z)$ is not unique, we can swap $\cC_i$ and $\cC_k$, but it does not change the value of the sum, so we can pick $(i)_z = (i)_{z + \delta_h}$ and conclude) as above.}
 
-  For the case when \(z=0\) there are two sub-cases to consider. First, when \(c_m^{\setminus k} = 0\) then
-  \eqref{eq:directional-derivative-simplified-again} is simply
-  \begin{equation*}
-    \label{eq:directional-derivative-zerocase}
-    H'(0; \delta)
-    = \lim_{h \downarrow 0} \frac{1}{h}
-    |h\delta|\smashoperator{\sum_{j \in C({\varepsilon_c}\delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}
-    = \smashoperator{\sum_{j \in C({\varepsilon_c}\delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}
-  \end{equation*}
-  since \(|\delta| = 1\) by definition.
-
-  The other sub-case is \(c_m^{\setminus k} \neq 0\). Here
-  \eqref{eq:directional-derivative-sl1} reduces to
-  \begin{equation*}
-    H'(0; \delta) = \lim_{h \downarrow 0}
-    \frac{1}{h}
-    \left(
-      |h \delta| \smashoperator{\sum_{j \in C({\varepsilon_c}\delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}
-      + \smashoperator{\sum_{j \notin C({\varepsilon_c}\delta)}} |\beta_j| \lambda_{(j)^-_{{\varepsilon_c}\delta}}
-      - \smashoperator{\sum_{j \notin C(0)}} |\beta_j| \lambda_{(j)^-_{0}}
-    \right).
-  \end{equation*}
-  In this case, we have \(C(0) = C({\varepsilon_c}\delta)\) since \(c_m^{\setminus k}
-  \neq 0\), and therefore
-  \[
-    \smashoperator{\sum_{j \notin C({\varepsilon_c}\delta)}} |\beta_j| \lambda_{(j)^-_{{\varepsilon_c}\delta}}
-    = \smashoperator{\sum_{j \notin C(0)}} |\beta_j| \lambda_{(j)^-_{0}},
-  \]
-  which means that
-  \begin{equation*}
-    H'(0; \delta) = \lim_{h \downarrow 0}
-    \frac{1}{h}
-    |h \delta| \smashoperator{\sum_{j \in C({\varepsilon_c}\delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}
-    = |\delta|\smashoperator{\sum_{j \in C({\varepsilon_c}\delta)}} \lambda_{(j)^-_{{\varepsilon_c}\delta}}
-    = \smashoperator{\sum_{j \in C(0)}} \lambda_{(j)^-_{0}}.
-  \end{equation*}
+  Finally let us treat the case $z = 0$.
+  If $c_m = 0$ then the proof proceeds as in the previous case, with the exception that $|\beta(z + \delta h)| = h$ and so the result is just:
+  \begin{align}
+    H(z + \delta h) - H(z)
+      &= h \sum_{j \in \cC_k} \lambda_{(i)^-_{z + \delta h}} \nonumber \\
+  \end{align}
+  If $c_m \neq 0$, then:
+  \mm{to conclude}
 \end{proof}
 
 \subsection{Proof of \Cref{thm:thresholding-operator}}

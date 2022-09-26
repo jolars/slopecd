@@ -235,6 +235,7 @@ def newt_alm(
     max_epochs=1000,
     max_time=np.inf,
     verbose=False,
+    callback=None
 ):
     if solver not in ["auto", "standard", "woodbury", "cg"]:
         raise ValueError("`solver` must be one of auto, standard, woodbury, and cg")
@@ -263,7 +264,13 @@ def newt_alm(
 
     ATy = A.T @ y
 
-    for epoch in range(max_epochs):
+    epoch = 0
+    intercept = x[0] if fit_intercept else 0.0
+    if callback is not None:
+        proceed = callback(np.hstack((intercept, x[fit_intercept:])))
+    else:
+        proceed = True
+    while proceed:
         # step 1
         local_param["delta_prime"] *= 0.999
         local_param["epsilon"] *= 0.9
@@ -302,7 +309,11 @@ def newt_alm(
         intercept = x[0] if fit_intercept else 0.0
 
         converged = monitor.check_convergence(x[fit_intercept:], intercept, epoch)
-
+        epoch += 1
+        if callback is None:
+            proceed = epoch < max_epochs
+        else:
+            proceed = callback(np.hstack((intercept, x[fit_intercept:])))
         if converged:
             break
 

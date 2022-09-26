@@ -22,6 +22,7 @@ def admm(
     max_epochs=10_000,
     max_time=np.inf,
     verbose=False,
+    callback=None
 ):
     # implementation from https://web.stanford.edu/~boyd/papers/admm/lasso/lasso.html
     # splitting: min f(w) + g(z) subject to z = w + use *scaled* Lagrangian variable u
@@ -67,7 +68,13 @@ def admm(
 
     Xty = X.T @ y
 
-    for it in range(max_epochs):
+    it = 0
+    intercept = w[0] if fit_intercept else 0.0
+    if callback is not None:
+        proceed = callback(np.hstack((intercept, w[fit_intercept:])))
+    else:
+        proceed = True
+    while proceed:
         if do_lsqr:
             res = lsqr(
                 sparse.vstack((X, np.sqrt(rho) * sparse.eye(p))),
@@ -126,10 +133,15 @@ def admm(
         intercept = w[0] if fit_intercept else 0.0
         converged = monitor.check_convergence(w[fit_intercept:], intercept, it)
 
+        it += 1
+        if callback is None:
+            proceed = it < max_epochs
+        else:
+            proceed = callback(np.hstack((intercept, w[fit_intercept:])))
         if converged:
             break
-
     primals, gaps, times = monitor.get_results()
+
     intercept = w[0] if fit_intercept else 0.0
 
     return w[fit_intercept:], intercept, primals, gaps, times

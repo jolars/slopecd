@@ -51,6 +51,7 @@ def oracle_cd(
     max_epochs=10_000,
     max_time=np.inf,
     verbose=False,
+    callback=None
 ):
     """Oracle CD: get solution clusters and run CD on collapsed design."""
     n_samples, n_features = X.shape
@@ -91,8 +92,12 @@ def oracle_cd(
     monitor = ConvergenceMonitor(X, y, alphas, tol, gap_freq, max_time, verbose, False)
 
     lc = norm(X_reduced, axis=0) ** 2 / n_samples
-
-    for epoch in range(max_epochs):
+    epoch = 0
+    if callback is not None:
+        proceed = callback(np.hstack((intercept, w)))
+    else:
+        proceed = True
+    while proceed:
         if is_X_sparse:
             pure_cd_epoch_sparse(
                 w_reduced,
@@ -118,7 +123,11 @@ def oracle_cd(
             intercept += intercept_update
 
         converged = monitor.check_convergence(w, intercept, epoch)
-
+        epoch += 1
+        if callback is None:
+            proceed = epoch < max_epochs
+        else:
+            proceed = callback(np.hstack((intercept, w)))
         if converged:
             break
 

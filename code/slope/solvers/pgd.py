@@ -17,6 +17,7 @@ def prox_grad(
     max_epochs=10_000,
     max_time=np.inf,
     verbose=False,
+    callback=None
 ):
     if anderson and fista:
         raise ValueError("anderson=True cannot be combined with fista=True")
@@ -41,7 +42,12 @@ def prox_grad(
     else:
         L = norm(X, ord=2) ** 2 / n_samples
 
-    for it in range(max_epochs):
+    it = 0
+    if callback is not None:
+        proceed = callback(np.hstack((intercept, w)))
+    else:
+        proceed = True
+    while proceed:
         w_new = prox_slope(z + (X.T @ R) / (L * n_samples), alphas / L)
         if anderson:
             # TODO multiple improvements possible here
@@ -87,7 +93,11 @@ def prox_grad(
         R -= intercept
 
         converged = monitor.check_convergence(w, intercept, it)
-
+        it += 1
+        if callback is None:
+            proceed = it < max_epochs
+        else:
+            proceed = callback(np.hstack((intercept, w)))
         if converged:
             break
 

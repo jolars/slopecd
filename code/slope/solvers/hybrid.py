@@ -245,6 +245,7 @@ def hybrid_cd(
     max_epochs=10_000,
     max_time=np.inf,
     verbose=False,
+    callback=None
 ):
     is_X_sparse = sparse.issparse(X)
     n_samples, n_features = X.shape
@@ -252,6 +253,7 @@ def hybrid_cd(
     w = np.zeros(n_features)
     intercept = 0.0
 
+    n_clusters = []
     monitor = ConvergenceMonitor(
         X, y, alphas, tol, gap_freq, max_time, verbose, intercept_column=False
     )
@@ -273,7 +275,12 @@ def hybrid_cd(
 
     c, cluster_ptr, cluster_indices, cluster_perm, n_c = get_clusters(w)
 
-    for epoch in range(max_epochs):
+    epoch = 0
+    if callback is not None:
+        proceed = callback(np.hstack((intercept, w)))
+    else:
+        proceed = True
+    while proceed:
         if epoch % pgd_freq == 0:
             s_old = np.sign(w)
             w = prox_slope(w + (X.T @ R) / (L * n_samples), alphas / L)
@@ -353,11 +360,16 @@ def hybrid_cd(
                 R -= intercept_update
                 intercept += intercept_update
 
+        epoch += 1
+        if callback is None:
+            proceed = epoch < max_epochs
+        else:
+            proceed = callback(np.hstack((intercept, w)))
         converged = monitor.check_convergence(w, intercept, epoch)
-
+        n_clusters.append(n_c)
         if converged:
             break
 
     primals, gaps, times = monitor.get_results()
 
-    return w, intercept, primals, gaps, times
+    return w, intercept, primals, gaps, times, n_clusters

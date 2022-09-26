@@ -235,6 +235,8 @@ def hybrid_cd(
     X,
     y,
     alphas,
+    w_start=None,
+    intercept_start=None,
     fit_intercept=True,
     cluster_updates=True,
     update_zero_cluster=False,
@@ -250,8 +252,9 @@ def hybrid_cd(
     is_X_sparse = sparse.issparse(X)
     n_samples, n_features = X.shape
     R = y.copy()
-    w = np.zeros(n_features)
-    intercept = 0.0
+
+    w = np.zeros(n_features) if w_start is None else w_start
+    intercept = 0.0 if intercept_start is None else intercept_start
 
     n_clusters = []
     monitor = ConvergenceMonitor(

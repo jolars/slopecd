@@ -81,10 +81,12 @@ Let \(C(z)\) be the function that returns the cluster of $\beta(z)$ correspondin
 \[
   C(z) = \{j : |\beta(z)_j| = z\} \,.
 \]
-Note that, if $z$ is equal to some $c_i$ then $C(z) = \mathcal{C}_i \cup \mathcal{C}_k$ and otherwise $C(z) = \mathcal{C}_k$.
 
-\begin{remark}
+
+\begin{remark}\label{rem:permutation_C_z}
+  Note that, if $z$ is equal to some $c_i$ then $C(z) = \mathcal{C}_i \cup \mathcal{C}_k$ and otherwise $C(z) = \mathcal{C}_k$.
   Related to the piecewise affineness of $H$ is the fact that the permutation corresponding to $\beta(z)$ is:
+  \mm{there are multiple possible permutations in fact, this matters when $|z| = c_i$}
   \begin{equation*}
     \begin{cases}
     \cC_k, \cC_m, \ldots, C_1 \, ,
@@ -313,9 +315,9 @@ Since the regularization term for SLOPE is not separable, applying PCD does not 
 However, \cite{dupuis2021} showed that once the clusters are known,  \cref{pb:slope} becomes separable with respect to the knowledge of the clusters of the solution $\hat{\beta}$.
 Practically, it is impossible to know these clusters in advance but we propose to take advantage of the proximal gradient descent to play the role of making sure that we identify the right clusters throughout the iterative updates.
 
-\Cref{alg:hybrid} presents the proposed algorithm. 
-Every $v$ iterations, we perform a proximal gradient descent update to allows for clusters to split eventually. 
-The choice of the parameter $v$ that accounts for the frequency at which pgd steps are performed was set to $5$. 
+\Cref{alg:hybrid} presents the proposed algorithm.
+Every $v$ iterations, we perform a proximal gradient descent update to allows for clusters to split eventually.
+The choice of the parameter $v$ that accounts for the frequency at which pgd steps are performed was set to $5$.
 Our own experiments show that this parameter does not have a great impact on the speed of the algorithm as long as it is at least $3$ (see \Cref{fig:pgd_freq}).
 
 The combination of the proximal gradient steps and PCD allows us to overcome the problem of vanilla PCD getting stuck because of non-separability and allows us to enjoy the speed-up provided by making local updates on each cluster as illustrated in \Cref{fig:illustration-solver}.

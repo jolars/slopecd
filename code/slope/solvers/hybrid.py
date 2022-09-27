@@ -265,8 +265,13 @@ def hybrid_cd(
         use_reduced_X = False
         warnings.warn("use_reduced_X cannot be used with sparse X; setting to False")
 
-    X_reduced = np.empty(X.shape, np.float64, order="F")
-    L_archive = np.empty(n_features, np.float64)
+    X_reduced = np.zeros((0, 0), np.float64, order="F")
+    L_archive = np.zeros(0, np.float64)
+
+    if use_reduced_X:
+        X_reduced.resize(X.shape)
+        L_archive.resize(n_features)
+
     XTX = np.empty(n_features, dtype=np.float64)
 
     previously_active = np.zeros(n_features, dtype=bool)

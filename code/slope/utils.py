@@ -5,6 +5,8 @@ import scipy.sparse as sparse
 from numba import njit
 from numpy.linalg import norm
 from scipy import stats
+from sklearn.feature_selection import VarianceThreshold
+from sklearn.preprocessing import MaxAbsScaler, StandardScaler
 
 
 @njit
@@ -240,3 +242,14 @@ class ConvergenceMonitor:
 
     def get_results(self):
         return self.primals, self.gaps, self.times
+
+
+def preprocess_data(X):
+    # remove zero variance predictors
+    X = VarianceThreshold().fit_transform(X)
+
+    # standardize
+    scaler = MaxAbsScaler if sparse.issparse(X) else StandardScaler
+    X = scaler().fit_transform(X)
+
+    return X

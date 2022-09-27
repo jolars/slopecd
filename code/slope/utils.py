@@ -249,7 +249,9 @@ def preprocess(X):
     X = VarianceThreshold().fit_transform(X)
 
     # standardize
-    scaler = MaxAbsScaler if sparse.issparse(X) else StandardScaler
-    X = scaler().fit_transform(X)
-
-    return X
+    if sparse.issparse(X):
+        X = MaxAbsScaler().fit_transform(X)
+        return X.tocsc()
+    else:
+        X = StandardScaler().fit_transform(X)
+        return X

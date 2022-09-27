@@ -244,7 +244,7 @@ class ConvergenceMonitor:
         return self.primals, self.gaps, self.times
 
 
-def preprocess_data(X):
+def preprocess(X):
     # remove zero variance predictors
     X = VarianceThreshold().fit_transform(X)
 

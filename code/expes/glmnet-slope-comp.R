@@ -124,7 +124,7 @@ while (TRUE) {
 
   gap <- dual_gap(beta, intercept, x, y, lambda)
 
-  n_nonzero <- sum(beta != 0)
+  n_nonzero <- sum(unique(abs(beta)) != 0)
 
   cat("  gap:", gap, "\tn_nonzero:", n_nonzero, "\n")
 

@@ -6,7 +6,7 @@ import rpy2.robjects as robjects
 from download import download
 from libsvmdata import fetch_libsvm
 from rpy2.robjects import numpy2ri
-from scipy.sparse import csc_array
+from scipy.sparse import csc_array, issparse
 
 breheny_datasets = [
     "bcTCGA",
@@ -33,7 +33,7 @@ breheny_datasets = [
 base_url = "https://s3.amazonaws.com/pbreheny-data-sets/"
 
 
-def fetch_breheny(dataset: str):
+def fetch_breheny(dataset: str, min_nnz=0):
     if dataset not in breheny_datasets:
         raise ValueError(
             f"{dataset} is not among available options: {breheny_datasets}"
@@ -60,11 +60,14 @@ def fetch_breheny(dataset: str):
     if density <= 0.2:
         X = csc_array(X)
 
+    if issparse(X) and min_nnz != 0:
+        X = X[:, np.diff(X.indptr) >= min_nnz]
+
     return X, y
 
 
-def get_data(dataset: str):
+def get_data(dataset: str, min_nnz=0):
     if dataset in breheny_datasets:
-        return fetch_breheny(dataset)
+        return fetch_breheny(dataset, min_nnz=min_nnz)
     else:
-        return fetch_libsvm(dataset)
+        return fetch_libsvm(dataset, min_nnz=min_nnz)

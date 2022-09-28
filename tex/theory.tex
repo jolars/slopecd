@@ -15,13 +15,13 @@ F \left(\sum_{i=1}^{m^*} \sum_{j \in \mathcal{C}_i^*} z_i \sign(\beta_j^*) e_j \
 % \klopfe{Clarify what $F$ is here}
 % MM: removed F and used the form (ell(beta) instead of F(Xbeta)) : more general
 % where $\tilde{x}_{\mathcal{C}_i} = \sum_{j \in \mathcal{C}_i} x_j \sign (\beta_j^*)$.
-Conditionally on the knowledge of the clusters and the signs of the coefficients, the penalty becomes separable and coordinate descent could be used.
+Conditionally on the knowledge of the clusters and the signs of the coefficients, the penalty becomes separable as shown by \cite{dupuis2021} and coordinate descent could be used.
 Hence, the idea of our algorithm is to intertwine steps that identify the clusters, and large coordinate-wise steps on these clusters.
 
 Based on this observation, we derive a coordinate descent algorithm for minimizing the SLOPE problem~\eqref{pb:slope} with respect to the coefficients of a single cluster at a time.
 
 In all the sequel, $\beta$ is fixed, with $m$ clusters $\mathcal{C}_1, \ldots, \mathcal{C}_m$ corresponding to values $c_1, \ldots, c_m$.
-Let also $k \in [m]$ be fixed, let $s = \sign \beta_{\mathcal{C}_k}$.
+Let also $k \in [m]$ be fixed, let $s_k = \sign \beta_{\mathcal{C}_k}$.
 We are interested in updating $\beta$ by changing only the value taken on the $k$-th cluster.
 To this end, we let
 \begin{equation}
@@ -50,12 +50,11 @@ where
 \]
 is the \emph{partial sorted \(\ell_1\) norm} with respect to the \(k\)-th cluster and where we write \(\lambda_{(j)^-_z}\) to indicate that the inverse sorting permutation \((j)^-_z\)
 is defined with respect to \(\beta(z)\).
-The optimality condition for \Cref{pb:cluster-problem} is
+The optimality condition for \Cref{pb:cluster-problem} is $\forall \delta \in \{-1, 1\}$
 \[
   % P_k'(z; \delta) \geq 0,
   G'(z; \delta) \geq 0,
 \]
-\mm{above, add: $\forall \delta$ or $\forall \delta \in \{-1, 1\}$ ?}
 where $G'(z; \delta) $ is the directional derivative of $G$ in the direction $\delta$.
 Since \(F\) is differentiable we have
 \[
@@ -311,19 +310,14 @@ Then, each time a new predictor becomes non-zero, we compute its inner product w
 
 \subsection{Hybrid proximal coordinate descent strategy}
 
-We propose an iterative solver that alternates between proximal gradient step and proximal coordinate descent.
-Since the regularization term for SLOPE is not separable, applying PCD does not guarantee convergence and PCD updates can be stuck at points that are the not the solution of \cref{pb:slope}.
-However, \cite{dupuis2021} showed that once the clusters are known,  \cref{pb:slope} becomes separable with respect to the knowledge of the clusters of the solution $\hat{\beta}$.
-Practically, it is impossible to know these clusters in advance but we propose to take advantage of the proximal gradient descent to play the role of making sure that we identify the right clusters throughout the iterative updates.
-
-\Cref{alg:hybrid} presents the proposed algorithm.
+We now present in \Cref{alg:hybrid} the proposed solver.
 Every $v$ iterations, we perform a proximal gradient descent update to allows for clusters to split eventually.
 The choice of the parameter $v$ that accounts for the frequency at which pgd steps are performed was set to $5$.
 Our own experiments show that this parameter does not have a great impact on the speed of the algorithm as long as it is at least $3$ (see \Cref{fig:pgd_freq}).
 
 The combination of the proximal gradient steps and PCD allows us to overcome the problem of vanilla PCD getting stuck because of non-separability and allows us to enjoy the speed-up provided by making local updates on each cluster as illustrated in \Cref{fig:illustration-solver}.
 
-\begin{algorithm}[htb]
+\begin{algorithm}[h!]
   \SetKwInOut{Init}{init}
   \SetKwInOut{Input}{input}
   \caption{%

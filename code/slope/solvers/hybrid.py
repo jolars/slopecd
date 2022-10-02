@@ -263,7 +263,6 @@ def hybrid_cd(
 
     if use_reduced_X and is_X_sparse:
         use_reduced_X = False
-        warnings.warn("use_reduced_X cannot be used with sparse X; setting to False")
 
     X_reduced = np.zeros((0, 0), np.float64, order="F")
     L_archive = np.zeros(0, np.float64)

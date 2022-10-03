@@ -76,7 +76,7 @@ while (TRUE) {
   gap <- dual_gap(beta, intercept, x, y, rep(lambda, p))
   n_nonzero <- sum(beta != 0)
 
-  cat("  gap:", gap, "\tn_nonzero:", n_nonzero, "\n")
+  cat("  reg:", reg, "\tgap:", gap, "\tn_nonzero:", n_nonzero, "\n")
 
   if (n_nonzero < nonzero_target) {
     reg <- reg * 0.99
@@ -95,8 +95,8 @@ while (TRUE) {
   }
 }
 
-tol <- 1e-4
-reg <- 0.23
+tol <- 1e-6
+reg <- 0.185
 
 cat("slope\n")
 
@@ -126,7 +126,7 @@ while (TRUE) {
 
   n_nonzero <- sum(unique(abs(beta)) != 0)
 
-  cat("  gap:", gap, "\tn_nonzero:", n_nonzero, "\n")
+  cat("  reg:", reg, "\tgap:", gap, "\tn_nonzero:", n_nonzero, "\n")
 
   if (n_nonzero < nonzero_target) {
     reg <- reg * 0.99

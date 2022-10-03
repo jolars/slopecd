@@ -63,11 +63,6 @@ def cd(X, y, alphas, max_iter, beta0, verbose=False):
                 c_old,
                 ind_old,
                 ind_new,
-                beta,
-                X,
-                np.zeros([X.shape[0], 2]),
-                np.zeros(1),
-                use_reduced_X=False,
             )
 
             j += 1
@@ -161,11 +156,6 @@ def hybrid_cd(X, y, alphas, max_iter, beta0, verbose=False):
                     c_old,
                     ind_old,
                     ind_new,
-                    beta,
-                    X,
-                    np.zeros([X.shape[0], 2]),
-                    np.zeros(1),
-                    use_reduced_X=False,
                 )
 
                 beta_tmp.append(beta.copy())

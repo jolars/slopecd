@@ -1,18 +1,79 @@
 import numpy as np
 from sklearn.linear_model import LinearRegression
+
 from slope.solvers import hybrid_cd
 from slope.utils import lambda_sequence
 
 
+def fit_path(
+    X, y, regs=None, path_length=100, q=0.1, fit_intercept=True, tol=1e-6, verbose=False
+):
+    n, p = X.shape
+
+    if regs is None:
+        auto_reg = True
+        reg_min_ratio = 1e-2 if n < n else 1e-4
+        nnz_max = p + 1
+
+        regs = np.geomspace(1, reg_min_ratio, 100)
+    else:
+        auto_reg = False
+        path_length = len(regs)
+
+    lambdas = lambda_sequence(X, y, fit_intercept, 1, q)
+
+    null_dev = 0.5 * np.linalg.norm(y - np.mean(y) * fit_intercept) ** 2
+    dev_prev = null_dev
+
+    betas = np.zeros((p, path_length))
+    intercepts = np.zeros(path_length)
+
+    beta = np.zeros(p)
+    intercept = np.mean(y) if fit_intercept else 0.0
+
+    i = 0
+    while i < path_length:
+        beta, intercept = hybrid_cd(
+            X,
+            y,
+            lambdas * regs[i],
+            w_start=beta,
+            intercept_start=intercept,
+            tol=tol,
+            fit_intercept=fit_intercept,
+        )[:2]
+
+        betas[:, i] = beta.copy()
+        intercepts[i] = intercept.copy()
+
+        dev = 0.5 * np.linalg.norm(y - X @ beta - intercept) ** 2
+        dev_ratio = 1 - dev / null_dev
+        dev_change = 1 - dev / dev_prev
+        nnz = np.sum(np.unique(np.abs(beta)) != 0)
+
+        if verbose:
+            print(
+                f"step: {i + 1}, reg: {regs[i]:.4f}, dev_ratio: {dev_ratio:.4f}, dev_change: {dev_change:.5f}"
+            )
+
+        if auto_reg:
+            # stopping rules taken from glmnet
+            if nnz >= nnz_max or dev_ratio > 0.999 or (i > 0 and dev_change < 1e-5):
+                break
+
+        dev_prev = dev
+        i += 1
+
+    regs = np.delete(regs, range(i, path_length))
+    betas = np.delete(betas, range(i, path_length), 1)
+    intercepts = np.delete(intercepts, range(i, path_length))
+
+    return betas, intercepts, regs
+
+
 # figure out the reg needed for a certain dev_ratio
 def get_reg_devratio(
-    dev_ratios,
-    X,
-    y,
-    q = 0.1,
-    fit_intercept = True,
-    tol=0.005,
-    verbose = False
+    dev_ratios, X, y, q=0.1, fit_intercept=True, tol=0.005, verbose=False
 ):
     n_samples, n_features = X.shape
 
@@ -62,7 +123,7 @@ def get_reg_devratio(
             tol=1e-4,
             fit_intercept=fit_intercept,
             use_reduced_X=False,
-            gap_freq=1
+            gap_freq=1,
         )[:2]
 
         dev = 0.5 * np.linalg.norm(y - X @ w - intercept) ** 2
@@ -89,9 +150,11 @@ def get_reg_devratio(
     while i < len(regs):
         f_i, w, intercept = f(regs[i], dev_ratio_targets[j], w, intercept)
         if verbose:
-            print(f"    step: {i}, reg: {regs[i]:.3f}, dev_ratio: {f_i + dev_ratio_targets[j]:.3f}")
+            print(
+                f"    step: {i}, reg: {regs[i]:.3f}, dev_ratio: {f_i + dev_ratio_targets[j]:.3f}"
+            )
         if f_i >= 0:
-            w_old = w.copy() # store for next target
+            w_old = w.copy()  # store for next target
 
             a = regs[i]
             b = regs[i - 1] if i > 0 else 1.0
@@ -104,7 +167,9 @@ def get_reg_devratio(
                 f_c, w, intercept = f(c, dev_ratio_targets[j], w, intercept)
 
                 if verbose:
-                    print(f"      Dev ratio: {f_c + dev_ratio_targets[j]:.3f}, diff: {f_c:.3f}")
+                    print(
+                        f"      Dev ratio: {f_c + dev_ratio_targets[j]:.3f}, diff: {f_c:.3f}"
+                    )
 
                 if abs(f_c) <= tol:
                     regs_out.append(c)

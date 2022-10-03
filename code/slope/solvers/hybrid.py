@@ -240,7 +240,7 @@ def hybrid_cd(
     fit_intercept=True,
     cluster_updates=True,
     update_zero_cluster=False,
-    use_reduced_X=True,
+    use_reduced_X=False,
     pgd_freq=5,
     gap_freq=10,
     tol=1e-6,

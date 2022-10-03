@@ -13,7 +13,7 @@ path_length = 100
 verbosity = 1
 n_folds = 10
 random_state = 2023
-overwrite = True
+overwrite = False
 
 folder_path = Path(here("results/cv-reg/", warn=False))
 if not folder_path.exists():

@@ -10,10 +10,10 @@ from slope.data import get_data
 
 fit_intercept = True
 path_length = 100
-verbosity = 2
-n_folds = 5
+verbosity = 1
+n_folds = 10
 random_state = 2023
-overwrite = False
+overwrite = True
 
 folder_path = Path(here("results/cv-reg/", warn=False))
 if not folder_path.exists():
@@ -22,10 +22,10 @@ if not folder_path.exists():
 datasets = [
     "Rhee2006",
     "bcTCGA",
-    # "Scheetz2006",
-    # "rcv1.binary",
-    # "news20.binary",
-    # "YearPredictionMSD",
+    "Scheetz2006",
+    "rcv1.binary",
+    "news20.binary",
+    "YearPredictionMSD",
 ]
 
 qs = [0.1, 0.2]

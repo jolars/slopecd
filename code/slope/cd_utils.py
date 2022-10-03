@@ -12,7 +12,17 @@ def sparse_dot_product(a, vals, inds):
 
 
 @njit
-def compute_grad_hess_sumX(resid, X_data, X_indices, X_indptr, s, cluster, n_samples):
+def compute_grad_hess_sumX(
+    resid,
+    X_data,
+    X_indices,
+    X_indptr,
+    X_squared_col_sums,
+    previously_active,
+    s,
+    cluster,
+    n_samples
+):
     grad = 0.0
     L = 0.0
 
@@ -25,8 +35,13 @@ def compute_grad_hess_sumX(resid, X_data, X_indices, X_indptr, s, cluster, n_sam
         X_sum_vals = X_data[start:end] * s[0]
         X_sum_inds = X_indices[start:end]
 
+        if not previously_active[j]:
+            X_squared_col_sums[j] = np.sum(np.square(X_sum_vals))
+            previously_active[j] = True
+
+        L = X_squared_col_sums[j]
+
         grad = -sparse_dot_product(resid, X_sum_vals, X_sum_inds)
-        L = np.sum(np.square(X_sum_vals))
     else:
         # NOTE(jolars): It is possible to do this even more efficiently by just
         # using arrays and only advancing positions for the array with the

@@ -14,7 +14,7 @@ from slope.utils import ConvergenceMonitor, prox_slope, slope_threshold
 def block_cd_epoch(
     w,
     X,
-    XTX,
+    X_squared_col_sums,
     R,
     alphas,
     cluster_indices,
@@ -44,9 +44,9 @@ def block_cd_epoch(
             ind = cluster[0]
             sum_X = X[:, ind] * sign_w[0]
             if not previously_active[ind]:
-                XTX[ind] = (X[:, ind] @ X[:, ind]) / n_samples
+                X_squared_col_sums[ind] = (X[:, ind] @ X[:, ind]) / n_samples
                 previously_active[ind] = True
-            L_j = XTX[ind]
+            L_j = X_squared_col_sums[ind]
         else:
             sum_X = X[:, cluster] @ sign_w
             L_j = (sum_X.T @ sum_X) / n_samples
@@ -89,6 +89,8 @@ def block_cd_epoch_sparse(
     X_data,
     X_indices,
     X_indptr,
+    X_squared_col_sums,
+    previously_active,
     R,
     alphas,
     cluster_indices,
@@ -114,7 +116,15 @@ def block_cd_epoch_sparse(
         sign_w = np.sign(w[cluster]) if c_old != 0 else np.ones(len(cluster))
 
         grad, L_j, new_vals, new_rows = compute_grad_hess_sumX(
-            R, X_data, X_indices, X_indptr, sign_w, cluster, n_samples
+            R,
+            X_data,
+            X_indices,
+            X_indptr,
+            X_squared_col_sums,
+            previously_active,
+            sign_w,
+            cluster,
+            n_samples,
         )
 
         x = c_old - grad / (L_j * n_samples)
@@ -180,8 +190,7 @@ def hybrid_cd(
         X, y, alphas, tol, gap_freq, max_time, verbose, intercept_column=False
     )
 
-    XTX = np.empty(n_features, dtype=np.float64)
-
+    X_squared_col_sums = np.empty(n_features, dtype=np.float64)
     previously_active = np.zeros(n_features, dtype=bool)
 
     if sparse.issparse(X):
@@ -214,6 +223,8 @@ def hybrid_cd(
                     X.data,
                     X.indices,
                     X.indptr,
+                    X_squared_col_sums,
+                    previously_active,
                     R,
                     alphas,
                     cluster_indices,
@@ -228,7 +239,7 @@ def hybrid_cd(
                 n_c = block_cd_epoch(
                     w,
                     X,
-                    XTX,
+                    X_squared_col_sums,
                     R,
                     alphas,
                     cluster_indices,

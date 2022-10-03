@@ -5,7 +5,7 @@ import numpy as np
 import scipy.sparse as sparse
 from benchopt.datasets.simulated import make_correlated_data
 
-from slope.clusters import get_clusters, update_cluster_sparse
+from slope.clusters import get_clusters
 from slope.solvers import admm, hybrid_cd, newt_alm, prox_grad
 from slope.utils import lambda_sequence
 
@@ -129,7 +129,7 @@ class TestClusterUpdates(unittest.TestCase):
             new_beta = beta.copy()
             new_beta[cluster] = new_coef
 
-            n_c = update_cluster_sparse(
+            n_c = update_cluster(
                 c, c_ptr, c_ind, c_perm, n_c, new_coef, old_coef, ind_old, ind_new
             )
 

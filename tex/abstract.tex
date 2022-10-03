@@ -1,12 +1,14 @@
 %!TEX root=./main.tex
 % Penalized regression is a core element of modern statistical learning.
-Among numerous regression methods, the lasso is the most famous estimator allowing for feature selection. %due to its sparsity.  %solution induced by the $\ell_1$ penalty.
-One of the many reasons for its wide usage is the speed at which the underlying optimization problem can be solved, state-of-the-art solvers relying on coordinate descent algorithm.
-The Sorted L-One Penalized Estimation (SLOPE) is a generalization of the lasso with appealing statistical properties. The method has not yet reached a wide interest. This is in large extent due to slow performance of the available software, which is due to slow solvers of the underlying optimization problem in large dimension.
+The lasso is the most famous sparse regression and feature selection method. %allowing for feature selection. %due to its sparsity.  %solution induced by the $\ell_1$ penalty.
+One reason for its popularity is the speed at which the underlying optimization problem can be solved. %, state-of-the-art solvers relying on coordinate descent algorithm.
+The Sorted L-One Penalized Estimation (SLOPE) is a generalization of the lasso with appealing statistical properties. 
+In spite of this, the method has not yet reached widespread interest.
+A major reason for this is that current software packages that fit SLOPE rely on algorithms that perform poorly in high dimensions. %is due to slow solvers of the underlying optimization problem in large dimension.
 %Despite having better statistical properties, the Sorted L-One Penalized Estimation (SLOPE), a generalization of the lasso, has not yet reached a wide interest.
 %This is mostly due to the time required to solve the underlying optimization problem in large dimension.
-We propose a new fast algorithm to solve the SLOPE optimization problem,
+To tackle this issue, we propose a new fast algorithm to solve the SLOPE optimization problem,
 % Despite the non-separability of the penalty, we propose a hybrid method
-that combines proximal gradient descent steps and proximal coordinate descent ones.
-We provide new results on the directional derivatives of the SLOPE penalty function, its related SLOPE thresholding operator and convergence guarantees for our proposed solver.
-To highlight the speed of our method, we performed an extensive benchmark based on simulated and real datasets including a large list of competitors.
+which combines proximal gradient descent and proximal coordinate descent steps.
+We provide new results on the directional derivative of the SLOPE penalty and its related SLOPE thresholding operator, as well as provide convergence guarantees for our proposed solver.
+In extensive benchmarks on simulated and real data, we show that our method outperforms a long list of competing algorithms.

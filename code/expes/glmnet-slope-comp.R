@@ -95,8 +95,8 @@ while (TRUE) {
   }
 }
 
-tol <- 1e-6
-reg <- 0.185
+tol <- 1.442099e-05
+reg <- 0.1582866
 
 cat("slope\n")
 

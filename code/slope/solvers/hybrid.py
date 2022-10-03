@@ -42,16 +42,16 @@ def block_cd_epoch(
 
         if len(cluster) == 1:
             ind = cluster[0]
-            sum_X = X[:, ind] * sign_w[0]
+            sum_X = np.ravel(X[:, ind] * sign_w[0])
             if not previously_active[ind]:
                 X_squared_col_sums[ind] = (X[:, ind] @ X[:, ind]) / n_samples
                 previously_active[ind] = True
             L_j = X_squared_col_sums[ind]
         else:
-            sum_X = X[:, cluster] @ sign_w
+            sum_X = np.ravel(X[:, cluster] @ sign_w)
             L_j = (sum_X.T @ sum_X) / n_samples
 
-        x = c_old + sum_X @ R / (L_j * n_samples)
+        x = c_old + sum_X.T @ R / (L_j * n_samples)
         beta_tilde, ind_new = slope_threshold(
             x, alphas / L_j, cluster_ptr, cluster_perm, c, n_c, j
         )

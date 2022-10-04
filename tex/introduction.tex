@@ -44,7 +44,7 @@ they use coordinate
 descent~\parencite{tseng2001convergence,friedman2010,breheny2011}. Current SLOPE
 solvers, on the other hand, rely on proximal gradient descent algorithms such
 as FISTA~\parencite{beck2009} and the alternating direction method of multipliers
-method (ADMM, ~\cite{boyd2010}), which have proven to be less efficient than
+method (ADMM, \cite{boyd2010}), which have proven to be less efficient than
 coordinate descent in empirical benchmarks on related problems, such as the
 lasso~\parencite{moreau2022benchopt}. Applying coordinate descent to SLOPE is not,
 however, straightforward since convergence guarantees for coordinate descent
@@ -60,7 +60,7 @@ stuck~(\Cref{fig:naive-cd-stuck}).
     The main plot shows level curves for the primal objective~\eqref{pb:slope}, with the minimizer \(\beta^* = [0, 0]^T\) indicated by the orange cross.
     The marginal plots displays objective values at \(\beta_1 = 0.2\) when optimizing over \(\beta_2\) and vice versa.
     At \(\beta = [0.2,0.2]^T\), standard coordinate descent can only move in the directions indicated by the dashed lines---neither of which are descent directions for the objective.
-    As a result, the algori algorithmthm is stuck at a suboptimal point.
+    As a result, the algorithm is stuck at a suboptimal point.
   }
   \label{fig:naive-cd-stuck}
 \end{figure}

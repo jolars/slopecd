@@ -14,7 +14,7 @@ from slope.utils import ConvergenceMonitor, prox_slope, slope_threshold
 def block_cd_epoch(
     w,
     X,
-    XTX,
+    X_squared_col_sums,
     R,
     alphas,
     cluster_indices,
@@ -44,9 +44,9 @@ def block_cd_epoch(
             ind = cluster[0]
             sum_X = np.ravel(X[:, ind] * sign_w[0])
             if not previously_active[ind]:
-                XTX[ind] = (X[:, ind] @ X[:, ind]) / n_samples
+                X_squared_col_sums[ind] = (X[:, ind] @ X[:, ind]) / n_samples
                 previously_active[ind] = True
-            L_j = XTX[ind]
+            L_j = X_squared_col_sums[ind]
         else:
             sum_X = np.ravel(X[:, cluster] @ sign_w)
             L_j = (sum_X.T @ sum_X) / n_samples
@@ -180,7 +180,7 @@ def hybrid_cd(
         X, y, alphas, tol, gap_freq, max_time, verbose, intercept_column=False
     )
 
-    XTX = np.empty(n_features, dtype=np.float64)
+    X_squared_col_sums = np.empty(n_features, dtype=np.float64)
 
     previously_active = np.zeros(n_features, dtype=bool)
 
@@ -228,7 +228,7 @@ def hybrid_cd(
                 n_c = block_cd_epoch(
                     w,
                     X,
-                    XTX,
+                    X_squared_col_sums,
                     R,
                     alphas,
                     cluster_indices,

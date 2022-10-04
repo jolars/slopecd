@@ -2,7 +2,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 The proposed algorithm is part of a python package relying on \pkg{numpy}~\parencite{harris2020} and \pkg{numba}~\parencite{lam2015}.
-It will be made open-source upon publication. To compare its efficiency, we used several public datasets described in \Cref{table:real-data}.
+It will be made open-source upon publication. To compare its efficiency, we used several public datasets described in \Cref{tab:real-data}.
 We performed an extensive benchmark with the following competitors:
 \begin{itemize}[noitemsep]
   \item Alternating Direction Method of Multipliers (ADMM)~\parencite{boyd2010}
@@ -19,7 +19,7 @@ We performed an extensive benchmark with the following competitors:
 \begin{table}[hbt]
   \centering
   \caption{List of real data sets used in our experiments}
-  \label{table:real-data}
+  \label{tab:real-data}
   \begin{tabular}{
       l
       S[table-format=5.0,round-mode=off]
@@ -38,7 +38,7 @@ We performed an extensive benchmark with the following competitors:
 We used the \pkg{benchopt}~\parencite{moreau2022benchopt} tool to obtain the convergence curves for the different solvers.
 \pkg{Benchopt} launches each solver several times increasing the number of iterations and store the objective value, dual gap and time to reach it.
 The repository to reproduce the benchmark is available at XXX.
-The datasets used for the experiments have been described in \Cref{table:datasets} and were obtained from \textcite{chang2011,chang2016} and \textcite{breheny2022}.
+The datasets used for the experiments have been described in \Cref{tab:real-data} and were obtained from \textcite{chang2011,chang2016} and \textcite{breheny2022}.
 
 Unless we note otherwise, we use the Benjamini--Hochberg method to compute the \(\lambda\) sequence~\parencite{bogdan2015} with \(q=0.1\) to control the shape of the sequence.
 We let \(\lambda_\text{max}\) be the \(\lambda\) sequence such that \(\beta^* = 0\), but for which any scaling with a strictly positive scalar smaller than one produces a solution with at least one non-zero coefficient.
@@ -50,21 +50,24 @@ The design matrix $X$ is simulated with correlation between features $j$ and $j'
 The true regression vector $\beta^\star$ contains a certain number of non-zero entries that are obtained by simulating a Gaussian distribution with zero mean and unit variance.
 The observations are equal to $y=X\beta^\star + \varepsilon$ where $\varepsilon$ is a centered Gaussian distribution with variance such that $\lVert X\beta^\star\rVert / \lVert \varepsilon \rVert = 3$.
 
+The different scenarios for the simulated data are described in \Cref{tab:simulated-data}
+
 \begin{table}[hbt]
   \centering
-  \caption{Settings for the simulated data in our benchmarks}
-  \label{table:simulated-data}
+  \caption{Scenarios for the simulated data in our benchmarks}
+  \label{tab:simulated-data}
   \begin{tabular}{
+      l
       S[table-format=5.0,round-mode=off]
       S[table-format=7.0,round-mode=off]
       S[table-format=2.0,round-mode=off]
       S[table-format=1.3,round-mode=off]
     }
     \toprule
-    \(n\) & \(p\)   & \(k\) & {Density} \\ \midrule
-    200   & 20000   & 20    & 1         \\
-    20000 & 200     & 40    & 1         \\
-    200   & 2000000 & 20    & 0.001     \\ \bottomrule
+    {Scenario} & \(n\) & \(p\)   & \(k\) & {Density} \\ \midrule
+    1          & 200   & 20000   & 20    & 1         \\
+    2          & 20000 & 200     & 40    & 1         \\
+    3          & 200   & 2000000 & 20    & 0.001     \\ \bottomrule
   \end{tabular}
 \end{table}
 
@@ -78,7 +81,7 @@ The observations are equal to $y=X\beta^\star + \varepsilon$ where $\varepsilon$
 \end{figure*}
 
 In \Cref{fig:simulated}, we present the results of the benchmarks on simulated data.
-The settings for the simulated can be found in \Cref{table:datasets}.
+The settings for the simulated can be found in \Cref{tab:real-data}.
 We see that for smaller fractions of $\lambda_{\text{max}}$ our hybrid algorithm allows significant speedup in comparison to its competitors mainly when the number of features is large than the number of samples.
 On very large scale data such as in simulated data setting $3$, we see that the hybrid solver is faster than its competitors by one or two orders of magnitude.
 

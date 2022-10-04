@@ -9,13 +9,13 @@ Proximal coordinate descent cannot be applied to \Cref{pb:slope} because it is n
 However, if the clusters $\mathcal{C}_1^*, \ldots, \mathcal{C}_{m^*}^*$ of the solution $\beta^*$ were known together with their signs, then the values $c_1^*, \ldots, c_{m^*}^*$ taken by $\beta^*$ on the clusters could be equivalently computed by solving:
 \begin{problem}
 \min_{z \in \bbR^{m^*}}
-F \left(\sum_{i=1}^{m^*} \sum_{j \in \mathcal{C}_i^*} z_i \sign(\beta_j^*) e_j \right)
-+ \sum_{i=1}^{m^*} | z_i | \sum_{j \in \mathcal{C}_i^*} \lambda_j \, ,
+ \frac{1}{2} \norm{y - X \sum_{i=1}^{m^*} \sum_{j \in \mathcal{C}_i^*} z_i \sign(\beta_j^*) e_j }^2
++ \sum_{i=1}^{m^*} | z_i | \sum_{j \in \mathcal{C}_i^*} \lambda_j
 \end{problem}
 % \klopfe{Clarify what $F$ is here}
 % MM: removed F and used the form (ell(beta) instead of F(Xbeta)) : more general
 % where $\tilde{x}_{\mathcal{C}_i} = \sum_{j \in \mathcal{C}_i} x_j \sign (\beta_j^*)$.
-Conditionally on the knowledge of the clusters and the signs of the coefficients, the penalty becomes separable as shown by \cite{dupuis2021} and coordinate descent could be used.
+Conditionally on the knowledge of the clusters and the signs of the coefficients, the penalty becomes separable as shown by \cite{dupuis2021}, and coordinate descent could be used.
 Hence, the idea of our algorithm is to intertwine steps that identify the clusters, and large coordinate-wise steps on these clusters.
 
 Based on this observation, we derive a coordinate descent algorithm for minimizing the SLOPE problem~\eqref{pb:slope} with respect to the coefficients of a single cluster at a time.
@@ -39,7 +39,7 @@ one-dimensional problem:
 \begin{problem}
 \label{pb:cluster-problem}
 \min_{z \in \mathbb{R}} \Big(
-G(z) = P(\beta(z))  = F\big(\beta(z)\big) + H(z)
+G(z) = P(\beta(z))  = \frac{1}{2 n} \norm{y - X \beta(z)}^2 + H(z)
 \Big) \,  ,
 \end{problem}
 where
@@ -55,9 +55,9 @@ The optimality condition for \Cref{pb:cluster-problem} is
   \forall \delta \in \{-1, 1\}, \quad G'(z; \delta) \geq 0,
 \]
 where $G'(z; \delta) $ is the directional derivative of $G$ in the direction $\delta$.
-Since \(F\) is differentiable we have
+Since the quadratic datafit is differentiable we have
 \[
-  G'(z; \delta)  = \delta \sum_{i \in \mathcal{C}_k}\nabla_i F(\beta(z)) + H'(z; \delta) \, ,
+  G'(z; \delta)  = \delta \sum_{i \in \mathcal{C}_k} X_{:i}^\top(X\beta(z) - y_i) + H'(z; \delta) \, ,
 \]
 % since \(\lVert \tilde{r} - \tilde{x}z\rVert_2^2\) is differentiable.
 where \(H'(z; \delta)\) is the directional derivative of $H$.

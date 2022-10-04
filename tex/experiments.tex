@@ -19,31 +19,11 @@ We performed an extensive benchmark with the following competitors:
 We used the \pkg{benchopt}~\parencite{moreau2022benchopt} tool to obtain the convergence curves for the different solvers.
 \pkg{Benchopt} launches each solver several times increasing the number of iterations and store the objective value, dual gap and time to reach it.
 The repository to reproduce the benchmark is available at XXX.
-The datasets used for the experiments can be found in \Cref{table:datasets} and were downloaded from \pkg{libsvm}\footnote{\url{https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/}} and the university of Iowa webpage\footnote{\url{https://myweb.uiowa.edu/pbreheny/7600/s16/data.html}}.
 
 We used the sequence of $\lambda$ given by the Benjamini-Hochberg (BH) method~\parencite{bogdan2015},
 which sets $\lambda_j = \eta^{-1}(1 - q\times j / (2p))$ for $j=1, 2, \hdots, p$ where $\eta^{-1}$ is the probit function. 
 For the rest of the experiments section, the parameter $q$ of this sequence has been set to $0.1$ if not stated otherwise.
 From this sequence of $\lambda$, we parametrized the sorted $\ell_1$ penalty as $J(\beta, \lambda, \sigma) = \sigma \sum_{j=1}^p |\beta_{(j)}| \lambda_j$, where $\sigma$ is chosen as a percentage of $\lambda_{\text{max}}$ where $\lambda_{\text{max}}$ is ...
-
-\begin{table}[hbt]
-  \centering
-  \caption{List of real data sets used in our experiments}
-  \label{tab:real-data}
-  \begin{tabular}{
-      l
-      S[table-format=5.0,round-mode=off]
-      S[table-format=7.0,round-mode=off]
-      S[table-format=1.5,round-mode=figures,round-precision=2]
-    }
-    \toprule
-    Dataset            & \(n\) & \(p\)   & {Density} \\ \midrule
-    \dataset{Rhee2006} & 842   & 360     & 0.02469   \\
-    \dataset{bcTCGA}   & 536   & 17322   & 1         \\
-    \dataset{rcv1}     & 20242 & 44504   & 0.00166   \\
-    \dataset{news20}   & 19996 & 1355191 & 0.0003357 \\ \bottomrule
-  \end{tabular}
-\end{table}
 
 We used the \pkg{benchopt}~\parencite{moreau2022benchopt} tool to obtain the convergence curves for the different solvers.
 \pkg{Benchopt} launches each solver several times increasing the number of iterations and store the objective value, dual gap and time to reach it.
@@ -93,14 +73,34 @@ The design matrix $X$ is simulated with correlation between features $j$ and $j'
 The true regression vector $\beta^\star$ contains a certain number of non-zero entries that are obtained by simulating a gaussian distribution with zero mean and unit variance.
 The observations are equal to $y=X\beta^\star + \varepsilon$ where $\varepsilon$ is a centered gaussian distribution with variance such that $\lVert X\beta^\star\rVert / \lVert \varepsilon \rVert = 3$.
 
-
 In \Cref{fig:simulated}, we present the results of the benchmarks on simulated data.
 The settings for the simulated can be found in \Cref{tab:real-data}.
 We see that for smaller fractions of $\lambda_{\text{max}}$ our hybrid algorithm allows significant speedup in comparison to its competitors mainly when the number of features is large than the number of samples.
 On very large scale data such as in simulated data setting $3$, we see that the hybrid solver is faster than its competitors by one or two orders of magnitude.
 
-
 \subsection{Real data}
+
+The datasets used for the experiments can be found in \Cref{table:datasets} and were downloaded from \pkg{libsvm}\footnote{\url{https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/}} and the university of Iowa webpage\footnote{\url{https://myweb.uiowa.edu/pbreheny/7600/s16/data.html}}.
+
+\begin{table}[hbt]
+  \centering
+  \caption{List of real data sets used in our experiments}
+  \label{tab:real-data}
+  \begin{tabular}{
+      l
+      S[table-format=5.0,round-mode=off]
+      S[table-format=7.0,round-mode=off]
+      S[table-format=1.5,round-mode=figures,round-precision=2]
+    }
+    \toprule
+    Dataset            & \(n\) & \(p\)   & {Density} \\ \midrule
+    \dataset{Rhee2006} & 842   & 360     & 0.02469   \\
+    \dataset{bcTCGA}   & 536   & 17322   & 1         \\
+    \dataset{rcv1}     & 20242 & 44504   & 0.00166   \\
+    \dataset{news20}   & 19996 & 1355191 & 0.0003357 \\ \bottomrule
+  \end{tabular}
+\end{table}
+
 \begin{figure*}[!t]
   \centering
   \includegraphics[scale=0.47]{real_legend.pdf}

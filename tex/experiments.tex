@@ -2,7 +2,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 The proposed algorithm is part of a python package relying on \pkg{numpy}~\parencite{harris2020} and \pkg{numba}~\parencite{lam2015}.
-It will be made open-source upon publication. To compare its efficiency, we used several public datasets described in \Cref{table:datasets}.
+It will be made open-source upon publication. To compare its efficiency, we used several public datasets described in \Cref{table:real-data}.
 We performed an extensive benchmark with the following competitors:
 \begin{itemize}[noitemsep]
   \item Alternating Direction Method of Multipliers (ADMM)~\parencite{boyd2010}
@@ -16,25 +16,22 @@ We performed an extensive benchmark with the following competitors:
         and coordinate descent to overcome the non-separability of the SLOPE problem.
 \end{itemize}
 
-\begin{table}[]
+\begin{table}[hbt]
   \centering
-  \label{table:datasets}
+  \caption{List of real data sets used in our experiments}
+  \label{table:real-data}
   \begin{tabular}{
       l
-      S[table-format=6.0,round-mode=off]
+      S[table-format=5.0,round-mode=off]
       S[table-format=7.0,round-mode=off]
-      S[table-format=1.4,round-mode=off]
-      c
+      S[table-format=1.5,round-mode=figures,round-precision=2]
     }
     \toprule
-    Dataset              & \(n\) & \(p\)   & {Density} \\ \midrule
-    \dataset{Simulated 1} & 200   & 20000   & 1         \\
-    \dataset{Simulated 2} & 20000 & 200     & 1         \\
-    \dataset{Simulated 3} & 200   & 2000000 & 0.001     \\ \midrule
-    \dataset{Rhee2006}    & 842   & 361     & 0.025     \\
-    \dataset{bcTCGA}      & 536   & 17322   & 1         \\
-    \dataset{rcv1}        & 20242 & 19959   & ?         \\
-    \dataset{news20}      & 19996 & 1355191 & ?         \\ \bottomrule
+    Dataset            & \(n\) & \(p\)   & {Density} \\ \midrule
+    \dataset{Rhee2006} & 842   & 360     & 0.02469   \\
+    \dataset{bcTCGA}   & 536   & 17322   & 1         \\
+    \dataset{rcv1}     & 20242 & 44504   & 0.00166   \\
+    \dataset{news20}   & 19996 & 1355191 & 0.0003357 \\ \bottomrule
   \end{tabular}
 \end{table}
 
@@ -52,6 +49,26 @@ We then parameterize the experiments by scaling \(\lambda_\text{max}\), using th
 The design matrix $X$ is simulated with correlation between features $j$ and $j'$ equal to $\rho^{|j-j'|}$ where $\rho$ is a parameter that can be chosen in $[0, 1[$.
 The true regression vector $\beta^\star$ contains a certain number of non-zero entries that are obtained by simulating a Gaussian distribution with zero mean and unit variance.
 The observations are equal to $y=X\beta^\star + \varepsilon$ where $\varepsilon$ is a centered Gaussian distribution with variance such that $\lVert X\beta^\star\rVert / \lVert \varepsilon \rVert = 3$.
+
+\begin{table}[hbt]
+  \centering
+  \caption{Settings for the simulated data in our benchmarks}
+  \label{table:simulated-data}
+  \begin{tabular}{
+      S[table-format=5.0,round-mode=off]
+      S[table-format=7.0,round-mode=off]
+      S[table-format=2.0,round-mode=off]
+      S[table-format=1.3,round-mode=off]
+    }
+    \toprule
+    \(n\) & \(p\)   & \(k\) & {Density} \\ \midrule
+    200   & 20000   & 20    & 1         \\
+    20000 & 200     & 40    & 1         \\
+    200   & 2000000 & 20    & 0.001     \\ \bottomrule
+  \end{tabular}
+\end{table}
+
+
 \begin{figure*}[htb]
   \centering
   \includegraphics[scale=0.47]{simulated_legend.pdf}

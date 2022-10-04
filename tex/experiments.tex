@@ -20,7 +20,7 @@ We used the \pkg{benchopt}~\parencite{moreau2022benchopt} tool to obtain the con
 \pkg{Benchopt} launches each solver several times increasing the number of iterations and store the objective value, dual gap and time to reach it.
 The repository to reproduce the benchmark is available at XXX.
 
-Unless we note otherwise, we use the Benjamini--Hochberg method to compute the \(\lambda\) sequence~\parencite{bogdan2015},
+Unless we note otherwise, we used the Benjamini--Hochberg method to compute the \(\lambda\) sequence~\parencite{bogdan2015},
 which sets $\lambda_j = \eta^{-1}(1 - q\times j / (2p))$ for $j=1, 2, \hdots, p$ where $\eta^{-1}$ is the probit function. 
 For the rest of the experiments section, the parameter $q$ of this sequence has been set to $0.1$ if not stated otherwise.
 We let \(\lambda_\text{max}\) be the \(\lambda\) sequence such that \(\beta^* = 0\), but for which any scaling with a strictly positive scalar smaller than one produces a solution with at least one non-zero coefficient.
@@ -29,9 +29,11 @@ We then parameterize the experiments by scaling \(\lambda_\text{max}\), using th
 \subsection{Simulated Data}
 \label{sec:experiments-real-data}
 
-The design matrix $X$ is simulated with correlation between features $j$ and $j'$ equal to $\rho^{|j-j'|}$ where $\rho$ is a parameter that can be chosen in $[0, 1[$, we fixed this value at $0.6$.
-The true regression vector $\beta^\star$ contains a certain number of non-zero entries that are obtained by simulating a gaussian distribution with zero mean and unit variance.
-The observations are equal to $y=X\beta^\star + \varepsilon$ where $\varepsilon$ is a centered gaussian distribution with variance such that $\lVert X\beta^\star\rVert / \lVert \varepsilon \rVert = 3$.
+The design matrix $X$ was generated such that features had mean one and unit variance, with correlation between features $j$ and $j'$ equal to $\rho^{|j-j'|}$ where $\rho$ is a parameter that can be chosen in $[0, 1[$.
+We fixed this value at $0.6$.
+We generated \(\beta \in \mathbb{R}^p\) such that \(k\) entries, chosen uniformly at random throughout the vector, were sampled from a standard Gaussian distribution.
+The response vector, meanwhile, was set to $y=X\beta + \varepsilon$, where
+$\varepsilon$ was sampled from a multivariate Gaussian distribution with variance such that $\lVert X\beta\rVert / \lVert \varepsilon \rVert = 3$.
 
 The different scenarios for the simulated data are described in \Cref{tab:simulated-data}
 

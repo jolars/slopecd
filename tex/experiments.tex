@@ -42,9 +42,9 @@ The repository to reproduce the benchmark is available at XXX.
 \subsection{Simulated Data}
 \label{sec:experiments-real-data}
 
-The design matrix $X$ is simulated with correlation between features $j$ and $j'$ equal to $\rho^{|j-j'|}$ where $\rho$ is a parameter that can be chosen in $[0, 1[$.
-The true regression vector $\beta^\star$ contains a certain number of non-zero entries that are obtained by simulating a Gaussian distribution with zero mean and unit variance.
-The observations are equal to $y=X\beta^\star + \varepsilon$ where $\varepsilon$ is a centered Gaussian distribution with variance such that $\lVert X\beta^\star\rVert / \lVert \varepsilon \rVert = 3$.
+The design matrix $X$ is simulated with correlation between features $j$ and $j'$ equal to $\rho^{|j-j'|}$ where $\rho$ is a parameter that can be chosen in $[0, 1[$, we fixed this value at $0.6$.
+The true regression vector $\beta^\star$ contains a certain number of non-zero entries that are obtained by simulating a gaussian distribution with zero mean and unit variance.
+The observations are equal to $y=X\beta^\star + \varepsilon$ where $\varepsilon$ is a centered gaussian distribution with variance such that $\lVert X\beta^\star\rVert / \lVert \varepsilon \rVert = 3$.
 
 The different scenarios for the simulated data are described in \Cref{tab:simulated-data}
 
@@ -67,6 +67,9 @@ The different scenarios for the simulated data are described in \Cref{tab:simula
   \end{tabular}
 \end{table}
 
+In \Cref{fig:simulated}, we present the results of the benchmarks on simulated data.
+The settings for the simulated can be found in \Cref{tab:real-data}.
+
 \begin{figure*}[!t]
   \centering
   \includegraphics[scale=0.47]{simulated_legend.pdf}
@@ -75,12 +78,6 @@ The different scenarios for the simulated data are described in \Cref{tab:simula
   \label{fig:simulated}
 \end{figure*}
 
-The design matrix $X$ is simulated with correlation between features $j$ and $j'$ equal to $\rho^{|j-j'|}$ where $\rho$ is a parameter that can be chosen in $[0, 1[$, we fixed this value at $0.6$.
-The true regression vector $\beta^\star$ contains a certain number of non-zero entries that are obtained by simulating a gaussian distribution with zero mean and unit variance.
-The observations are equal to $y=X\beta^\star + \varepsilon$ where $\varepsilon$ is a centered gaussian distribution with variance such that $\lVert X\beta^\star\rVert / \lVert \varepsilon \rVert = 3$.
-
-In \Cref{fig:simulated}, we present the results of the benchmarks on simulated data.
-The settings for the simulated can be found in \Cref{tab:real-data}.
 We see that for smaller fractions of $\lambda_{\text{max}}$ our hybrid algorithm allows significant speedup in comparison to its competitors mainly when the number of features is large than the number of samples.
 On very large scale data such as in simulated data setting $3$, we see that the hybrid solver is faster than its competitors by one or two orders of magnitude.
 

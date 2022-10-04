@@ -22,10 +22,10 @@ if not folder_path.exists():
 datasets = [
     "Rhee2006",
     "bcTCGA",
-    "Scheetz2006",
     "rcv1.binary",
     "news20.binary",
     "YearPredictionMSD",
+    "Scheetz2006",
 ]
 
 qs = [0.1, 0.2]

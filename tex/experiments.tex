@@ -29,6 +29,11 @@ We then parameterize the experiments by scaling \(\lambda_\text{max}\), using th
 We pre-process datasets by first removing features with less than three non-zero values. Then, for dense data we center and scale each feature by its mean and standard deviation respectively.
 For sparse data, we scale each feature by its maximum absolute value.
 
+The proposed algorithm is part of a python package relying on \pkg{numpy}~\parencite{harris2020} and \pkg{numba}~\parencite{lam2015}, which will
+be made open-source upon publication.\jl{We are going to include it in the supplementary material too, right?} 
+
+\jl{Add information about the benchmarking system here (or refer to entry in appendix).}
+
 \subsection{Simulated Data}
 \label{sec:experiments-real-data}
 

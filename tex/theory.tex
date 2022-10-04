@@ -18,6 +18,8 @@ However, if the clusters $\mathcal{C}_1^*, \ldots, \mathcal{C}_{m^*}^*$ of the s
 Conditionally on the knowledge of the clusters and the signs of the coefficients, the penalty becomes separable as shown by \cite{dupuis2021}, and coordinate descent could be used.
 Hence, the idea of our algorithm is to intertwine steps that identify the clusters, and large coordinate-wise steps on these clusters.
 
+\jl{Is this reasoning sound? The PGD step does not immediately identify clusters.}
+
 Based on this observation, we derive a coordinate descent algorithm for minimizing the SLOPE problem~\eqref{pb:slope} with respect to the coefficients of a single cluster at a time.
 
 In all the sequel, $\beta$ is fixed, with $m$ clusters $\mathcal{C}_1, \ldots, \mathcal{C}_m$ corresponding to values $c_1, \ldots, c_m$.

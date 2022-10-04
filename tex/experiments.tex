@@ -20,10 +20,24 @@ We used the \pkg{benchopt}~\parencite{moreau2022benchopt} tool to obtain the con
 \pkg{Benchopt} launches each solver several times increasing the number of iterations and store the objective value, dual gap and time to reach it.
 The repository to reproduce the benchmark is available at XXX.
 
-We used the sequence of $\lambda$ given by the Benjamini-Hochberg (BH) method~\parencite{bogdan2015},
-which sets $\lambda_j = \eta^{-1}(1 - q\times j / (2p))$ for $j=1, 2, \hdots, p$ where $\eta^{-1}$ is the probit function. 
-For the rest of the experiments section, the parameter $q$ of this sequence has been set to $0.1$ if not stated otherwise.
-From this sequence of $\lambda$, we parametrized the sorted $\ell_1$ penalty as $J(\beta, \lambda, \sigma) = \sigma \sum_{j=1}^p |\beta_{(j)}| \lambda_j$, where $\sigma$ is chosen as a percentage of $\lambda_{\text{max}}$ where $\lambda_{\text{max}}$ is ...
+\begin{table}[]
+  \centering
+  \caption{List of real data sets used in our experiments}
+  \label{tab:real-data}
+  \begin{tabular}{
+      l
+      S[table-format=5.0,round-mode=off]
+      S[table-format=7.0,round-mode=off]
+      S[table-format=1.5,round-mode=figures,round-precision=2]
+    }
+    \toprule
+    Dataset            & \(n\) & \(p\)   & {Density} \\ \midrule
+    \dataset{Rhee2006} & 842   & 360     & 0.02469   \\
+    \dataset{bcTCGA}   & 536   & 17322   & 1         \\
+    \dataset{rcv1}     & 20242 & 44504   & 0.00166   \\
+    \dataset{news20}   & 19996 & 1355191 & 0.0003357 \\ \bottomrule
+  \end{tabular}
+\end{table}
 
 \subsection{Simulated Data}
 \label{sec:experiments-real-data}

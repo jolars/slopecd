@@ -7,7 +7,7 @@ We performed an extensive benchmark with the following competitors:
 \begin{itemize}[noitemsep]
   \item Alternating Direction Method of Multipliers (\texttt{admm})~\parencite{boyd2010}
   \item Anderson acceleration for proximal gradient descent (\texttt{anderson pgd})~\parencite{zhang2020}
-  \item Proximal Gradient Descent (\texttt{pgd})~\cite{combettes2005}
+  \item Proximal Gradient Descent (\texttt{pgd})~\parencite{combettes2005}
   \item Fast Iterative Shrinkage-Thresholding Algorithm (\texttt{fista})~\parencite{beck2009}
   \item Semismooth Newton-Based Augmented Lagrangian (\texttt{newt-alt})~\parencite{Ziyan2019}
   \item The Oracle solver (\texttt{oracle cd}) uses the clusters obtained via another
@@ -21,7 +21,10 @@ We used the \texttt{benchopt}~\parencite{moreau2022benchopt} tool to obtain the 
 The repository to reproduce the benchmark is available at XXX.
 The datasets used for the experiments can be found in \Cref{table:datasets} and were downloaded from \dataset{libsvm}\footnote{\url{https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/}} and the university of Iowa webpage\footnote{\url{https://myweb.uiowa.edu/pbreheny/7600/s16/data.html}}.
 
-\klopfe{Describe lambda sequence}
+We used the sequence of $\lambda$ given by the Benjamini-Hochberg (BH) method~\parencite{bogdan2015},
+which sets $\lambda_j = \eta^{-1}(1 - q\times j / (2p))$ for $j=1, 2, \hdots, p$ where $\eta^{-1}$ is the probit function. 
+For the rest of the experiments section, the parameter $q$ of this sequence has been set to $0.1$ if not stated otherwise.
+From this sequence of $\lambda$, we parametrized the sorted $\ell_1$ penalty as $J(\beta, \lambda, \sigma) = \sigma \sum_{j=1}^p |\beta_{(j)}| \lambda_j$, where $\sigma$ is chosen as a percentage of $\lambda_{\text{max}}$ where $\lambda_{\text{max}}$ is ...
 
 \begin{table}[]
   \centering

@@ -5,18 +5,25 @@ The proposed algorithm is part of a python package relying on \pkg{numpy}~\paren
 It will be made open-source upon publication. To compare its efficiency, we used several public datasets described in \Cref{table:real-data}.
 We performed an extensive benchmark with the following competitors:
 \begin{itemize}[noitemsep]
-  \item Alternating Direction Method of Multipliers (ADMM)~\parencite{boyd2010}
-  \item Anderson acceleration for proximal gradient descent~\parencite{zhang2020}
-  \item Proximal Gradient Descent (PGD)~\parencite{combettes2005}
-  \item Fast Iterative Shrinkage-Thresholding Algorithm (FISTA)~\parencite{beck2009}
-  \item Semismooth Newton-Based Augmented Lagrangian (Newt-ALM)~\parencite{Ziyan2019}
-  \item The oracle solver uses the clusters obtained via another
+  \item Alternating Direction Method of Multipliers (\texttt{admm})~\parencite{boyd2010}
+  \item Anderson acceleration for proximal gradient descent (\texttt{anderson pgd})~\parencite{zhang2020}
+  \item Proximal Gradient Descent (\texttt{pgd})~\cite{combettes2005}
+  \item Fast Iterative Shrinkage-Thresholding Algorithm (\texttt{fista})~\parencite{beck2009}
+  \item Semismooth Newton-Based Augmented Lagrangian (\texttt{newt-alt})~\parencite{Ziyan2019}
+  \item The Oracle solver (\texttt{oracle cd}) uses the clusters obtained via another
         solver to compute coordinate descent updates from the known solver.
   \item The hybrid (our) solver (see \Cref{alg:hybrid}) combines proximal gradient descent
         and coordinate descent to overcome the non-separability of the SLOPE problem.
 \end{itemize}
 
-\begin{table}[hbt]
+We used the \texttt{benchopt}~\parencite{moreau2022benchopt} tool to obtain the convergence curves for the different solvers.
+\texttt{Benchopt} launches each solver several times increasing the number of iterations and store the objective value, dual gap and time to reach it.
+The repository to reproduce the benchmark is available at XXX.
+The datasets used for the experiments can be found in \Cref{table:datasets} and were downloaded from \dataset{libsvm}\footnote{\url{https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/}} and the university of Iowa webpage\footnote{\url{https://myweb.uiowa.edu/pbreheny/7600/s16/data.html}}.
+
+\klopfe{Describe lambda sequence}
+
+\begin{table}[]
   \centering
   \caption{List of real data sets used in our experiments}
   \label{table:real-data}
@@ -35,10 +42,7 @@ We performed an extensive benchmark with the following competitors:
   \end{tabular}
 \end{table}
 
-We used the \pkg{benchopt}~\parencite{moreau2022benchopt} tool to obtain the convergence curves for the different solvers.
-\pkg{Benchopt} launches each solver several times increasing the number of iterations and store the objective value, dual gap and time to reach it.
-The repository to reproduce the benchmark is available at XXX.
-The datasets used for the experiments have been described in \Cref{table:datasets} and were obtained from \textcite{chang2011,chang2016} and \textcite{breheny2022}.
+\subsection{Simulated data}
 
 Unless we note otherwise, we use the Benjamini--Hochberg method to compute the \(\lambda\) sequence~\parencite{bogdan2015} with \(q=0.1\) to control the shape of the sequence.
 We let \(\lambda_\text{max}\) be the \(\lambda\) sequence such that \(\beta^* = 0\), but for which any scaling with a strictly positive scalar smaller than one produces a solution with at least one non-zero coefficient.
@@ -70,6 +74,7 @@ The observations are equal to $y=X\beta^\star + \varepsilon$ where $\varepsilon$
 
 
 \begin{figure*}[htb]
+\begin{figure*}[!t]
   \centering
   \includegraphics[scale=0.47]{simulated_legend.pdf}
   \includegraphics[scale=0.5]{simulated.pdf}
@@ -77,17 +82,24 @@ The observations are equal to $y=X\beta^\star + \varepsilon$ where $\varepsilon$
   \label{fig:simulated}
 \end{figure*}
 
+The design matrix $X$ is simulated with correlation between features $j$ and $j'$ equal to $\rho^{|j-j'|}$ where $\rho$ is a parameter that can be chosen in $[0, 1[$, we fixed this value at $0.6$.
+The true regression vector $\beta^\star$ contains a certain number of non-zero entries that are obtained by simulating a gaussian distribution with zero mean and unit variance.
+The observations are equal to $y=X\beta^\star + \varepsilon$ where $\varepsilon$ is a centered gaussian distribution with variance such that $\lVert X\beta^\star\rVert / \lVert \varepsilon \rVert = 3$.
+
+
 In \Cref{fig:simulated}, we present the results of the benchmarks on simulated data.
 The settings for the simulated can be found in \Cref{table:datasets}.
 We see that for smaller fractions of $\lambda_{\text{max}}$ our hybrid algorithm allows significant speedup in comparison to its competitors mainly when the number of features is large than the number of samples.
 On very large scale data such as in simulated data setting $3$, we see that the hybrid solver is faster than its competitors by one or two orders of magnitude.
 
 
-\subsection{Real Data}
-\begin{figure*}[htb]
+\subsection{Real data}
+\begin{figure*}[!t]
   \centering
   \includegraphics[scale=0.47]{real_legend.pdf}
   \includegraphics[scale=0.5]{real.pdf}
   \caption{\textbf{Benchmark on real datasets.} Normalized duality gap as a function of time for SLOPE on multiple simulated datasets and for multiple sequence of $\lambda$.}
   \label{fig:real}
 \end{figure*}
+
+In \Cref{fig:real}, we present the results of the benchmarks on real data.

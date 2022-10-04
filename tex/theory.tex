@@ -264,50 +264,6 @@ In \Cref{fig:slope-thresholding}, we visualize the SLOPE thresholding operator.
   \label{fig:slope-thresholding}
 \end{figure*}
 
-\subsubsection{Naive Updates}
-
-As in \textcite{friedman2010}, we can improve the efficiency of updates by observing that
-\begin{equation*}
-  \begin{aligned}
-    \tilde r_k & = y - \tilde y_k                                                                       \\
-               & = y - X_{\bar{\mathcal{C}}_k}\beta_{\bar{\mathcal{C}}_k} - \tilde x c_k + \tilde x c_k \\
-               & = r + \tilde x c_k
-  \end{aligned}
-\end{equation*}
-and therefore that
-\begin{equation}
-  \label{eq:naive-update}
-  \tilde x_k^T (y - \tilde y_k) = \tilde x_k^T r + \tilde x_k^T \tilde x_k c_k.
-\end{equation}
-
-\subsubsection{Caching Reductions}
-
-Observe that \(\tilde x_k\) only changes between subsequent coordinate updates provided that the members of the cluster \(k\) change, for instance if two clusters are merged, a predictor leaves a cluster, or the signs flip (through an update of \(\alpha_k\)).
-As a result, it is possible to obtain computational gains by caching \(\tilde x_k\) and \(\tilde x_k^T \tilde x_k\) for each cluster (except the zero cluster, which we do not consider in our coordinate descent step).
-When there is no change in the clusters, there is no need to recompute these quantities.
-And even when there are changes, we can still reduce the costs involved since \(\tilde x_k\) can be updated in place.
-If a large cluster is joined by few new predictors, then the cost of updating may be much lower than recomputing the quantities for the entire cluster.
-Also note that, for single-member clusters we only need to store \(\tilde x_k^T \tilde x_k\) since \(\tilde x_k\) is just a column in \(X\) times the corresponding sign.
-
-Letting \(\tilde x_k^\text{old}\) correspond to the value of \(\tilde x_k\) before the update, we note that \(\tilde x_k \gets \tilde x_k^\text{old} + x_j \sign(\beta_j)\) for each \(j \in \mathcal{C}_k^\text{new} \setminus \mathcal{C}_k^\text{old}\) and \(\tilde x_k \gets \tilde x_k^\text{old} - x_j \sign(\beta_j)\) for each \(j \in \mathcal{C}_k^\text{old} \setminus \mathcal{C}_k^\text{new}\).
-If only the signs flip, we simply have to also flip the signs in \(\tilde x_k\).
-
-\subsubsection{Covariance Updates}
-
-Notice that we can rewrite the first term in \eqref{eq:naive-update} as
-\begin{equation}
-  \begin{aligned}
-    \tilde x_k^T r & = \tilde x_k^T y - \sum_{j : \beta_j \neq 0} \tilde x_k^T x_j \beta_j                                                                    \\
-                   & = \tilde x_k^T y - \sum_{j : c_j \neq 0} \tilde x_k^T \tilde x_j c_j                                                                     \\
-                   & = s_{\mathcal{C}_k}^T X_{\mathcal{C}_k}^T y - \sum_{j : \beta_j \neq 0} s_{\mathcal{C}_k}^T X_{\mathcal{C}_k}^T x_j \beta_j              \\
-                   & = s_{\mathcal{C}_k}^T \left(X^T y\right)_{\mathcal{C}_k} - \sum_{j : \beta_j \neq 0} s_{\mathcal{C}_k}^T X_{\mathcal{C}_k}^T x_j \beta_j \\
-                   & = \sum_{j \in \mathcal{C}_k}\left( s_j x_j^Ty - \sum_{t : \beta_t \neq 0} s_j x_j^T x_t \beta_t \right)
-  \end{aligned}
-\end{equation}
-As in \textcite{friedman2010}, this formulation can be used to achieve so-called \emph{covariance updates}.
-We compute \(X^T y\) once at the start.
-Then, each time a new predictor becomes non-zero, we compute its inner product with all other predictors, caching these products.
-
 \subsection{Hybrid proximal coordinate descent strategy}
 
 We now present in \Cref{alg:hybrid} the proposed solver.
@@ -363,6 +319,8 @@ The combination of the proximal gradient steps and PCD allows us to overcome the
   }
   \Return{\(\beta\)}
 \end{algorithm}
+
+Please see \Cref{sec:computational-details} for computational details regarding the implementation of the algorithm.
 
 \begin{figure*}[htb]
   \centering

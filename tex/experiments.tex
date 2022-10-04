@@ -16,10 +16,10 @@ We performed an extensive benchmark with the following competitors:
         and coordinate descent to overcome the non-separability of the SLOPE problem.
 \end{itemize}
 
-We used the \texttt{benchopt}~\parencite{moreau2022benchopt} tool to obtain the convergence curves for the different solvers.
-\texttt{Benchopt} launches each solver several times increasing the number of iterations and store the objective value, dual gap and time to reach it.
+We used the \pkg{benchopt}~\parencite{moreau2022benchopt} tool to obtain the convergence curves for the different solvers.
+\pkg{Benchopt} launches each solver several times increasing the number of iterations and store the objective value, dual gap and time to reach it.
 The repository to reproduce the benchmark is available at XXX.
-The datasets used for the experiments can be found in \Cref{table:datasets} and were downloaded from \dataset{libsvm}\footnote{\url{https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/}} and the university of Iowa webpage\footnote{\url{https://myweb.uiowa.edu/pbreheny/7600/s16/data.html}}.
+The datasets used for the experiments can be found in \Cref{table:datasets} and were downloaded from \pkg{libsvm}\footnote{\url{https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/}} and the university of Iowa webpage\footnote{\url{https://myweb.uiowa.edu/pbreheny/7600/s16/data.html}}.
 
 We used the sequence of $\lambda$ given by the Benjamini-Hochberg (BH) method~\parencite{bogdan2015},
 which sets $\lambda_j = \eta^{-1}(1 - q\times j / (2p))$ for $j=1, 2, \hdots, p$ where $\eta^{-1}$ is the probit function. 
@@ -81,8 +81,6 @@ The different scenarios for the simulated data are described in \Cref{tab:simula
   \end{tabular}
 \end{table}
 
-
-\begin{figure*}[htb]
 \begin{figure*}[!t]
   \centering
   \includegraphics[scale=0.47]{simulated_legend.pdf}

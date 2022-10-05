@@ -252,6 +252,14 @@ Using the directional derivative, we can introduce the SLOPE thresholding operat
 
 In \Cref{fig:slope-thresholding}, we visualize the SLOPE thresholding operator.
 
+Note that it is typically not necessary to compute all partial sums in \Cref{thm:thresholding-operator}. 
+Instead, we need only to first check in which direction we need to search relative to the current order for the cluster and then search in that direction until we find the solution.
+The complexity of this search depends on how far we need to search in order to find the solution and the size of the current cluster.
+For each change in order, we need to compute a partial sum of the \(\lambda\) sequence across as many entries as there are members of the cluster.
+In practice, this means that the costs involved are often large at the start of optimization but become marginal as the identity of the clusters approach the true clusters.
+
+\jl{The text above needs refinement and more rigor.}
+
 \begin{figure*}[htb]
   \centering
   \includegraphics[]{slope-thresholding.pdf}

@@ -288,15 +288,14 @@ The combination of the proximal gradient steps and PCD allows us to overcome the
 
       \(\tilde x_k \gets X_{\mathcal{C}_k}s\)
 
-      % \(\tilde y_k \gets X_{\widebar{\mathcal{C}}_k}\beta_{\widebar{\mathcal{C}}_k}\)
+      % \(\tilde r_k \gets y - X_{\widebar{\mathcal{C}}_k}\beta_{\widebar{\mathcal{C}}_k}\)
 
-      \(\tilde r_k \gets y - X_{\widebar{\mathcal{C}}_k}\beta_{\widebar{\mathcal{C}}_k}\)
 
-      % \(\gamma \gets \tilde{r}^T \tilde{x}_k\)
 
-      % \(\omega \gets \tilde{x}_k^T \tilde{x}_k\)
+      % \(\beta \gets T(\tilde{r}^T \tilde{x}_k; \tilde{x}_k^T \tilde{x}_k, c^{\setminus k}, \lambda)\)
+      \(z \gets T(\beta - \frac{1}{\norm{\tilde x_k}^2}\tilde{x}_k^\top(y - X\beta); \tilde{x}_k^T \tilde{x}_k, c^{\setminus k}, \lambda)\)
 
-      \(\beta \gets T(\tilde{r}^T \tilde{x}_k; \tilde{x}_k^T \tilde{x}_k, c^{\setminus k}, \lambda)\)
+      $\beta_{\cC_k} \gets z \sign(\beta_{\cC_k})$
 
       Update \(c\), \(\mathcal{C}\)
     }

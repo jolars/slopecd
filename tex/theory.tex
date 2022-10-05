@@ -159,6 +159,7 @@ We can now state the directional derivative of $H$. % \(J_k\).
   \end{equation}
   % Let \(c^{\setminus k}\) be the \(m - 1\) length version of $c$ where the $k$-th coordinate has been removed: $c^{\setminus k} = (c_1, \ldots c_{k-1}, c_{k+1}, \ldots, c_m)$.
   Let \(c^{\setminus k}\) be the set containing all elements of $c$ except the $k$-th one: $c^{\setminus k} =  \{c_1, \ldots c_{k-1}, c_{k+1}, \ldots, c_m \}$.
+  \mathurin{move into notation section? it's not used in the theorem, only in the proof}
   % Let \({\varepsilon_c} > 0\) satisfying \eqref{eq:epsilon-c}.
   The directional derivative of the partial sorted $\ell_1$ norm with respect to the $k$-th cluster, \(H\), in the direction \(\delta\) is
   \[
@@ -173,35 +174,7 @@ We can now state the directional derivative of $H$. % \(J_k\).
     \end{cases}
   \]
 \end{theorem}
-The proof is in \Cref{app:proof_directional_slope}.
-
-% \begin{proof}
-%   Let $z$ such that $|z|$ is not one of the $c_i$'s and $z \neq 0$.
-%   Then, for any $h$ smaller that $\dist(z, \{c_i\} \cup \{0\})$, the permutation for $z$, $z - h$ and $z + h$ are all equal to:
-%   \begin{equation*}
-%     \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \mathcal{C}_i, \mathcal{C}_k, \mathcal{C}_{i+1}, \dots, \mathcal{C}_m
-%   \end{equation*}
-%   Thus
-%   % \begin{align}
-%   %   H(z + h) - H(z) = \sum_{j=1}^p |\beta(z + h)
-%   % \end{align}
-
-
-%   If $z = 0$, then for $h$ small enough, $C(h)$ is the last/smallest cluster.
-
-
-%   Finally if $z = c_i$, for $h$ small enough the permutation for $\beta(z + h)$ is:
-%   \begin{equation}
-%     \mathcal{C}_1, \dots, \mathcal{C}_k, \mathcal{C}_{i}, \dots, \mathcal{C}_m
-%   \end{equation}
-%   while the one for $\beta(z - h)$ is:
-%   \begin{equation}
-%     \mathcal{C}_1, \dots, \mathcal{C}_{i}, \mathcal{C}_k, \dots, \mathcal{C}_m \, .
-%   \end{equation}
-
-% \end{proof}
-
-In \Cref{fig:directional-derivative}, we show an example of the directional
+The proof is in \Cref{app:proof_directional_slope}; in \Cref{fig:directional-derivative}, we show an example of the directional
 derivative and the objective function.
 
 \begin{figure}[htb]
@@ -243,16 +216,18 @@ Using the directional derivative, we can introduce the SLOPE thresholding operat
       \end{cases}
     \end{multlined}
   \]
-  with \({\varepsilon_c}\) defined as in \eqref{eq:epsilon-c} and let
-  \(\gamma = \tilde{r}^Tx\), \(\omega = \tilde{x}^T\tilde{x}\). Then
+  with \({\varepsilon_c}\) defined as in \eqref{eq:epsilon-c}.
+  Let $\tilde x = X_{\cC_k} \sign(\beta_{\cC_k})$ and $\tilde r = y - X_{\bar \cC_k} \beta_{\bar \cC_k}$.
+  Let \(\gamma = \tilde{r}^Tx\), \(\omega = \tilde{x}^T\tilde{x}\). Then
   \(T(\gamma; \omega, c^{(k)}, \lambda) \in \argmin_{z \in \mathbb{R}} G(z)\).
+  \mathurin{add remark on uniqueness of argmin? $G(z)$ is a 1 quadratic so it's either constant (possible) either there's a single minimizer}
 \end{theorem}
 
 \jl{Consider adding a remark showing that our operator generalizes the soft thresholding operator.}
 
 In \Cref{fig:slope-thresholding}, we visualize the SLOPE thresholding operator.
 
-Note that it is typically not necessary to compute all partial sums in \Cref{thm:thresholding-operator}. 
+Note that it is typically not necessary to compute all partial sums in \Cref{thm:thresholding-operator}.
 Instead, we need only to first check in which direction we need to search relative to the current order for the cluster and then search in that direction until we find the solution.
 The complexity of this search depends on how far we need to search in order to find the solution and the size of the current cluster.
 For each change in order, we need to compute a partial sum of the \(\lambda\) sequence across as many entries as there are members of the cluster.
@@ -299,7 +274,7 @@ The combination of the proximal gradient steps and PCD allows us to overcome the
   \(t \gets t + 1\)
 
   \If{\(t \bmod v = 0\)}{
-    \(\beta \leftarrow \operatorname{prox}_{J}(\beta - \frac{1}{L}\nabla f(\beta); \lambda / L)\) \label{alg:hybrid-istastep}
+    \(\beta \leftarrow \prox_{J}(\beta - \frac{1}{L}\nabla f(\beta); \lambda / L)\) \label{alg:hybrid-istastep}
 
     Update \(c\), \(\mathcal{C}\)
   }

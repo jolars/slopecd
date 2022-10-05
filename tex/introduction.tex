@@ -46,7 +46,10 @@ solvers, on the other hand, rely on proximal gradient descent algorithms such
 as FISTA~\parencite{beck2009} and the alternating direction method of multipliers
 method (ADMM, \cite{boyd2010}), which have proven to be less efficient than
 coordinate descent in empirical benchmarks on related problems, such as the
-lasso~\parencite{moreau2022benchopt}. Applying coordinate descent to SLOPE is not,
+lasso~\parencite{moreau2022benchopt}. 
+In addition to FISTA and ADMM, there has also been research into Newton-based augmented Lagrangian methods to solve SLOPE~\parencite{Ziyan2019}. 
+But this method is adapted only the \(p \gg n\) regime and, as we show in our paper, is outperformed by our method even in this scenario. 
+Applying coordinate descent to SLOPE is not,
 however, straightforward since convergence guarantees for coordinate descent
 require the objective to be separable, which is not the case for SLOPE. As a
 result, naive coordinate descent schemes can get
@@ -65,9 +68,9 @@ stuck~(\Cref{fig:naive-cd-stuck}).
   \label{fig:naive-cd-stuck}
 \end{figure}
 
-\jl{We should probably mention the Newt-ALM solver somewhere in the introduction, but I'm not quite sure what the right angle is.}
-
 In this article we address this problem by introducing a new, highly effective
 algorithm for SLOPE based on a hybrid proximal gradient and coordinate descent
 scheme. Our method features convergence guarantees and reduces the time
 required to fit SLOPE by orders of magnitude in our empirical experiments.
+
+

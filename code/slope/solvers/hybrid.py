@@ -250,7 +250,7 @@ def hybrid_cd(
             proceed = callback(np.hstack((intercept, w)))
         converged = monitor.check_convergence(w, intercept, epoch)
         n_clusters.append(n_c)
-        if converged:
+        if callback is None and converged:
             break
 
     primals, gaps, times = monitor.get_results()

@@ -138,7 +138,7 @@ def admm(
             proceed = it < max_epochs
         else:
             proceed = callback(np.hstack((intercept, w[fit_intercept:])))
-        if converged:
+        if callback is None and converged:
             break
     primals, gaps, times = monitor.get_results()
 

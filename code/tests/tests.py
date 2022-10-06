@@ -5,7 +5,7 @@ import numpy as np
 import scipy.sparse as sparse
 from benchopt.datasets.simulated import make_correlated_data
 
-from slope.clusters import get_clusters
+from slope.clusters import get_clusters, update_cluster
 from slope.solvers import admm, hybrid_cd, newt_alm, prox_grad
 from slope.utils import lambda_sequence
 
@@ -24,7 +24,7 @@ class TestHybridSolver(unittest.TestCase):
             for fit_intercept in [False, True]:
                 lambdas = lambda_sequence(X, y, fit_intercept, reg=reg, q=q)
 
-                _, _, _, gaps, _ = hybrid_cd(
+                _, _, _, gaps, _, _ = hybrid_cd(
                     X, y, lambdas, fit_intercept=fit_intercept, tol=tol
                 )
 

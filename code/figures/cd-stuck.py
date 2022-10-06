@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from benchopt.datasets.simulated import make_correlated_data
 from numpy.linalg import norm
 from numpy.random import default_rng
 from scipy import stats

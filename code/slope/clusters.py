@@ -40,6 +40,7 @@ def get_clusters(beta):
 
     return c, c_ptr, c_ind, c_perm, n_c
 
+
 @njit
 def merge_clusters(c, c_ptr, c_ind, c_perm, n_c, ind_from, ind_to):
     size_from = c_ptr[ind_from + 1] - c_ptr[ind_from]
@@ -79,6 +80,7 @@ def merge_clusters(c, c_ptr, c_ind, c_perm, n_c, ind_from, ind_to):
         n_c -= 1
 
     return n_c
+
 
 @njit
 def reorder_cluster(c, c_ptr, c_ind, c_perm, new_coef, ind_old, ind_new):

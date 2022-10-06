@@ -43,12 +43,13 @@ def compute_reduced_X_sparse(X_indices, X_indptr, X_data, s, clusters, cluster_p
         for k in cluster:
             start, end = X_indptr[k : k + 2]
             for ind in range(start, end):
-                row_ind = X_indices[ind]
-                v = s[k] * X_data[ind]
+                if s[k] != 0:
+                    row_ind = X_indices[ind]
+                    v = s[k] * X_data[ind]
 
-                X_reduced_row.append(row_ind)
-                X_reduced_col.append(j)
-                X_reduced_val.append(v)
+                    X_reduced_row.append(row_ind)
+                    X_reduced_col.append(j)
+                    X_reduced_val.append(v)
 
     return X_reduced_row, X_reduced_col, X_reduced_val
 

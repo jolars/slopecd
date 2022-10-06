@@ -195,7 +195,7 @@ def hybrid_cd(
     else:
         proceed = True
     while proceed:
-        if ecoch % pgd_freq == 0:
+        if epoch % pgd_freq == 0:
             w = prox_slope(w + (X.T @ R) / (L * n_samples), alphas / L)
             R[:] = y - X @ w
             if fit_intercept:

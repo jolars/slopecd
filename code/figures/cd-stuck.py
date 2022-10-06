@@ -2,11 +2,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 from numpy.linalg import norm
 from numpy.random import default_rng
-from scipy import stats
 
+from figures import figspec
 from slope.solvers import hybrid_cd
 from slope.utils import lambda_sequence, sl1_norm
-from figures import figspec
 
 n = 10
 p = 2
@@ -61,7 +60,9 @@ for i in range(len(beta_in)):
 fs = (f1, f2)
 
 plt.close("all")
-fig = plt.figure(figsize=(figspec.HALF_WIDTH, figspec.FULL_WIDTH), constrained_layout=True)
+fig = plt.figure(
+    figsize=(figspec.HALF_WIDTH, figspec.FULL_WIDTH), constrained_layout=True
+)
 ax = fig.add_gridspec(top=0.4, right=0.4).subplots()
 
 # contours
@@ -109,4 +110,3 @@ plt.rcParams["text.usetex"] = True
 plt.show(block=False)
 
 plt.savefig("../figures/naive-cd-stuck.pdf", bbox_inches="tight", pad_inches=0.01)
-

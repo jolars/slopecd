@@ -247,7 +247,7 @@ def newt_alm(
     else:
         L = norm(A, ord=2) ** 2
 
-    local_param["sigma"] = min(local_param["sigma"], 1.0)
+    local_param["sigma"] = min(1.0, 1 / np.sqrt(L))
 
     if fit_intercept:
         A = add_intercept_column(A)

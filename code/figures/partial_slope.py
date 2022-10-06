@@ -2,24 +2,12 @@ from bisect import bisect_right
 
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.collections import LineCollection
 from matplotlib.lines import Line2D
-from numpy.linalg import norm
 from numpy.random import default_rng
-from scipy import stats
 
 from figures import figspec
-from slope.clusters import get_clusters, update_cluster
-from slope.solvers import hybrid_cd
-from slope.utils import (
-    ConvergenceMonitor,
-    dual_norm_slope,
-    lambda_sequence,
-    primal,
-    prox_slope,
-    sl1_norm,
-    slope_threshold,
-)
+from slope.clusters import get_clusters
+from slope.utils import lambda_sequence, sl1_norm
 
 
 def signbit(x):
@@ -55,7 +43,7 @@ def get_cluster(z, beta, k):
 
 def directional_derivative(z, delta, k, beta, lambdas):
     c, c_ptr, c_ind, c_perm, n_c = get_clusters(beta)
-    ind = c_ind[c_ptr[k]: c_ptr[k + 1]]
+    ind = c_ind[c_ptr[k] : c_ptr[k + 1]]
     c_k = np.delete(c[:n_c], k)
     epsilon_c = get_epsilon_c(c_k)
 
@@ -69,8 +57,7 @@ def directional_derivative(z, delta, k, beta, lambdas):
     beta_clust = beta_update(beta, upd, ind)
     c, c_ptr, c_ind, c_perm, n_c = get_clusters(beta_clust)
     new_pos = n_c - 1 - bisect_right(c_k[::-1], abs(upd))
-    lambda_sum = np.sum(lambdas[c_ptr[new_pos]: c_ptr[new_pos + 1]])
-    new_ind = c_ind[c_ptr[new_pos]: c_ptr[new_pos + 1]]
+    lambda_sum = np.sum(lambdas[c_ptr[new_pos] : c_ptr[new_pos + 1]])
 
     if z == 0:
         out = lambda_sum
@@ -116,7 +103,7 @@ eps = 1e-6
 c, c_ptr, c_ind, c_perm, n_c = get_clusters(beta)
 c_k = np.delete(c[:n_c], k)
 
-ind = c_ind[c_ptr[k]: c_ptr[k + 1]]
+ind = c_ind[c_ptr[k] : c_ptr[k + 1]]
 
 
 plt.close("all")
@@ -159,10 +146,13 @@ ax.set_xlim(*x_lim)
 old_labels = ax.get_xticklabels()
 ax.set_xticks(np.hstack([ax.get_xticks(), -c_k, c_k]))
 ax.set_xticklabels(
-    np.hstack([old_labels,
-               [f"$-c_{k}$" for k in range(2, 4)],
-               [f"$c_{k}$" for k in range(2, 4)]
-               ])
+    np.hstack(
+        [
+            old_labels,
+            [f"$-c_{k}$" for k in range(2, 4)],
+            [f"$c_{k}$" for k in range(2, 4)],
+        ]
+    )
 )
 
 plt.show(block=False)
@@ -170,9 +160,5 @@ plt.show(block=False)
 
 savefig = True
 if savefig:
-    plt.savefig(
-        "../../figures/partial_slope.pdf", bbox_inches="tight", pad_inches=0.01
-    )
-    plt.savefig(
-        "../../figures/partial_slope.svg", bbox_inches="tight", pad_inches=0.01
-    )
+    plt.savefig("../../figures/partial_slope.pdf", bbox_inches="tight", pad_inches=0.01)
+    plt.savefig("../../figures/partial_slope.svg", bbox_inches="tight", pad_inches=0.01)

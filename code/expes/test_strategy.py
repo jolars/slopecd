@@ -15,18 +15,16 @@ else:
     X, y = get_data(dataset)
 
 n, p = X.shape
-fit_intercept = True
 q = 0.1
+fit_intercept = True
+reg = 0.02
 
-lambdas = lambda_sequence(X, y, fit_intercept, 1, q)
+lambdas = lambda_sequence(X, y, fit_intercept, reg, q)
 
-# fit_interecpt = True
-# max_epochs = 10000
-# max_time = 100
-# q = 0.1
-# reg = 0.02
-# verbose = True
-# tol = 1e-4
+max_epochs = 10000
+max_time = 100
+verbose = True
+tol = 1e-4
 
 # # beta_pgd, intercept_cd, primals_pgd, gaps_pgd, time_pgd = prox_grad(
 # #     X,
@@ -49,16 +47,16 @@ lambdas = lambda_sequence(X, y, fit_intercept, 1, q)
 #     tol=tol,
 # )
 
-# beta_cd, intercept_cd, primals_cd, gaps_cd, time_cd, _ = hybrid_cd(
-#     X,
-#     y,
-#     lambdas,
-#     fit_intercept=fit_intercept,
-#     max_epochs=max_epochs,
-#     verbose=verbose,
-#     tol=tol,
-#     max_time=max_time,
-# )
+beta_cd, intercept_cd, primals_cd, gaps_cd, time_cd, _ = hybrid_cd(
+    X,
+    y,
+    lambdas,
+    fit_intercept=fit_intercept,
+    max_epochs=max_epochs,
+    verbose=verbose,
+    tol=tol,
+    max_time=max_time,
+)
 
 # # beta_oracle, intercept_oracle, primals_oracle, gaps_oracle, time_oracle = oracle_cd(
 # #     X,
@@ -70,15 +68,15 @@ lambdas = lambda_sequence(X, y, fit_intercept, 1, q)
 # #     tol=tol,
 # # )
 
-# # beta_newt, intercept_newt, primals_newt, gaps_newt, time_newt = newt_alm(
-# #     X,
-# #     y,
-# #     lambdas,
-# #     fit_intercept=fit_intercept,
-# #     max_epochs=max_epochs,
-# #     verbose=verbose,
-# #     tol=tol,
-# # )
+beta_newt, intercept_newt, primals_newt, gaps_newt, time_newt = newt_alm(
+    X,
+    y,
+    lambdas,
+    fit_intercept=fit_intercept,
+    max_epochs=max_epochs,
+    verbose=verbose,
+    tol=tol,
+)
 
 # null_dev = 0.5 * norm(y - np.mean(y) * fit_intercept) ** 2
 # dev = 0.5 * norm(y - X @ beta_cd - intercept_cd) ** 2
@@ -88,16 +86,17 @@ lambdas = lambda_sequence(X, y, fit_intercept, 1, q)
 
 # plt.close("all")
 
-# plt.title(dataset)
+plt.title(f"{dataset}, reg: {reg}, q: {q}")
 
-# plt.semilogy(time_cd, gaps_cd, label="cd")
+plt.semilogy(time_cd, gaps_cd, label="cd")
 # plt.semilogy(time_admm, gaps_admm, label="admm")
+plt.semilogy(time_newt, gaps_newt, label="Newt-ALM")
 # # plt.semilogy(time_pgd, gaps_pgd, label="pgd")
 # # plt.semilogy(time_oracle, gaps_oracle, label="oracle")
 
-# plt.ylabel("duality gap")
-# plt.xlabel("Time (s)")
+plt.ylabel("duality gap")
+plt.xlabel("Time (s)")
 
-# plt.legend()
+plt.legend()
 
-# plt.show(block=False)
+plt.show(block=False)

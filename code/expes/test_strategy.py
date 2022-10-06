@@ -7,7 +7,6 @@ from scipy import stats
 from slope.data import get_data
 from slope.solvers import admm, hybrid_cd, newt_alm, oracle_cd, prox_grad
 from slope.utils import lambda_sequence
-from slope.benchmark_utils import get_reg_devratio
 
 dataset = "bcTCGA"
 if dataset == "simulated":
@@ -20,8 +19,6 @@ fit_intercept = True
 q = 0.1
 
 lambdas = lambda_sequence(X, y, fit_intercept, 1, q)
-
-alphas, dev_ratios_real = get_reg_devratio([0.1, 0.5, 0.9], X, y, q, verbose = True)
 
 # fit_interecpt = True
 # max_epochs = 10000

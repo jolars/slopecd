@@ -123,6 +123,10 @@ def slope_threshold(x, lambdas, cluster_ptr, c_perm, c, n_c, j):
         c[c_perm[j]]
     )
 
+    # TODO: These sums are actually overlappping, which means that we should be
+    # able to compute this more efficiently by re-using the sums (in the case
+    # when there are multiple members in the cluster).
+
     if up_direction:
         start = cluster_ptr[j + 1]
         lo = sum(lambdas[start : start + cluster_size])

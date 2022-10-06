@@ -7,7 +7,6 @@ from scipy import stats, sparse
 from slope.data import get_data
 from slope.solvers import admm, hybrid_cd, newt_alm, oracle_cd, prox_grad
 from slope.utils import lambda_sequence, get_clusters
-from slope.benchmark_utils import get_reg_devratio
 
 dataset = "real-sim"
 if dataset == "simulated":

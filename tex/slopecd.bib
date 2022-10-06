@@ -321,6 +321,27 @@
   pages      = {930--938}
 }
 
+@article{friedman2007,
+  title = {Pathwise Coordinate Optimization},
+  author = {Friedman, Jerome and Hastie, Trevor and Höfling, Holger and Tibshirani, Robert},
+  date = {2007-12},
+  journaltitle = {The Annals of Applied Statistics},
+  shortjournal = {Ann. Appl. Stat.},
+  volume = {1},
+  number = {2},
+  pages = {302--332},
+  issn = {1932-6157},
+  doi = {10/d88g8c},
+  url = {https://projecteuclid.org/euclid.aoas/1196438020},
+  urldate = {2018-03-12},
+  abstract = {We consider “one-at-a-time” coordinate-wise descent algorithms for a class of convex optimization problems. An algorithm of this kind has been proposed for the L1-penalized regression (lasso) in the literature, but it seems to have been largely ignored. Indeed, it seems that coordinate-wise algorithms are not often used in convex optimization. We show that this algorithm is very competitive with the well-known LARS (or homotopy) procedure in large lasso problems, and that it can be applied to related methods such as the garotte and elastic net. It turns out that coordinate-wise descent does not work in the “fused lasso,” however, so we derive a generalized algorithm that yields the solution in much less time that a standard convex optimizer. Finally, we generalize the procedure to the two-dimensional fused lasso, and demonstrate its performance on some image smoothing problems.},
+  langid = {english}
+}
+% == BibLateX quality report for friedman2007:
+% ? unused Library catalog ("Project Euclid")
+
+
+
 @article{friedman2010,
   title        = {Regularization Paths for Generalized Linear Models via Coordinate
                   Descent},
@@ -655,4 +676,18 @@
   abstract = {Reuters Corpus Volume I (RCV1) is an archive of over 800,000 manually categorized newswire stories recently made available by Reuters, Ltd. for research purposes. Use of this data for research on text categorization requires a detailed understanding of the real world constraints under which the data was produced. Drawing on interviews with Reuters personnel and access to Reuters documentation, we describe the coding policy and quality control procedures used in producing the RCV1 data, the intended semantics of the hierarchical category taxonomies, and the corrections necessary to remove errorful data. We refer to the original data as RCV1-v1, and the corrected data as RCV1-v2. We benchmark several widely used supervised learning methods on RCV1-v2, illustrating the collection's properties, suggesting new directions for research, and providing baseline results for future studies. We make available detailed, per-category experimental results, as well as corrected versions of the category assignments and taxonomy structures, via online appendices.}
 }
 
-
+@inproceedings{fercoq2015,
+  title = {Mind the Duality Gap: Safer Rules for the Lasso},
+  booktitle = {Proceedings of the 37th International Conference on Machine Learning},
+  author = {Fercoq, Olivier and Gramfort, Alexandre and Salmon, Joseph},
+  editor = {Bach, Francis and Blei, David},
+  date = {2015-07-06/2015-07-11},
+  series = {Proceedings of Machine Learning Research},
+  volume = {37},
+  pages = {333--342},
+  publisher = {{PMLR}},
+  location = {{Lille, France}},
+  url = {http://proceedings.mlr.press/v37/fercoq15},
+  abstract = {Screening rules allow to early discard irrelevant variables from the optimization in Lasso problems, or its derivatives, making solvers faster. In this paper, we propose new versions of the so-called rules for the Lasso. Based on duality gap considerations, our new rules create safe test regions whose diameters converge to zero, provided that one relies on a converging solver. This property helps screening out more variables, for a wider range of regularization parameter values. In addition to faster convergence, we prove that we correctly identify the active sets (supports) of the solutions in finite time. While our proposed strategy can cope with any solver, its performance is demonstrated using a coordinate descent algorithm particularly adapted to machine learning use cases. Significant computing time reductions are obtained with respect to previous safe rules.},
+  eventtitle = {{{ICML}} 2015}
+}

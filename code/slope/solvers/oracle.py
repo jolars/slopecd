@@ -128,7 +128,7 @@ def oracle_cd(
             proceed = epoch < max_epochs
         else:
             proceed = callback(np.hstack((intercept, w)))
-        if converged:
+        if callback is None and converged:
             break
 
     primals, gaps, times = monitor.get_results()

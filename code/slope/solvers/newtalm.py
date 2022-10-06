@@ -293,8 +293,8 @@ def newt_alm(
                 solver,
                 fit_intercept,
             )
-            # if converged:
-                # break
+            if converged:
+                break
 
             if j == max_inner_it - 1:
                 warnings.warn("The inner solver did not converge.")
@@ -314,7 +314,7 @@ def newt_alm(
             proceed = epoch < max_epochs
         else:
             proceed = callback(np.hstack((intercept, x[fit_intercept:])))
-        if converged:
+        if callback is None and converged:
             break
 
     primals, gaps, times = monitor.get_results()

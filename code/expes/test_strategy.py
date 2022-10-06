@@ -54,18 +54,18 @@ beta_oracle, intercept_oracle, primals_oracle, gaps_oracle, time_oracle = oracle
 
 # nnz = np.sum(np.unique(np.abs(beta_cd)) != 0)
 
-# plt.close("all")
+plt.close("all")
 
-# plt.title(dataset)
+plt.title(dataset)
 
-# plt.semilogy(time_cd, gaps_cd, label="cd")
+plt.semilogy(time_cd, gaps_cd, label="cd")
 # plt.semilogy(time_admm, gaps_admm, label="admm")
-# # plt.semilogy(time_pgd, gaps_pgd, label="pgd")
-# # plt.semilogy(time_oracle, gaps_oracle, label="oracle")
+# plt.semilogy(time_pgd, gaps_pgd, label="pgd")
+plt.semilogy(time_oracle, gaps_oracle, label="oracle")
 
-# plt.ylabel("duality gap")
-# plt.xlabel("Time (s)")
+plt.ylabel("duality gap")
+plt.xlabel("Time (s)")
 
-# plt.legend()
+plt.legend()
 
-# plt.show(block=False)
+plt.show(block=False)

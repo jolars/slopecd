@@ -293,8 +293,8 @@ def newt_alm(
                 solver,
                 fit_intercept,
             )
-            if converged:
-                break
+            # if converged:
+                # break
 
             if j == max_inner_it - 1:
                 warnings.warn("The inner solver did not converge.")

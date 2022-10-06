@@ -51,7 +51,7 @@ def block_cd_epoch(
             sum_X = np.ravel(X[:, cluster] @ sign_w)
             L_j = (sum_X.T @ sum_X) / n_samples
 
-        x = c_old + sum_X @ R / (L_j * n_samples)
+        x = c_old + sum_X.T @ R / (L_j * n_samples)
         beta_tilde, ind_new = slope_threshold(
             x, alphas / L_j, cluster_ptr, cluster_perm, c, n_c, j
         )

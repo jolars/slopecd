@@ -1,17 +1,15 @@
 %!TEX root = ./main.tex
-\section{Introduction}\label{sec:introduction}
+\section{INTRODUCTION}\label{sec:introduction}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 In this paper we present a novel numerical algorithm for Sorted L-One Penalized
-Estimation (SLOPE)~\parencite{bogdan2013,bogdan2015,zeng2014ordered}, defined as
-\jw{technically the SLOPE is only for least squares right?}
+Estimation (SLOPE, ~\cite{bogdan2013,bogdan2015,zeng2014ordered}), defined as
 \begin{problem}\label{pb:slope}
   \min_{\beta \in \mathbb{R}^p}
-  P(\beta) = F(\beta) + J(\beta)
+  P(\beta) =  \frac{1}{2 n} \norm{y - X \beta}^2 + J(\beta)
 \end{problem}
-% \mm{TODO change}
-where we take \(F\) to be smooth and twice differentiable and
-% \mm{to discuss: $L(X\beta)$ doable? + some computation are sepcific to  the quadratic case}
+% where we take \(F\) to be smooth and twice differentiable and
+where
 \begin{equation}
   \label{eq:sorted-l1-norm}
   J(\beta) = \sum_{j=1}^p \lambda_j|\beta_{(j)}|
@@ -28,7 +26,7 @@ to control false discovery rate~\parencite{bogdan2015,kos2020}, cluster
 coefficients~\parencite{figueiredo2016, schneider2020a}, and recover sparsity and
 ordering patterns in the solution~\parencite{bogdan2022}. Unlike other competing
 sparse regularization methods such as MCP~\parencite{zhang2010} and
-SCAD~\parencite{fan2001}, SLOPE is also a convex problem~\parencite{bogdan2015}.
+SCAD~\parencite{fan2001}, SLOPE has the advantage of being a convex problem~\parencite{bogdan2015}.
 
 In spite of the availability of predictor screening
 rules~\parencite{larsson2020c,elvira2022}, which help speed up SLOPE in the
@@ -37,7 +35,7 @@ poorly in comparison to those of more established penalization methods such as
 the lasso (\(\ell_1\)-norm regularization) and ridge regression
 (\(\ell_2\)-norm regularization).
 As a small illustration of this issue, we compared the speed at which the \pkg{SLOPE}~\parencite{friedman2022} and \pkg{glmnet}~\parencite{friedman2022} packages solve a SLOPE and lasso problem, respectively, for the \dataset{bcTCGA} data set.
-In this small experiment, \pkg{SLOPE} takes 42.7 seconds to reach convergence, whilst \pkg{glmnet} requires only 0.143 seconds\footnote{See~\Cref{sec:slope-vs-glmnet} for details on how this experiment was run.}.
+In this small experiment, \pkg{SLOPE} takes 43 seconds to reach convergence, whilst \pkg{glmnet} requires only 0.14 seconds\footnote{See~\Cref{sec:slope-vs-glmnet} for details on how this experiment was run.}.
 
 This lackluster performance has hampered the applicability of SLOPE to many
 real-world applications. A major reason for why algorithms for solving
@@ -46,9 +44,12 @@ they use coordinate
 descent~\parencite{tseng2001convergence,friedman2010,breheny2011}. Current SLOPE
 solvers, on the other hand, rely on proximal gradient descent algorithms such
 as FISTA~\parencite{beck2009} and the alternating direction method of multipliers
-method (ADMM)~\parencite{boyd2010}, which have proven to be less efficient than
+method (ADMM, \cite{boyd2010}), which have proven to be less efficient than
 coordinate descent in empirical benchmarks on related problems, such as the
-lasso~\parencite{moreau2022benchopt}. Applying coordinate descent to SLOPE is not,
+lasso~\parencite{moreau2022benchopt}. 
+In addition to FISTA and ADMM, there has also been research into Newton-based augmented Lagrangian methods to solve SLOPE~\parencite{Ziyan2019}. 
+But this method is adapted only the \(p \gg n\) regime and, as we show in our paper, is outperformed by our method even in this scenario. 
+Applying coordinate descent to SLOPE is not,
 however, straightforward since convergence guarantees for coordinate descent
 require the objective to be separable, which is not the case for SLOPE. As a
 result, naive coordinate descent schemes can get
@@ -59,10 +60,10 @@ stuck~(\Cref{fig:naive-cd-stuck}).
   \includegraphics[]{naive-cd-stuck.pdf}
   \caption{%
     An example of (standard) coordinate descent getting stuck on a two-dimensional SLOPE problem.
-    The main plot shows level curves for the primal objective~\eqref{pb:slope}, with the optimum \(\beta^* = [0, 0]^T\) indicated by the orange cross.
+    The main plot shows level curves for the primal objective~\eqref{pb:slope}, with the minimizer \(\beta^* = [0, 0]^T\) indicated by the orange cross.
     The marginal plots displays objective values at \(\beta_1 = 0.2\) when optimizing over \(\beta_2\) and vice versa.
-    At \(\beta = [0.2,0.2]^T\), a naive coordinate descent algorithm can only move in the directions indicated by the dashed lines---neither of which are descent directions for the objective.
-    As a result, the algorithm is stuck.
+    At \(\beta = [0.2,0.2]^T\), standard coordinate descent can only move in the directions indicated by the dashed lines---neither of which are descent directions for the objective.
+    As a result, the algorithm is stuck at a suboptimal point.
   }
   \label{fig:naive-cd-stuck}
 \end{figure}
@@ -71,3 +72,5 @@ In this article we address this problem by introducing a new, highly effective
 algorithm for SLOPE based on a hybrid proximal gradient and coordinate descent
 scheme. Our method features convergence guarantees and reduces the time
 required to fit SLOPE by orders of magnitude in our empirical experiments.
+
+

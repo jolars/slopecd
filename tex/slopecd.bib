@@ -147,6 +147,38 @@
   pages        = {232--253}
 }
 
+@online{breheny2022,
+  title = {Patrick {{Breheny}}},
+  author = {Breheny, Patrick},
+  date = {2022-05-16},
+  url = {https://myweb.uiowa.edu/pbreheny/},
+  urldate = {2022-05-17},
+  organization = {{University of Iowa}}
+}
+
+@article{chang2011,
+  title = {{{LIBSVM}}: A Library for Support Vector Machines},
+  shorttitle = {{{LIBSVM}}},
+  author = {Chang, Chih-chung and Lin, Chih-jen},
+  date = {2011-05},
+  journaltitle = {ACM Transactions on Intelligent Systems and Technology},
+  volume = {2},
+  number = {3},
+  pages = {27:1-27:27},
+  doi = {10.1145/1961189.1961199},
+  abstract = {LIBSVM is a library for Support Vector Machines (SVMs). We have been actively developing this package since the year 2000. The goal is to help users to easily apply SVM to their applications. LIBSVM has gained wide popularity in machine learning and many other areas. In this article, we present all implementation details of LIBSVM. Issues such as solving SVM optimization problems, theoretical convergence, multi-class classification, probability estimates, and parameter selection are discussed in detail. Classification, LIBSVM, optimization, regression, support vector ma-Keywords:}
+}
+
+@online{chang2016,
+  title = {{{LIBSVM}} Data: Classification, Regression, and Multi-Label},
+  author = {Chang, Chih-Chung and Lin, Chih-Jen},
+  date = {2016-12-22},
+  url = {https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/},
+  urldate = {2022-10-05},
+  organization = {{LIBSVM - A library for Support Vector Machines}}
+}
+
+
 
 @article{combettes2005,
   title     = {Signal recovery by proximal forward-backward splitting},
@@ -286,8 +318,7 @@
   booktitle  = {AISTATS},
   author     = {Figueiredo, Mario and Nowak, Robert},
   year       = {2016},
-  pages      = {930--938},
-  langid     = {english}
+  pages      = {930--938}
 }
 
 @article{friedman2010,
@@ -543,14 +574,14 @@
 }
 
 @software{larsson2022d,
-  title = {{{SLOPE}}: {{Sorted L1 Penalized Estimation}}},
+  title      = {{{SLOPE}}: {{Sorted L1 Penalized Estimation}}},
   shorttitle = {{{SLOPE}}},
-  author = {Larsson, Johan and Wallin, Jonas and Bogdan, Malgorzata and family=Berg, given=Ewout, prefix=van den, useprefix=false and Sabatti, Chiara and Candes, Emmanuel and Patterson, Evan and Su, Weijie and Kała, Jakub and Grzesiak, Krystyna and Burdukiewicz, Michal and family=), given=Jerome Friedman (code, prefix=adapted, useprefix=true and family=), given=Trevor Hastie (code, prefix=adapted, useprefix=true and family=), given=Rob Tibshirani (code, prefix=adapted, useprefix=true and family=), given=Balasubramanian Narasimhan (code, prefix=adapted, useprefix=true and family=), given=Noah Simon (code, prefix=adapted, useprefix=true and family=), given=Junyang Qian (code, prefix=adapted, useprefix=true and Goyal, Akarsh},
-  date = {2022-06-09},
-  url = {https://CRAN.R-project.org/package=SLOPE},
-  urldate = {2022-09-20},
-  abstract = {Efficient implementations for Sorted L-One Penalized Estimation (SLOPE): generalized linear models regularized with the sorted L1-norm (Bogdan et al. (2015) {$<$}doi:10/gfgwzt{$>$}). Supported models include ordinary least-squares regression, binomial regression, multinomial regression, and Poisson regression. Both dense and sparse predictor matrices are supported. In addition, the package features predictor screening rules that enable fast and efficient solutions to high-dimensional problems.},
-  version = {0.5.0}
+  author     = {Larsson, Johan and Wallin, Jonas and Bogdan, Malgorzata and family=Berg, given=Ewout, prefix=van den, useprefix=false and Sabatti, Chiara and Candes, Emmanuel and Patterson, Evan and Su, Weijie and Kała, Jakub and Grzesiak, Krystyna and Burdukiewicz, Michal and family=), given=Jerome Friedman (code, prefix=adapted, useprefix=true and family=), given=Trevor Hastie (code, prefix=adapted, useprefix=true and family=), given=Rob Tibshirani (code, prefix=adapted, useprefix=true and family=), given=Balasubramanian Narasimhan (code, prefix=adapted, useprefix=true and family=), given=Noah Simon (code, prefix=adapted, useprefix=true and family=), given=Junyang Qian (code, prefix=adapted, useprefix=true and Goyal, Akarsh},
+  date       = {2022-06-09},
+  url        = {https://CRAN.R-project.org/package=SLOPE},
+  urldate    = {2022-09-20},
+  abstract   = {Efficient implementations for Sorted L-One Penalized Estimation (SLOPE): generalized linear models regularized with the sorted L1-norm (Bogdan et al. (2015) {$<$}doi:10/gfgwzt{$>$}). Supported models include ordinary least-squares regression, binomial regression, multinomial regression, and Poisson regression. Both dense and sparse predictor matrices are supported. In addition, the package features predictor screening rules that enable fast and efficient solutions to high-dimensional problems.},
+  version    = {0.5.0}
 }
 % == BibLateX quality report for larsson2022d:
 % ? Title looks like it was stored in title-case in Zotero
@@ -558,16 +589,70 @@
 
 
 @software{friedman2022,
-  title = {Glmnet: {{Lasso}} and {{Elastic-Net Regularized Generalized Linear Models}}},
+  title      = {Glmnet: {{Lasso}} and {{Elastic-Net Regularized Generalized Linear Models}}},
   shorttitle = {Glmnet},
-  author = {Friedman, Jerome and Hastie, Trevor and Tibshirani, Rob and Narasimhan, Balasubramanian and Tay, Kenneth and Simon, Noah and Qian, Junyang and Yang, James},
-  date = {2022-04-15},
-  url = {https://CRAN.R-project.org/package=glmnet},
-  urldate = {2022-09-20},
-  abstract = {Extremely efficient procedures for fitting the entire lasso or elastic-net regularization path for linear regression, logistic and multinomial regression models, Poisson regression, Cox model, multiple-response Gaussian, and the grouped multinomial regression. There are two new and important additions. The family argument can be a GLM family object, which opens the door to any programmed family. This comes with a modest computational cost, so when the built-in families suffice, they should be used instead. The other novelty is the relax option, which refits each of the active sets in the path unpenalized. The algorithm uses cyclical coordinate descent in a path-wise fashion, as described in the papers listed in the URL below.},
-  version = {4.1-4}
+  author     = {Friedman, Jerome and Hastie, Trevor and Tibshirani, Rob and Narasimhan, Balasubramanian and Tay, Kenneth and Simon, Noah and Qian, Junyang and Yang, James},
+  date       = {2022-04-15},
+  url        = {https://CRAN.R-project.org/package=glmnet},
+  urldate    = {2022-09-20},
+  abstract   = {Extremely efficient procedures for fitting the entire lasso or elastic-net regularization path for linear regression, logistic and multinomial regression models, Poisson regression, Cox model, multiple-response Gaussian, and the grouped multinomial regression. There are two new and important additions. The family argument can be a GLM family object, which opens the door to any programmed family. This comes with a modest computational cost, so when the built-in families suffice, they should be used instead. The other novelty is the relax option, which refits each of the active sets in the path unpenalized. The algorithm uses cyclical coordinate descent in a path-wise fashion, as described in the papers listed in the URL below.},
+  version    = {4.1-4}
 }
 % == BibLateX quality report for friedman2022:
 % ? unused Library catalog ("R-Packages")
+
+@online{nationalcancerinstitute2022,
+  title = {The {{Cancer Genome Atlas Program}}},
+  author = {{National Cancer Institute}},
+  date = {2022-05-16},
+  url = {https://www.cancer.gov/about-nci/organization/ccg/research/structural-genomics/tcga},
+  urldate = {2022-05-17},
+  abstract = {The Cancer Genome Atlas (TCGA) is a landmark cancer genomics program that sequenced and molecularly characterized over 11,000 cases of primary cancer samples. Learn more about how the program transformed the cancer research community and beyond.},
+  langid = {english},
+  organization = {{National Cancer Institute}}
+}
+
+@article{rhee2006,
+  title = {Genotypic Predictors of Human Immunodeficiency Virus Type 1 Drug Resistance},
+  author = {Rhee, Soo-Yon and Taylor, Jonathan and Wadhera, Gauhar and Ben-Hur, Asa and Brutlag, Douglas L. and Shafer, Robert W.},
+  date = {2006-11-14},
+  journaltitle = {Proceedings of the National Academy of Sciences},
+  volume = {103},
+  number = {46},
+  pages = {17355--17360},
+  publisher = {{Proceedings of the National Academy of Sciences}},
+  doi = {10.1073/pnas.0607274103},
+  url = {https://www.pnas.org/doi/abs/10.1073/pnas.0607274103},
+  urldate = {2022-10-05}
+}
+
+
+@article{keerthi2005,
+  title = {A Modified Finite {{Newton}} Method for Fast Solution of Large Scale Linear {{SVMs}}},
+  author = {Keerthi, S. Sathiya and DeCoste, Dennis},
+  date = {2005-12-01},
+  journaltitle = {The Journal of Machine Learning Research},
+  shortjournal = {J. Mach. Learn. Res.},
+  volume = {6},
+  number = {12},
+  pages = {341--361},
+  issn = {1532-4435},
+  url = {http://jmlr.org/papers/v6/keerthi05a.html},
+  abstract = {This paper develops a fast method for solving linear SVMs with L2 loss function that is suited for large scale data mining tasks such as text classification. This is done by modifying the finite Newton method of Mangasarian in several ways. Experiments indicate that the method is much faster than decomposition methods such as SVMlight, SMO and BSVM (e.g., 4-100 fold), especially when the number of examples is large. The paper also suggests ways of extending the method to other loss functions such as the modified Huber's loss function and the L1 loss function, and also for solving ordinal regression.}
+}
+
+
+@article{lewis2004,
+  title = {{{RCV1}}: A New Benchmark Collection for Text Categorization Research},
+  shorttitle = {{{RCV1}}},
+  author = {Lewis, David D. and Yang, Yiming and Rose, Tony G. and Li, Fan},
+  date = {2004-12-01},
+  journaltitle = {The Journal of Machine Learning Research},
+  shortjournal = {J. Mach. Learn. Res.},
+  volume = {5},
+  pages = {361--397},
+  issn = {1532-4435},
+  abstract = {Reuters Corpus Volume I (RCV1) is an archive of over 800,000 manually categorized newswire stories recently made available by Reuters, Ltd. for research purposes. Use of this data for research on text categorization requires a detailed understanding of the real world constraints under which the data was produced. Drawing on interviews with Reuters personnel and access to Reuters documentation, we describe the coding policy and quality control procedures used in producing the RCV1 data, the intended semantics of the hierarchical category taxonomies, and the corrections necessary to remove errorful data. We refer to the original data as RCV1-v1, and the corrected data as RCV1-v2. We benchmark several widely used supervised learning methods on RCV1-v2, illustrating the collection's properties, suggesting new directions for research, and providing baseline results for future studies. We make available detailed, per-category experimental results, as well as corrected versions of the category assignments and taxonomy structures, via online appendices.}
+}
 
 

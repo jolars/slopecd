@@ -1,56 +1,71 @@
-\section{Experiments}\label{sec:experiments}
+\section{EXPERIMENTS}\label{sec:experiments}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The proposed algorithm is part of a python package relying on numpy and numba~\parencite{harris2020,lam2015}.
-It will be made open-source upon publication. To compare its efficiency, we used several public datasets described in \Cref{table:datasets}.
-We performed an extensive benchmark with the following competitors:
+To investigate the performance of our algorithm, we performed an extensive benchmark against the following competitors:
 \begin{itemize}[noitemsep]
   \item Alternating Direction Method of Multipliers (\texttt{admm})~\parencite{boyd2010}
-  \item Anderson acceleration for proximal gradient descent (\texttt{anderson})~\parencite{zhang2020}
-  \item Proximal Gradient Descent (\texttt{pgd})~\cite{combettes2005}
+  \item Anderson acceleration for proximal gradient descent (\texttt{anderson pgd})~\parencite{zhang2020}
+  \item Proximal Gradient Descent (\texttt{pgd})~\parencite{combettes2005}
   \item Fast Iterative Shrinkage-Thresholding Algorithm (\texttt{fista})~\parencite{beck2009}
   \item Semismooth Newton-Based Augmented Lagrangian (\texttt{newt-alt})~\parencite{Ziyan2019}
-  \item The Oracle solver (\texttt{oracle}) uses the clusters obtained via another
+  \item The Oracle solver (\texttt{oracle cd}) uses the clusters obtained via another
         solver to compute coordinate descent updates from the known solver.
-  \item The Hybrid (ours) (\texttt{hybrid}) solver (see \Cref{alg:hybrid}) combines proximal gradient descent
+  \item The hybrid (our) solver (see \Cref{alg:hybrid}) combines proximal gradient descent
         and coordinate descent to overcome the non-separability of the SLOPE problem.
 \end{itemize}
 
-\begin{table}[]
+We used the \pkg{benchopt}~\parencite{moreau2022benchopt} tool to obtain the convergence curves for the different solvers.
+\pkg{Benchopt} launches each solver several times increasing the number of iterations and store the objective value, dual gap and time to reach it.
+The repository to reproduce the benchmark is available at XXX.
+
+Unless we note otherwise, we used the Benjamini--Hochberg method to compute the \(\lambda\) sequence~\parencite{bogdan2015},
+which sets $\lambda_j = \eta^{-1}(1 - q\times j / (2p))$ for $j=1, 2, \hdots, p$ where $\eta^{-1}$ is the probit function. 
+For the rest of the experiments section, the parameter $q$ of this sequence has been set to $0.1$ if not stated otherwise.
+We let \(\lambda_\text{max}\) be the \(\lambda\) sequence such that \(\beta^* = 0\), but for which any scaling with a strictly positive scalar smaller than one produces a solution with at least one non-zero coefficient.
+We then parameterize the experiments by scaling \(\lambda_\text{max}\), using the fixed values \(0.25 \lambda_\text{max}\), \(0.1 \lambda_\text{max}\), \(0.02 \lambda_\text{max}\), which covers the range of very sparse solutions to the almost-saturated case.
+
+We pre-process datasets by first removing features with less than three non-zero values. Then, for dense data we center and scale each feature by its mean and standard deviation respectively.
+For sparse data, we scale each feature by its maximum absolute value.
+
+Each solver was coded in \pkg{python}, using \pkg{numpy}~\parencite{harris2020} and \pkg{numba}~\parencite{lam2015} for performance-critical code.
+The code will be made open-source upon publication.
+\jl{We are going to include it in the supplementary material too, right?} 
+
+\jl{Add information about the benchmarking system here (or refer to entry in appendix).}
+
+\subsection{Simulated Data}
+\label{sec:experiments-real-data}
+
+The design matrix $X$ was generated such that features had mean one and unit variance, with correlation between features $j$ and $j'$ equal to $\rho^{|j-j'|}$ where $\rho$ is a parameter that can be chosen in $[0, 1[$.
+We fixed this value at $0.6$.
+We generated \(\beta \in \mathbb{R}^p\) such that \(k\) entries, chosen uniformly at random throughout the vector, were sampled from a standard Gaussian distribution.
+The response vector, meanwhile, was set to $y=X\beta + \varepsilon$, where
+$\varepsilon$ was sampled from a multivariate Gaussian distribution with variance such that $\lVert X\beta\rVert / \lVert \varepsilon \rVert = 3$.
+
+The different scenarios for the simulated data are described in \Cref{tab:simulated-data}
+
+\begin{table}[hbt]
   \centering
-  \label{table:datasets}
+  \caption{Scenarios for the simulated data in our benchmarks}
+  \label{tab:simulated-data}
   \begin{tabular}{
       l
-      S[table-format=6.0,round-mode=off]
+      S[table-format=5.0,round-mode=off]
       S[table-format=7.0,round-mode=off]
-      S[table-format=1.4,round-mode=off]
-      c
+      S[table-format=2.0,round-mode=off]
+      S[table-format=1.3,round-mode=off]
     }
     \toprule
-    Datasets    & \(n\) & \(p\)   & {Density} \\ \midrule
-    Simulated 1 & 200   & 20000   & 1         \\
-    Simulated 2 & 20000 & 200     & 1         \\
-    Simulated 3 & 200   & 2000000 & 0.001     \\ \hline
-    Rhee2006  & 842   & 361     & 0.025        \\
-    bcTCGA    & 536   & 17322   & 1         \\
-    rcv1 & 20242   & 19959   & ?\\
-    news20 & 19996 & 1355191 & ?  \\ \bottomrule
+    {Scenario} & \(n\) & \(p\)   & \(k\) & {Density} \\ \midrule
+    1          & 200   & 20000   & 20    & 1         \\
+    2          & 20000 & 200     & 40    & 1         \\
+    3          & 200   & 2000000 & 20    & 0.001     \\ \bottomrule
   \end{tabular}
 \end{table}
 
-We used the \texttt{benchopt}~\parencite{moreau2022benchopt} tool to obtain the convergence curves for the different solvers.
-\texttt{Benchopt} launches each solver several times increasing the number of iterations and store the objective value, dual gap and time to reach it.
-The repository to reproduce the benchmark is available at XXX.
-The datasets used for the experiments can be found in \Cref{table:datasets} and were downloaded from \dataset{libsvm}\footnote{\url{https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/}} and the university of Iowa webpage\footnote{\url{https://myweb.uiowa.edu/pbreheny/7600/s16/data.html}}.
+In \Cref{fig:simulated}, we present the results of the benchmarks on simulated data.
 
-\qk{Talk about how the sequence of $\lambda$ was chosen throughout the benchmarks}
-
-\subsection{Simulated data}
-
-The design matrix $X$ is simulated with correlation between features $j$ and $j'$ equal to $\rho^{|j-j'|}$ where $\rho$ is a parameter that can be chosen in $[0, 1[$.
-The true regression vector $\beta^\star$ contains a certain number of non-zero entries that are obtained by simulating a gaussian distribution with zero mean and unit variance.
-The observations are equal to $y=X\beta^\star + \varepsilon$ where $\varepsilon$ is a centered gaussian distribution with variance such that $\lVert X\beta^\star\rVert / \lVert \varepsilon \rVert = 3$.
-\begin{figure*}[htb]
+\begin{figure*}[!t]
   \centering
   \includegraphics[scale=0.47]{simulated_legend.pdf}
   \includegraphics[scale=0.5]{simulated.pdf}
@@ -58,17 +73,40 @@ The observations are equal to $y=X\beta^\star + \varepsilon$ where $\varepsilon$
   \label{fig:simulated}
 \end{figure*}
 
-In \Cref{fig:simulated}, we present the results of the benchmarks on simulated data.
-The settings for the simulated can be found in \Cref{table:datasets}. 
-We see that for smaller fractions of $\lambda_{\text{max}}$ our hybrid algorithm allows significant speedup in comparison to its competitors mainly when the number of features is large than the number of samples. 
-On very large scale data such as in simulated data setting $3$, we see that the hybrid solver is faster than its competitors by one or two orders of magnitude. 
-
+We see that for smaller fractions of $\lambda_{\text{max}}$ our hybrid algorithm allows significant speedup in comparison to its competitors mainly when the number of features is large than the number of samples.
+On very large scale data such as in simulated data setting $3$, we see that the hybrid solver is faster than its competitors by one or two orders of magnitude.
 
 \subsection{Real data}
-\begin{figure*}[htb]
+\label{sec:experiments-real-data}
+
+The datasets used for the experiments have been described in \Cref{tab:real-data} and were obtained from \textcite{chang2011,chang2016} and \textcite{breheny2022}.
+
+\begin{table}[hbt]
+  \centering
+  \caption{List of real data sets used in our experiments}
+  \label{tab:real-data}
+  \begin{tabular}{
+      l
+      S[table-format=5.0,round-mode=off]
+      S[table-format=7.0,round-mode=off]
+      S[table-format=1.5,round-mode=figures,round-precision=2]
+    }
+    \toprule
+    Dataset            & \(n\) & \(p\)   & {Density} \\ \midrule
+    \dataset{bcTCGA}   & 536   & 17322   & 1         \\
+    \dataset{news20}   & 19996 & 1355191 & 0.0003357 \\ 
+    \dataset{rcv1}     & 20242 & 44504   & 0.00166   \\
+    \dataset{Rhee2006} & 842   & 360     & 0.02469   \\ \bottomrule
+  \end{tabular}
+\end{table}
+
+In \Cref{fig:real-data}, we present the results of the benchmarks on real data.
+
+\begin{figure*}[!t]
   \centering
   \includegraphics[scale=0.47]{real_legend.pdf}
   \includegraphics[scale=0.5]{real.pdf}
   \caption{\textbf{Benchmark on real datasets.} Normalized duality gap as a function of time for SLOPE on multiple simulated datasets and for multiple sequence of $\lambda$.}
-  \label{fig:real}
+  \label{fig:real-data}
 \end{figure*}
+

@@ -1,6 +1,6 @@
 %!TEX root = ./main.tex
 
-\section{Theory}\label{sec:theory}
+\section{THEORY}\label{sec:theory}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Coordinate Descent for SLOPE}%
 \label{sec:coordinate-updates}
@@ -9,14 +9,16 @@ Proximal coordinate descent cannot be applied to \Cref{pb:slope} because it is n
 However, if the clusters $\mathcal{C}_1^*, \ldots, \mathcal{C}_{m^*}^*$ of the solution $\beta^*$ were known together with their signs, then the values $c_1^*, \ldots, c_{m^*}^*$ taken by $\beta^*$ on the clusters could be equivalently computed by solving:
 \begin{problem}
 \min_{z \in \bbR^{m^*}}
-F \left(\sum_{i=1}^{m^*} \sum_{j \in \mathcal{C}_i^*} z_i \sign(\beta_j^*) e_j \right)
-+ \sum_{i=1}^{m^*} | z_i | \sum_{j \in \mathcal{C}_i^*} \lambda_j \, ,
+ \frac{1}{2} \norm{y - X \sum_{i=1}^{m^*} \sum_{j \in \mathcal{C}_i^*} z_i \sign(\beta_j^*) e_j }^2
++ \sum_{i=1}^{m^*} | z_i | \sum_{j \in \mathcal{C}_i^*} \lambda_j
 \end{problem}
 % \klopfe{Clarify what $F$ is here}
 % MM: removed F and used the form (ell(beta) instead of F(Xbeta)) : more general
 % where $\tilde{x}_{\mathcal{C}_i} = \sum_{j \in \mathcal{C}_i} x_j \sign (\beta_j^*)$.
-Conditionally on the knowledge of the clusters and the signs of the coefficients, the penalty becomes separable as shown by \cite{dupuis2021} and coordinate descent could be used.
+Conditionally on the knowledge of the clusters and the signs of the coefficients, the penalty becomes separable as shown by \cite{dupuis2021}, and coordinate descent could be used.
 Hence, the idea of our algorithm is to intertwine steps that identify the clusters, and large coordinate-wise steps on these clusters.
+
+\jl{Is this reasoning sound? The PGD step does not immediately identify clusters.}
 
 Based on this observation, we derive a coordinate descent algorithm for minimizing the SLOPE problem~\eqref{pb:slope} with respect to the coefficients of a single cluster at a time.
 
@@ -36,11 +38,10 @@ To this end, we let
 % coordinate update for the \(k\)-th cluster.
 Minimizing the objective in this direction amounts to solving the following
 one-dimensional problem:
-
 \begin{problem}
 \label{pb:cluster-problem}
 \min_{z \in \mathbb{R}} \Big(
-G(z) = P(\beta(z))  = F\big(\beta(z)\big) + H(z)
+G(z) = P(\beta(z))  = \frac{1}{2 n} \norm{y - X \beta(z)}^2 + H(z)
 \Big) \,  ,
 \end{problem}
 where
@@ -50,15 +51,15 @@ where
 \]
 is the \emph{partial sorted \(\ell_1\) norm} with respect to the \(k\)-th cluster and where we write \(\lambda_{(j)^-_z}\) to indicate that the inverse sorting permutation \((j)^-_z\)
 is defined with respect to \(\beta(z)\).
-The optimality condition for \Cref{pb:cluster-problem} is $\forall \delta \in \{-1, 1\}$
+The optimality condition for \Cref{pb:cluster-problem} is
 \[
   % P_k'(z; \delta) \geq 0,
-  G'(z; \delta) \geq 0,
+  \forall \delta \in \{-1, 1\}, \quad G'(z; \delta) \geq 0,
 \]
 where $G'(z; \delta) $ is the directional derivative of $G$ in the direction $\delta$.
-Since \(F\) is differentiable we have
+Since the quadratic datafit is differentiable we have
 \[
-  G'(z; \delta)  = \delta \sum_{i \in \mathcal{C}_k}\nabla_i F(\beta(z)) + H'(z; \delta) \, ,
+  G'(z; \delta)  = \delta \sum_{i \in \mathcal{C}_k} X_{:i}^\top(X\beta(z) - y_i) + H'(z; \delta) \, ,
 \]
 % since \(\lVert \tilde{r} - \tilde{x}z\rVert_2^2\) is differentiable.
 where \(H'(z; \delta)\) is the directional derivative of $H$.
@@ -66,13 +67,13 @@ where \(H'(z; \delta)\) is the directional derivative of $H$.
 Throughout the rest of this section we derive the solution to \eqref{pb:cluster-problem}.
 To do so, we will introduce the directional derivative for the
 sorted \(\ell_1\) norm with respect to the coefficient of the \(k\)-th cluster.
-First, as illustrated on \Cref{fig:partial_slope}, note that $H$ is piecewise affine, with breakpoints at 0 and all $\pm c_i$'s for $i \neq k$.
+First, as illustrated on \Cref{fig:partial_slope}, note that $H$ is piecewise affine, with breakpoints at 0 and all $\pm c_i$s for $i \neq k$.
 Hence, the partial derivative is piecewise constant, with jumps at these points; in addition, $H'(\cdot; 1) = H'(\cdot, -1)$ except at these points.
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=\linewidth]{partial_slope.pdf}
-  \caption{Graph of the partial sorted $\ell_1$ norm with \(\beta = [-3.0, 1.0, 3.0, 2.0]^T\), \(k = 1\) and so $c_1, c_2, c_3 = (3, 2, 1)$.}
+  \caption{Graph of the partial sorted $\ell_1$ norm with \(\beta = [-3.0, 1.0, 3.0, 2.0]^T\), \(k = 1\), and so $c_1, c_2, c_3 = (3, 2, 1)$.}
   \label{fig:partial_slope}
 \end{figure}
 
@@ -156,7 +157,9 @@ We can now state the directional derivative of $H$. % \(J_k\).
     \label{eq:epsilon-c}
     \varepsilon_c < \big| c_i - c_j\big| , \quad \forall\, i \neq j \text{ and } \varepsilon_c < c_m \text{ if } c_m \neq 0 \, .
   \end{equation}
-  Let \(c^{\setminus k}\) be the \(m - 1\) length version of $c$ where the $k$-th coordinate has been removed: $c^{\setminus k} = (c_1, \ldots c_{k-1}, c_{k+1}, \ldots, c_m)$.
+  % Let \(c^{\setminus k}\) be the \(m - 1\) length version of $c$ where the $k$-th coordinate has been removed: $c^{\setminus k} = (c_1, \ldots c_{k-1}, c_{k+1}, \ldots, c_m)$.
+  Let \(c^{\setminus k}\) be the set containing all elements of $c$ except the $k$-th one: $c^{\setminus k} =  \{c_1, \ldots c_{k-1}, c_{k+1}, \ldots, c_m \}$.
+  \mathurin{move into notation section? it's not used in the theorem, only in the proof}
   % Let \({\varepsilon_c} > 0\) satisfying \eqref{eq:epsilon-c}.
   The directional derivative of the partial sorted $\ell_1$ norm with respect to the $k$-th cluster, \(H\), in the direction \(\delta\) is
   \[
@@ -171,35 +174,7 @@ We can now state the directional derivative of $H$. % \(J_k\).
     \end{cases}
   \]
 \end{theorem}
-The proof is in \Cref{app:proof_directional_slope}.
-
-% \begin{proof}
-%   Let $z$ such that $|z|$ is not one of the $c_i$'s and $z \neq 0$.
-%   Then, for any $h$ smaller that $\dist(z, \{c_i\} \cup \{0\})$, the permutation for $z$, $z - h$ and $z + h$ are all equal to:
-%   \begin{equation*}
-%     \mathcal{C}_1, \dots, \mathcal{C}_{k-1}, \mathcal{C}_{k+1}, \dots, \mathcal{C}_i, \mathcal{C}_k, \mathcal{C}_{i+1}, \dots, \mathcal{C}_m
-%   \end{equation*}
-%   Thus
-%   % \begin{align}
-%   %   H(z + h) - H(z) = \sum_{j=1}^p |\beta(z + h)
-%   % \end{align}
-
-
-%   If $z = 0$, then for $h$ small enough, $C(h)$ is the last/smallest cluster.
-
-
-%   Finally if $z = c_i$, for $h$ small enough the permutation for $\beta(z + h)$ is:
-%   \begin{equation}
-%     \mathcal{C}_1, \dots, \mathcal{C}_k, \mathcal{C}_{i}, \dots, \mathcal{C}_m
-%   \end{equation}
-%   while the one for $\beta(z - h)$ is:
-%   \begin{equation}
-%     \mathcal{C}_1, \dots, \mathcal{C}_{i}, \mathcal{C}_k, \dots, \mathcal{C}_m \, .
-%   \end{equation}
-
-% \end{proof}
-
-In \Cref{fig:directional-derivative}, we show an example of the directional
+The proof is in \Cref{app:proof_directional_slope}; in \Cref{fig:directional-derivative}, we show an example of the directional
 derivative and the objective function.
 
 \begin{figure}[htb]
@@ -208,7 +183,7 @@ derivative and the objective function.
   \caption{%
   The function \(G\) and its directional derivative \(G( \cdot ; \delta)\) for
   an example with \(\beta = [-3.0, 1.0, 3.0, 2.0]^T\), \(k = 1\), and consequently
-  \(c^{\setminus k} = (2, 1)\). The solution of \Cref{pb:cluster-problem} is the value of \(z\) for
+  \(c^{\setminus k} = \{1, 2\}\). The solution of \Cref{pb:cluster-problem} is the value of \(z\) for
       which \(P'_k(z; \delta) \geq 0 \) for \(\delta \in \{-1, 1\}\), which holds only
       at \(z = 2\), which must therefore be the solution.
     }
@@ -241,14 +216,24 @@ Using the directional derivative, we can introduce the SLOPE thresholding operat
       \end{cases}
     \end{multlined}
   \]
-  with \({\varepsilon_c}\) defined as in \eqref{eq:epsilon-c} and let
-  \(\gamma = \tilde{r}^Tx\), \(\omega = \tilde{x}^T\tilde{x}\). Then
+  with \({\varepsilon_c}\) defined as in \eqref{eq:epsilon-c}.
+  Let $\tilde x = X_{\cC_k} \sign(\beta_{\cC_k})$ and $\tilde r = y - X_{\bar \cC_k} \beta_{\bar \cC_k}$.
+  Let \(\gamma = \tilde{r}^Tx\), \(\omega = \tilde{x}^T\tilde{x}\). Then
   \(T(\gamma; \omega, c^{(k)}, \lambda) \in \argmin_{z \in \mathbb{R}} G(z)\).
+  \mathurin{add remark on uniqueness of argmin? $G(z)$ is a 1 quadratic so it's either constant (possible) either there's a single minimizer}
 \end{theorem}
 
 \jl{Consider adding a remark showing that our operator generalizes the soft thresholding operator.}
 
 In \Cref{fig:slope-thresholding}, we visualize the SLOPE thresholding operator.
+
+Note that it is typically not necessary to compute all partial sums in \Cref{thm:thresholding-operator}.
+Instead, we need only to first check in which direction we need to search relative to the current order for the cluster and then search in that direction until we find the solution.
+The complexity of this search depends on how far we need to search in order to find the solution and the size of the current cluster.
+For each change in order, we need to compute a partial sum of the \(\lambda\) sequence across as many entries as there are members of the cluster.
+In practice, this means that the costs involved are often large at the start of optimization but become marginal as the identity of the clusters approach the true clusters.
+
+\jl{The text above needs refinement and more rigor.}
 
 \begin{figure*}[htb]
   \centering
@@ -264,51 +249,8 @@ In \Cref{fig:slope-thresholding}, we visualize the SLOPE thresholding operator.
   \label{fig:slope-thresholding}
 \end{figure*}
 
-\subsubsection{Naive Updates}
-
-As in \textcite{friedman2010}, we can improve the efficiency of updates by observing that
-\begin{equation*}
-  \begin{aligned}
-    \tilde r_k & = y - \tilde y_k                                                                       \\
-               & = y - X_{\bar{\mathcal{C}}_k}\beta_{\bar{\mathcal{C}}_k} - \tilde x c_k + \tilde x c_k \\
-               & = r + \tilde x c_k
-  \end{aligned}
-\end{equation*}
-and therefore that
-\begin{equation}
-  \label{eq:naive-update}
-  \tilde x_k^T (y - \tilde y_k) = \tilde x_k^T r + \tilde x_k^T \tilde x_k c_k.
-\end{equation}
-
-\subsubsection{Caching Reductions}
-
-Observe that \(\tilde x_k\) only changes between subsequent coordinate updates provided that the members of the cluster \(k\) change, for instance if two clusters are merged, a predictor leaves a cluster, or the signs flip (through an update of \(\alpha_k\)).
-As a result, it is possible to obtain computational gains by caching \(\tilde x_k\) and \(\tilde x_k^T \tilde x_k\) for each cluster (except the zero cluster, which we do not consider in our coordinate descent step).
-When there is no change in the clusters, there is no need to recompute these quantities.
-And even when there are changes, we can still reduce the costs involved since \(\tilde x_k\) can be updated in place.
-If a large cluster is joined by few new predictors, then the cost of updating may be much lower than recomputing the quantities for the entire cluster.
-Also note that, for single-member clusters we only need to store \(\tilde x_k^T \tilde x_k\) since \(\tilde x_k\) is just a column in \(X\) times the corresponding sign.
-
-Letting \(\tilde x_k^\text{old}\) correspond to the value of \(\tilde x_k\) before the update, we note that \(\tilde x_k \gets \tilde x_k^\text{old} + x_j \sign(\beta_j)\) for each \(j \in \mathcal{C}_k^\text{new} \setminus \mathcal{C}_k^\text{old}\) and \(\tilde x_k \gets \tilde x_k^\text{old} - x_j \sign(\beta_j)\) for each \(j \in \mathcal{C}_k^\text{old} \setminus \mathcal{C}_k^\text{new}\).
-If only the signs flip, we simply have to also flip the signs in \(\tilde x_k\).
-
-\subsubsection{Covariance Updates}
-
-Notice that we can rewrite the first term in \eqref{eq:naive-update} as
-\begin{equation}
-  \begin{aligned}
-    \tilde x_k^T r & = \tilde x_k^T y - \sum_{j : \beta_j \neq 0} \tilde x_k^T x_j \beta_j                                                                    \\
-                   & = \tilde x_k^T y - \sum_{j : c_j \neq 0} \tilde x_k^T \tilde x_j c_j                                                                     \\
-                   & = s_{\mathcal{C}_k}^T X_{\mathcal{C}_k}^T y - \sum_{j : \beta_j \neq 0} s_{\mathcal{C}_k}^T X_{\mathcal{C}_k}^T x_j \beta_j              \\
-                   & = s_{\mathcal{C}_k}^T \left(X^T y\right)_{\mathcal{C}_k} - \sum_{j : \beta_j \neq 0} s_{\mathcal{C}_k}^T X_{\mathcal{C}_k}^T x_j \beta_j \\
-                   & = \sum_{j \in \mathcal{C}_k}\left( s_j x_j^Ty - \sum_{t : \beta_t \neq 0} s_j x_j^T x_t \beta_t \right)
-  \end{aligned}
-\end{equation}
-As in \textcite{friedman2010}, this formulation can be used to achieve so-called \emph{covariance updates}.
-We compute \(X^T y\) once at the start.
-Then, each time a new predictor becomes non-zero, we compute its inner product with all other predictors, caching these products.
-
-\subsection{Hybrid proximal coordinate descent strategy}
+\subsection{Hybrid Strategy}
+\label{sec:hybrid-strategy}
 
 We now present in \Cref{alg:hybrid} the proposed solver.
 Every $v$ iterations, we perform a proximal gradient descent update to allows for clusters to split eventually.
@@ -332,7 +274,7 @@ The combination of the proximal gradient steps and PCD allows us to overcome the
   \(t \gets t + 1\)
 
   \If{\(t \bmod v = 0\)}{
-    \(\beta \leftarrow \operatorname{prox}_{J}(\beta - \frac{1}{L}\nabla f(\beta); \lambda / L)\) \label{alg:hybrid-istastep}
+    \(\beta \leftarrow \prox_{J}(\beta - \frac{1}{L}\nabla f(\beta); \lambda / L)\) \label{alg:hybrid-istastep}
 
     Update \(c\), \(\mathcal{C}\)
   }
@@ -346,15 +288,14 @@ The combination of the proximal gradient steps and PCD allows us to overcome the
 
       \(\tilde x_k \gets X_{\mathcal{C}_k}s\)
 
-      % \(\tilde y_k \gets X_{\widebar{\mathcal{C}}_k}\beta_{\widebar{\mathcal{C}}_k}\)
+      % \(\tilde r_k \gets y - X_{\widebar{\mathcal{C}}_k}\beta_{\widebar{\mathcal{C}}_k}\)
 
-      \(\tilde r_k \gets y - X_{\widebar{\mathcal{C}}_k}\beta_{\widebar{\mathcal{C}}_k}\)
 
-      % \(\gamma \gets \tilde{r}^T \tilde{x}_k\)
 
-      % \(\omega \gets \tilde{x}_k^T \tilde{x}_k\)
+      % \(\beta \gets T(\tilde{r}^T \tilde{x}_k; \tilde{x}_k^T \tilde{x}_k, c^{\setminus k}, \lambda)\)
+      \(z \gets T(\beta - \frac{1}{\norm{\tilde x_k}^2}\tilde{x}_k^\top(y - X\beta); \tilde{x}_k^T \tilde{x}_k, c^{\setminus k}, \lambda)\)
 
-      \(\beta \gets T(\tilde{r}^T \tilde{x}_k; \tilde{x}_k^T \tilde{x}_k, c^{\setminus k}, \lambda)\)
+      $\beta_{\cC_k} \gets z \sign(\beta_{\cC_k})$
 
       Update \(c\), \(\mathcal{C}\)
     }
@@ -363,6 +304,8 @@ The combination of the proximal gradient steps and PCD allows us to overcome the
   }
   \Return{\(\beta\)}
 \end{algorithm}
+
+Please see \Cref{sec:computational-details} for computational details regarding the implementation of the algorithm.
 
 \begin{figure*}[htb]
   \centering

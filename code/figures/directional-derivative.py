@@ -2,23 +2,14 @@ from bisect import bisect_right
 
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.collections import LineCollection
 from matplotlib.lines import Line2D
-from numpy.linalg import norm
 from numpy.random import default_rng
-from scipy import stats
 
 from figures import figspec
-from slope.clusters import get_clusters, update_cluster
-from slope.solvers import hybrid_cd
+from slope.clusters import get_clusters
 from slope.utils import (
-    ConvergenceMonitor,
-    dual_norm_slope,
     lambda_sequence,
     primal,
-    prox_slope,
-    sl1_norm,
-    slope_threshold,
 )
 
 
@@ -70,7 +61,6 @@ def directional_derivative(z, delta, k, beta, lambdas):
     c, c_ptr, c_ind, c_perm, n_c = get_clusters(beta_clust)
     new_pos = n_c - 1 - bisect_right(c_k[::-1], abs(upd))
     lambda_sum = np.sum(lambdas[c_ptr[new_pos]: c_ptr[new_pos + 1]])
-    new_ind = c_ind[c_ptr[new_pos]: c_ptr[new_pos + 1]]
 
     if z == 0:
         out = lambda_sum
@@ -144,10 +134,8 @@ def plot_dirder(delta, ax):
 
     if delta == 1:
         linecolor = "tab:orange"
-        label = r"$\delta = 1$"
     else:
         linecolor = "tab:blue"
-        label = r"$\delta = -1$"
 
     for i in range(len(ends)):
         x = (starts[i], ends[i])

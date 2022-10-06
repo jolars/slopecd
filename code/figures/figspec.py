@@ -1,3 +1,2 @@
 FULL_WIDTH = 6.75
 HALF_WIDTH = 3.25
-

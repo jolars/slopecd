@@ -3,8 +3,9 @@ from bisect import bisect_left
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats
-from slope.utils import dual_norm_slope
+
 from figures import figspec
+from slope.utils import dual_norm_slope
 
 
 def get_clusters(w):
@@ -132,16 +133,6 @@ xy = np.stack(
 )
 
 x2_labs = (
-    # r"$-\omega c^{\setminus k}_1 - \sum_{j \in C(c^{\setminus k}_1 + \varepsilon_c)} \lambda_{(j)^-_{c^{\setminus k}_1 + \varepsilon_c}}$",
-    # r"$-\omega c^{\setminus k}_1 - \sum_{j \in C(c^{\setminus k}_1 - \varepsilon_c)} \lambda_{(j)^-_{c^{\setminus k}_1 - \varepsilon_c}}$",
-    # r"$-\omega c^{\setminus k}_2 - \sum_{j \in C(c^{\setminus k}_2 + \varepsilon_c)} \lambda_{(j)^-_{c^{\setminus k}_2 + \varepsilon_c}}$",
-    # r"$-\omega c^{\setminus k}_2 - \sum_{j \in C(c^{\setminus k}_2 - \varepsilon_c)} \lambda_{(j)^-_{c^{\setminus k}_2 - \varepsilon_c}}$",
-    # r"-$\sum_{j \in C(0)} \lambda_{(j)^-_{\varepsilon_c}}$",
-    # r"$\sum_{j \in C(0)} \lambda_{(j)^-_{\varepsilon_c}}$",
-    # r"$\omega c^{\setminus k}_2 + \sum_{j \in C(c^{\setminus k}_2 - \varepsilon_c)} \lambda_{(j)^-_{c^{\setminus k}_2 - \varepsilon_c}}$",
-    # r"$\omega c^{\setminus k}_2 + \sum_{j \in C(c^{\setminus k}_2 + \varepsilon_c)} \lambda_{(j)^-_{c^{\setminus k}_2 + \varepsilon_c}}$",
-    # r"$\omega c^{\setminus k}_1 + \sum_{j \in C(c^{\setminus k}_1 - \varepsilon_c)} \lambda_{(j)^-_{c^{\setminus k}_1 - \varepsilon_c}}$",
-    # r"$\omega c^{\setminus k}_1 + \sum_{j \in C(c^{\setminus k}_1 + \varepsilon_c)} \lambda_{(j)^-_{c^{\setminus k}_1 + \varepsilon_c}}$",
     r"$-\omega c^{\setminus k}_1 - S(c^{\setminus k}_1 + \varepsilon_c)$",
     r"$-\omega c^{\setminus k}_1 - S(c^{\setminus k}_1 - \varepsilon_c)$",
     r"$-\omega c^{\setminus k}_2 - S(c^{\setminus k}_2 + \varepsilon_c)$",

@@ -22,13 +22,14 @@ Unless we note otherwise, we used the Benjamini--Hochberg method to compute the 
 which sets $\lambda_j = \eta^{-1}(1 - q\times j / (2p))$ for $j=1, 2, \hdots, p$ where $\eta^{-1}$ is the probit function. 
 For the rest of the experiments section, the parameter $q$ of this sequence has been set to $0.1$ if not stated otherwise.
 We let \(\lambda_\text{max}\) be the \(\lambda\) sequence such that \(\beta^* = 0\), but for which any scaling with a strictly positive scalar smaller than one produces a solution with at least one non-zero coefficient.
-We then parameterize the experiments by scaling \(\lambda_\text{max}\), using the fixed values \(0.25 \lambda_\text{max}\), \(0.1 \lambda_\text{max}\), \(0.02 \lambda_\text{max}\), which covers the range of very sparse solutions to the almost-saturated case.
+We then parameterize the experiments by scaling \(\lambda_\text{max}\), using the fixed values \(0.5 \lambda_\text{max}\), \(0.1 \lambda_\text{max}\), \(0.02 \lambda_\text{max}\), which covers the range of very sparse solutions to the almost-saturated case.
 
 We pre-process datasets by first removing features with less than three non-zero values. Then, for dense data we center and scale each feature by its mean and standard deviation respectively.
 For sparse data, we scale each feature by its maximum absolute value.
 
 Each solver was coded in \pkg{python}, using \pkg{numpy}~\parencite{harris2020} and \pkg{numba}~\parencite{lam2015} for performance-critical code.
 The code will be made open-source upon publication.
+
 \jl{We are going to include it in the supplementary material too, right?} 
 
 \jl{Add information about the benchmarking system here (or refer to entry in appendix).}
@@ -100,7 +101,13 @@ The datasets used for the experiments have been described in \Cref{tab:real-data
   \end{tabular}
 \end{table}
 
-In \Cref{fig:real-data}, we present the results of the benchmarks on real data.
+\Cref{fig:real-data} shows the suboptimality score the objective function $P$ as a function of the time for four different datasets. 
+We see that when the regularization parameter is set at $\lambda_{\text{max}/2}$ and $\lambda_{\text{max}}/10$ our proposed solver is faster than all its competitors especially when the datasets becomes larger. 
+This is especially visible on the \dataset{news20} dataset where we see that our proposed method is faster by at least one order of magnitude.
+
+When the parametrization value is set to $\lambda_{\text{max}}/50$, our algorithm remains competitive on the different datasets.
+It can be seen that the different competitors do not behave consistently accross the datasets. 
+For example, the \texttt{newt-alm} method is very fast on the \dataset{bcTCGA} dataset but is very slow on the \dataset{news20} dataset whereas the \texttt{hybrid} method remains very efficient in both settings. 
 
 \begin{figure*}[!t]
   \centering
@@ -109,4 +116,3 @@ In \Cref{fig:real-data}, we present the results of the benchmarks on real data.
   \caption{\textbf{Benchmark on real datasets.} Normalized duality gap as a function of time for SLOPE on multiple simulated datasets and for multiple sequence of $\lambda$.}
   \label{fig:real-data}
 \end{figure*}
-

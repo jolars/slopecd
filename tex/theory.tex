@@ -6,7 +6,7 @@
 \label{sec:coordinate-updates}
 
 Proximal coordinate descent cannot be applied to \Cref{pb:slope} because it is not separable.
-However, if the clusters $\mathcal{C}_1^*, \ldots, \mathcal{C}_{m^*}^*$ of the solution $\beta^*$ were known together with their signs, then the values $c_1^*, \ldots, c_{m^*}^*$ taken by $\beta^*$ on the clusters could be equivalently computed by solving:
+However, if the clusters $\mathcal{C}_1^*, \ldots, \mathcal{C}_{m^*}^*$ of the solution $\beta^*$ were known together with $\sign()\beta^*)$, then the values $c_1^*, \ldots, c_{m^*}^*$ taken by $\beta^*$ on the clusters could be equivalently computed by solving:
 \begin{problem}
   \begin{multlined}
   \min_{z \in \bbR^{m^*}}\bigg(
@@ -20,9 +20,9 @@ However, if the clusters $\mathcal{C}_1^*, \ldots, \mathcal{C}_{m^*}^*$ of the s
 % where $\tilde{x}_{\mathcal{C}_i} = \sum_{j \in \mathcal{C}_i} x_j \sign (\beta_j^*)$.
 Conditionally on the knowledge of the clusters and the signs of the coefficients, the penalty becomes separable as shown by \cite{dupuis2021}, and coordinate descent could be used.
 Hence, the idea of our algorithm is to intertwine steps that allows the clusters to split, and large coordinate-wise steps on these clusters.
-The combination of proximal gradient descent steps and proximal coordinate descent avoid the situation depicted in \Cref{fig:naive-cd-stuck} where coordinate descent gets stuck.
+The combination of proximal gradient descent steps and proximal coordinate descent avoids the situation depicted in \Cref{fig:naive-cd-stuck} where coordinate descent gets stuck.
 
-A full proximal coordinate descent may have been possible if one could decide wether a cluster should be split or not. 
+A full proximal coordinate descent may have been possible if one could decide wether a cluster should be split or not.
 However, the cost of checking the conditions under which a cluster splits is too high and the alternation between proximal gradient descent and proximal coordinate proved to be very efficient.
 
 Based on this observation, we derive a coordinate descent algorithm for minimizing the SLOPE problem~\eqref{pb:slope} with respect to the coefficients of a single cluster at a time.
@@ -31,6 +31,7 @@ In all the sequel, $\beta$ is fixed, with $m$ clusters $\mathcal{C}_1, \ldots, \
 Let also $k \in [m]$ be fixed, let $s_k = \sign \beta_{\mathcal{C}_k}$.
 We are interested in updating $\beta$ by changing only the value taken on the $k$-th cluster.
 To this end, we let
+\mm{$s_k$ issue below}
 \begin{equation}
   \label{eq:coordinate-update-beta}
   \beta_i(z) =
@@ -72,7 +73,7 @@ where \(H'(z; \delta)\) is the directional derivative of $H$.
 Throughout the rest of this section we derive the solution to \eqref{pb:cluster-problem}.
 To do so, we will introduce the directional derivative for the
 sorted \(\ell_1\) norm with respect to the coefficient of the \(k\)-th cluster.
-First, as illustrated on \Cref{fig:partial_slope}, note that $H$ is piecewise affine, with breakpoints at 0 and all $\pm c_i$s for $i \neq k$.
+First, as illustrated on \Cref{fig:partial_slope}, note that $H$ is piecewise affine, with breakpoints at 0 and all $\pm c_i$'s for $i \neq k$.
 Hence, the partial derivative is piecewise constant, with jumps at these points; in addition, $H'(\cdot; 1) = H'(\cdot, -1)$ except at these points.
 
 \begin{figure}[htbp]
@@ -91,15 +92,15 @@ Let \(C(z)\) be the function that returns the cluster of $\beta(z)$ correspondin
 
 \begin{remark}\label{rem:permutation_C_z}
   Note that, if $z$ is equal to some $c_i$ then $C(z) = \mathcal{C}_i \cup \mathcal{C}_k$ and otherwise $C(z) = \mathcal{C}_k$.
-  Related to the piecewise affineness of $H$ is the fact that the permutation corresponding to $\beta(z)$ is:
-  \mm{there are multiple possible permutations in fact, this matters when $|z| = c_i$}
+  Related to the piecewise affineness of $H$ is the fact that the permutation\footnote{the permutation is in fact not unique, without impact on our results. This is discussed when needed in the proofs.} corresponding to $\beta(z)$ is:
+  % \mm{there are multiple possible permutations in fact, this matters when $|z| = c_i$}
   \begin{equation*}
     \begin{cases}
     \cC_k, \cC_m, \ldots, C_1 \, ,
         &\text{ if } z \in \left]0, c_m\right[ \, \\
     \cC_m, \ldots ,\cC_i, \cC_k, \cC_{i-1}, \ldots, C_1 \, ,
         &\text{ if } z \in \left]c_{i}, c_{i-1} \right[, \, i \in \llbracket 2 , m \rrbracket \, \\
-    \cC_m, \ldots C_1,  \cC_k, \, ,
+    \cC_m, \ldots C_1,  \cC_k \, ,
         &\text{ if } z \in \left]c_1, +\infty \right[ \, , \\
     \end{cases}
   \end{equation*}
@@ -157,15 +158,12 @@ Let \(C(z)\) be the function that returns the cluster of $\beta(z)$ correspondin
 We can now state the directional derivative of $H$. % \(J_k\).
 
 \begin{theorem}\label{thm:sl1-directional-derivative}
-  Let $\varepsilon_c$ be an arbitrary positive value such that
+  % Let $\varepsilon_c$ be an arbitrary positive value such that
+  Let $\varepsilon_c > 0$ such that
   \begin{equation}
     \label{eq:epsilon-c}
     \varepsilon_c < \big| c_i - c_j\big| , \quad \forall\, i \neq j \text{ and } \varepsilon_c < c_m \text{ if } c_m \neq 0 \, .
   \end{equation}
-  % Let \(c^{\setminus k}\) be the \(m - 1\) length version of $c$ where the $k$-th coordinate has been removed: $c^{\setminus k} = (c_1, \ldots c_{k-1}, c_{k+1}, \ldots, c_m)$.
-  Let \(c^{\setminus k}\) be the set containing all elements of $c$ except the $k$-th one: $c^{\setminus k} =  \{c_1, \ldots c_{k-1}, c_{k+1}, \ldots, c_m \}$.
-  \mathurin{move into notation section? it's not used in the theorem, only in the proof}
-  % Let \({\varepsilon_c} > 0\) satisfying \eqref{eq:epsilon-c}.
   The directional derivative of the partial sorted $\ell_1$ norm with respect to the $k$-th cluster, \(H\), in the direction \(\delta\) is
   \[
     H'(z; \delta) =

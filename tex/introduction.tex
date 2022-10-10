@@ -3,7 +3,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 In this paper we present a novel numerical algorithm for Sorted L-One Penalized
-Estimation (SLOPE, \cite{bogdan2013,bogdan2015,zeng2014ordered}), defined as
+Estimation (SLOPE, \cite{bogdan2013,bogdan2015,zeng2014ordered}), which, for a 
+matrix of features \(X \in \mathbb{R}^{n \times p}\) and response vector \(y \in \mathbb{R}^n\) is defined as 
 \begin{problem}\label{pb:slope}
   \min_{\beta \in \mathbb{R}^p}
   P(\beta) =  \frac{1}{2 n} \norm{y - X \beta}^2 + J(\beta)

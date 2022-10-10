@@ -19,9 +19,11 @@ If the clusters $\mathcal{C}_1^*, \ldots, \mathcal{C}_{m^*}^*$ and signs of the 
 % MM: removed F and used the form (ell(beta) instead of F(Xbeta)) : more general
 % where $\tilde{x}_{\mathcal{C}_i} = \sum_{j \in \mathcal{C}_i} x_j \sign (\beta_j^*)$.
 Conditionally on the knowledge of the clusters and the signs of the coefficients, the penalty becomes separable as shown by \cite{dupuis2021}, and coordinate descent could be used.
-Hence, the idea of our algorithm is to intertwine steps that identify the clusters, and large coordinate-wise steps on these clusters.
+Hence, the idea of our algorithm is to intertwine steps that allows the clusters to split, and large coordinate-wise steps on these clusters.
+The combination of proximal gradient descent steps and proximal coordinate descent avoid the situation depicted in \Cref{fig:naive-cd-stuck} where coordinate descent gets stuck.
 
-\jl{Is this reasoning sound? The PGD step does not immediately identify clusters.}
+A full proximal coordinate descent may have been possible if one could decide wether a cluster should be split or not. 
+However, the cost of checking the conditions under which a cluster splits is too high and the alternation between proximal gradient descent and proximal coordinate proved to be very efficient.
 
 Based on this observation, we derive a coordinate descent algorithm for minimizing the SLOPE problem~\eqref{pb:slope} with respect to the coefficients of a single cluster at a time.
 
@@ -342,4 +344,3 @@ We now state that our proposed hybrid algorithm converges to a solution of \Cref
   \]
   where \(\beta^* \in \argmin_{\beta \in \mathbb{R}^p} P.\)
 \end{lemma}
-

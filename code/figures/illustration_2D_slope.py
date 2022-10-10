@@ -311,7 +311,7 @@ for i in range(3):
             color="black",
             label=labels[i],
             linestyle="",
-            markersize=8,
+            markersize=6,
         )
 
     if i == 1:

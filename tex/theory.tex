@@ -65,9 +65,8 @@ The optimality condition for \Cref{pb:cluster-problem} is
 where $G'(z; \delta) $ is the directional derivative of $G$ in the direction $\delta$.
 Since the quadratic datafit is differentiable we have
 \[
-  G'(z; \delta)  = \delta \sum_{i \in \mathcal{C}_k} X_{:i}^\top(X\beta(z) - y_i) + H'(z; \delta) \, ,
+  G'(z; \delta)  = \delta \sum_{j \in \mathcal{C}_k} X_{:j}^\top(X\beta(z) - y) + H'(z; \delta) \, ,
 \]
-% since \(\lVert \tilde{r} - \tilde{x}z\rVert_2^2\) is differentiable.
 where \(H'(z; \delta)\) is the directional derivative of $H$.
 
 Throughout the rest of this section we derive the solution to \eqref{pb:cluster-problem}.
@@ -158,6 +157,7 @@ Let \(C(z)\) be the function that returns the cluster of $\beta(z)$ correspondin
 We can now state the directional derivative of $H$. % \(J_k\).
 
 \begin{theorem}\label{thm:sl1-directional-derivative}
+  Let \(c^{\setminus k}\) be the set containing all elements of $c$ except the $k$-th one: $c^{\setminus k} =  \{c_1, \ldots c_{k-1}, c_{k+1}, \ldots, c_m \}$.
   % Let $\varepsilon_c$ be an arbitrary positive value such that
   Let $\varepsilon_c > 0$ such that
   \begin{equation}
@@ -171,7 +171,8 @@ We can now state the directional derivative of $H$. % \(J_k\).
       \smashoperator[r]{\sum_{j \in C(\varepsilon_c )}} \lambda_{(j)^-_{\varepsilon_c }}
        & \text{if } z = 0 \, ,               \\
       \sign(z)\delta\smashoperator{\sum_{j \in C(z + {\varepsilon_c} \delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
-       & \text{if } |z| = c^{(k)}_i > 0 \, , \\
+      %  & \text{if } |z| = c^{(k)}_i > 0 \, , \\
+       & \text{if } |z| \in c^{\setminus k} \setminus \{0\} , \\
       \sign(z)\delta\smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}
        & \text{otherwise} \, .
     \end{cases}
@@ -187,7 +188,7 @@ derivative and the objective function.
   The function \(G\) and its directional derivative \(G( \cdot ; \delta)\) for
   an example with \(\beta = [-3.0, 1.0, 3.0, 2.0]^T\), \(k = 1\), and consequently
   \(c^{\setminus k} = \{1, 2\}\). The solution of \Cref{pb:cluster-problem} is the value of \(z\) for
-      which \(P'_k(z; \delta) \geq 0 \) for \(\delta \in \{-1, 1\}\), which holds only
+      which \(G'(z; \delta) \geq 0 \) for \(\delta \in \{-1, 1\}\), which holds only
       at \(z = 2\), which must therefore be the solution.
     }
   \label{fig:directional-derivative}
@@ -223,10 +224,18 @@ Using the directional derivative, we can introduce the SLOPE thresholding operat
   Let $\tilde x = X_{\cC_k} \sign(\beta_{\cC_k})$ and $\tilde r = y - X_{\bar \cC_k} \beta_{\bar \cC_k}$.
   Let \(\gamma = \tilde{r}^Tx\), \(\omega = \tilde{x}^T\tilde{x}\). Then
   \(T(\gamma; \omega, c^{(k)}, \lambda) \in \argmin_{z \in \mathbb{R}} G(z)\).
-  \mathurin{add remark on uniqueness of argmin? $G(z)$ is a 1 quadratic so it's either constant (possible) either there's a single minimizer}
+  Then:
+  \begin{equation}
+    T \left(\beta_{\cC_k} - \tfrac{1}{\Vert \tilde x \Vert^2} \tilde x (y - X\beta)); \Vert \tilde x \Vert^2, c^{\setminus k}, \lambda \right) \in \argmin_{z \in \mathbb{R}} G(z) \,.
+  \end{equation}
 \end{theorem}
 
+\mathurin{add remark on uniqueness of argmin? $G(z)$ is a 1 quadratic so it's either constant (possible) either there's a single minimizer}
+
+\begin{remark}
+  In the Lasso case where the $\lambda_i$'s are all equal and $m = p$, the SLOPE Thresholding Operator is a soft thresholding operator.
 \jl{Consider adding a remark showing that our operator generalizes the soft thresholding operator.}
+\end{remark}
 
 In \Cref{fig:slope-thresholding}, we visualize the SLOPE thresholding operator.
 

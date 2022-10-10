@@ -15,7 +15,7 @@ To investigate the performance of our algorithm, we performed an extensive bench
 \end{itemize}
 
 We used the \pkg{benchopt}~\parencite{moreau2022benchopt} tool to obtain the convergence curves for the different solvers.
-\pkg{Benchopt} launches each solver several times increasing the number of iterations and store the objective value, dual gap and time to reach it.
+\pkg{Benchopt} is a collaborative framework that allows reproducible and automatic benchmarks. 
 The repository to reproduce the benchmark is available at \url{https://github.com/Klopfe/benchmark_slope}.
 
 Unless we note otherwise, we used the Benjamini--Hochberg method to compute the \(\lambda\) sequence~\parencite{bogdan2015},
@@ -74,7 +74,7 @@ In \Cref{fig:simulated}, we present the results of the benchmarks on simulated d
   \label{fig:simulated}
 \end{figure*}
 
-We see that for smaller fractions of $\lambda_{\text{max}}$ our hybrid algorithm allows significant speedup in comparison to its competitors mainly when the number of features is large than the number of samples.
+We see that for smaller fractions of $\lambda_{\text{max}}$ our hybrid algorithm allows significant speedup in comparison to its competitors mainly when the number of features is larger than the number of samples.
 On very large scale data such as in simulated data setting $3$, we see that the hybrid solver is faster than its competitors by one or two orders of magnitude.
 
 \subsection{Real data}

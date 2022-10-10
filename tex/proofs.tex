@@ -4,6 +4,8 @@
 
 \begin{proof}\label{app:proof_directional_derivative}
   \label{app:proof_directional_slope}
+  Let \(c^{\setminus k}\) be the set containing all elements of $c$ except the $k$-th one: $c^{\setminus k} =  \{c_1, \ldots c_{k-1}, c_{k+1}, \ldots, c_m \}$.
+
   From the observations in \Cref{rem:permutation_C_z},
   we have the following cases to consider: \(|z| \in c^{\setminus k}\),
   \(|z| = 0\), and \(|z| \notin \{0\} \cup c^{\setminus k}\).
@@ -47,75 +49,6 @@
       &= h \sum_{j \in \cC_k} \lambda_{(i)^-_{z + \delta h}} \, .
   \end{align}
   If $c_m \neq 0$, then the computation proceeds exactly as in case 1.
-\end{proof}
-
-\mathurin{previous proof below}
-\subsection{Previous Proof of thm 2.2}
-\input{old_proof_thm_2_2.tex}
-
-\subsection{Proof of \Cref{thm:thresholding-operator}}
-
-\begin{proof}
-  Recall that \(G(z) : \mathbb{R} \mapsto \mathbb{R}\) is a convex,
-  continuous piecewise-differentiable function with kinks whenever \(|z| =
-  c_i^{\setminus k}\) or \(z = 0\). Let \(\gamma = \tilde{r}^T\tilde{x}\)
-  and \(\omega = \tilde{x}^T\tilde{x}\) and note that the optimality criterion for
-  \eqref{pb:cluster-problem} is
-  \[
-    \delta(\omega z - \gamma) + H'(z; \delta) \geq 0, \quad
-    \forall \delta \in \{-1, 1\},
-  \]
-  which is equivalent to
-  \begin{equation}
-    \label{eq:optimality-inequality}
-    \omega z - H'(z; -1) \leq \gamma \leq \omega z + H'(z; 1).
-  \end{equation}
-  We now proceed to show that there is a solution \(z^* \in \argmin_{z \in
-    \mathbb{R}} H(z)\) for every interval over \(\gamma \in \mathbb{R}\).
-
-  First, assume that the first case in the definition of \(T_k\) holds
-  and note that this is equivalent to \eqref{eq:optimality-inequality} with \(z
-  = 0\) since \(C({\varepsilon_c}) = C(-{\varepsilon_c})\) and
-  \(\lambda_{(j)^-_{-{\varepsilon_c}}} = \lambda_{(j)^-_{{\varepsilon_c}}}\).
-  This is sufficient for \(z^* = 0\).
-
-  Next, assume that the second case holds and observe that this is equivalent
-  to \eqref{eq:optimality-inequality} with
-  \(z = c_i^{\setminus k}\), since
-  \(C(c_i + {\varepsilon_c}) = C(-c_i - {\varepsilon_c})\) and
-  \(C(-c_i + {\varepsilon_c}) = C(c_i - {\varepsilon_c})\). Thus \(z^* =
-  \sign(\gamma)c_i^{\setminus k}\).
-
-  For the third case, we have
-  \[
-    \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}}
-    =
-    \smashoperator[r]{\sum_{j \in C(c_{i-1} - {\varepsilon_c})}} \lambda_{(j)^-_{c_{i-1} - {\varepsilon_c}}}
-  \]
-  and therefore \eqref{eq:optimality-inequality} is equivalent to
-  \[
-    c_i < \frac{1}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} \bigg) < c_{i -1}.
-  \]
-  Now let
-  \begin{equation}
-    \label{eq:differentiable-solution}
-    z^* = \frac{\sign(\gamma)}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} \bigg)
-  \end{equation}
-  and note that \(|z^*| \in \big(c_i^{\setminus k}, c_{i-1}^{\setminus k}\big)\) and hence
-  \[
-    \frac{1}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} \bigg)
-    =
-    \frac{1}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(z^*)}} \lambda_{(j)^-_{z^*}} \bigg).
-  \]
-  Furthermore, since \(G\) is differentiable in \(\big(c_i^{\setminus k}, c_{i-1}^{\setminus k}\big)\), we have
-  \[
-    \frac{\partial}{\partial z} G(z) \Big|_{z = z^*}
-    = \omega z^* - \gamma + \sign(z^*) \smashoperator{\sum_{j \in C(z^*)}} \lambda_{(j)^-_{z^*}} = 0,
-  \]
-  and therefore \eqref{eq:differentiable-solution} must be the solution.
-
-  The solution for the last case follows using reasoning analogous to that of the
-  third case.
 \end{proof}
 
 \subsection{Proof of \Cref{lem:convergence}}

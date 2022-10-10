@@ -15,9 +15,9 @@ where
   J(\beta) = \sum_{j=1}^p \lambda_j|\beta_{(j)}|
 \end{equation}
 is the \emph{sorted \(\ell_1\) norm}, defined through
-\begin{equation*}
+\begin{equation}
   |\beta_{(1)}| \geq |\beta_{(2)}| \geq \cdots \geq |\beta_{(p)}| \enspace,
-\end{equation*}
+\end{equation}
 with \(\lambda\) being a fixed non-increasing and non-negative sequence.
 
 The sorted $\ell_1$ norm is a sparsity-enforcing penalty that has become
@@ -32,10 +32,10 @@ In spite of the availability of predictor screening
 rules~\parencite{larsson2020c,elvira2022}, which help speed up SLOPE in the
 high-dimensional regime, current state-of-the-art algorithms for SLOPE perform
 poorly in comparison to those of more established penalization methods such as
-the lasso (\(\ell_1\)-norm regularization) and ridge regression
-(\(\ell_2\)-norm regularization).
+the lasso (\(\ell_1\) norm regularization) and ridge regression
+(\(\ell_2\) norm regularization).
 As a small illustration of this issue, we compared the speed at which the \pkg{SLOPE}~\parencite{friedman2022} and \pkg{glmnet}~\parencite{friedman2022} packages solve a SLOPE and lasso problem, respectively, for the \dataset{bcTCGA} data set.
-In this small experiment, \pkg{SLOPE} takes 43 seconds to reach convergence, whilst \pkg{glmnet} requires only 0.14 seconds\footnote{See~\Cref{sec:slope-vs-glmnet} for details on how this experiment was run.}.
+\pkg{SLOPE} takes 43 seconds to reach convergence, whilst \pkg{glmnet} requires only 0.14 seconds\footnote{See~\Cref{sec:slope-vs-glmnet} for details on this experiment.}.
 This lackluster performance has hampered the applicability of SLOPE to many real-world applications.
 
 A major reason for why algorithms for solving
@@ -46,9 +46,9 @@ solvers, on the other hand, rely on proximal gradient descent algorithms such
 as FISTA~\parencite{beck2009} and the alternating direction method of multipliers
 method (ADMM, \cite{boyd2010}), which have proven to be less efficient than
 coordinate descent in empirical benchmarks on related problems, such as the
-lasso~\parencite{moreau2022benchopt}. 
-In addition to FISTA and ADMM, there has also been research into Newton-based augmented Lagrangian methods to solve SLOPE~\parencite{Ziyan2019}. 
-But this method is adapted only the \(p \gg n\) regime and, as we show in our paper, is outperformed by our method even in this scenario. 
+lasso~\parencite{moreau2022benchopt}.
+In addition to FISTA and ADMM, there has also been research into Newton-based augmented Lagrangian methods to solve SLOPE~\parencite{Ziyan2019}.
+But this method is adapted only to the \(p \gg n\) regime and, as we show in our paper, is outperformed by our method even in this scenario.
 Applying coordinate descent to SLOPE is not,
 however, straightforward since convergence guarantees for coordinate descent
 require the objective to be separable, which is not the case for SLOPE. As a
@@ -59,7 +59,7 @@ stuck~(\Cref{fig:naive-cd-stuck}).
   \centering
   \includegraphics[]{naive-cd-stuck.pdf}
   \caption{%
-    An example of (standard) coordinate descent getting stuck on a two-dimensional SLOPE problem.
+    An example of standard coordinate descent getting stuck on a two-dimensional SLOPE problem.
     The main plot shows level curves for the primal objective~\eqref{pb:slope}, with the minimizer \(\beta^* = [0, 0]^T\) indicated by the orange cross.
     The marginal plots displays objective values at \(\beta_1 = 0.2\) when optimizing over \(\beta_2\) and vice versa.
     At \(\beta = [0.2,0.2]^T\), standard coordinate descent can only move in the directions indicated by the dashed lines---neither of which are descent directions for the objective.

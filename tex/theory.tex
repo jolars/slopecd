@@ -22,8 +22,7 @@ Conditionally on the knowledge of the clusters and the signs of the coefficients
 Hence, the idea of our algorithm is to intertwine steps that allows the clusters to split, and large coordinate-wise steps on these clusters.
 The combination of proximal gradient descent steps and proximal coordinate descent avoid the situation depicted in \Cref{fig:naive-cd-stuck} where coordinate descent gets stuck.
 
-A full proximal coordinate descent may have been possible if one could decide wether a cluster should be split or not. 
-However, the cost of checking the conditions under which a cluster splits is too high and the alternation between proximal gradient descent and proximal coordinate proved to be very efficient.
+A full proximal coordinate descent is possible by examine all possible direction proposed by the directional derivative. However, for a cluster of size $k$ there will be $k$ directions that needs to be computed, and for at least a naive implementation this is computationally very demanding. So instead we alternate between proximal gradient descent, to determine the cluster components, and proximal coordinate descent, to determine the coefficients.
 
 Based on this observation, we derive a coordinate descent algorithm for minimizing the SLOPE problem~\eqref{pb:slope} with respect to the coefficients of a single cluster at a time.
 

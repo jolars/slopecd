@@ -19,8 +19,8 @@ If the clusters $\mathcal{C}_1^*, \ldots, \mathcal{C}_{m^*}^*$ and signs of the 
 % MM: removed F and used the form (ell(beta) instead of F(Xbeta)) : more general
 % where $\tilde{x}_{\mathcal{C}_i} = \sum_{j \in \mathcal{C}_i} x_j \sign (\beta_j^*)$.
 Conditionally on the knowledge of the clusters and the signs of the coefficients, the penalty becomes separable as shown by \cite{dupuis2021}, and coordinate descent could be used.
-Hence, the idea of our algorithm is to intertwine steps that allows the clusters to split, and large coordinate-wise steps on these clusters.
-The combination of proximal gradient descent steps and proximal coordinate descent avoids the situation depicted in \Cref{fig:naive-cd-stuck} where coordinate descent gets stuck.
+Based on this idea, we propose an algorithm that intertwines proximal gradient descent steps on the full problem, which allow the clusters to split, with proximal coordinate descent steps on these clusters, which enable the algorithm to benefit from greater step lengths.
+This combination of proximal gradient and coordinate descent allows us to avoid the situation depicted in \Cref{fig:naive-cd-stuck}.
 
 A full proximal coordinate descent is possible by examine all possible direction proposed by the directional derivative. However, for a cluster of size $k$ there will be $k$ directions that needs to be computed, and for at least a naive implementation this is computationally very demanding. So instead we alternate between proximal gradient descent, to determine the cluster components, and proximal coordinate descent, to determine the coefficients.
 

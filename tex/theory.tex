@@ -287,7 +287,7 @@ This is equivalent to taking a proximal gradient step on the full problem.
 We now present the proposed solver in \Cref{alg:hybrid}.
 Every $v$ iterations, we perform a proximal gradient descent update that allows for clusters to split.
 The choice of the parameter $v$ that accounts for the frequency at which PGD steps are performed was set to $5$.
-Our own experiments show that this parameter does not have a great impact on the speed of the algorithm as long as it is at least $3$ (see \Cref{fig:pgd_freq}).
+Our experiments show that this parameter does not have a great impact on the speed of the algorithm as long as it is at least $3$ (see \Cref{fig:pgd_freq}).
 
 The combination of the proximal gradient steps and PCD allows us to overcome the problem of vanilla PCD getting stuck because of non-separability and allows us to enjoy the speed-up provided by making local updates on each cluster as illustrated in \Cref{fig:illustration-solver}.
 

@@ -24,7 +24,7 @@ lambdas = lambda_sequence(X, y, False, reg=0.999, q=0.99)
 
 lambdas = np.array([0.5, 0.1])
 
-beta_star, _, _, _, _ = hybrid_cd(X, y, lambdas, False)
+beta_star = hybrid_cd(X, y, lambdas, fit_intercept=False)[0]
 
 lims = (-0.05, 0.45)
 

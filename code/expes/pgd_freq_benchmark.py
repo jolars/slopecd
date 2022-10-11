@@ -1,18 +1,15 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from benchopt.datasets import make_correlated_data
 from libsvmdata import fetch_libsvm
 from scipy import stats
 
 from slope.solvers import hybrid_cd
 from slope.utils import dual_norm_slope
+from slope.plot_utils import configure_plt, _plot_legend_apart
 
-dataset = "rcv1.binary"
-if dataset == "simulated":
-    X, y, _ = make_correlated_data(n_samples=100, n_features=40, random_state=0)
-    # X = csc_matrix(X)
-else:
-    X, y = fetch_libsvm(dataset)
+fig_dir = "../../figures/"
+configure_plt()
+X, y = fetch_libsvm("rcv1.binary")
 
 randnorm = stats.norm(loc=0, scale=1)
 q = 0.5
@@ -22,12 +19,12 @@ alphas_seq = randnorm.ppf(1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1]
 
 alpha_max = dual_norm_slope(X, y / len(y), alphas_seq)
 
-alphas = alpha_max * alphas_seq / 5
+alphas = alpha_max * alphas_seq / 10
 
 max_epochs = 10000
 tol = 1e-10
 
-beta_cd, _, primals_cd, gaps_cd, time_cd = hybrid_cd(
+beta_cd, _, primals_cd, gaps_cd, time_cd, _ = hybrid_cd(
     X, y, alphas, max_epochs=2, verbose=True, tol=tol
 )
 freqs = np.arange(1, 10)
@@ -37,7 +34,7 @@ primals = list()
 gaps = list()
 times = list()
 for k in freqs:
-    beta_cd, _, primals_cd, gap_cd, time_cd = hybrid_cd(
+    beta_cd, _, primals_cd, gap_cd, time_cd, _ = hybrid_cd(
         X, y, alphas, max_epochs=max_epochs, verbose=True, tol=tol, pgd_freq=k
     )
     betas.append(beta_cd)
@@ -47,12 +44,18 @@ for k in freqs:
 
 # Time vs. duality gap
 plt.clf()
-
+fig, ax = plt.subplots(layout="constrained")
+minimum = np.min(primals[4])
 for k in freqs:
-    plt.semilogy(times[k - 1], gaps[k - 1], label="pgd freq = %s" % k)
+    ax.semilogy(
+        times[k - 1], np.array(primals[k - 1]) - minimum, label="pgd freq = %s" % k)
 
-plt.ylabel("duality gap")
-plt.xlabel("Time (s)")
-plt.legend()
-plt.title(dataset)
+ax.set_ylabel(r"$P(\beta) - P(\beta^*)$")
+ax.set_xlabel("Time (s)")
+ax.set_title("rcv1")
+ax.set_ylim(1e-10, 1)
+ax.set_xlim(0, 5)
+fig.savefig(fig_dir + "pgd_freq.pdf")
 plt.show(block=False)
+
+_plot_legend_apart(ax, fig_dir + "legend_pgd_freq.pdf", ncol=3)

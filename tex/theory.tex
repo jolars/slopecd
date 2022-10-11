@@ -230,12 +230,15 @@ Using the directional derivative, we can introduce the SLOPE thresholding operat
     \end{multlined}
   \]
   with \({\varepsilon_c}\) defined as in \eqref{eq:epsilon-c}.
-  Let $\tilde x = X_{\cC_k} \sign(\beta_{\cC_k})$ and $\tilde r = y - X_{\bar \cC_k} \beta_{\bar \cC_k}$.
-  Let \(\gamma = \tilde{r}^Tx\), \(\omega = \tilde{x}^T\tilde{x}\). Then
-  \(T(\gamma; \omega, c^{(k)}, \lambda) \in \argmin_{z \in \mathbb{R}} G(z)\).
-  Then:
+  Let $\tilde x = X_{\cC_k} \sign(\beta_{\cC_k})$.
+  %and $\tilde r = y - X_{\bar \cC_k} \beta_{\bar \cC_k}$.
+  % Let \(\gamma = \tilde{r}^Tx\), \(\omega = \tilde{x}^T\tilde{x}\). Then
+  % \(T(\gamma; \omega, c^{(k)}, \lambda) \in \argmin_{z \in \mathbb{R}} G(z)\).
+  Then
   \begin{equation}
-    T \left(\beta_{\cC_k} - \tfrac{1}{\Vert \tilde x \Vert^2} \tilde x (y - X\beta)); \Vert \tilde x \Vert^2, c^{\setminus k}, \lambda \right) \in \argmin_{z \in \mathbb{R}} G(z) \,.
+    \begin{multlined}
+      T \left(\beta_{\cC_k} - \frac{\tilde x^T(X\beta - y)}{\norm{\tilde x}^2} ; \Vert \tilde x \Vert^2, c^{\setminus k}, \lambda \right) \in \argmin_{z \in \mathbb{R}} G(z) \,.
+    \end{multlined}
   \end{equation}
 \end{theorem}
 

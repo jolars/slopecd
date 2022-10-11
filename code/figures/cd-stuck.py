@@ -94,15 +94,15 @@ ax.set_xlabel(r"$\beta_1$")
 ax.set_ylabel(r"$\beta_2$")
 
 ax_beta1.tick_params(axis="x", labelbottom=False)
+ax_beta1.vlines(beta_stuck, min(f1), max(f1), linestyle="dotted", color="darkgrey")
 ax_beta1.plot(beta_in, f1, color="black")
 ax_ylim = ax_beta1.get_ylim()
-ax_beta1.vlines(beta_stuck, ax_ylim[0], ax_ylim[1], linestyle="dotted", color="darkgrey")
 ax_beta1.set_ylabel(r"$P(\beta)$")
 
 ax_beta2.tick_params(axis="y", labelleft=False)
+ax_beta2.hlines(beta_stuck, min(f2), max(f2), linestyle="dotted", color="darkgrey")
 ax_beta2.plot(f2, beta_in, color="black")
 ax_xlim = ax_beta2.get_xlim()
-ax_beta2.hlines(beta_stuck, ax_xlim[0], ax_xlim[1], linestyle="dotted", color="darkgrey")
 ax_beta2.set_xlabel(r"$P(\beta)$")
 
 plt.rcParams["text.usetex"] = True

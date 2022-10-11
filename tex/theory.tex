@@ -285,7 +285,7 @@ This is equivalent to taking a proximal gradient step on the full problem.
 \label{sec:hybrid-strategy}
 
 We now present the proposed solver in \Cref{alg:hybrid}.
-Every $v$ iterations, we perform a proximal gradient descent update to allows for clusters to split eventually.
+Every $v$ iterations, we perform a proximal gradient descent update that allows for clusters to split.
 The choice of the parameter $v$ that accounts for the frequency at which pgd steps are performed was set to $5$.
 Our own experiments show that this parameter does not have a great impact on the speed of the algorithm as long as it is at least $3$ (see \Cref{fig:pgd_freq}).
 

@@ -10,9 +10,7 @@ from slope.clusters import get_clusters, update_cluster
 from slope.solvers import prox_grad
 from slope.utils import ConvergenceMonitor, dual_norm_slope, prox_slope, slope_threshold
 
-dir_results = "../figures/"
 savefig = True
-
 
 def cd(X, y, alphas, max_iter, beta0, verbose=False):
     n_samples = X.shape[0]
@@ -330,12 +328,11 @@ for i in range(3):
         ax.set_ylabel(r"$\beta_2$")
 
 if savefig:
+    figpath_pdf = figspec.fig_path("illustration_solvers.pdf")
+    figpath_svg = figspec.fig_path("illustration_solvers.svg")
+
     plt.rcParams["text.usetex"] = True
-    fig.savefig(
-        dir_results + "illustration_solvers.pdf", bbox_inches="tight", pad_inches=0.01
-    )
-    fig.savefig(
-        dir_results + "illustration_solvers.svg", bbox_inches="tight", pad_inches=0.01
-    )
+    fig.savefig(figpath_pdf, bbox_inches="tight", pad_inches=0.01)
+    fig.savefig(figpath_svg, bbox_inches="tight", pad_inches=0.01)
 
 plt.show(block=False)

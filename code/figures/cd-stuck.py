@@ -105,8 +105,17 @@ ax_beta2.plot(f2, beta_in, color="black")
 ax_xlim = ax_beta2.get_xlim()
 ax_beta2.set_xlabel(r"$P(\beta)$")
 
-plt.rcParams["text.usetex"] = True
 
 plt.show(block=False)
 
-plt.savefig("../figures/naive-cd-stuck.pdf", bbox_inches="tight", pad_inches=0.01)
+savefig = True
+
+if savefig:
+    figpath = figspec.fig_path("naive-cd-stuck")
+    formats = [".svg", ".pdf"]
+
+    plt.rcParams["text.usetex"] = True
+    [
+        fig.savefig(figpath.with_suffix(f), bbox_inches="tight", pad_inches=0.01)
+        for f in formats
+    ]

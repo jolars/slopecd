@@ -217,9 +217,14 @@ axs[0].set_ylabel(r"$G(z)$")
 
 plt.show(block=False)
 
-
 savefig = True
+
 if savefig:
-    plt.savefig(
-        "../figures/directional-derivative.pdf", bbox_inches="tight", pad_inches=0.01
-    )
+    figpath = figspec.fig_path("directional-derivative")
+    formats = [".svg", ".pdf"]
+
+    plt.rcParams["text.usetex"] = True
+    [
+        fig.savefig(figpath.with_suffix(f), bbox_inches="tight", pad_inches=0.01)
+        for f in formats
+    ]

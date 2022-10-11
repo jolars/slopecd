@@ -85,8 +85,8 @@ ax.plot(beta_star[0], beta_star[1], color="darkorange", marker="x", markersize=7
 xlim = ax.get_xlim()
 ylim = ax.get_ylim()
 
-ax.hlines(beta_stuck, xlim[0], xlim[1], linestyle="dotted")
-ax.vlines(beta_stuck, ylim[0], ylim[1], linestyle="dotted")
+ax.hlines(beta_stuck, xlim[0], xlim[1], linestyle="dotted", color="darkgrey")
+ax.vlines(beta_stuck, ylim[0], ylim[1], linestyle="dotted", color="darkgrey")
 ax.plot(beta_stuck, beta_stuck, color="black", marker=".", markersize=6)
 
 # labels
@@ -96,13 +96,13 @@ ax.set_ylabel(r"$\beta_2$")
 ax_beta1.tick_params(axis="x", labelbottom=False)
 ax_beta1.plot(beta_in, f1, color="black")
 ax_ylim = ax_beta1.get_ylim()
-ax_beta1.vlines(beta_stuck, ax_ylim[0], ax_ylim[1], linestyle="dotted")
+ax_beta1.vlines(beta_stuck, ax_ylim[0], ax_ylim[1], linestyle="dotted", color="darkgrey")
 ax_beta1.set_ylabel(r"$P(\beta)$")
 
 ax_beta2.tick_params(axis="y", labelleft=False)
 ax_beta2.plot(f2, beta_in, color="black")
 ax_xlim = ax_beta2.get_xlim()
-ax_beta2.hlines(beta_stuck, ax_xlim[0], ax_xlim[1], linestyle="dotted")
+ax_beta2.hlines(beta_stuck, ax_xlim[0], ax_xlim[1], linestyle="dotted", color="darkgrey")
 ax_beta2.set_xlabel(r"$P(\beta)$")
 
 plt.rcParams["text.usetex"] = True

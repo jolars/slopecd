@@ -68,6 +68,8 @@ The different scenarios for the simulated data are described in \Cref{tab:simula
 \end{table}
 
 In \Cref{fig:simulated}, we present the results of the benchmarks on simulated data.
+We see that for smaller fractions of $\lambda_{\text{max}}$ our hybrid algorithm allows significant speedup in comparison to its competitors mainly when the number of features is larger than the number of samples.
+On very large scale data such as in simulated data setting $3$, we see that the hybrid solver is faster than its competitors by one or two orders of magnitude.
 
 \begin{figure*}[!t]
   \centering
@@ -76,9 +78,6 @@ In \Cref{fig:simulated}, we present the results of the benchmarks on simulated d
   \caption{Benchmark on simulated datasets. Normalized duality gap as a function of time for SLOPE on multiple simulated datasets and for multiple sequence of $\lambda$.}
   \label{fig:simulated}
 \end{figure*}
-
-We see that for smaller fractions of $\lambda_{\text{max}}$ our hybrid algorithm allows significant speedup in comparison to its competitors mainly when the number of features is larger than the number of samples.
-On very large scale data such as in simulated data setting $3$, we see that the hybrid solver is faster than its competitors by one or two orders of magnitude.
 
 \subsection{Real data}
 \label{sec:experiments-real-data}

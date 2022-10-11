@@ -79,7 +79,7 @@ On very large scale data such as in simulated data setting $3$, we see that the 
   \label{fig:simulated}
 \end{figure*}
 
-For the second scenario, notice that all solvers take considerably longer than the hybrid method to reach convergence.
+For the second scenario, notice that all solvers take considerably longer than the \texttt{oracle CD} method to reach convergence.
 This gap is a consequence of Cholesky factorization in the case of \texttt{ADMM} and the global Lipschitz constant \(L\) in the remaining cases.
 For the hybrid method, we can avoid this cost, with little impact on performance, since \(L\) is used only in the PGD step.
 

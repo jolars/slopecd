@@ -116,11 +116,7 @@ lambda_sums = np.sort(
 )
 
 ax.vlines(
-    lambda_sums,
-    ymin=min(res),
-    ymax=max(res),
-    linestyles="dotted",
-    color="darkgrey"
+    lambda_sums, ymin=min(res), ymax=max(res), linestyles="dotted", color="darkgrey"
 )
 
 xlim = ax.get_xlim()
@@ -173,5 +169,14 @@ ax2_y.set_yticks(y2_vals, y2_labs)
 
 plt.show(block=False)
 
-plt.rcParams["text.usetex"] = True
-plt.savefig("../figures/slope-thresholding.pdf", bbox_inches="tight", pad_inches=0.01)
+savefig = True
+
+if savefig:
+    figpath = figspec.fig_path("slope-thresholding")
+    formats = [".svg", ".pdf"]
+
+    plt.rcParams["text.usetex"] = True
+    [
+        fig.savefig(figpath.with_suffix(f), bbox_inches="tight", pad_inches=0.01)
+        for f in formats
+    ]

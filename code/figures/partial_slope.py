@@ -157,8 +157,11 @@ ax.set_xticklabels(
 
 plt.show(block=False)
 
-
 savefig = True
+
 if savefig:
-    plt.savefig("../figures/partial_slope.pdf", bbox_inches="tight", pad_inches=0.01)
-    plt.savefig("../figures/partial_slope.svg", bbox_inches="tight", pad_inches=0.01)
+    figpath_pdf = figspec.fig_path("partial_slope.pdf")
+    figpath_svg = figspec.fig_path("partial_slope.svg")
+
+    plt.savefig(figpath_pdf, bbox_inches="tight", pad_inches=0.01)
+    plt.savefig(figpath_svg, bbox_inches="tight", pad_inches=0.01)

@@ -27,8 +27,9 @@ for name in other_bench_names:
     df = pd.concat([df, df_to_add], ignore_index=True)
 
 solvers = [
-    'admm', 'anderson', 'hybrid',
-    'oracle', 'pgd[fista=False]', 'pgd[fista=True]', 'newt_alm']
+    'admm[adaptive_rho=False,rho=100]',
+    'newt_alm', 'anderson', 'hybrid',
+    'oracle', 'pgd[fista=False]', 'pgd[fista=True]']
 
 dataset_names = [
     "breheny[dataset=Rhee2006]",
@@ -45,16 +46,17 @@ obj_col = 'objective_value'
 dict_ylabel = {}
 
 dict_legend = {}
-dict_legend['admm'] = 'admm'
-dict_legend['anderson'] = 'anderson pgd'
+dict_legend['admm[adaptive_rho=False,rho=100]'] = r'ADMM $(\rho=100)$'
+dict_legend['anderson'] = 'anderson PGD'
 dict_legend['hybrid'] = 'hybrid (ours)'
-dict_legend['oracle'] = 'oracle cd'
-dict_legend['pgd[fista=False]'] = 'pgd'
-dict_legend['pgd[fista=True]'] = 'fista'
-dict_legend['newt_alm'] = 'newt alm'
+dict_legend['oracle'] = 'oracle CD'
+dict_legend['pgd[fista=False]'] = 'PGD'
+dict_legend['pgd[fista=True]'] = 'FISTA'
+dict_legend['newt_alm'] = 'Newt-ALM'
+
 
 dict_linestyle = {}
-dict_linestyle['admm'] = 'solid'
+dict_linestyle['admm[adaptive_rho=False,rho=100]'] = 'solid'
 dict_linestyle['anderson'] = 'solid'
 dict_linestyle['hybrid'] = 'solid'
 dict_linestyle['oracle'] = 'dashed'
@@ -62,25 +64,44 @@ dict_linestyle['pgd[fista=False]'] = 'solid'
 dict_linestyle['pgd[fista=True]'] = 'solid'
 dict_linestyle['newt_alm'] = 'solid'
 
+dict_col = {}
+dict_col['admm[adaptive_rho=False,rho=100]'] = cmap(0)
+dict_col['anderson'] = cmap(1)
+dict_col['hybrid'] = cmap(2)
+dict_col['oracle'] = cmap(3)
+dict_col['pgd[fista=False]'] = cmap(4)
+dict_col['pgd[fista=True]'] = cmap(5)
+dict_col['newt_alm'] = cmap(6)
+
+dict_markers = {}
+dict_markers['admm[adaptive_rho=False,rho=100]'] = 'o'
+dict_markers['anderson'] = 'o'
+dict_markers['hybrid'] = 'o'
+dict_markers['oracle'] = ''
+dict_markers['pgd[fista=False]'] = 'o'
+dict_markers['pgd[fista=True]'] = 'o'
+dict_markers['newt_alm'] = 'o'
+
+
 regs = [0.5, 0.1, 0.02]
 
 
 dict_xlim = defaultdict(lambda: None, key="default_key")
-dict_xlim[0, 0.5] = (1e-3, 3)
-dict_xlim[0, 0.1] = (1e-3, 10)
-dict_xlim[0, 0.02] = (1e-3, 10)
+dict_xlim[0, 0.5] = (-0.001, 0.05)
+dict_xlim[0, 0.1] = (-0.005, 0.1)
+dict_xlim[0, 0.02] = (-0.01, 0.2)
 
-dict_xlim[1, 0.5] = (1e-3, 150)
-dict_xlim[1, 0.1] = (5e-3, 1000)
-dict_xlim[1, 0.02] = (0.01, 1000)
+dict_xlim[1, 0.5] = (-0.5, 10)
+dict_xlim[1, 0.1] = (-1, 40)
+dict_xlim[1, 0.02] = (-1, 40)
 
-dict_xlim[2, 0.5] = (0.01, 1000)
-dict_xlim[2, 0.1] = (0.01, 1000)
-dict_xlim[2, 0.02] = (0.01, 1000)
+dict_xlim[2, 0.5] = (-0.05, 2)
+dict_xlim[2, 0.1] = (-0.1, 6)
+dict_xlim[2, 0.02] = (-0.5, 10)
 
-dict_xlim[3, 0.5] = (0.1, 1000)
-dict_xlim[3, 0.1] = (0.1, 1000)
-dict_xlim[3, 0.02] = (0.1, 1000)
+dict_xlim[3, 0.5] = (-1, 50)
+dict_xlim[3, 0.1] = (-0.5, 50)
+dict_xlim[3, 0.02] = (-1, 350)
 
 fontsize = 24
 labelsize = 24
@@ -114,9 +135,10 @@ for idx1, dataset in enumerate(dataset_names):
             # y = curve.objective_duality_gap / dual0
             y = curve[obj_col] - c_star
             color = cmap(i)
-            ax.loglog(
-                curve["time"], y, color=color, marker="o", markersize=3,
-                label=dict_legend[solver_name], linewidth=3,
+            ax.semilogy(
+                curve["time"], y, color=dict_col[solver_name], markersize=5,
+                label=dict_legend[solver_name], linewidth=2,
+                marker=dict_markers[solver_name],
                 linestyle=dict_linestyle[solver_name])
         axarr[idx1, idx2].set_xlim(dict_xlim[idx1, reg])
         axarr[idx1, idx2].set_ylim([1e-8, 1000])

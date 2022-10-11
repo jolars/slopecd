@@ -1,53 +1,54 @@
 \section{PROOFS}\label{sec:proofs}
 
 \subsection{Proof of \Cref{thm:sl1-directional-derivative}}
+\label{app:proof_directional_derivative}
 
-\begin{proof}\label{app:proof_directional_derivative}
-  \label{app:proof_directional_slope}
-  Let \(c^{\setminus k}\) be the set containing all elements of $c$ except the $k$-th one: $c^{\setminus k} =  \{c_1, \ldots c_{k-1}, c_{k+1}, \ldots, c_m \}$.
+Let \(c^{\setminus k}\) be the set containing all elements of $c$ except the $k$-th one: $c^{\setminus k} =  \{c_1, \ldots c_{k-1}, c_{k+1}, \ldots, c_m \}$.
 
-  From the observations in \Cref{rem:permutation_C_z},
-  we have the following cases to consider: \(|z| \in c^{\setminus k}\),
-  \(|z| = 0\), and \(|z| \notin \{0\} \cup c^{\setminus k}\).
+From the observations in \Cref{rem:permutation_C_z},
+we have the following cases to consider: \(|z| \in c^{\setminus k}\),
+\(|z| = 0\), and \(|z| \notin \{0\} \cup c^{\setminus k}\).
 
 
-  \paragraph{Case 1}
-  Let us first consider the case $z \neq 0$, $|z| \neq c_i$ for all $i \neq k$.
-  Since \(C(z + \delta h) = C(z) = \cC_k\) and $\sign(z + \delta h) = \sign(z)$ for $h$ small enough,
-  \begin{align}
-    H(z + \delta h) - H(z)
-      &= \sum_{j =1}^p |\beta(z + \delta h)_j| \lambda_{(j)^-_{z + \delta h}}
-          - \sum_{j=1}^p |\beta(z)_j| \lambda_{(j)^-_z} \nonumber \\
-      &= \sum_{j =1}^p (|\beta(z + \delta h)_j| - |\beta(z)_j|) \lambda_{(j)^-_z} \nonumber  \\
-      &= \sum_{j =1}^p (|\beta(z + \delta h)_j| - |\beta(z)_j|) \lambda_{(j)^-_z} \nonumber  \\
-      &= \sum_{j \in C(z)}^p (|\beta(z + \delta h)_j| - |\beta(z)_j|) \lambda_{(j)^-_z} \nonumber \\
-      &= \sum_{j \in C(z)} \sign(\beta(z)_j) (z + \delta h - z) \lambda_{(j)^-_z} \nonumber \\
-      &= \sum_{j \in C(z)} \sign(z) \delta h  \lambda_{(j)^-_z} \nonumber \\
-      &= \sum_{j \in \cC_k} \sign(z) \delta h  \lambda_{(j)^-_z} \, .
-  \end{align}
+\paragraph{Case 1}
+Let us first consider the case $z \neq 0$, $|z| \neq c_i$ for all $i \neq k$.
+Since \(C(z + \delta h) = C(z) = \cC_k\) and $\sign(z + \delta h) = \sign(z)$ for $h$ small enough,
+\begin{align}
+  H(z + \delta h) - H(z)
+   & = \sum_{j =1}^p |\beta(z + \delta h)_j| \lambda_{(j)^-_{z + \delta h}}
+  - \sum_{j=1}^p |\beta(z)_j| \lambda_{(j)^-_z} \nonumber                                       \\
+   & = \sum_{j =1}^p (|\beta(z + \delta h)_j| - |\beta(z)_j|) \lambda_{(j)^-_z} \nonumber       \\
+   & = \sum_{j =1}^p (|\beta(z + \delta h)_j| - |\beta(z)_j|) \lambda_{(j)^-_z} \nonumber       \\
+   & = \sum_{j \in C(z)}^p (|\beta(z + \delta h)_j| - |\beta(z)_j|) \lambda_{(j)^-_z} \nonumber \\
+   & = \sum_{j \in C(z)} \sign(\beta(z)_j) (z + \delta h - z) \lambda_{(j)^-_z} \nonumber       \\
+   & = \sum_{j \in C(z)} \sign(z) \delta h  \lambda_{(j)^-_z} \nonumber                         \\
+   & = \sum_{j \in \cC_k} \sign(z) \delta h  \lambda_{(j)^-_z} \, .
+\end{align}
 
-  \paragraph{Case 2}
-  Then if  $z \neq 0$ and $|z|$ is equal to one of the $c_i$'s, $i \neq k$,  one has $C(z) = \cC_k \cup \cC_i$, $C(z + \delta h) = \cC_k$, and $\sign(z + \delta h) = \sign(z)$ for $h$ small enough.
-  Thus
-  \begin{align}
-    H(z + \delta h) - H(z)
-      &= \sum_{j =1}^p |\beta(z + \delta h)_j| \lambda_{(j)^-_{z + \delta h}}
-          - \sum_{i=1}^p |\beta(z)_j| \lambda_{(j)^-_z}  \nonumber \\
-      &= \sum_{j \in \cC_k \cup \cC_i} \left( |\beta(z + \delta h)_j| \lambda_{(j)^-_{z + \delta h}}
-         - |\beta(z)_j| \lambda_{(j)^-_z} \right)  \nonumber \\
-      &= \sum_{j \in \cC_k} \left( c_i + \delta h \right) \lambda_{(i)^-_{z + \delta h}}
-           - c_i \lambda_{(i)^-_z}
-           + \sum_{j \in \cC_i} \left( c_i \lambda_{(j)^-_{z + \delta h}}
-           - c_i \lambda_{(i)^-_z} \right) \, .
-  \end{align}
-  \mm{to conclude we need to mention there is an ambiguity in terms of permutation (the permutation reordering $\beta(z)$ is not unique, we can swap $\cC_i$ and $\cC_k$, but it does not change the value of the sum, so we can pick $(i)_z = (i)_{z + \delta_h}$ and conclude) as above.}
+\paragraph{Case 2}
+Then if  $z \neq 0$ and $|z|$ is equal to one of the $c_i$'s, $i \neq k$,  one has $C(z) = \cC_k \cup \cC_i$, $C(z + \delta h) = \cC_k$, and $\sign(z + \delta h) = \sign(z)$ for $h$ small enough.
+Thus
+\begin{align}
+  H(z + \delta h) - H(z)
+   & = \sum_{j =1}^p |\beta(z + \delta h)_j| \lambda_{(j)^-_{z + \delta h}}
+  - \sum_{i=1}^p |\beta(z)_j| \lambda_{(j)^-_z}  \nonumber                                         \\
+   & = \sum_{j \in \cC_k \cup \cC_i} \left( |\beta(z + \delta h)_j| \lambda_{(j)^-_{z + \delta h}}
+  - |\beta(z)_j| \lambda_{(j)^-_z} \right)  \nonumber                                              \\
+   & = \sum_{j \in \cC_k} \left( c_i + \delta h \right) \lambda_{(i)^-_{z + \delta h}}
+  - c_i \lambda_{(i)^-_z}
+  + \sum_{j \in \cC_i} \left( c_i \lambda_{(j)^-_{z + \delta h}}
+    - c_i \lambda_{(i)^-_z} \right) \, .
+\end{align}
+\mm{to conclude we need to mention there is an ambiguity in terms of permutation (the permutation reordering $\beta(z)$ is not unique, we can swap $\cC_i$ and $\cC_k$, but it does not change the value of the sum, so we can pick $(i)_z = (i)_{z + \delta_h}$ and conclude) as above.}
 
-  \paragraph{Case 3} Finally let us treat the case $z = 0$.
-  If $c_m = 0$ then the proof proceeds as in case 2, with the exception that $|\beta(z + \delta h)| = h$ and so the result is just:
-  \begin{align}
-    H(z + \delta h) - H(z)
-      &= h \sum_{j \in \cC_k} \lambda_{(i)^-_{z + \delta h}} \, .
-  \end{align}
+\paragraph{Case 3} Finally let us treat the case $z = 0$.
+If $c_m = 0$ then the proof proceeds as in case 2, with the exception that $|\beta(z + \delta h)| = h$ and so the result is just:
+\begin{align}
+  H(z + \delta h) - H(z)
+   & = h \sum_{j \in \cC_k} \lambda_{(i)^-_{z + \delta h}} \, .
+\end{align}
+If $c_m \neq 0$, then the computation proceeds exactly as in case 1.
+
 \subsection{Proof of \Cref{thm:thresholding-operator}}
 
 Recall that \(G(z) : \mathbb{R} \mapsto \mathbb{R}\) is a convex,
@@ -113,20 +114,18 @@ third case.
 
 \subsection{Proof of \Cref{lem:convergence}}
 
-\begin{proof}
-  From \cref{thm:thresholding-operator}, we know that lines 9--14 in \cref{alg:hybrid} correspond to minimizing \(G(z)\) for a given \(\beta \coloneqq \beta^{(t + k / |\mathcal{C}|)}\), and therefore that
-  \[
-    G\big(\beta^{(t + (k - 1) / |\mathcal{C}|)}\big) \leq G\big(\beta^{(t + k / |\mathcal{C}|)}\big)
-  \]
-  since \(G(z) = P\big(\beta(z)\big)\).
+From \cref{thm:thresholding-operator}, we know that lines 9--14 in \cref{alg:hybrid} correspond to minimizing \(G(z)\) for a given \(\beta \coloneqq \beta^{(t + k / |\mathcal{C}|)}\), and therefore that
+\[
+  G\big(\beta^{(t + (k - 1) / |\mathcal{C}|)}\big) \leq G\big(\beta^{(t + k / |\mathcal{C}|)}\big)
+\]
+since \(G(z) = P\big(\beta(z)\big)\).
 
-  Moreover, for a sequence of iterates of the proximal gradient descent step,
-  \(\beta^{(v)}, \beta^{(2v)}, \dots, \beta^{(\lfloor k / v \rfloor)}\),
-  we know from~\textcite[Theorem 3.1]{beck2009} that it holds that
-  \[
-    P(\beta^{(\lfloor k / v \rfloor)}) - P(\beta^*)
-    \leq \frac{L \lVert \beta^{(0)} - \beta^* \rVert_2^2}{2\lfloor k / v \rfloor}.
-  \]
-  Combining this and the result from the previous paragraph yields the desired
-  result.
-\end{proof}
+Moreover, for a sequence of iterates of the proximal gradient descent step,
+\(\beta^{(v)}, \beta^{(2v)}, \dots, \beta^{(\lfloor k / v \rfloor)}\),
+we know from~\textcite[Theorem 3.1]{beck2009} that it holds that
+\[
+  P(\beta^{(\lfloor k / v \rfloor)}) - P(\beta^*)
+  \leq \frac{L \lVert \beta^{(0)} - \beta^* \rVert_2^2}{2\lfloor k / v \rfloor}.
+\]
+Combining this and the result from the previous paragraph yields the desired
+result.

@@ -122,25 +122,25 @@ x_max = max(c) + 0.5
 x_margin = (x_max - x_min) * plt.margins()[1]
 x_lim = (x_min - x_margin, x_max + x_margin)
 
-
 legend_symbols = [
     Line2D([0], [0], color=c, linestyle="-", marker="o", markerfacecolor=c)
     for c in ["tab:orange", "tab:blue"]
 ]
 legend_labels = [r"$1$", r"$-1$"]
 
-
 zs = np.sort(np.hstack((-c_k, [0.0], c_k, np.linspace(x_lim[0], x_lim[1], 100))))
 
 obj = [sl1_norm(beta_update(beta, z, ind), lambdas) for z in zs]
 
+y_lim = (np.min(obj), np.max(obj))
 ps = np.hstack((-c_k, [0.0], c_k[::-1]))
+
+ax.vlines(ps, *y_lim, color="darkgrey", linestyle="dotted")
+
 ax.plot(zs, obj, color="black")
 ax.set_ylabel(r"$H(z)$")
 
 # ax.set_xlabel(r"$z$")
-
-ax.vlines(ps, *ax.get_ylim(), color="darkgrey", linestyle="dotted")
 
 ax.set_xlim(*x_lim)
 old_labels = ax.get_xticklabels()
@@ -160,5 +160,5 @@ plt.show(block=False)
 
 savefig = True
 if savefig:
-    plt.savefig("../../figures/partial_slope.pdf", bbox_inches="tight", pad_inches=0.01)
-    plt.savefig("../../figures/partial_slope.svg", bbox_inches="tight", pad_inches=0.01)
+    plt.savefig("../figures/partial_slope.pdf", bbox_inches="tight", pad_inches=0.01)
+    plt.savefig("../figures/partial_slope.svg", bbox_inches="tight", pad_inches=0.01)

@@ -43,7 +43,7 @@ y <- xy$y - mean(xy$y)
 n <- nrow(x)
 p <- ncol(x)
 
-tol_gap <- 1e-5
+tol_gap <- 1.907283e-06
 
 tol <- 1e-5
 
@@ -111,8 +111,7 @@ while (TRUE) {
       scale = "none",
       center = FALSE,
       tol_rel_gap = tol,
-      tol_infeas = tol,
-      tol_dev_ratio = 0.999
+      tol_infeas = tol
     )
   })[3]
 

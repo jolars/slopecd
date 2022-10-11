@@ -125,3 +125,6 @@ This is especially visible for the \dataset{news20} dataset where we see that ou
 When the parametrization value is set to $\lambda_{\text{max}}/50$, our algorithm remains competitive on the different datasets.
 It can be seen that the different competitors do not behave consistently across the datasets.
 For example, the \texttt{Newt-ALM} method is very fast on the \dataset{bcTCGA} dataset but is very slow on the \dataset{news20} dataset whereas the \texttt{hybrid} method remains very efficient in both settings.
+
+Finally, we re-ran the experiment from the introduction on the \dataset{bcTCGA} dataset that took 43 seconds for the R package \pkg{SLOPE} to reach convergence on.
+Our algorithm, which, unlike \pkg{SLOPE}, does not use any screening rules, manages to reach convergence in 2.91 seconds.

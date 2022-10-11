@@ -42,12 +42,11 @@ In the sequel, let $\beta$ be fixed with $m$ clusters $\mathcal{C}_1, \ldots, \m
 In addition, let $k \in [m]$ be fixed and $s_k = \sign \beta_{\mathcal{C}_k}$.
 We are interested in updating $\beta$ by changing only the value taken on the $k$-th cluster.
 To this end, we let
-\mm{$s_k$ issue below}
 \begin{equation}
   \label{eq:coordinate-update-beta}
   \beta_i(z) =
   \begin{cases}
-    s_k z   \, , & \text{if } i \in \mathcal{C}_k \, , \\
+    \mathrm{sign}(\beta_i) z   \, , & \text{if } i \in \mathcal{C}_k \, , \\
     \beta_i \, , & \text{otherwise} \, .
   \end{cases}
 \end{equation}
@@ -187,7 +186,7 @@ We can now state the directional derivative of $H$. % \(J_k\).
     \end{cases}
   \]
 \end{theorem}
-The proof is in \Cref{app:proof_directional_slope}; in \Cref{fig:directional-derivative}, we show an example of the directional
+The proof is in \Cref{app:proof_directional_derivative}; in \Cref{fig:directional-derivative}, we show an example of the directional
 derivative and the objective function.
 
 \begin{figure}[htb]

@@ -25,8 +25,8 @@ for name in other_bench_names:
     df = pd.concat([df, df_to_add], ignore_index=True)
 
 solvers = [
-    'admm[adaptive_rho=False,rho=100]', 'anderson', 'hybrid',
-    'oracle', 'pgd[fista=False]', 'pgd[fista=True]', 'newt_alm']
+    'admm[adaptive_rho=False,rho=10]', 'admm[adaptive_rho=False,rho=100]',
+    'hybrid', 'admm[adaptive_rho=False,rho=1000]', 'admm[adaptive_rho=True,rho=10]']
 
 dataset_names = [
     "Simulated[X_density=1.0,density=0.001,n_features=20000,n_samples=200]",
@@ -42,17 +42,18 @@ obj_col = 'objective_value'
 dict_ylabel = {}
 
 dict_legend = {}
-dict_legend['admm[adaptive_rho=False,rho=100]'] = r'ADMM $(\rho=100)$'
-dict_legend['anderson'] = 'anderson PGD'
+dict_legend['admm[adaptive_rho=True,rho=10]'] = r'adaptive ADMM'
+dict_legend['admm[adaptive_rho=False,rho=10]'] = r'ADMM $\rho=10$'
+dict_legend['admm[adaptive_rho=False,rho=100]'] = r'ADMM $\rho=100$'
+dict_legend['admm[adaptive_rho=False,rho=1000]'] = r'ADMM $\rho=1000$'
 dict_legend['hybrid'] = 'hybrid (ours)'
-dict_legend['oracle'] = 'oracle CD'
-dict_legend['pgd[fista=False]'] = 'PGD'
-dict_legend['pgd[fista=True]'] = 'FISTA'
-dict_legend['newt_alm'] = 'Newt-ALM'
 
 
 dict_linestyle = {}
+dict_linestyle['admm[adaptive_rho=True,rho=10]'] = 'solid'
+dict_linestyle['admm[adaptive_rho=False,rho=10]'] = 'solid'
 dict_linestyle['admm[adaptive_rho=False,rho=100]'] = 'solid'
+dict_linestyle['admm[adaptive_rho=False,rho=1000]'] = 'solid'
 dict_linestyle['anderson'] = 'solid'
 dict_linestyle['hybrid'] = 'solid'
 dict_linestyle['oracle'] = 'dashed'
@@ -61,16 +62,17 @@ dict_linestyle['pgd[fista=True]'] = 'solid'
 dict_linestyle['newt_alm'] = 'solid'
 
 dict_col = {}
-dict_col['admm[adaptive_rho=False,rho=100]'] = cmap(0)
-dict_col['anderson'] = cmap(1)
+dict_col['admm[adaptive_rho=True,rho=10]'] = cmap(0)
+dict_col['admm[adaptive_rho=False,rho=10]'] = cmap(1)
+dict_col['admm[adaptive_rho=False,rho=100]'] = cmap(3)
+dict_col['admm[adaptive_rho=False,rho=1000]'] = cmap(4)
 dict_col['hybrid'] = cmap(2)
-dict_col['oracle'] = cmap(3)
-dict_col['pgd[fista=False]'] = cmap(4)
-dict_col['pgd[fista=True]'] = cmap(5)
-dict_col['newt_alm'] = cmap(6)
 
 dict_markers = {}
+dict_markers['admm[adaptive_rho=True,rho=10]'] = 'o'
+dict_markers['admm[adaptive_rho=False,rho=10]'] = 'o'
 dict_markers['admm[adaptive_rho=False,rho=100]'] = 'o'
+dict_markers['admm[adaptive_rho=False,rho=1000]'] = 'o'
 dict_markers['anderson'] = 'o'
 dict_markers['hybrid'] = 'o'
 dict_markers['oracle'] = ''
@@ -82,15 +84,15 @@ regs = [0.5, 0.1, 0.02]
 
 
 dict_xlim = {}
-dict_xlim[0, 0.5] = (-0.2, 3)
-dict_xlim[0, 0.1] = (-0.2, 10)
-dict_xlim[0, 0.02] = (-0.2, 10)
-dict_xlim[1, 0.5] = (-0.1, 3)
-dict_xlim[1, 0.1] = (-0.1, 3)
-dict_xlim[1, 0.02] = (-0.1, 3)
-dict_xlim[2, 0.5] = (-1, 50)
-dict_xlim[2, 0.1] = (-1, 50)
-dict_xlim[2, 0.02] = (-5, 300)
+dict_xlim[0, 0.5] = (0, 3)
+dict_xlim[0, 0.1] = (0, 10)
+dict_xlim[0, 0.02] = (0, 10)
+dict_xlim[1, 0.5] = (0, 3)
+dict_xlim[1, 0.1] = (0, 3)
+dict_xlim[1, 0.02] = (0, 3)
+dict_xlim[2, 0.5] = (0, 50)
+dict_xlim[2, 0.1] = (0, 50)
+dict_xlim[2, 0.02] = (0, 300)
 
 fontsize = 24
 labelsize = 24
@@ -144,6 +146,6 @@ for idx1, dataset in enumerate(dataset_names):
 fig.supxlabel("Time (s)", fontsize=fontsize)
 fig.supylabel(r"$P(\beta) - P(\beta^*)$", fontsize=fontsize)
 if save_fig:
-    fig.savefig(fig_dir + "simulated.pdf", bbox_inches="tight")
-    _plot_legend_apart(axarr[0, 0], fig_dir + "simulated_legend.pdf", ncol=4)
+    fig.savefig(fig_dir + "simulated_appendix.pdf", bbox_inches="tight")
+    _plot_legend_apart(axarr[0, 0], fig_dir + "simulated_legend_appendix.pdf", ncol=3)
 plt.show()

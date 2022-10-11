@@ -12,6 +12,7 @@ from slope.utils import ConvergenceMonitor, dual_norm_slope, prox_slope, slope_t
 
 savefig = True
 
+
 def cd(X, y, alphas, max_iter, beta0, verbose=False):
     n_samples = X.shape[0]
     beta = beta0.copy()

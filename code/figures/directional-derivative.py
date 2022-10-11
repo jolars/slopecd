@@ -7,10 +7,7 @@ from numpy.random import default_rng
 
 from figures import figspec
 from slope.clusters import get_clusters
-from slope.utils import (
-    lambda_sequence,
-    primal,
-)
+from slope.utils import lambda_sequence, primal
 
 
 def signbit(x):
@@ -46,7 +43,7 @@ def get_cluster(z, beta, k):
 
 def directional_derivative(z, delta, k, beta, lambdas):
     c, c_ptr, c_ind, c_perm, n_c = get_clusters(beta)
-    ind = c_ind[c_ptr[k]: c_ptr[k + 1]]
+    ind = c_ind[c_ptr[k] : c_ptr[k + 1]]
     c_k = np.delete(c[:n_c], k)
     epsilon_c = get_epsilon_c(c_k)
 
@@ -60,7 +57,7 @@ def directional_derivative(z, delta, k, beta, lambdas):
     beta_clust = beta_update(beta, upd, ind)
     c, c_ptr, c_ind, c_perm, n_c = get_clusters(beta_clust)
     new_pos = n_c - 1 - bisect_right(c_k[::-1], abs(upd))
-    lambda_sum = np.sum(lambdas[c_ptr[new_pos]: c_ptr[new_pos + 1]])
+    lambda_sum = np.sum(lambdas[c_ptr[new_pos] : c_ptr[new_pos + 1]])
 
     if z == 0:
         out = lambda_sum
@@ -109,9 +106,10 @@ eps = 1e-6
 c, c_ptr, c_ind, c_perm, n_c = get_clusters(beta)
 c_k = np.delete(c[:n_c], k)
 
-ind = c_ind[c_ptr[k]: c_ptr[k + 1]]
+ind = c_ind[c_ptr[k] : c_ptr[k + 1]]
 
 C_PAD = 0.0
+
 
 def plot_dirder(delta, ax):
     eps = 1e-6
@@ -195,7 +193,9 @@ plot_dirder(1, axs[1])
 plot_dirder(-1, axs[1])
 
 legend_symbols = [
-    Line2D([0], [0], color=c, linestyle="-", marker="o", markerfacecolor=c, markersize=4)
+    Line2D(
+        [0], [0], color=c, linestyle="-", marker="o", markerfacecolor=c, markersize=4
+    )
     for c in ["tab:orange", "tab:blue"]
 ]
 legend_labels = [r"$1$", r"$-1$"]

@@ -120,6 +120,7 @@ ax.vlines(
     ymin=min(res),
     ymax=max(res),
     linestyles="dotted",
+    color="darkgrey"
 )
 
 xlim = ax.get_xlim()

@@ -39,8 +39,9 @@ The code will be made open-source upon publication.
 \subsection{Simulated Data}
 \label{sec:experiments-real-data}
 
-The design matrix $X$ was generated such that features had mean one and unit variance, with correlation between features $j$ and $j'$ equal to $\rho^{|j-j'|}$ where $\rho$ is a parameter that can be chosen in $[0, 1[$.
-We fixed this value at $0.6$.
+The design matrix $X$ was generated such that features had mean one and unit variance, with correlation between features $j$ and $j'$ equal to $0.6^{|j-j'|}$.
+%where $\rho$ is a parameter that can be chosen in $[0, 1[$.
+%We fixed this value at $0.6$.
 We generated \(\beta \in \mathbb{R}^p\) such that \(k\) entries, chosen uniformly at random throughout the vector, were sampled from a standard Gaussian distribution.
 The response vector, meanwhile, was set to $y=X\beta + \varepsilon$, where
 $\varepsilon$ was sampled from a multivariate Gaussian distribution with variance such that $\lVert X\beta\rVert / \lVert \varepsilon \rVert = 3$.

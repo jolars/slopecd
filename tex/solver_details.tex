@@ -1,0 +1,19 @@
+\section{IMPLEMENTATION DETAILS OF SOLVERS}
+\label{sec:solver-details}
+
+\subsection{ADMM}
+
+Our implementation of the solver is based on \textcite{boyd2011}.
+For high-dimensional sparse \(X\), we use the numerical LSQR algorithm~\parencite{paige1982} instead of the typical direct linear system solver.
+We originally implemented the solver using the adaptive step size (\(\rho\)) scheme from \textcite{boyd2010} but discovered that it performed poorly.
+Instead, we used \(\rho = 100\) and have provided benchmarks of the alternative configurations in \Cref{sec:admm-benchmarks}.
+
+\subsection{Newt-ALM}
+
+The implementation of the solver is based on the pseudo-code provided in \textcite{Ziyan2019}.
+According to the authors' suggestions, we use the Matrix inversion lemma for high-dimensional and sparse \(X\) and the preconditioned conjugate gradient method if, in addition, \(n\) is large.
+Please see the source code for further details regarding hyper-parameter choices for the algorithm.
+
+After having completed our own implementation of the algorithm, we received an implementation directly from the authors.
+Since our own implementation performed better, however, we opted to use it instead.
+

@@ -114,10 +114,6 @@ The datasets used for the experiments have been described in \Cref{tab:real-data
 We see that when the regularization parameter is set at $\lambda_{\text{max}}/2$ and $\lambda_{\text{max}}/10$, our proposed solver is faster than all its competitors---especially when the datasets become larger.
 This is especially visible for the \dataset{news20} dataset where we see that our proposed method is faster by at least one order of magnitude.
 
-When the parametrization value is set to $\lambda_{\text{max}}/50$, our algorithm remains competitive on the different datasets.
-It can be seen that the different competitors do not behave consistently across the datasets.
-For example, the \texttt{Newt-ALM} method is very fast on the \dataset{bcTCGA} dataset but is very slow on the \dataset{news20} dataset whereas the \texttt{hybrid} method remains very efficient in both settings.
-
 \begin{figure*}[!t]
   \centering
   \includegraphics{real_legend.pdf}
@@ -125,3 +121,7 @@ For example, the \texttt{Newt-ALM} method is very fast on the \dataset{bcTCGA} d
   \caption{Benchmark on real datasets. Normalized duality gap as a function of time for SLOPE on multiple simulated datasets and for multiple sequence of $\lambda$.}
   \label{fig:real-data}
 \end{figure*}
+
+When the parametrization value is set to $\lambda_{\text{max}}/50$, our algorithm remains competitive on the different datasets.
+It can be seen that the different competitors do not behave consistently across the datasets.
+For example, the \texttt{Newt-ALM} method is very fast on the \dataset{bcTCGA} dataset but is very slow on the \dataset{news20} dataset whereas the \texttt{hybrid} method remains very efficient in both settings.

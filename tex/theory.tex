@@ -243,11 +243,13 @@ Using the directional derivative, we can now introduce the SLOPE thresholding op
 
 \begin{remark}
   \(T\) is a unique minimizer in this case because \(G\) is the sum of a quadratic function in one variable and a norm.
-  For other objectives, such as sorted \(\ell_1\)-regularized logistic regression, \(T_k\) would not be a unique minimizer in general.
+  For other objectives, such as sorted \(\ell_1\)-regularized logistic regression, \(T\) would not be a unique minimizer in general.
+  \mm{I'd remove the last sentence above, because it's 1) somehow downplaying our results 2) not so clear (logreg is stricly convex so min is unique? 3) for logreg you'd majorize it by a parabola, as for CD? hence the update would be unique still}
 \end{remark}
 
 \begin{remark}
   In the Lasso case where the $\lambda_i$'s are all equal and $m = p$, the SLOPE Thresholding Operator is a soft thresholding operator.
+  \mm{I have an issue with the value of S(0) in that case, I'd expect $\lambda / ||x_j||^2$ and not just $\lambda$}
 \end{remark}
 
 In practice, it is rarely necessary to compute all sums in \Cref{thm:thresholding-operator}.

@@ -51,7 +51,7 @@ If $c_m \neq 0$, then the computation proceeds exactly as in case 1.
 
 \subsection{Proof of \Cref{thm:thresholding-operator}}
 
-Recall that \(G(z) : \mathbb{R} \mapsto \mathbb{R}\) is a convex,
+Recall that \(G(z) : \mathbb{R} \to \mathbb{R}\) is a convex,
 continuous piecewise-differentiable function with kinks whenever \(|z| =
 c_i^{\setminus k}\) or \(z = 0\). Let \(\gamma = \tilde{r}^T\tilde{x}\)
 and \(\omega = \tilde{x}^T\tilde{x}\) and note that the optimality criterion for
@@ -68,7 +68,7 @@ which is equivalent to
 We now proceed to show that there is a solution \(z^* \in \argmin_{z \in
   \mathbb{R}} H(z)\) for every interval over \(\gamma \in \mathbb{R}\).
 
-First, assume that the first case in the definition of \(T_k\) holds
+First, assume that the first case in the definition of \(T\) holds
 and note that this is equivalent to \eqref{eq:optimality-inequality} with \(z
 = 0\) since \(C({\varepsilon_c}) = C(-{\varepsilon_c})\) and
 \(\lambda_{(j)^-_{-{\varepsilon_c}}} = \lambda_{(j)^-_{{\varepsilon_c}}}\).
@@ -113,6 +113,7 @@ The solution for the last case follows using reasoning analogous to that of the
 third case.
 
 \subsection{Proof of \Cref{lem:convergence}}
+\mathurin{I'm not sure this is so straightforwrd}
 
 From \cref{thm:thresholding-operator}, we know that lines 9--14 in \cref{alg:hybrid} correspond to minimizing \(G(z)\) for a given \(\beta \coloneqq \beta^{(t + k / |\mathcal{C}|)}\), and therefore that
 \[

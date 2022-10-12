@@ -210,7 +210,7 @@ Using the directional derivative, we can now introduce the SLOPE thresholding op
   let
   \[
     \begin{multlined}
-      T_k(\gamma; \omega, c, \lambda) = \\
+      T(\gamma; \omega, c, \lambda) = \\
       \begin{cases}
         0
             & \text{if } |\gamma| \leq S(\varepsilon_c),               \\
@@ -242,7 +242,7 @@ Using the directional derivative, we can now introduce the SLOPE thresholding op
 \end{theorem}
 
 \begin{remark}
-  \(T_k\) is a unique minimizer in this case because \(G\) is the sum of a quadratic function in one variable and a norm.
+  \(T\) is a unique minimizer in this case because \(G\) is the sum of a quadratic function in one variable and a norm.
   For other objectives, such as sorted \(\ell_1\)-regularized logistic regression, \(T_k\) would not be a unique minimizer in general.
 \end{remark}
 

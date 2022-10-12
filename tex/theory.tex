@@ -10,7 +10,7 @@ If the clusters $\mathcal{C}_1^*, \ldots, \mathcal{C}_{m^*}^*$ and signs of the 
 \begin{problem}\label{pb:separable_slope}
   \begin{multlined}
   \min_{z \in \bbR^{m^*}}\bigg(
-    \frac{1}{2n} \Big\lVert y - X \sum_{i=1}^{m^*} \sum_{j \in \mathcal{C}_i^*} z_i \sign(\beta_j^*) e_j \Big\rVert^2 \\
+    \frac{1}{2} \Big\lVert y - X \sum_{i=1}^{m^*} \sum_{j \in \mathcal{C}_i^*} z_i \sign(\beta_j^*) e_j \Big\rVert^2 \\
     + \sum_{i=1}^{m^*} | z_i | \sum_{j \in \mathcal{C}_i^*} \lambda_j
    \bigg).
   \end{multlined}
@@ -57,7 +57,7 @@ one-dimensional problem:
 \begin{problem}
 \label{pb:cluster-problem}
 \min_{z \in \mathbb{R}} \Big(
-G(z) = P(\beta(z))  = \frac{1}{2 n} \norm{y - X \beta(z)}^2 + H(z)
+G(z) = P(\beta(z))  = \frac{1}{2} \norm{y - X \beta(z)}^2 + H(z)
 \Big) \,  ,
 \end{problem}
 where
@@ -236,7 +236,7 @@ Using the directional derivative, we can now introduce the SLOPE thresholding op
   Then
   \begin{equation}
     \begin{multlined}
-      T \left(\beta_{\cC_k} - \frac{\tilde x^T(X\beta - y)}{\norm{\tilde x}^2} ; \Vert \tilde x \Vert^2, c^{\setminus k}, \lambda \right) \in \argmin_{z \in \mathbb{R}} G(z) \,.
+      T \left(c_k - \frac{\tilde x^T(X\beta - y)}{\norm{\tilde x}^2} ; \Vert \tilde x \Vert^2, c^{\setminus k}, \lambda \right) \in \argmin_{z \in \mathbb{R}} G(z) \,.
     \end{multlined}
   \end{equation}
 \end{theorem}

@@ -14,6 +14,8 @@ X, y = fetch_libsvm("rcv1.binary")
 randnorm = stats.norm(loc=0, scale=1)
 q = 0.5
 
+cmap = plt.get_cmap('viridis')
+cmap = cmap(np.linspace(0., 1.0, 10))
 alphas_seq = randnorm.ppf(1 - np.arange(1, X.shape[1] + 1) * q / (2 * X.shape[1]))
 
 
@@ -48,7 +50,8 @@ fig, ax = plt.subplots(layout="constrained")
 minimum = np.min(primals[4])
 for k in freqs:
     ax.semilogy(
-        times[k - 1], np.array(primals[k - 1]) - minimum, label="pgd freq = %s" % k)
+        times[k - 1], np.array(primals[k - 1]) - minimum, label="pgd freq = %s" % k,
+        color=cmap[k])
 
 ax.set_ylabel(r"$P(\beta) - P(\beta^*)$")
 ax.set_xlabel("Time (s)")

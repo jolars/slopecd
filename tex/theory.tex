@@ -7,7 +7,7 @@
 
 Proximal coordinate descent cannot be applied to \Cref{pb:slope} because it is not separable.
 If the clusters $\mathcal{C}_1^*, \ldots, \mathcal{C}_{m^*}^*$ and signs of the solution $\beta^*$ were known, however, then the values $c_1^*, \ldots, c_{m^*}^*$ taken by the clusters corresponding to $\beta^*$ could be computed by solving
-\begin{problem}
+\begin{problem}\label{pb:separable_slope}
   \begin{multlined}
   \min_{z \in \bbR^{m^*}}\bigg(
     \frac{1}{2n} \Big\lVert y - X \sum_{i=1}^{m^*} \sum_{j \in \mathcal{C}_i^*} z_i \sign(\beta_j^*) e_j \Big\rVert^2 \\

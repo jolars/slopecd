@@ -56,15 +56,15 @@ Minimizing the objective in this direction amounts to solving the following
 one-dimensional problem:
 \begin{problem}
 \label{pb:cluster-problem}
-\min_{z \in \mathbb{R}} \Big(
-G(z) = P(\beta(z))  = \frac{1}{2} \norm{y - X \beta(z)}^2 + H(z)
-\Big) \,  ,
+  \min_{z \in \mathbb{R}} \Big(
+  G(z) = P(\beta(z))  = \frac{1}{2} \norm{y - X \beta(z)}^2 + H(z)
+  \Big) \,  ,
 \end{problem}
 where
-\[
+\begin{equation}
   H(z) = |z| \sum_{j \in \mathcal{C}_k} \lambda_{(j)^-_z}
   + \sum_{j \notin \mathcal{C}_k} |\beta_j| \lambda_{(j)^-_z}
-\]
+\end{equation}
 is the \emph{partial sorted \(\ell_1\) norm} with respect to the \(k\)-th cluster and where we write \(\lambda_{(j)^-_z}\) to indicate that the inverse sorting permutation \((j)^-_z\)
 is defined with respect to \(\beta(z)\).
 The optimality condition for \Cref{pb:cluster-problem} is

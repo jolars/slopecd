@@ -241,7 +241,10 @@ Using the directional derivative, we can now introduce the SLOPE thresholding op
   \end{equation}
 \end{theorem}
 
-\mathurin{add remark on uniqueness of argmin? $G(z)$ is a 1 quadratic so it's either constant (possible) either there's a single minimizer}
+\begin{remark}
+  \(T_k\) is a unique minimizer in this case because \(G\) is the sum of a quadratic function in one variable and a norm.
+  For other objectives, such as sorted \(\ell_1\)-regularized logistic regression, \(T_k\) would not be a unique minimizer in general.
+\end{remark}
 
 \begin{remark}
   In the Lasso case where the $\lambda_i$'s are all equal and $m = p$, the SLOPE Thresholding Operator is a soft thresholding operator.

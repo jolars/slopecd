@@ -29,6 +29,15 @@ We see on this figure that any choice of parameter between $3$ and $9$ would bas
 \subsection{Benchmark with different parameters for the ADMM solver}
 \label{sec:admm-benchmarks}
 
+We reproduced the benchmarks setting described in \Cref{sec:experiments} for the simulated and real data.
+We compared the \texttt{ADMM} solver with our \texttt{hybrid} algorithm for different values of the augmented Lagrangian parameter $\rho$. 
+We tested three different values $10, 100$ and $1000$ as well as the adaptive method~\parencite[Sec. 3.4.1]{boyd2010}.
+
+We present in \Cref{fig:simulated_appendix} and \Cref{fig:real_appendix} the suboptimality score as a function the time for the different solvers. 
+We see that the best value for $\rho$ depends on the dataset and the regularization strengh. 
+The value chosen for the main benchmark (\Cref{sec:experiments}) performs well in comparison to other \texttt{ADMM} solvers.
+Nevertheless, our \texttt{hybrid} approach is consistently faster than the different  \texttt{ADMM} solvers.
+
 \begin{figure*}[!t]
   \centering
   \includegraphics[scale=0.47]{simulated_legend_appendix.pdf}

@@ -284,12 +284,17 @@ The combination of the proximal gradient steps and PCD allows us to overcome the
   \caption{%
     Hybrid coordinate descent and proximal gradient descent algorithm
     for SLOPE\label{alg:hybrid}}
-  \Input{
-    \(X \in \mathbb{R}^{n\times p}, y\in \mathbb{R}^n, \lambda \in \{\mathbb{R}^p : \lambda_1 \geq \lambda_2 \geq \cdots > 0\}\), \(v \in \mathbb{N}\)}
+  \Input{%
+    \(X \in \mathbb{R}^{n\times p}\),
+    \(y\in \mathbb{R}^n\),
+    \(\lambda \in \{\mathbb{R}^p : \lambda_1 \geq \lambda_2 \geq \cdots > 0\}\),
+    \(v \in \mathbb{N}\),
+    \(\beta \in \mathbb{R}^p\)
+  }
 
-  \Init{\(t \gets 0\), \(\beta \gets 0\)}  % \(L \gets \lVert X \rVert_2^2\)
+  % \Init{\(t \gets 0\)}
 
-  \Repeat{convergence}{
+  \For{\(t \gets 0,1,\dots\)}{
 
   \If{\(t \bmod v = 0\)}{
     \(\beta \leftarrow \prox_{J}(\beta - \frac{1}{\lVert X \rVert^2}X^\top(X \beta - y); \lambda / \lVert X \rVert^2)\) \label{alg:hybrid-istastep}
@@ -297,11 +302,9 @@ The combination of the proximal gradient steps and PCD allows us to overcome the
     Update \(c\), \(\mathcal{C}\)
   }
   \Else{
-    \(k \gets 0\)
+    \(k \gets 1\)
 
     \While{\(k \leq \lvert \mathcal{C} \rvert\)}{
-      \(k \gets k + 1\)
-
       \(\tilde x_k \gets X_{\mathcal{C}_k} \sign(\beta_{\cC_k}) \)
 
       \(z \gets T(c_k\norm{\tilde x}^2 - \tilde x^T(X\beta - y); \norm{x}^2, c^{\setminus k}, \lambda)\)
@@ -309,15 +312,15 @@ The combination of the proximal gradient steps and PCD allows us to overcome the
       $\beta_{\cC_k} \gets z \sign(\beta_{\cC_k})$
 
       Update \(c\), \(\mathcal{C}\)
+
+      \(k \gets k + 1\)
     }
   }
-
-  \(t \gets t + 1\)
-
   }
   \Return{\(\beta\)}
 \end{algorithm}
 \mathurin{In algo check prox J second argument}
+\jl{This should be fine, it's exactly what we use in the code.}
 
 \begin{figure*}[htb]
   \centering

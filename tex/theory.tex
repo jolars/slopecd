@@ -270,7 +270,7 @@ To circumvent this issue, we combine these coordinate descent steps with full pr
 \label{sec:hybrid-strategy}
 
 We now present the proposed solver in \Cref{alg:hybrid}.
-For the first and every $v$th iteration\footnote{Our experiments show that \(v\) has little impact on the speed of the algorithm as long as it is at least 3~(\Cref{sec:pgd-freq-study}). We have therefore set \(v = 5\) in our experiments.}, we perform a proximal gradient descent update.
+For the first and every $v$th iteration\footnote{Our experiments suggest that \(v\) has little impact on performance as long as it is at least 3~(\Cref{sec:pgd-freq-study}). We have therefore set it to 5 in our experiments.}, we perform a proximal gradient descent update.
 For the remaining iterations, we take coordinate descent steps.
 
 The combination of the proximal gradient steps and proximal coordinate descent allows us to overcome the problem of vanilla proximal coordinate descent getting stuck because of non-separability and allows us to enjoy the speed-up provided by making local updates on each cluster, as we illustrate in \Cref{fig:illustration-solver}.

@@ -108,14 +108,11 @@ c_k = np.delete(c[:n_c], k)
 
 ind = c_ind[c_ptr[k] : c_ptr[k + 1]]
 
-C_PAD = 0.0
+C_PAD = 0.25
 
 
-def plot_dirder(delta, ax):
+def plot_dirder(delta, x0, x1, ax):
     eps = 1e-6
-
-    x0 = np.hstack((-np.max(c) - C_PAD, -c_k, [0.0], c_k[::-1]))
-    x1 = np.hstack((-c_k, [0.0], c_k[::-1], np.max(c) + C_PAD))
 
     if delta > 0:
         starts = x0
@@ -168,14 +165,14 @@ plt.rcParams["text.usetex"] = True
 fig, axs = plt.subplots(
     2,
     1,
-    figsize=(figspec.HALF_WIDTH, figspec.HALF_WIDTH * 1.5),
+    figsize=(figspec.HALF_WIDTH, figspec.HALF_WIDTH * 1.25),
     constrained_layout=True,
     sharex=True,
-    gridspec_kw=dict(height_ratios=(0.3, 0.7)),
+    gridspec_kw=dict(height_ratios=(0.25, 0.75)),
 )
 
-x_min = -max(c) - C_PAD
-x_max = max(c) + C_PAD
+x_min = -max(c_k)
+x_max = max(c_k)
 x_margin = (x_max - x_min) * plt.margins()[1]
 x_lim = (x_min - x_margin, x_max + x_margin)
 
@@ -187,10 +184,13 @@ y_rng2 = np.hstack((y_rng, -y_rng))
 y_lim = (min(y_rng2), max(y_rng2))
 
 axs[1].vlines(ps, y_lim[0], y_lim[1], color="darkgrey", linestyle="dotted")
-axs[1].hlines(0.0, min(-c), max(c), color="grey", linestyle="dashed")
+axs[1].hlines(0.0, x_lim[0], x_lim[1], color="grey", linestyle="dashed")
 
-plot_dirder(1, axs[1])
-plot_dirder(-1, axs[1])
+x0 = np.hstack((-np.max(c_k) - C_PAD, -c_k, [0.0], c_k[::-1]))
+x1 = np.hstack((-c_k, [0.0], c_k[::-1], np.max(c_k) + C_PAD))
+
+plot_dirder(1, x0, x1, axs[1])
+plot_dirder(-1, x0, x1, axs[1])
 
 legend_symbols = [
     Line2D(
@@ -204,7 +204,7 @@ axs[1].set_ylabel(r"$G'(z)$")
 axs[1].set_xlabel(r"$z$")
 axs[1].legend(legend_symbols, legend_labels, title=r"$\delta$")
 
-zs = np.sort(np.hstack((-c_k, [0.0], c_k, np.linspace(min(-c), max(c), 100))))
+zs = np.sort(np.hstack((-c_k, [0.0], c_k, np.linspace(x_lim[0], x_lim[1], 100))))
 
 obj = [primal(beta_update(beta, z, ind), X, y, lambdas) for z in zs]
 

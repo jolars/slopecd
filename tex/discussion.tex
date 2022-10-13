@@ -2,8 +2,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 In this paper we have presented a new, fast algorithm for solving Sorted L-One Penalized Estimation (SLOPE).
-Our method relies on a combination of proximal gradient descent steps that split clusters and coordinate descent steps that optimize a subproblem, which together guarantee fast convergence.
-In our results, we have shown that our method outperforms all competitors for a large variation of real and simulated datasets.
+Our method relies on a combination of proximal gradient descent to identify the cluster structure of the solution and coordinate descent to allow the algorithm to take large steps.
+In our results, we have shown that our method often outperforms all competitors by orders of magnitude for high-to-medium levels of regularization and typically performs among the best algorithms for low levels of regularization.
 
 We have not, in this paper, considered using screening rules for SLOPE~\parencite{larsson2020c,elvira2022}.
 Although screening rules work for any algorithm considered in this article, they are particularly effective when used in tandem with coordinate descent~\parencite{fercoq2015} and, in addition, easy to implement due to the nature of coordinate descent steps.

@@ -57,7 +57,7 @@ ax.set_ylabel(r"$P(\beta) - P(\beta^*)$")
 ax.set_xlabel("Time (s)")
 ax.set_title("rcv1")
 ax.set_ylim(1e-10, 1)
-ax.set_xlim(0, 5)
+ax.set_xlim(0, 2)
 fig.savefig(fig_dir + "pgd_freq.pdf")
 plt.show(block=False)
 

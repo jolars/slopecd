@@ -1,0 +1,11 @@
+\section{EXTENSIONS TO OTHER DATAFITS}
+\label{sec:other-datafits}
+
+Our algorithm straightforwardly generalizes to problems where the quadratic datafit $\frac{1}{2} \lVert y - X \beta \rVert$ is replaced by $F(\beta) = \sum_{i = 1}^n f_i (X_{i:}^\top \beta)$, where the $f_i$'s are $L$ smooth (and so $F$ is $L * \lVert X \rVert^2$-smooth), such as Logistic regression.
+
+In that case, one has by the descent lemma applied to $F(\beta(z))$, using $F(\beta) = F(\beta(c_k))$
+\begin{equation}
+  F(\beta(z)) + H(z) \leq F(\beta) + \sum{j \in \cC_k} \nabla_j F(\beta) \sign \beta_j (z - c_k) + \frac{L \lVert \tilde x \rVert^2}{2} (z - c_k)^2 + H(z)
+\end{equation}
+and so a majorization-minimization approach can be used, by minimizing the right-hand side instead of directly minimizing $F(\beta(z)) + H(z)$.
+Minimizing the RHS, up to rearranging, is of the form of \Cref{pb:cluster-problem}.

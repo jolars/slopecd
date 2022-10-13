@@ -333,8 +333,6 @@ The combination of the proximal gradient steps and PCD allows us to overcome the
 \end{algorithm}
 \mathurin{In algo check prox J second argument}
 
-Please see \Cref{sec:computational-details} for computational details regarding the implementation of the algorithm, and generalization to other convex smooth datafits.
-
 \begin{figure*}[htb]
   \centering
   \includegraphics{illustration_solvers}
@@ -364,4 +362,9 @@ We now state that our proposed hybrid algorithm converges to a solution of \Cref
   \]
   where \(\beta^* \in \argmin_{\beta \in \mathbb{R}^p} P.\)
 \end{lemma}
+
+\paragraph{Alternative Datafits}
+
+In this paper we have only considered sorted \(\ell_1\)-penalized least squares regression.
+In \Cref{sec:other-datafits}, we consider extensions to alternative datafits.
 

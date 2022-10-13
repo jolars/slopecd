@@ -266,7 +266,7 @@ In practice, the cost is typically larger at the start of optimization and becom
 
 The coordinate descent update outlined in the previous section updates the coefficients of each cluster in unison, which allows clusters to merge---but not to split.
 This means that the coordinate descent updates are not guaranteed to identify the clusters of the solution on their own.
-To circumvent this issue, we combine these coordinate descent steps with full proximal gradient steps, which enable the algorithm to identify the cluster structure due to the partial smoothness property of the sorted \(\ell_1\) norm~(\Cref{app:sec:partly_smooth}).
+To circumvent this issue, we combine these coordinate descent steps with full proximal gradient steps, which enable the algorithm to identify the cluster structure~\parencite{Liang2014} due to the partial smoothness property of the sorted \(\ell_1\) norm~(\Cref{app:sec:partly_smooth}).
 
 \subsection{Hybrid Strategy}
 \label{sec:hybrid-strategy}

@@ -156,21 +156,27 @@ This allows to apply result about the structure identification of the proximal g
   First, $J$ is convex and has full domain, so its subdifferential is always non-empty.
   Let $x \in \bbR^d$.
 
-  First, we consider the case where no entry of $x$ vanish.
-  Let $m$ be the number of clusters of $x$ and $\cC_1, \ldots, \cC_m$ be those clusters, $c_1 > \ldots > c_m > 0$ the value of $\lvert x \rvert$ on the clusters.
+  First, we consider the case where no entry of $\lvert x\rvert >0$.
+  Let $m$ be the number of clusters of $x$ and $\cC_1, \ldots, \cC_m$ be those clusters, and let be the  value of  $\lvert x \rvert$ on the clusters be $c_1 > \ldots > c_m > 0$.
 
   Let $\varepsilon_c$ be as in \Cref{eq:epsilon-c}.
-  Let $\cB = \{u \in \bbR^d: \lVert u - x \rVert_\infty \leq \varepsilon_c / 2\}$.
-  Let
+  Let $\cB = \{u \in \bbR^d: \lVert u - x \rVert_\infty \leq \varepsilon_c / 2\}$,
+  and
   \begin{equation}
-    \cM = \{ u \in \bbR^d : (\exists c' \in \bbR^m, \forall i \neq j \in [d], c'_i \neq c'_j) \& (\forall k \in [m], \forall j \in \cC_k, u_j = \sign(x_j) c'_k) \} \cap \cB \, .
+    \cM = \{ u \in \bbR^d : (\exists c' \in \bbR^m, \forall i \neq j \in [m], c'_i \neq c'_j) \& (\forall k \in [m], \forall j \in \cC_k, u_j = \sign(x_j) c'_k) \} \cap \cB \, .
+  \end{equation}
+  $k(j):[d] \rightarrow [m]$  such that $j \in \cC_{k(j}$.
+ \begin{equation}
+    \cM = \{ u \in \bbR^d : u_j = \sign(x_j) c'_{k(j)}\mbox{ where }  c' \in \bbR^m, \forall i \neq l , c'_i \neq c'_l \} \cap \cB \, .
   \end{equation}
 
-  For $k \in [m]$, let $v_k \in \bbR^d$ be equal to $\sign x_{\cC_k}$ on $\cC_k$ and to 0 outside, such that $x = \sum_{k=1}^m c_k v_k$.
+We will now establish that $J$ is linear on $\mathcal{M}$. 
+  let $v_k \in \bbR^d$ for $k \in [m]$  be equal to $\sign x_{\cC_k}$ on $\cC_k$ and to 0 outside, such that $x = \sum_{k=1}^m c_k v_k$.
 
-  Then one has $\cM = \Span(v_1, \ldots v_k) \cap \cB$.
+
+  Then one has $\cM = \Span(v_1, \ldots v_m) \cap \cB$.
   One inclusion is trivial.
-  For the other, let $u \in \Span(v_1, \ldots v_k) \cap \cB$.
+  For the other, let $u \in \Span(v_1, \ldots v_m) \cap \cB$.
   Then there exists $c' \in \bbR^k$, $u = \sum_{k=1}^m c'_k v_k$.
   Suppose that there exist $k \neq k'$ such that $c'_k = c'_{k'}$.
   Then since $\lVert x - u \rVert_\infty = \max_k |c_k - c'_k|$ and $|c_k - c_{k'}| > \varepsilon_c$, one has:
@@ -183,7 +189,9 @@ This allows to apply result about the structure identification of the proximal g
   \end{align*}
 
   This shows that clusters of any $u \in \cM$ are equal to clusters of $x$.
-  Thus $J$ is linear on $\cM$ and 1 and 3 hold. \mathurin{maybe add a nitpick so that coefs don't cross 0, like condition on $\varepsilon_c$}
+  Note that for $u =\sum_{k=1}^m c'_k v_k\in \Span(v_1, \ldots v_m) \cap \cB$ the function $J(u) = \sum_{i=j}^m \lambda_j \sign(c_j) |\cC_j|c_j'$ which is clearly linear hence 1 and 3 holds.
+
+  
   In addition, the tangent space of $\cM$ at $x$ is $\{ u \in \bbR^d : (\exists c' \in \bbR^m, \forall i \neq j \in [d], c'_i \neq c'_j) \& (\forall k \in [m], \forall j \in \cC_k, |u_j| = c'_k) \}$.
 
   $J$ is linear hence smooth on $\cM$, its gradient is TODO $\sum_k (\sum_{j \in \cC_k} \lambda_j) v_k$. \mm{and this is orthogonal to $\cM$ because??? it cannot be, it's in $\cM$}

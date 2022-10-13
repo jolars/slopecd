@@ -294,7 +294,7 @@ The combination of the proximal gradient steps and proximal coordinate descent a
   \For{\(t \gets 0,1,\dots\)}{
 
   \If{\(t \bmod v = 0\)}{
-    \(\beta \leftarrow \prox_{J}(\beta - \frac{1}{\norm{X}_2^2}X^T(X \beta - y); \lambda / \norm{X}_2^2)\) \label{alg:hybrid-istastep}
+    \(\beta \leftarrow \prox_{J/{\norm{X}^2_2}}\Big(\beta - \frac{1}{\norm{X}_2^2}X^T(X \beta - y)\Big)\) \label{alg:hybrid-istastep}
 
     Update \(c\), \(\mathcal{C}\)
   }
@@ -316,8 +316,6 @@ The combination of the proximal gradient steps and proximal coordinate descent a
   }
   \Return{\(\beta\)}
 \end{algorithm}
-\mathurin{In algo check prox J second argument}
-\jl{This should be fine, it's exactly what we use in the code.}
 
 \begin{figure*}[htb]
   \centering

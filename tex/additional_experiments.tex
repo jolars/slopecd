@@ -9,6 +9,8 @@ The features were centered by their means and scaled by their standard deviation
 The code is available in the supplement.
 
 \subsection{Study on Proximal Gradient Descent Frequency}
+\label{sec:pgd-freq-study}
+
 To study the impact of the frequence at which the pgd step in the \texttt{hybrid} solver is used, we performed a comparative study with the \dataset{rcv1} dataset.
 We set this parameter to values ranging from $1$ \textit{i.e.}, the \texttt{pgd} algorithm, to 9 meaning that a pgd step is taken every $9$ epochs.
 The sequence of $\lambda$ has been set with the Benjamini-Hochberg method and parametrized with $0.1 \lambda_{\text{max}}$.

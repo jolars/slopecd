@@ -275,8 +275,7 @@ For the remaining iterations, we take coordinate descent steps.
 
 The combination of the proximal gradient steps and proximal coordinate descent allows us to overcome the problem of vanilla proximal coordinate descent getting stuck because of non-separability and allows us to enjoy the speed-up provided by making local updates on each cluster, as we illustrate in \Cref{fig:illustration-solver}.
 
-\begin{algorithm}[h!]
-  \SetKwInOut{Init}{init}
+\begin{algorithm}[hbt]
   \SetKwInOut{Input}{input}
   \caption{%
     Hybrid coordinate descent and proximal gradient descent algorithm
@@ -288,8 +287,6 @@ The combination of the proximal gradient steps and proximal coordinate descent a
     \(v \in \mathbb{N}\),
     \(\beta \in \mathbb{R}^p\)
   }
-
-  % \Init{\(t \gets 0\)}
 
   \For{\(t \gets 0,1,\dots\)}{
 

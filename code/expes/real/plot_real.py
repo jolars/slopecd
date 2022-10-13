@@ -121,7 +121,7 @@ fig, axarr = plt.subplots(
     len(dataset_names),  len(objective_names),
     sharex=False,
     sharey="row",
-    figsize=[figspec.FULL_WIDTH, figspec.FULL_WIDTH * 0.7],
+    figsize=[figspec.FULL_WIDTH, figspec.FULL_WIDTH * 0.65],
     constrained_layout=True)
 # handle if there is only 1 objective:
 for idx1, dataset in enumerate(dataset_names):

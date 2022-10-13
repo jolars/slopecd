@@ -126,7 +126,7 @@ Moreover, for a sequence of iterates of the proximal gradient descent step,
 we know from~\textcite[Theorem 3.1]{beck2009} that it holds that
 \[
   P(\beta^{(\lfloor k / v \rfloor)}) - P(\beta^*)
-  \leq \frac{\norm{X}^2 \lVert \beta^{(0)} - \beta^* \rVert_2^2}{2\lfloor k / v \rfloor}.
+  \leq \frac{\norm{X}_2^2 \norm{\beta^{(0)} - \beta^*}^2}{2\lfloor k / v \rfloor}.
 \]
 Combining this and the result from the previous paragraph yields the desired
 result.

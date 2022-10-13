@@ -86,8 +86,8 @@ On very large scale data such as in simulated data setting $3$, we see that the 
 
 
 For the second scenario, notice that all solvers take considerably longer than the \texttt{oracle CD} method to reach convergence.
-This gap is a consequence of Cholesky factorization in the case of \texttt{ADMM} and computation of \(\norm{X}\) in the remaining cases.
-For the hybrid method, we can avoid this cost, with little impact on performance, since \(\norm{X}\) is used only in the PGD step.
+This gap is a consequence of Cholesky factorization in the case of \texttt{ADMM} and computation of \(\norm{X}_2\) in the remaining cases.
+For the hybrid method, we can avoid this cost, with little impact on performance, since \(\norm{X}_2\) is used only in the PGD step.
 
 \subsection{Real data}
 \label{sec:experiments-real-data}

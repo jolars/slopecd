@@ -296,7 +296,7 @@ The combination of the proximal gradient steps and proximal coordinate descent a
   \For{\(t \gets 0,1,\dots\)}{
 
   \If{\(t \bmod v = 0\)}{
-    \(\beta \leftarrow \prox_{J}(\beta - \frac{1}{\norm{X}_2^2}X^\top(X \beta - y); \lambda / \norm{X}_2^2)\) \label{alg:hybrid-istastep}
+    \(\beta \leftarrow \prox_{J}(\beta - \frac{1}{\norm{X}_2^2}X^T(X \beta - y); \lambda / \norm{X}_2^2)\) \label{alg:hybrid-istastep}
 
     Update \(c\), \(\mathcal{C}\)
   }

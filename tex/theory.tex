@@ -237,8 +237,7 @@ Using the directional derivative, we can now introduce the SLOPE thresholding op
   Then
   \begin{equation}
     \begin{multlined}
-      % T \left(c_k - \frac{\tilde x^T(X\beta - y)}{\norm{\tilde x}^2} ; \Vert \tilde x \Vert^2, c^{\setminus k}, \lambda \right) = \argmin_{z \in \mathbb{R}} G(z) \,.
-      T \left(\tilde x^Tr + \norm{\tilde x}^2 c_k ; \Vert \tilde x \Vert^2, c^{\setminus k}, \lambda \right) = \argmin_{z \in \mathbb{R}} G(z) \,.
+      T \left(c_k\norm{\tilde x}^2 + \tilde x^Tr; \norm{x}^2, c^{\setminus k}, \lambda \right) = \argmin_{z \in \mathbb{R}} G(z) \,.
     \end{multlined}
   \end{equation}
 \end{theorem}
@@ -310,7 +309,7 @@ The combination of the proximal gradient steps and PCD allows us to overcome the
   \(t \gets t + 1\)
 
   \If{\(t \bmod v = 0\)}{
-    \(\beta \leftarrow \prox_{J}(\beta - \frac{1}{\lVert X \rVert_2^2}X^\top(X \beta - y); \lambda / \lVert X \rVert_2^2)\) \label{alg:hybrid-istastep}
+    \(\beta \leftarrow \prox_{J}(\beta - \frac{1}{\lVert X \rVert^2}X^\top(X \beta - y); \lambda / \lVert X \rVert^2)\) \label{alg:hybrid-istastep}
 
     Update \(c\), \(\mathcal{C}\)
   }
@@ -322,7 +321,7 @@ The combination of the proximal gradient steps and PCD allows us to overcome the
 
       \(\tilde x_k \gets X_{\mathcal{C}_k} \sign(\beta_{\cC_k}) \)
 
-      \(z \gets T(c_k- \frac{1}{\norm{\tilde x_k}^2}\tilde{x}_k^\top(X\beta - y); \lVert \tilde{x}_k\rVert^2, c^{\setminus k}, \lambda)\)
+      \(z \gets T(c_k\norm{\tilde x}^2 - \tilde x^T(X\beta - y); \norm{x}^2, c^{\setminus k}, \lambda)\)
 
       $\beta_{\cC_k} \gets z \sign(\beta_{\cC_k})$
 

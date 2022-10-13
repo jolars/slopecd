@@ -54,7 +54,7 @@ dict_ylabel = {}
 
 dict_legend = {}
 dict_legend['admm[adaptive_rho=False,rho=100]'] = r'ADMM $(\rho=100)$'
-dict_legend['anderson'] = 'anderson PGD'
+dict_legend['anderson'] = 'Anderson PGD'
 dict_legend['hybrid'] = 'hybrid (ours)'
 dict_legend['oracle'] = 'oracle CD'
 dict_legend['pgd[fista=False]'] = 'PGD'

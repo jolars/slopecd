@@ -3,10 +3,10 @@
 
 To investigate the performance of our algorithm, we performed an extensive benchmark against the following competitors:
 \begin{itemize}[noitemsep]
-  \item Alternating Direction Method of Multipliers (\texttt{ADMM})~\parencite{boyd2010}. 
-  We considered several alternative for the choice of the augmented Lagragian parameter: an adaptive method to update the parameter throughout the algorithm~\parencite[Sec. 3.4.1]{boyd2010} and fixed values. 
+  \item Alternating Direction Method of Multipliers (\texttt{ADMM})~\parencite{boyd2010}.
+  We considered several alternative for the choice of the augmented Lagragian parameter: an adaptive method to update the parameter throughout the algorithm~\parencite[Sec. 3.4.1]{boyd2010} and fixed values.
   In the following sections, we only kept the \texttt{ADMM} solver with a fixed value of $100$ for the augmented Lagrangian parameter.
-  We present in \Cref{sec:admm-benchmarks} a more detailed benchmarks for \texttt{ADMM} solvers with different values of this parameter and the adaptive setting. 
+  We present in \Cref{sec:admm-benchmarks} a more detailed benchmarks for \texttt{ADMM} solvers with different values of this parameter and the adaptive setting.
   Choosing this parameter is not straightforward and the best value changes across datasets and regularization strengh.
   \item Anderson acceleration for proximal gradient descent (\texttt{anderson PGD})~\parencite{zhang2020}
   \item Proximal Gradient Descent (\texttt{PGD})~\parencite{combettes2005}
@@ -19,7 +19,7 @@ To investigate the performance of our algorithm, we performed an extensive bench
   Note that it cannot be used in practice as it requires identifying the clusters of the minimizer of the SLOPE optimization problem \Cref{pb:slope}. This solver solves \Cref{pb:separable_slope} where clusters are obtained with the \texttt{hybrid} solver.
 \end{itemize}
 
-We used the \pkg{benchopt}~\parencite{moreau2022benchopt} tool to obtain the convergence curves for the different solvers.
+We used \pkg{Benchopt}~\parencite{moreau2022benchopt} to obtain the convergence curves for the different solvers.
 \pkg{Benchopt} is a collaborative framework that allows reproducible and automatic benchmarks.
 % This would void anonymity. We should uncomment for the camera-ready version.
 % The repository to reproduce the benchmark is available at \url{https://github.com/Klopfe/benchmark_slope}.
@@ -88,11 +88,14 @@ On very large scale data such as in simulated data setting $3$, we see that the 
 For the second scenario, notice that all solvers take considerably longer than the \texttt{oracle CD} method to reach convergence.
 This gap is a consequence of Cholesky factorization in the case of \texttt{ADMM} and the global Lipschitz constant \(L\) in the remaining cases.
 For the hybrid method, we can avoid this cost, with little impact on performance, since \(L\) is used only in the PGD step.
+\mm{CHeck everywhere: we hare removed the notation $L$, it's the spectral norm of $X$ squared}
 
 \subsection{Real data}
 \label{sec:experiments-real-data}
 
-The datasets used for the experiments have been described in \Cref{tab:real-data} and were obtained from \textcite{chang2011,chang2016} and \textcite{breheny2022}.
+
+
+The datasets used for the experiments have been described in \Cref{tab:real-data} and were obtained from \textcite{chang2011,chang2016,breheny2022}.
 
 \begin{table}[hbt]
   \centering
@@ -128,9 +131,12 @@ This is especially visible for the \dataset{news20} dataset where we see that ou
   \label{fig:real-data}
 \end{figure*}
 
+
+
 When the parametrization value is set to $\lambda_{\text{max}}/50$, our algorithm remains competitive on the different datasets.
 It can be seen that the different competitors do not behave consistently across the datasets.
 For example, the \texttt{Newt-ALM} method is very fast on the \dataset{bcTCGA} dataset but is very slow on the \dataset{news20} dataset whereas the \texttt{hybrid} method remains very efficient in both settings.
 
 As a final demonstration of the performance of our algorithm, we re-ran the experiment from the introduction on the \dataset{bcTCGA} dataset that took 43 seconds for the \pkg{SLOPE} package to reach convergence on.
-Our algorithm, in contrast, reaches convergence in only 2.91 seconds\footnote{Note also that we do not use any screening rule in the current implementation of our algorithm, unlike the \pkg{SLOPE} package, which uses the strong screening rule for SLOPE~\parencite{larsson2020c}.}.
+Our algorithm, in contrast, reaches convergence in only 2.9 seconds\footnote{Note also that we do not use any screening rule in the current implementation of our algorithm, unlike the \pkg{SLOPE} package, which uses the strong screening rule for SLOPE~\parencite{larsson2020c}.}.
+\mm{should this go to the introduction to tease the reader (rather than here where the reader is less focussed and we have already highlighted the superiority of the algo?)}

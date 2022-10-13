@@ -51,7 +51,7 @@ If $c_m \neq 0$, then the computation proceeds exactly as in case 1.
 
 \subsection{Proof of \Cref{thm:thresholding-operator}}
 
-Recall that \(G(z) : \mathbb{R} \mapsto \mathbb{R}\) is a convex,
+Recall that \(G(z) : \mathbb{R} \to \mathbb{R}\) is a convex,
 continuous piecewise-differentiable function with kinks whenever \(|z| =
 c_i^{\setminus k}\) or \(z = 0\). Let \(\gamma = \tilde{r}^T\tilde{x}\)
 and \(\omega = \tilde{x}^T\tilde{x}\) and note that the optimality criterion for
@@ -68,7 +68,7 @@ which is equivalent to
 We now proceed to show that there is a solution \(z^* \in \argmin_{z \in
   \mathbb{R}} H(z)\) for every interval over \(\gamma \in \mathbb{R}\).
 
-First, assume that the first case in the definition of \(T_k\) holds
+First, assume that the first case in the definition of \(T\) holds
 and note that this is equivalent to \eqref{eq:optimality-inequality} with \(z
 = 0\) since \(C({\varepsilon_c}) = C(-{\varepsilon_c})\) and
 \(\lambda_{(j)^-_{-{\varepsilon_c}}} = \lambda_{(j)^-_{{\varepsilon_c}}}\).
@@ -113,6 +113,7 @@ The solution for the last case follows using reasoning analogous to that of the
 third case.
 
 \subsection{Proof of \Cref{lem:convergence}}
+\mathurin{I'm not sure this is so straightforwrd}
 
 From \cref{thm:thresholding-operator}, we know that lines 9--14 in \cref{alg:hybrid} correspond to minimizing \(G(z)\) for a given \(\beta \coloneqq \beta^{(t + k / |\mathcal{C}|)}\), and therefore that
 \[
@@ -129,3 +130,63 @@ we know from~\textcite[Theorem 3.1]{beck2009} that it holds that
 \]
 Combining this and the result from the previous paragraph yields the desired
 result.
+
+
+
+\subsection{Partial smoothness of the sorted $\ell_1$ norm}
+\label{app:sec:partly_smooth}
+In this section, we prove that the sorted $\ell_1$ norm $J$ is partly smooth~\parencite{lewis2003active}.
+This allows to apply result about the structure identification of the proximal gradient algorithm.
+
+\begin{definition}
+  Let $J$ be a proper closed convex function ad $x$ a point of its domain such that $\partial J(x) \neq \emptyset$.
+  $J$ is said to be partly smooth at $x$ relative to a set $\cM$ containing x if:
+  \begin{enumerate}
+    \item $\cM$ is a $C^2$-manifold around $x$ and $J$ restricted to $\cM$ is $C^2$ around $x$
+    \item The tangent space of $\cM$ at $x$ is the orthogonal of the linear hull of $\partial J(x)$.
+    \item $\partial J$ is continuous at $x$ relative to $\cM$
+  \end{enumerate}
+\end{definition}
+
+\begin{proposition}
+  The sorted $\ell_1$ norm is partly smooth at any point of $\bbR^d$.
+\end{proposition}
+
+\begin{proof}
+  First, $J$ is convex and has full domain, so its subdifferential is always non-empty.
+  Let $x \in \bbR^d$.
+
+  First, we consider the case where no entry of $x$ vanish.
+  Let $m$ be the number of clusters of $x$ and $\cC_1, \ldots, \cC_m$ be those clusters, $c_1 > \ldots > c_m > 0$ the value of $\lvert x \rvert$ on the clusters.
+
+  Let $\varepsilon_c$ be as in \Cref{eq:epsilon-c}.
+  Let $\cB = \{u \in \bbR^d: \lVert u - x \rVert_\infty \leq \varepsilon_c / 2\}$.
+  Let
+  \begin{equation}
+    \cM = \{ u \in \bbR^d : (\exists c' \in \bbR^m, \forall i \neq j \in [d], c'_i \neq c'_j) \& (\forall k \in [m], \forall j \in \cC_k, u_j = \sign(x_j) c'_k) \} \cap \cB \, .
+  \end{equation}
+
+  For $k \in [m]$, let $v_k \in \bbR^d$ be equal to $\sign x_{\cC_k}$ on $\cC_k$ and to 0 outside, such that $x = \sum_{k=1}^m c_k v_k$.
+
+  Then one has $\cM = \Span(v_1, \ldots v_k) \cap \cB$.
+  One inclusion is trivial.
+  For the other, let $u \in \Span(v_1, \ldots v_k) \cap \cB$.
+  Then there exists $c' \in \bbR^k$, $u = \sum_{k=1}^m c'_k v_k$.
+  Suppose that there exist $k \neq k'$ such that $c'_k = c'_{k'}$.
+  Then since $\lVert x - u \rVert_\infty = \max_k |c_k - c'_k|$ and $|c_k - c_{k'}| > \varepsilon_c$, one has:
+  \begin{align*}
+     \varepsilon_c < |c_k - c_{k'}|
+     &= |c_k - c'_k + c'_{k'} - c_{k'}| \\
+     &\leq |c_k - c'_k| + |c'_{k'} - c_{k'}| \\
+     &\leq 2 \lVert x - u \rVert_\infty \\
+     &\leq  \varepsilon_c \, .
+  \end{align*}
+
+  This shows that clusters of any $u \in \cM$ are equal to clusters of $x$.
+  Thus $J$ is linear on $\cM$ and 1 and 3 hold. \mathurin{maybe add a nitpick so that coefs don't cross 0, like condition on $\varepsilon_c$}
+  In addition, the tangent space of $\cM$ at $x$ is $\{ u \in \bbR^d : (\exists c' \in \bbR^m, \forall i \neq j \in [d], c'_i \neq c'_j) \& (\forall k \in [m], \forall j \in \cC_k, |u_j| = c'_k) \}$.
+
+  $J$ is linear hence smooth on $\cM$, its gradient is TODO $\sum_k (\sum_{j \in \cC_k} \lambda_j) v_k$. \mm{and this is orthogonal to $\cM$ because??? it cannot be, it's in $\cM$}
+
+  If one cluster of $x$ vanishes ($c_m = 0)$, the same reasoning holds wih the manifold $cM \cap \{u \in \bbR^d: u_{\cC_m} = 0\}$ aka $c'_m = 0$).
+\end{proof}

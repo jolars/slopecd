@@ -244,7 +244,7 @@ Using the directional derivative, we can now introduce the SLOPE thresholding op
 \end{theorem}
 
 \begin{remark}
-  \(T\) is a unique minimizer in this case because \(G\) is the sum of a quadratic function in one variable and a norm.
+  The minimizer is unique because \(G\) is the sum of a quadratic function in one variable and a norm.
 \end{remark}
 
 \begin{remark}
@@ -283,6 +283,7 @@ To discover these directions for a cluster, we need to compute the gradients for
 If the cluster is large, this step is potentially quite costly.
 An alternative, which we will consider here, is to instead compute the full gradient of the problem, thereby considering splits for all clusters simultaneously.
 This is equivalent to taking a proximal gradient step on the full problem.
+\mathurin{What about: our CD procedure works only if the clusters are correctly identified. In order to achieve this, we combine it with full proximal gradient steps and rely on the structure identification of the latter in partly smooth functions, detaild in \Cref{app:sec:partly_smooth}.}
 
 \subsection{Hybrid Strategy}
 \label{sec:hybrid-strategy}
@@ -319,11 +320,9 @@ The combination of the proximal gradient steps and PCD allows us to overcome the
     \While{\(k \leq \lvert \mathcal{C} \rvert\)}{
       \(k \gets k + 1\)
 
-      \(s \leftarrow \mathrm{sign}(\beta_{\mathcal{C}_k})\)
+      \(\tilde x_k \gets X_{\mathcal{C}_k} \sign(\beta_{\cC_k}) \)
 
-      \(\tilde x_k \gets X_{\mathcal{C}_k}s\)
-
-      \(z \gets T(\beta - \frac{1}{\norm{\tilde x_k}^2}\tilde{x}_k^\top(X\beta - y); \lVert \tilde{x}_k\rVert^2, c^{\setminus k}, \lambda)\)
+      \(z \gets T(c_k- \frac{1}{\norm{\tilde x_k}^2}\tilde{x}_k^\top(X\beta - y); \lVert \tilde{x}_k\rVert^2, c^{\setminus k}, \lambda)\)
 
       $\beta_{\cC_k} \gets z \sign(\beta_{\cC_k})$
 
@@ -334,8 +333,9 @@ The combination of the proximal gradient steps and PCD allows us to overcome the
   }
   \Return{\(\beta\)}
 \end{algorithm}
+\mathurin{In algo check prox J second argument}
 
-Please see \Cref{sec:computational-details} for computational details regarding the implementation of the algorithm.
+Please see \Cref{sec:computational-details} for computational details regarding the implementation of the algorithm, and generalization to other convex smooth datafits.
 
 \begin{figure*}[htb]
   \centering
@@ -367,4 +367,3 @@ We now state that our proposed hybrid algorithm converges to a solution of \Cref
   where \(\beta^* \in \argmin_{\beta \in \mathbb{R}^p} P.\)
 \end{lemma}
 
-\jl{We should probably add a paragraph here about alternative datafits.}

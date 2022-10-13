@@ -5,8 +5,8 @@
 % \subsection{Motivation and Overview}%
 % \label{sec:overview}
 
-Proximal coordinate descent cannot be applied to \Cref{pb:slope} because it is not separable.
-If the clusters $\mathcal{C}_1^*, \ldots, \mathcal{C}_{m^*}^*$ and signs of the solution $\beta^*$ were known, however, then the values $c_1^*, \ldots, c_{m^*}^*$ taken by the clusters corresponding to $\beta^*$ could be computed by solving
+Proximal coordinate descent cannot be applied to \Cref{pb:slope} because the non-smooth term is not separable.
+If the clusters $\mathcal{C}_1^*, \ldots, \mathcal{C}_{m^*}^*$ and signs of the solution $\beta^*$ were known, however, then the values $c_1^*, \ldots, c_{m^*}^*$ taken by the clusters of $\beta^*$ could be computed by solving
 \begin{problem}\label{pb:separable_slope}
   \begin{multlined}
   \min_{z \in \bbR^{m^*}}\bigg(
@@ -31,7 +31,7 @@ In \Cref{sec:experiments}, we show empirically that our algorithm outperforms co
 In the sequel, let $\beta$ be fixed with $m$ clusters $\mathcal{C}_1, \ldots, \mathcal{C}_m$ corresponding to values $c_1, \ldots, c_m$.
 In addition, let $k \in [m]$ be fixed and $s_k = \sign \beta_{\mathcal{C}_k}$.
 We are interested in updating $\beta$ by changing only the value taken on the $k$-th cluster.
-To this end, we let
+To this end, we define $\beta(z) \in \bbR^p$ by:
 \begin{equation}
   \label{eq:coordinate-update-beta}
   \beta_i(z) =
@@ -231,7 +231,7 @@ Using the directional derivative, we can now introduce the SLOPE thresholding op
     \end{multlined}
   \end{equation}
 \end{theorem}
-
+An illustration of this operator is given in \Cref{fig:slope-thresholding}.
 \begin{remark}
   The minimizer is unique because \(G\) is the sum of a quadratic function in one variable and a norm.
 \end{remark}
@@ -253,7 +253,7 @@ In practice, the cost is typically larger at the start of optimization and becom
   with an update for the second cluster (\(k = 2\)), such that
   \(c^{\setminus k} = (0.5, 0.3)\). Across regions where the function is constant,
       the operator sets the result to be either exactly 0 or to the value of one
-      of the elements of \(c^{\setminus k}\).
+      of the elements of \(\pm c^{\setminus k}\).
     }
   \label{fig:slope-thresholding}
 \end{figure*}
@@ -263,13 +263,13 @@ In practice, the cost is typically larger at the start of optimization and becom
 
 The coordinate descent update outlined in the previous section updates the coefficients of each cluster in unison, which allows clusters to merge---but not to split.
 This means that the coordinate descent updates are not guaranteed to identify the clusters of the solution on their own.
-To circumvent this issue, we combine these coordinate descent steps with full proximal gradient steps, which enable the algorithm to identify the cluster structure~\parencite{Liang2014} due to the partial smoothness property of the sorted \(\ell_1\) norm~(\Cref{app:sec:partly_smooth}).
+To circumvent this issue, we combine these coordinate descent steps with full proximal gradient steps, which enable the algorithm to identify the cluster structure~\parencite{Liang2014} due to the partial smoothness property of the sorted \(\ell_1\) norm that we prove in \Cref{app:sec:partly_smooth}.
 
 \subsection{Hybrid Strategy}
 \label{sec:hybrid-strategy}
 
 We now present the proposed solver in \Cref{alg:hybrid}.
-For the first and every $v$th iteration\footnote{Our experiments suggest that \(v\) has little impact on performance as long as it is at least 3~(\Cref{sec:pgd-freq-study}). We have therefore set it to 5 in our experiments.}, we perform a proximal gradient descent update.
+For the first and every $v$-th iteration\footnote{Our experiments suggest that \(v\) has little impact on performance as long as it is at least 3~(\Cref{sec:pgd-freq-study}). We have therefore set it to 5 in our experiments.}, we perform a proximal gradient descent update.
 For the remaining iterations, we take coordinate descent steps.
 
 The combination of the proximal gradient steps and proximal coordinate descent allows us to overcome the problem of vanilla proximal coordinate descent getting stuck because of non-separability and allows us to enjoy the speed-up provided by making local updates on each cluster, as we illustrate in \Cref{fig:illustration-solver}.
@@ -345,6 +345,6 @@ We now state that our proposed hybrid algorithm converges to a solution of \Cref
 
 \paragraph{Alternative Datafits}
 
-In this paper we have only considered sorted \(\ell_1\)-penalized least squares regression.
-In \Cref{sec:other-datafits}, we consider extensions to alternative datafits.
+So far we have only considered sorted \(\ell_1\)-penalized least squares regression.
+In \Cref{sec:other-datafits}, we consider possible extensions to alternative datafits.
 

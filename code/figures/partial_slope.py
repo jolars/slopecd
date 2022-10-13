@@ -113,13 +113,13 @@ plt.rcParams["text.usetex"] = True
 fig, ax = plt.subplots(
     1,
     1,
-    figsize=(figspec.HALF_WIDTH, figspec.HALF_WIDTH * 0.6),
+    figsize=(figspec.HALF_WIDTH, figspec.HALF_WIDTH * 0.45),
     constrained_layout=True,
 )
 
-x_min = -max(c) - 0.5
-x_max = max(c) + 0.5
-x_margin = (x_max - x_min) * plt.margins()[1]
+x_min = -max(c_k)
+x_max = max(c_k)
+x_margin = (x_max - x_min) * plt.margins()[0]
 x_lim = (x_min - x_margin, x_max + x_margin)
 
 legend_symbols = [

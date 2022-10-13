@@ -21,22 +21,12 @@ If the clusters $\mathcal{C}_1^*, \ldots, \mathcal{C}_{m^*}^*$ and signs of the 
 Conditionally on the knowledge of the clusters and the signs of the coefficients, the penalty becomes separable~\parencite{dupuis2021}, which means that coordinate descent could be used.
 
 Based on this idea, we derive a coordinate descent update for minimizing the SLOPE problem~\eqref{pb:slope} with respect to the coefficients of a single cluster at a time~(\Cref{sec:cd-update}).
-Because this update is limited to updating and, possibly, merging clusters, we intertwine it with proximal gradient descent in order to split clusters~(\Cref{sec:pgd-update}).
+Because this update is limited to updating and, possibly, merging clusters, we intertwine it with proximal gradient descent in order to correctly identify the clusters~(\Cref{sec:pgd-update}).
 In \Cref{sec:hybrid-strategy}, we present this hybrid strategy and show that is guaranteed to converge.
 In \Cref{sec:experiments}, we show empirically that our algorithm outperforms competing alternatives for a wide range of problems.
 
 \subsection{Coordinate Descent Update}
 \label{sec:cd-update}
-
-% Conditionally on the knowledge of the clusters and the signs of the coefficients, the penalty becomes separable as shown by \cite{dupuis2021}, and coordinate descent could be used.
-% Based on this idea, we propose an algorithm that intertwines proximal gradient descent steps on the full problem, which allow the clusters to split, with proximal coordinate descent steps on these clusters, which enable the algorithm to benefit from greater step lengths.
-% This combination of proximal gradient and coordinate descent allows us to avoid the situation depicted in \Cref{fig:naive-cd-stuck}.
-
-% A full proximal coordinate descent is possible by examine all possible direction proposed by the directional derivative.
-% However, for a cluster of size $k$ there will be $k$ directions that needs to be computed, and for at least a naive implementation this is computationally very demanding.
-% So instead we alternate between proximal gradient descent, to determine the cluster components, and proximal coordinate descent, to determine the coefficients.
-
-% Based on this observation, we derive a coordinate descent algorithm for minimizing the SLOPE problem~\eqref{pb:slope} with respect to the coefficients of a single cluster at a time.
 
 In the sequel, let $\beta$ be fixed with $m$ clusters $\mathcal{C}_1, \ldots, \mathcal{C}_m$ corresponding to values $c_1, \ldots, c_m$.
 In addition, let $k \in [m]$ be fixed and $s_k = \sign \beta_{\mathcal{C}_k}$.
@@ -275,13 +265,8 @@ In practice, the cost is typically larger at the start of optimization and becom
 \label{sec:pgd-update}
 
 The coordinate descent update outlined in the previous section updates the coefficients of each cluster in unison, which allows clusters to merge---but not to split.
-To finalize the algorithm, we therefore need an additional step that, for each cluster, considers the direction of the update on a coefficient-by-coefficient basis, which would allow clusters to split before updating.
-
-To discover these directions for a cluster, we need to compute the gradients for each component in the cluster.
-If the cluster is large, this step is potentially quite costly.
-An alternative, which we will consider here, is to instead compute the full gradient of the problem, thereby considering splits for all clusters simultaneously.
-This is equivalent to taking a proximal gradient step on the full problem.
-\mathurin{What about: our CD procedure works only if the clusters are correctly identified. In order to achieve this, we combine it with full proximal gradient steps and rely on the structure identification of the latter in partly smooth functions, detaild in \Cref{app:sec:partly_smooth}.}
+This means that the coordinate descent updates are not guaranteed to identify the clusters of the solution on their own.
+To circumvent this issue, we combine these coordinate descent steps with full proximal gradient steps, which enable the algorithm to identify the cluster structure due to the partial smoothness property of the sorted \(\ell_1\) norm~(\Cref{app:sec:partly_smooth}).
 
 \subsection{Hybrid Strategy}
 \label{sec:hybrid-strategy}

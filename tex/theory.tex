@@ -290,7 +290,6 @@ The combination of the proximal gradient steps and PCD allows us to overcome the
   \Init{\(t \gets 0\), \(\beta \gets 0\)}  % \(L \gets \lVert X \rVert_2^2\)
 
   \Repeat{convergence}{
-  \(t \gets t + 1\)
 
   \If{\(t \bmod v = 0\)}{
     \(\beta \leftarrow \prox_{J}(\beta - \frac{1}{\lVert X \rVert^2}X^\top(X \beta - y); \lambda / \lVert X \rVert^2)\) \label{alg:hybrid-istastep}
@@ -312,6 +311,8 @@ The combination of the proximal gradient steps and PCD allows us to overcome the
       Update \(c\), \(\mathcal{C}\)
     }
   }
+
+  \(t \gets t + 1\)
 
   }
   \Return{\(\beta\)}

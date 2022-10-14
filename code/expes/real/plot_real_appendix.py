@@ -12,7 +12,6 @@ save_fig = True
 # save_fig = False
 
 cmap = plt.get_cmap('tab10')
-fig_dir = "../../../figures/"
 
 base_dir = here("expes/real")
 

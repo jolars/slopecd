@@ -12,13 +12,12 @@ save_fig = True
 base_dir = here("expes/simulated")
 
 # Simulated setting 1
-bench_name = base_dir / "Simulated1.parquet"
 cmap = plt.get_cmap('tab10')
-fig_dir = "../../../figures/"
+# fig_dir = "../../../figures/"
 
 # Simulated setting 1
-bench_name = ["Simulated1.parquet"]
-df = pd.read_parquet(bench_name, engine='pyarrow')
+bench_name = base_dir / "Simulated1.parquet"
+df = pd.read_parquet(base_dir / bench_name, engine='pyarrow')
 
 
 other_bench_names = [
@@ -26,7 +25,7 @@ other_bench_names = [
     "Simulated3.parquet"]  # Simulated 3
 
 for name in other_bench_names:
-    df_to_add = pd.read_parquet(name, engine='pyarrow')
+    df_to_add = pd.read_parquet(base_dir / name, engine='pyarrow')
     df = pd.concat([df, df_to_add], ignore_index=True)
 
 solvers = [

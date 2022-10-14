@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats
 
-from figures import figspec
+from slope import plot_utils
 from slope.utils import dual_norm_slope
 
 
@@ -18,6 +18,8 @@ def get_clusters(w):
         clusters[indices[i]].append(i)
     return clusters[::-1], counts[::-1], indices[::-1], unique[::-1]
 
+
+savefig = False
 
 np.random.seed(10)
 
@@ -103,11 +105,12 @@ for a in a_list:
         ll = len(l_sums) - bisect_left(l_sums[::-1], np.abs(a))
         res.extend([np.sign(a) * (np.abs(a) - sums[ll])])
 
-plt.rcParams["text.usetex"] = True
 
 plt.close("all")
 
-fig, ax = plt.subplots(figsize=(figspec.FULL_WIDTH, 3.5), constrained_layout=True)
+plt.rcParams["text.usetex"] = True
+
+fig, ax = plt.subplots(figsize=(plot_utils.FULL_WIDTH, 3.5), constrained_layout=True)
 
 ax.hlines(0, xmin=min(a_list), xmax=max(a_list), color="lightgrey")
 
@@ -167,16 +170,12 @@ y2_vals = np.sort(np.hstack((-np.delete(c, 1), np.delete(c, 1))))
 ax2_y = ax.secondary_yaxis("right")
 ax2_y.set_yticks(y2_vals, y2_labs)
 
-plt.show(block=False)
-
-savefig = True
-
 if savefig:
-    figpath = figspec.fig_path("slope-thresholding")
+    figpath = plot_utils.fig_path("slope-thresholding")
     formats = [".svg", ".pdf"]
-
-    plt.rcParams["text.usetex"] = True
     [
         fig.savefig(figpath.with_suffix(f), bbox_inches="tight", pad_inches=0.01)
         for f in formats
     ]
+else:
+    plt.show(block=False)

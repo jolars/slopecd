@@ -10,6 +10,6 @@ Although screening rules work for any algorithm considered in this article, they
 Coordinate descent is moreover especially well-adapted to fitting a path of \(\lambda\) sequences~\parencite{friedman2007,friedman2010}, which is standard practice during cross-validating to obtain an optimal \(\lambda\) sequence.
 
 Future research directions may include investigating alternative strategies to split clusters, for instance by considering the directional derivatives with respect to the coefficients of an entire cluster at once.
-Another potential approach could be to see if the full proximal gradient might be replaced with batch stochastic gradient descent in order to reduce the cost of this step.
+Another potential approach could be to see if the full proximal gradient steps might be replaced with batch stochastic gradient descent in order to reduce the costs of these steps.
 Finally, it would also be interesting to consider whether gap safe screening rules might be used not only to screen predictors, but also to deduce whether clusters are able to change further during optimization.
 

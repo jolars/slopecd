@@ -3,15 +3,15 @@
 
 To investigate the performance of our algorithm, we performed an extensive benchmark against the following competitors:
 \begin{itemize}[noitemsep]
-  \item Alternating Direction Method of Multipliers (\texttt{ADMM})~\parencite{boyd2010}.
+  \item Alternating direction method of multipliers (\texttt{ADMM}, \cite{boyd2010}).
   We considered several alternative for the choice of the augmented Lagragian parameter: an adaptive method to update the parameter throughout the algorithm~\parencite[Sec. 3.4.1]{boyd2010} and fixed values.
   In the following sections, we only kept the \texttt{ADMM} solver with a fixed value of $100$ for the augmented Lagrangian parameter.
   We present in \Cref{sec:admm-benchmarks} a more detailed benchmarks for \texttt{ADMM} solvers with different values of this parameter and the adaptive setting.
   Choosing this parameter is not straightforward and the best value changes across datasets and regularization strengths.
-  \item Anderson acceleration for proximal gradient descent (\texttt{Anderson PGD})~\parencite{zhang2020}
-  \item Proximal Gradient Descent (\texttt{PGD})~\parencite{combettes2005}
-  \item Fast Iterative Shrinkage-Thresholding Algorithm (\texttt{FISTA})~\parencite{beck2009}
-  \item Semismooth Newton-Based Augmented Lagrangian (\texttt{Newt-ALM})~\parencite{Ziyan2019}
+  \item Anderson acceleration for proximal gradient descent (\texttt{Anderson PGD}, \cite{zhang2020})
+  \item Proximal gradient descent (\texttt{PGD}, \cite{combettes2005})
+  \item Fast Iterative Shrinkage-Thresholding Algorithm (\texttt{FISTA}, \cite{beck2009})
+  \item Semismooth Newton-Based Augmented Lagrangian (\texttt{Newt-ALM}, \cite{Ziyan2019})
 
   \item The hybrid (our) solver (see \Cref{alg:hybrid}) combines proximal gradient descent
         and coordinate descent to overcome the non-separability of the SLOPE problem.

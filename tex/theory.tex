@@ -8,12 +8,12 @@
 Proximal coordinate descent cannot be applied to \Cref{pb:slope} because the non-smooth term is not separable.
 If the clusters $\mathcal{C}_1^*, \ldots, \mathcal{C}_{m^*}^*$ and signs of the solution $\beta^*$ were known, however, then the values $c_1^*, \ldots, c_{m^*}^*$ taken by the clusters of $\beta^*$ could be computed by solving
 \begin{problem}\label{pb:separable_slope}
-  \begin{multlined}
+\begin{multlined}
   \min_{z \in \bbR^{m^*}}\bigg(
-    \frac{1}{2} \Big\lVert y - X \sum_{i=1}^{m^*} \sum_{j \in \mathcal{C}_i^*} z_i \sign(\beta_j^*) e_j \Big\rVert^2 \\
-    + \sum_{i=1}^{m^*} | z_i | \sum_{j \in \mathcal{C}_i^*} \lambda_j
-   \bigg).
-  \end{multlined}
+  \frac{1}{2} \Big\lVert y - X \sum_{i=1}^{m^*} \sum_{j \in \mathcal{C}_i^*} z_i \sign(\beta_j^*) e_j \Big\rVert^2 \\
+  + \sum_{i=1}^{m^*} | z_i | \sum_{j \in \mathcal{C}_i^*} \lambda_j
+  \bigg).
+\end{multlined}
 \end{problem}
 % \klopfe{Clarify what $F$ is here}
 % MM: removed F and used the form (ell(beta) instead of F(Xbeta)) : more general
@@ -37,7 +37,7 @@ To this end, we define $\beta(z) \in \bbR^p$ by:
   \beta_i(z) =
   \begin{cases}
     \mathrm{sign}(\beta_i) z   \, , & \text{if } i \in \mathcal{C}_k \, , \\
-    \beta_i \, , & \text{otherwise} \, .
+    \beta_i \, ,                    & \text{otherwise} \, .
   \end{cases}
 \end{equation}
 % This means that \(\beta(z)\) corresponds to a version of \(\beta\) with a
@@ -45,7 +45,7 @@ To this end, we define $\beta(z) \in \bbR^p$ by:
 Minimizing the objective in this direction amounts to solving the following
 one-dimensional problem:
 \begin{problem}
-\label{pb:cluster-problem}
+  \label{pb:cluster-problem}
   \min_{z \in \mathbb{R}} \Big(
   G(z) = P(\beta(z))  = \frac{1}{2} \norm{y - X \beta(z)}^2 + H(z)
   \Big) \,  ,
@@ -93,12 +93,12 @@ Let \(C(z)\) be the function that returns the cluster of $\beta(z)$ correspondin
   % \mm{there are multiple possible permutations in fact, this matters when $|z| = c_i$}
   \begin{equation*}
     \begin{cases}
-    \cC_k, \cC_m, \ldots, C_1
-        &\text{ if } z \in \left]0, c_m\right[ \, , \\
-    \cC_m, \ldots ,\cC_i, \cC_k, \cC_{i-1}, \ldots, C_1
-        &\splitfrac{\text{ if } z \in \left]c_{i}, c_{i-1} \right[}{\text{ and } i \in \llbracket 2 , m \rrbracket\, ,} \\
-    \cC_m, \ldots C_1,  \cC_k
-        &\text{ if } z \in \left]c_1, +\infty \right[ \, , \\
+      \cC_k, \cC_m, \ldots, C_1
+       & \text{ if } z \in \left]0, c_m\right[ \, ,                                                                     \\
+      \cC_m, \ldots ,\cC_i, \cC_k, \cC_{i-1}, \ldots, C_1
+       & \splitfrac{\text{ if } z \in \left]c_{i}, c_{i-1} \right[}{\text{ and } i \in \llbracket 2 , m \rrbracket\, ,} \\
+      \cC_m, \ldots C_1,  \cC_k
+       & \text{ if } z \in \left]c_1, +\infty \right[ \, ,                                                              \\
     \end{cases}
   \end{equation*}
   and that this permutation also reorders $\beta(z \pm h)$ for $z \neq c_i \; (i \neq k)$ and $h$ small enough.
@@ -167,7 +167,7 @@ We can now state the directional derivative of $H$. % \(J_k\).
     H'(z; \delta) =
     \begin{cases}
       \smashoperator[r]{\sum_{j \in C(\varepsilon_c )}} \lambda_{(j)^-_{\varepsilon_c }}
-       & \text{if } z = 0 \, ,               \\
+       & \text{if } z = 0 \, ,                                \\
       \sign(z)\delta\smashoperator{\sum_{j \in C(z + {\varepsilon_c} \delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
       %  & \text{if } |z| = c^{(k)}_i > 0 \, , \\
        & \text{if } |z| \in c^{\setminus k} \setminus \{0\} , \\
@@ -186,9 +186,9 @@ derivative and the objective function.
   The function \(G\) and its directional derivative \(G'( \cdot ; \delta)\) for
   an example with \(\beta = [-3, 1, 3, 2]^T\), \(k = 1\), and consequently
   \(c^{\setminus k} = \{1, 2\}\). The solution of \Cref{pb:cluster-problem} is the value of \(z\) for
-      which \(G'(z; \delta) \geq 0 \) for \(\delta \in \{-1, 1\}\), which holds only
-      at \(z = 2\), which must therefore be the solution.
-    }
+  which \(G'(z; \delta) \geq 0 \) for \(\delta \in \{-1, 1\}\), which holds only
+  at \(z = 2\), which must therefore be the solution.
+  }
   \label{fig:directional-derivative}
 \end{figure}
 
@@ -203,18 +203,18 @@ Using the directional derivative, we can now introduce the SLOPE thresholding op
       T(\gamma; \omega, c, \lambda) = \\
       \begin{cases}
         0
-            & \text{if } |\gamma| \leq S(\varepsilon_c),               \\
+         & \text{if } |\gamma| \leq S(\varepsilon_c),               \\
         \sign(\gamma)c_i
-            & \text{if } \omega c_i + S(c_i - \varepsilon_c)           \\
-            & \quad \leq |\gamma| \leq                                 \\
-            & \quad \omega c_i + S(c_i + \varepsilon_c),               \\
+         & \text{if } \omega c_i + S(c_i - \varepsilon_c)           \\
+         & \quad \leq |\gamma| \leq                                 \\
+         & \quad \omega c_i + S(c_i + \varepsilon_c),               \\
         \frac{\sign(\gamma)}{\omega} \big( |\gamma| - S(c_i + \varepsilon_c) \big)
-            & \text{if } \omega c_i + S(c_i + {\varepsilon_c})         \\
-            & \quad < |\gamma| <                                       \\
-            & \quad \omega c_{i - 1} + S(c_{i - 1} - {\varepsilon_c}), \\
+         & \text{if } \omega c_i + S(c_i + {\varepsilon_c})         \\
+         & \quad < |\gamma| <                                       \\
+         & \quad \omega c_{i - 1} + S(c_{i - 1} - {\varepsilon_c}), \\
         \frac{\sign(\gamma)}{\omega} \big( |\gamma| - S(c_1 + {\varepsilon_c}) \big)
-            & \text{if } |\gamma| \geq                                 \\
-            & \quad \omega c_1 + S(c_1 + {\varepsilon_c}).
+         & \text{if } |\gamma| \geq                                 \\
+         & \quad \omega c_1 + S(c_1 + {\varepsilon_c}).
       \end{cases}
     \end{multlined}
   \]
@@ -252,9 +252,9 @@ In practice, the cost is typically larger at the start of optimization and becom
   An example of the SLOPE thresholding operator for \(\beta = [0.5, -0.5, 0.3, 0.7]^T\), \(c = (0.7, 0.5, 0.3)\)
   with an update for the second cluster (\(k = 2\)), such that
   \(c^{\setminus k} = (0.5, 0.3)\). Across regions where the function is constant,
-      the operator sets the result to be either exactly 0 or to the value of one
-      of the elements of \(\pm c^{\setminus k}\).
-    }
+  the operator sets the result to be either exactly 0 or to the value of one
+  of the elements of \(\pm c^{\setminus k}\).
+  }
   \label{fig:slope-thresholding}
 \end{figure*}
 
@@ -289,26 +289,26 @@ The combination of the proximal gradient steps and proximal coordinate descent a
 
   \For{\(t \gets 0,1,\dots\)}{
 
-  \If{\(t \bmod v = 0\)}{
-    \(\beta \leftarrow \prox_{J/{\norm{X}^2_2}}\Big(\beta - \frac{1}{\norm{X}_2^2}X^T(X \beta - y)\Big)\) \label{alg:hybrid-istastep}
-
-    Update \(c\), \(\mathcal{C}\)
-  }
-  \Else{
-    \(k \gets 1\)
-
-    \While{\(k \leq \lvert \mathcal{C} \rvert\)}{
-      \(\tilde x_k \gets X_{\mathcal{C}_k} \sign(\beta_{\cC_k}) \)
-
-      \(z \gets T(c_k\norm{\tilde x}^2 - \tilde x^T(X\beta - y); \norm{x}^2, c^{\setminus k}, \lambda)\)
-
-      $\beta_{\cC_k} \gets z \sign(\beta_{\cC_k})$
+    \If{\(t \bmod v = 0\)}{
+      \(\beta \leftarrow \prox_{J/{\norm{X}^2_2}}\Big(\beta - \frac{1}{\norm{X}_2^2}X^T(X \beta - y)\Big)\) \label{alg:hybrid-istastep}
 
       Update \(c\), \(\mathcal{C}\)
-
-      \(k \gets k + 1\)
     }
-  }
+    \Else{
+      \(k \gets 1\)
+
+      \While{\(k \leq \lvert \mathcal{C} \rvert\)}{
+        \(\tilde x_k \gets X_{\mathcal{C}_k} \sign(\beta_{\cC_k}) \)
+
+        \(z \gets T(c_k\norm{\tilde x}^2 - \tilde x^T(X\beta - y); \norm{x}^2, c^{\setminus k}, \lambda)\)
+
+        $\beta_{\cC_k} \gets z \sign(\beta_{\cC_k})$
+
+        Update \(c\), \(\mathcal{C}\)
+
+        \(k \gets k + 1\)
+      }
+    }
   }
   \Return{\(\beta\)}
 \end{algorithm}

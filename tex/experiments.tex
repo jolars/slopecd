@@ -4,10 +4,10 @@
 To investigate the performance of our algorithm, we performed an extensive benchmark against the following competitors:
 \begin{itemize}[noitemsep]
   \item Alternating direction method of multipliers (\texttt{ADMM}, \cite{boyd2010}).
-  We considered several alternative for the choice of the augmented Lagragian parameter: an adaptive method to update the parameter throughout the algorithm~\parencite[Sec. 3.4.1]{boyd2010} and fixed values.
-  In the following sections, we only kept the \texttt{ADMM} solver with a fixed value of $100$ for the augmented Lagrangian parameter.
-  We present in \Cref{sec:admm-benchmarks} a more detailed benchmarks for \texttt{ADMM} solvers with different values of this parameter and the adaptive setting.
-  Choosing this parameter is not straightforward and the best value changes across datasets and regularization strengths.
+        We considered several alternative for the choice of the augmented Lagragian parameter: an adaptive method to update the parameter throughout the algorithm~\parencite[Sec. 3.4.1]{boyd2010} and fixed values.
+        In the following sections, we only kept the \texttt{ADMM} solver with a fixed value of $100$ for the augmented Lagrangian parameter.
+        We present in \Cref{sec:admm-benchmarks} a more detailed benchmarks for \texttt{ADMM} solvers with different values of this parameter and the adaptive setting.
+        Choosing this parameter is not straightforward and the best value changes across datasets and regularization strengths.
   \item Anderson acceleration for proximal gradient descent (\texttt{Anderson PGD}, \cite{zhang2020})
   \item Proximal gradient descent (\texttt{PGD}, \cite{combettes2005})
   \item Fast Iterative Shrinkage-Thresholding Algorithm (\texttt{FISTA}, \cite{beck2009})
@@ -16,7 +16,7 @@ To investigate the performance of our algorithm, we performed an extensive bench
   \item The hybrid (our) solver (see \Cref{alg:hybrid}) combines proximal gradient descent
         and coordinate descent to overcome the non-separability of the SLOPE problem.
   \item The oracle solver (\texttt{oracle CD}) solves \Cref{pb:separable_slope} with coordinate descent, using the clusters obtained via another solver.
-  Note that it cannot be used in practice as it requires knowledge of the solution's clusters.
+        Note that it cannot be used in practice as it requires knowledge of the solution's clusters.
 \end{itemize}
 
 We used \pkg{Benchopt}~\parencite{moreau2022benchopt} to obtain the convergence curves for the different solvers.
@@ -73,7 +73,7 @@ The different scenarios for the simulated data are described in \Cref{tab:simula
     {Scenario} & {\(n\)} & {\(p\)} & {\(k\)} & {Density} \\ \midrule
     1          & 200     & 20000   & 20      & 1         \\
     2          & 20000   & 200     & 40      & 1         \\
-    3          & 200     & 200000 & 20      & 0.001     \\ \bottomrule
+    3          & 200     & 200000  & 20      & 0.001     \\ \bottomrule
   \end{tabular}
 \end{table}
 

@@ -3,9 +3,11 @@ import numpy as np
 from numpy.linalg import norm
 from numpy.random import default_rng
 
-from figures import figspec
+from slope import plot_utils
 from slope.solvers import hybrid_cd
 from slope.utils import lambda_sequence, sl1_norm
+
+savefig = True
 
 n = 10
 p = 2
@@ -60,8 +62,9 @@ for i in range(len(beta_in)):
 fs = (f1, f2)
 
 plt.close("all")
+plt.rcParams["text.usetex"] = True
 fig = plt.figure(
-    figsize=(figspec.HALF_WIDTH, figspec.FULL_WIDTH), constrained_layout=True
+    figsize=(plot_utils.HALF_WIDTH, plot_utils.FULL_WIDTH), constrained_layout=True
 )
 ax = fig.add_gridspec(top=0.4, right=0.4).subplots()
 
@@ -105,17 +108,13 @@ ax_beta2.plot(f2, beta_in, color="black")
 ax_xlim = ax_beta2.get_xlim()
 ax_beta2.set_xlabel(r"$P(\beta)$")
 
-
-plt.show(block=False)
-
-savefig = True
-
 if savefig:
-    figpath = figspec.fig_path("naive-cd-stuck")
+    figpath = plot_utils.fig_path("naive-cd-stuck")
     formats = [".svg", ".pdf"]
 
-    plt.rcParams["text.usetex"] = True
     [
         fig.savefig(figpath.with_suffix(f), bbox_inches="tight", pad_inches=0.01)
         for f in formats
     ]
+else:
+    plt.show(block=False)

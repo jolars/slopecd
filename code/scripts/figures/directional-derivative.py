@@ -5,7 +5,7 @@ import numpy as np
 from matplotlib.lines import Line2D
 from numpy.random import default_rng
 
-from figures import figspec
+from slope import plot_utils
 from slope.clusters import get_clusters
 from slope.utils import lambda_sequence, primal
 
@@ -72,6 +72,8 @@ def directional_derivative(z, delta, k, beta, lambdas):
     return out + grad * delta
 
 
+save_fig = True
+
 n = 10
 
 beta = np.array([-3.0, 1.0, 3.0, 2.0])
@@ -79,7 +81,6 @@ p = len(beta)
 
 rng = default_rng(1)
 
-# cov = [[1, 0.85], [0.85, 1]]
 sigma = np.zeros((p, p))
 sigma[:] = 0.9
 np.fill_diagonal(sigma, 1.0)
@@ -98,8 +99,6 @@ delta = 1
 c, c_ptr, c_ind, c_perm, n_c = get_clusters(beta)
 
 lambdas = lambda_sequence(X, y, fit_intercept, reg, q)
-
-# zs = np.sort(np.hstack(([0.0], c[:n_c], np.linspace(-6, 6, 100))))
 
 eps = 1e-6
 
@@ -165,7 +164,7 @@ plt.rcParams["text.usetex"] = True
 fig, axs = plt.subplots(
     2,
     1,
-    figsize=(figspec.HALF_WIDTH, figspec.HALF_WIDTH * 1.25),
+    figsize=(plot_utils.HALF_WIDTH, plot_utils.HALF_WIDTH * 1.25),
     constrained_layout=True,
     sharex=True,
     gridspec_kw=dict(height_ratios=(0.25, 0.75)),
@@ -212,19 +211,13 @@ obj = [primal(beta_update(beta, z, ind), X, y, lambdas) for z in zs]
 axs[0].vlines(ps, np.min(obj), np.max(obj), color="darkgrey", linestyle="dotted")
 axs[0].plot(zs, obj, color="black")
 axs[0].set_ylabel(r"$G(z)$")
-# axs[0].set_xlabel(r"$z$")
 
-
-plt.show(block=False)
-
-savefig = True
-
-if savefig:
-    figpath = figspec.fig_path("directional-derivative")
+if save_fig:
+    figpath = plot_utils.fig_path("directional-derivative")
     formats = [".svg", ".pdf"]
-
-    plt.rcParams["text.usetex"] = True
     [
         fig.savefig(figpath.with_suffix(f), bbox_inches="tight", pad_inches=0.01)
         for f in formats
     ]
+else:
+    plt.show(block=False)

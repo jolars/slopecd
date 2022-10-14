@@ -5,12 +5,12 @@ from numpy.linalg import norm
 from numpy.random import default_rng
 from scipy import stats
 
-from figures import figspec
+from slope import plot_utils
 from slope.clusters import get_clusters, update_cluster
 from slope.solvers import prox_grad
 from slope.utils import ConvergenceMonitor, dual_norm_slope, prox_slope, slope_threshold
 
-savefig = True
+savefig = False
 
 
 def cd(X, y, alphas, max_iter, beta0, verbose=False):
@@ -258,12 +258,14 @@ labels = ["CD", "Hybrid", "PGD"]
 
 plt.close("all")
 
+plt.rcParams["text.usetex"] = True
+
 fig, axarr = plt.subplots(
     1,
     3,
     sharey=True,
     sharex=True,
-    figsize=(figspec.FULL_WIDTH, 3),
+    figsize=(plot_utils.FULL_WIDTH, 3),
     constrained_layout=True,
 )
 
@@ -329,11 +331,10 @@ for i in range(3):
         ax.set_ylabel(r"$\beta_2$")
 
 if savefig:
-    figpath_pdf = figspec.fig_path("illustration_solvers.pdf")
-    figpath_svg = figspec.fig_path("illustration_solvers.svg")
+    figpath_pdf = plot_utils.fig_path("illustration_solvers.pdf")
+    figpath_svg = plot_utils.fig_path("illustration_solvers.svg")
 
-    plt.rcParams["text.usetex"] = True
     fig.savefig(figpath_pdf, bbox_inches="tight", pad_inches=0.01)
     fig.savefig(figpath_svg, bbox_inches="tight", pad_inches=0.01)
-
-plt.show(block=False)
+else:
+    plt.show(block=False)

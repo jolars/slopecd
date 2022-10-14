@@ -6,10 +6,12 @@ from libsvmdata import fetch_libsvm
 from pyprojroot import here
 from scipy import stats
 
-from figures import figspec
+from slope import plot_utils
 from slope.plot_utils import _plot_legend_apart, configure_plt
 from slope.solvers import hybrid_cd
 from slope.utils import dual_norm_slope
+
+save_fig = True
 
 X, y = fetch_libsvm("rcv1.binary")
 
@@ -53,17 +55,15 @@ for k in freqs:
     gaps.append(gap_cd)
     times.append(time_cd)
 
-# Time vs. duality gap
-save_fig = True
-
+# Time vs. suboptimality
 plt.close("all")
 
-plt.rcParams["text.usetex"] = save_fig
+plt.rcParams["text.usetex"] = True
 
 fig, ax = plt.subplots(
     1,
     1,
-    figsize=[figspec.HALF_WIDTH * 1.2, figspec.HALF_WIDTH * 1],
+    figsize=[plot_utils.HALF_WIDTH * 1.2, plot_utils.HALF_WIDTH * 1],
     layout="constrained",
 )
 minimum = np.min(primals[4])
@@ -77,15 +77,16 @@ for k in freqs:
 
 ax.set_ylabel(r"$P(\beta) - P(\beta^*)$")
 ax.set_xlabel("Time (s)")
-# ax.set_title("rcv1")
 ax.set_ylim(1e-10, None)
 ax.set_xlim(0, 2)
 
 
 if save_fig:
-    fig.savefig(figspec.fig_path("pgd_freq.pdf"), bbox_inches="tight", pad_inches=0.05)
-    _plot_legend_apart(
-        ax, figspec.fig_path("pgd_freq_legend.pdf"), ncol=1, title="PGD Frequency"
+    fig.savefig(
+        plot_utils.fig_path("pgd_freq.pdf"), bbox_inches="tight", pad_inches=0.05
+    )
+    plot_utils.plot_legend_apart(
+        ax, plot_utils.fig_path("pgd_freq_legend.pdf"), ncol=1, title="PGD Frequency"
     )
 else:
     plt.show(block=False)

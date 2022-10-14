@@ -5,7 +5,7 @@ import numpy as np
 from matplotlib.lines import Line2D
 from numpy.random import default_rng
 
-from figures import figspec
+from slope import plot_utils
 from slope.clusters import get_clusters
 from slope.utils import lambda_sequence, sl1_norm
 
@@ -72,6 +72,8 @@ def directional_derivative(z, delta, k, beta, lambdas):
     return out + grad * delta
 
 
+savefig = False
+
 n = 10
 
 beta = np.array([-3.0, 1.0, 3.0, 2.0])
@@ -113,7 +115,7 @@ plt.rcParams["text.usetex"] = True
 fig, ax = plt.subplots(
     1,
     1,
-    figsize=(figspec.HALF_WIDTH, figspec.HALF_WIDTH * 0.45),
+    figsize=(plot_utils.HALF_WIDTH, plot_utils.HALF_WIDTH * 0.45),
     constrained_layout=True,
 )
 
@@ -155,13 +157,11 @@ ax.set_xticklabels(
     )
 )
 
-plt.show(block=False)
-
-savefig = True
-
 if savefig:
-    figpath_pdf = figspec.fig_path("partial_slope.pdf")
-    figpath_svg = figspec.fig_path("partial_slope.svg")
+    figpath_pdf = plot_utils.fig_path("partial_slope.pdf")
+    figpath_svg = plot_utils.fig_path("partial_slope.svg")
 
     plt.savefig(figpath_pdf, bbox_inches="tight", pad_inches=0.01)
     plt.savefig(figpath_svg, bbox_inches="tight", pad_inches=0.01)
+else:
+    plt.show(block=False)

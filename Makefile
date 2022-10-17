@@ -45,3 +45,6 @@ arxiv: latexify
 	cd tex; \
 		tar czf "../${OUTPUT_DIR}/arxiv-v${ARXIV_VERSION}.tar.gz" \
 		figures/*.pdf *.tex *.sty *.bbl
+
+clean:
+	rm -rf ${OUTPUT_DIR}/*

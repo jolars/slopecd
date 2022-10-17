@@ -33,7 +33,7 @@ latexify: tex/main.pdf
 
 aistats: latexify bundle-code get-benchmark
 	mkdir -p ${OUTPUT_DIR}
-	pdftk tex/main.pdf cat 1-10 output ${OUTPUT_DIR}/main.pdf
+	pdftk tex/main.pdf cat 1-10 output ${OUTPUT_DIR}/aistats-main-v${AISTATS_VERSION}.pdf
 	pdftk tex/main.pdf cat 11-end output ${OUTPUT_DIR}/appendix.pdf
 	cd ${OUTPUT_DIR}; \
 		tar --concatenate --file=slopecd-code.tar benchmark.tar ;\

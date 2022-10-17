@@ -300,10 +300,8 @@ def newt_alm(
                 warnings.warn("The inner solver did not converge.")
 
         # step 3, update sigma
-        # TODO(jolars): The paper says nothing about how sigma is updated except
-        # that it is always increased if I interpret the paper correctly.
-        # But in correspondence with the authors, they say that it is decreased or
-        # increased based on the primal and dual residuals.
+        # TODO: The paper says nothing about how sigma is updated except
+        # that it is always increased.
         local_param["sigma"] *= 1.1
 
         intercept = x[0] if fit_intercept else 0.0

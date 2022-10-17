@@ -16,7 +16,7 @@ def compute_grad_hess_sumX(resid, X_data, X_indices, X_indptr, s, cluster, n_sam
     grad = 0.0
     L = 0.0
 
-    # NOTE(jolars): We treat the length one cluster case separately because it
+    # NOTE: We treat the length one cluster case separately because it
     # speeds up computations significantly.
     if len(cluster) == 1:
         j = cluster[0]
@@ -28,7 +28,7 @@ def compute_grad_hess_sumX(resid, X_data, X_indices, X_indptr, s, cluster, n_sam
         grad = -sparse_dot_product(resid, X_sum_vals, X_sum_inds)
         L = np.sum(np.square(X_sum_vals))
     else:
-        # NOTE(jolars): It is possible to do this even more efficiently by just
+        # NOTE: It is possible to do this even more efficiently by just
         # using arrays and only advancing positions for the array with the
         # lowest index.
         X_sum = Dict.empty(key_type=types.int32, value_type=types.float64)
@@ -43,7 +43,7 @@ def compute_grad_hess_sumX(resid, X_data, X_indices, X_indptr, s, cluster, n_sam
                 X_sum[row_ind] = X_sum.get(row_ind, 0.0) + v
 
         # Convert values and keys to arrays
-        # TODO(jolars): It is strange that np.array(X_sum.values()) does not
+        # TODO: It is strange that np.array(X_sum.values()) does not
         # work. There should be some better way to do this.
         vals = X_sum.values()
         inds = X_sum.keys()

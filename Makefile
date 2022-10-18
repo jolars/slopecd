@@ -2,6 +2,7 @@ MAIN_FILE=main.tex
 AISTATS_VERSION=1
 ARXIV_VERSION=1
 OUTPUT_DIR=submissions
+SUPPLEMENT=aistats-supplement-v${AISTATS_VERSION}.tar
 
 all: latexify
 
@@ -14,7 +15,7 @@ bundle-code:
 		":(exclude).github/" \
 		":(exclude).gitignore" \
 		":(exclude)code/.gitignore" \
-		-o ${OUTPUT_DIR}/slopecd-code.tar
+		-o ${OUTPUT_DIR}/${SUPPLEMENT}
 
 get-benchmark:
 	mkdir -p ${OUTPUT_DIR}
@@ -24,7 +25,7 @@ get-benchmark:
 		fi; \
 		cd benchmark_slope; \
 		git pull; \
-		git archive HEAD . ":!.github" ":!.gitignore" \
+		git archive HEAD . ":!.github" ":!.gitignore" ":!README.rst" \
 		--prefix=benchmark/ \
 		-o ../benchmark.tar
 	
@@ -36,9 +37,8 @@ aistats: latexify bundle-code get-benchmark
 	pdftk tex/main.pdf cat 1-10 output ${OUTPUT_DIR}/aistats-main-v${AISTATS_VERSION}.pdf
 	pdftk tex/main.pdf cat 11-end output ${OUTPUT_DIR}/appendix.pdf
 	cd ${OUTPUT_DIR}; \
-		tar --concatenate --file=slopecd-code.tar benchmark.tar ;\
-		tar czf aistats-supplement-v${AISTATS_VERSION}.tar.gz \
-			appendix.pdf slopecd-code.tar
+		tar --concatenate --file=${SUPPLEMENT} benchmark.tar; \
+		tar --append --file=${SUPPLEMENT} appendix.pdf
 
 arxiv: latexify
 	mkdir -p ${OUTPUT_DIR}

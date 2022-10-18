@@ -144,6 +144,9 @@ while (TRUE) {
   }
 }
 
-cat("timings\n")
-cat("  glmnet: ", glmnet_time, "\n")
-cat("  slope: ", slope_time, "\n")
+cat("glmnet: ", glmnet_time, "\n")
+cat("slope: ", slope_time, "\n")
+
+write(glmnet_time, "results/bcTCGA_glmnet.txt")
+write(slope_time, "results/bcTCGA_rslope.txt")
+

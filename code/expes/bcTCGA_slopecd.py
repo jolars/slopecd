@@ -1,3 +1,5 @@
+from timeit import default_timer as timer
+
 import matplotlib.pyplot as plt
 import numpy as np
 from benchopt.datasets import make_correlated_data
@@ -23,9 +25,22 @@ lambdas = lambda_sequence(X, y, fit_intercept, reg, q)
 
 max_epochs = 10000
 max_time = 100
-verbose = True
+verbose = False
 tol = 1e-6
 
+# run once for numba JIT compiling
+hybrid_cd(
+    X,
+    y,
+    lambdas,
+    fit_intercept=fit_intercept,
+    max_epochs=max_epochs,
+    verbose=False,
+    tol=1e-3,
+    max_time=max_time,
+)
+
+t0 = timer()
 beta_cd, intercept_cd, primals_cd, gaps_cd, time_cd, _ = hybrid_cd(
     X,
     y,
@@ -37,4 +52,10 @@ beta_cd, intercept_cd, primals_cd, gaps_cd, time_cd, _ = hybrid_cd(
     max_time=max_time,
 )
 
-time_cd[-1]
+slopecd_time = timer() - t0
+
+print(f"slopecd: {slopecd_time}")
+
+f = open("results/bcTCGA_slopecd.txt", "w")
+f.write(str(slopecd_time) + "\n")
+f.close()

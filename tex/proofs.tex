@@ -113,6 +113,31 @@ The solution for the last case follows using reasoning analogous to that of the
 third case.
 
 \subsection{Proof of \Cref{lem:convergence}}
+We prove the results by establishing two mirror Lemmas for coordinate descent as \textcite[Lemmas 2.2,2.3]{beck2009} is for proximal gradient descent. After this one can just apply the proof of \textcite[Theorem 3.1]{beck2009} directly.
+First we show the corresponding \textcite[Lemmas 2.1]{beck2009} (we follow the notation of the that paper to simplify comparison). We prove the result for a more general function that only LS in \eqref{pb:slope} that is for any convex function $f$ that is Lipschitz continuous gradient with Lipschitz constant $L(f)$ 
+\begin{lemma}
+For any ${y} \in \mathbb{R}^d$, one has ${z}=p_{CD}(\mv{y})$ where $p_{CD}$ is the minimizer of  $G$ in \eqref{pb:cluster-problem}. Then there exists a $\gamma({y}) \in \partial J({z})$ such that
+$$
+\langle {z}- {y},\nabla f({y}) + \gamma(y) \rangle + L(f) ||  {z}-{y}||^2  \leq 0.
+$$
+\end{lemma}
+\begin{proof}
+Since solving $G$ is equivalent to minimizing $P$ in the direction ${d} = {z}- {y}$ it follows that that there exists a $\gamma({y}) \in \partial J({z})$ such that
+$$
+\langle {z}- {y},\nabla f({z}) + \gamma(y) \rangle  = 0.
+$$
+Now since $f$ is Lipschitz continuous it follows that 
+\begin{align*}
+0 \leq f(z)  &\leq f(y) +   \langle z-y,\nabla f({y})  \rangle + \frac12 L(f) ||  {z}-{y}||^2  \\
+ & \leq   \langle y-z,\nabla f({z})  \rangle + \langle z-y,\nabla f({y})  \rangle + L(f) ||  {z}-{y}||^2,
+\end{align*}
+hence 
+
+$
+\langle {z}- {y},\nabla f({z}) \rangle \leq \langle {z}- {y},\nabla f({y}) \rangle + L(f) ||  {z}-{y}||^2  $ and the lemma follows.
+\end{proof}
+
+We prove the results by showing that a step of coordinate descent has the same convergence results as proximal gradient descent. Then after  
 \mathurin{I'm not sure this is so straightforwrd}
 
 From \cref{thm:thresholding-operator}, we know that lines 9--14 in \cref{alg:hybrid} correspond to minimizing \(G(z)\) for a given \(\beta \coloneqq \beta^{(t + k / |\mathcal{C}|)}\), and therefore that

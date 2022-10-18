@@ -1,13 +1,9 @@
-from pathlib import Path
-
 import matplotlib.pyplot as plt
 import numpy as np
 from libsvmdata import fetch_libsvm
-from pyprojroot import here
 from scipy import stats
 
 from slope import plot_utils
-from slope.plot_utils import _plot_legend_apart, configure_plt
 from slope.solvers import hybrid_cd
 from slope.utils import dual_norm_slope
 

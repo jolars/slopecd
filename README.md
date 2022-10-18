@@ -25,7 +25,7 @@ conda activate slope_aistats
 pip install benchopt
 ```
 
-After this, run `pip install code/`
+After this, run
 
 ```python
 pip install code/

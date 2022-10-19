@@ -113,50 +113,28 @@ The solution for the last case follows using reasoning analogous to that of the
 third case.
 
 \subsection{Proof of \Cref{lem:convergence}}
-We prove the results by establishing two mirror Lemmas for coordinate descent as \textcite[Lemmas 2.2,2.3]{beck2009} is for proximal gradient descent. After this one can just apply the proof of \textcite[Theorem 3.1]{beck2009} directly.
-First we show the corresponding \textcite[Lemmas 2.1]{beck2009} (we follow the notation of the that paper to simplify comparison). We prove the result for a more general function that only LS in \eqref{pb:slope} that is for any convex function $f$ that is Lipschitz continuous gradient with Lipschitz constant $L(f)$ 
-\begin{lemma}
-% For any ${y} \in \mathbb{R}^d$, one has ${z}=p_{CD}(\mv{y})$ where $p_{CD}$ is the minimizer of  $G$ in \eqref{pb:cluster-problem}. Then there exists a $\gamma({y}) \in \partial J({z})$ such that
-For any ${y} \in \mathbb{R}^d$, one has ${z}=p_{CD}(y)$ where $p_{CD}$ is the minimizer of  $G$ in \eqref{pb:cluster-problem}. Then there exists a $\gamma({y}) \in \partial J({z})$ such that
+
+Let $\beta^*$ denote the stationary point of $F$.
+If we denote the $t$th iteration of Algorithm \ref{alg:hybrid} as $T_t$, i.e. $\beta^{(t+1)} = T_t(\beta^{t})$. Then by definition
+
 $$
-\langle {z}- {y},\nabla f({y}) + \gamma(y) \rangle + L(f) ||  {z}-{y}||^2  \leq 0.
+T_t(\beta)=\begin{cases}
+T_{PGD}(\beta) & \mbox{if } t\bmod v=0, \\
+T_{CD}(\beta) & \mbox{else,}  \\
+\end{cases}
 $$
-\end{lemma}
-\begin{proof}
-Since solving $G$ is equivalent to minimizing $P$ in the direction ${d} = {z}- {y}$ it follows that that there exists a $\gamma({y}) \in \partial J({z})$ such that
+where $T_{PGD}$ is an iteration proximal gradient descent, and $T_{CD}$ is an iteration of coordinate descent. Clearly $P(T_{CD}(\beta)) \leq P(\beta)$. Now note that $$T_{PGD}(\beta)= \argmin_{\hat{\beta}} \left( H(\beta,\hat{\beta}) = f(\beta) + \langle \nabla f(\beta),\hat{\beta} - \beta ) + \frac{L(f)}{2} ||\beta-\hat{\beta}  ||^2+ J(\beta) \right)$$ 
+where $f(\beta) = \frac{1}{2} \norm{y - X \beta}^2$ and $L(f)$ is the Lipschitz constant. Note that by strong convexity that $H(\beta,T_{PGD}(\beta)) \leq F(T_{PGD}(\beta))$.
+Then we can apply Lemma 3 in \cite{richtarik2014iteration}
+to get
 $$
-\langle {z}- {y},\nabla f({z}) + \gamma(y) \rangle  = 0.
+P(T_{PGD}(\beta)) - P(\beta^*)  \leq 
+\begin{cases}
+\left(1 - \frac{P(\beta) - P(\beta^*)}{R^2} \right) \left( P(\beta) - P(\beta^*)\right) & \mbox{if } \left( P(\beta) - P(\beta^*) \right)\leq R^2, \\
+\frac{1}{2}\left( P(\beta) - P(\beta^*)\right) & \mbox{else,}
+\end{cases}
 $$
-Now since $f$ is Lipschitz continuous it follows that 
-\begin{align*}
-0 \leq f(z)  &\leq f(y) +   \langle z-y,\nabla f({y})  \rangle + \frac12 L(f) ||  {z}-{y}||^2  \\
- & \leq   \langle y-z,\nabla f({z})  \rangle + \langle z-y,\nabla f({y})  \rangle + L(f) ||  {z}-{y}||^2,
-\end{align*}
-hence 
-
-$
-\langle {z}- {y},\nabla f({z}) \rangle \leq \langle {z}- {y},\nabla f({y}) \rangle + L(f) ||  {z}-{y}||^2  $ and the lemma follows.
-\end{proof}
-
-We prove the results by showing that a step of coordinate descent has the same convergence results as proximal gradient descent. Then after  
-\mathurin{I'm not sure this is so straightforwrd}
-
-From \cref{thm:thresholding-operator}, we know that lines 9--14 in \cref{alg:hybrid} correspond to minimizing \(G(z)\) for a given \(\beta \coloneqq \beta^{(t + k / |\mathcal{C}|)}\), and therefore that
-\[
-  G\big(\beta^{(t + (k - 1) / |\mathcal{C}|)}\big) \leq G\big(\beta^{(t + k / |\mathcal{C}|)}\big)
-\]
-since \(G(z) = P\big(\beta(z)\big)\).
-
-Moreover, for a sequence of iterates of the proximal gradient descent step,
-\(\beta^{(v)}, \beta^{(2v)}, \dots, \beta^{(\lfloor k / v \rfloor)}\),
-we know from~\textcite[Theorem 3.1]{beck2009} that it holds that
-\[
-  P(\beta^{(\lfloor k / v \rfloor)}) - P(\beta^*)
-  \leq \frac{\norm{X}_2^2 \norm{\beta^{(0)} - \beta^*}^2}{2\lfloor k / v \rfloor}.
-\]
-Combining this and the result from the previous paragraph yields the desired
-result.
-
+where $R^2=||\beta- \beta^*||_L$. To get the convergence rate apply proof of Theorem 1. in \cite{richtarik2014iteration}.
 
 
 \subsection{Partial smoothness of the sorted $\ell_1$ norm}
@@ -179,28 +157,21 @@ This allows to apply result about the structure identification of the proximal g
 \end{proposition}
 
 \begin{proof}
-  First, $J$ is convex and has full domain, so its subdifferential is always non-empty.
-  Let $x \in \bbR^d$.
+  % First, $J$ is convex and has full domain, so its subdifferential is always non-empty.
+  % Let $x \in \bbR^d$.
 
-  First, we consider the case where no entry of $\lvert x\rvert >0$.
-  Let $m$ be the number of clusters of $x$ and $\cC_1, \ldots, \cC_m$ be those clusters, and let be the  value of  $\lvert x \rvert$ on the clusters be $c_1 > \ldots > c_m > 0$.
+  First, we consider the case where $| x_j| >0$ for all $j\in\bbR^d$.
+  Let $m$ be the number of clusters of $x$ and $\cC_1, \ldots, \cC_m$ be those clusters, and let $c_1 > \ldots > c_m > 0$ be the  value of  $\lvert x \rvert$ on the clusters.
 
-  Let $\varepsilon_c$ be as in \Cref{eq:epsilon-c}.
-  Let $\cB = \{u \in \bbR^d: \lVert u - x \rVert_\infty \leq \varepsilon_c / 2\}$,
-  and
+  We define $\varepsilon_c$ as in \Cref{eq:epsilon-c} and 
+  let $\cB = \{u \in \bbR^d: \lVert u - x \rVert_\infty < \varepsilon_c / 2\}$.
+  
+  We will show that $J$ is partly smooth at $x$ relative to the subspace
   \begin{equation}
     \cM = \{ u \in \bbR^d : (\exists c' \in \bbR^m, \forall i \neq j \in [m], c'_i \neq c'_j) \& (\forall k \in [m], \forall j \in \cC_k, u_j = \sign(x_j) c'_k) \} \cap \cB \, .
   \end{equation}
-  $k(j):[d] \rightarrow [m]$  such that $j \in \cC_{k(j}$.
- \begin{equation}
-    \cM = \{ u \in \bbR^d : u_j = \sign(x_j) c'_{k(j)}\mbox{ where }  c' \in \bbR^m, \forall i \neq l , c'_i \neq c'_l \} \cap \cB \, .
-  \end{equation}
-
-We will now establish that $J$ is linear on $\mathcal{M}$.
-  let $v_k \in \bbR^d$ for $k \in [m]$  be equal to $\sign x_{\cC_k}$ on $\cC_k$ and to 0 outside, such that $x = \sum_{k=1}^m c_k v_k$.
-
-
-  Then one has $\cM = \Span(v_1, \ldots v_m) \cap \cB$.
+  Moreover, let $v_k \in \bbR^d$ for $k \in [m]$  be equal to $\sign x_{\cC_k}$ on $\cC_k$ and to 0 outside, such that $x = \sum_{k=1}^m c_k v_k$.
+  The set $\cM$ can then be rewritten as $\cM = \Span(v_1, \ldots v_m) \cap \cB$.
   One inclusion is trivial.
   For the other, let $u \in \Span(v_1, \ldots v_m) \cap \cB$.
   Then there exists $c' \in \bbR^k$, $u = \sum_{k=1}^m c'_k v_k$.
@@ -215,10 +186,39 @@ We will now establish that $J$ is linear on $\mathcal{M}$.
   \end{align*}
 
   This shows that clusters of any $u \in \cM$ are equal to clusters of $x$.
-  Note that for $u =\sum_{k=1}^m c'_k v_k\in \Span(v_1, \ldots v_m) \cap \cB$ the function $J(u) = \sum_{k=1}^m \left( \sum_{j \in \cC_k} \lambda_j \right)c_k'$ which is clearly linear hence 1 and 3 holds.
+  In addition, the tangent space of $\cM$ at $x$ is $\Span(v_1, \hdots, v_m)$. 
+  
+  
+  % $\{ u \in \bbR^d : (\exists c' \in \bbR^m, \forall i \neq j \in [d], c'_i \neq c'_j) \& (\forall k \in [m], \forall j \in \cC_k, |u_j| = c'_k) \}$.
+
+  
+%   $k(j):[d] \rightarrow [m]$  such that $j \in \cC_{k(j}$.
+%  \begin{equation}
+%     \cM = \{ u \in \bbR^d : u_j = \sign(x_j) c'_{k(j)}\mbox{ where }  c' \in \bbR^m, \forall i \neq l , c'_i \neq c'_l \} \cap \cB \, .
+%   \end{equation}
+
+\begin{enumerate}
+  \item The set $\cM$ is then the intersection of a linear subspace and an open ball hence it is a $\cC^2$ manifold. 
+  Following the observation of the fact that the clusters of any $u\in\cM$ are the same than the clusters of $x$, we have that 
+  \begin{align}{}
+    J(u) = \sum_{k=1}^m \left( \sum_{j \in \cC_k} \lambda_j \right)c_k' \enspace ,
+  \end{align}
+  hence $J$ is linear on $\cM$ thus $\cC^2$. 
+  \item The subdifferential of $J$ at $x$ is 
+  \begin{align}
+    \partial J(x) = 
+  \end{align}
+  \klopfe{Compute what is the linear hull of subdifferential restricted to one cluster}
+  \item The subdifferential of $J$ is a constant set locally around $x$ along $\cM$ which shows that it is continuous at $x$ relative to $\cM$. 
+\end{enumerate}
+
+% We will now establish that $J$ is linear on $\mathcal{M}$.
+%   let $v_k \in \bbR^d$ for $k \in [m]$  be equal to $\sign x_{\cC_k}$ on $\cC_k$ and to 0 outside, such that $x = \sum_{k=1}^m c_k v_k$.
+
+%   Note that for $u =\sum_{k=1}^m c'_k v_k\in \Span(v_1, \ldots v_m) \cap \cB$ the function $J(u) = \sum_{k=1}^m \left( \sum_{j \in \cC_k} \lambda_j \right)c_k'$ which is clearly linear hence 1 and 3 holds.
 
 
-  In addition, the tangent space of $\cM$ at $x$ is $\{ u \in \bbR^d : (\exists c' \in \bbR^m, \forall i \neq j \in [d], c'_i \neq c'_j) \& (\forall k \in [m], \forall j \in \cC_k, |u_j| = c'_k) \}$.
+
 
   $J$ is linear hence smooth on $\cM$, its gradient is TODO $\sum_k (\sum_{j \in \cC_k} \lambda_j) v_k$. \mm{and this is orthogonal to $\cM$ because??? it cannot be, it's in $\cM$}
 

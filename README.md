@@ -26,24 +26,25 @@ be run. Here, we also install two R packages that were used in one of the
 experiments.
 
 ```bash
-conda create -n slope_-c conda-forge aistats \
-  python=3.9 r=4.2 r-slope=0.4 r-glmnet=4.1
-conda activate slope_aistats
+conda create -n aistats_slopecd -c conda-forge -y \
+  python=3.9 r=4.2 r-slope=0.4 r-glmnet=4.1 
+conda activate aistats_slopecd
 pip install benchopt
 ```
 
-After this, run
+After this, make sure that you have navigated to the root folder of the
+extracted archive. Then run
 
 ```bash
 pip install code/
 ```
 
-to install the python module `slopecd`.
+to install the python module `slope`.
 
 Finally, to install the benchopt benchmark, run
 
 ```bash
-benchopt install benchmark/
+benchopt install -y benchmark/
 ```
 
 ## Running the Experiments

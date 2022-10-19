@@ -1,54 +1,67 @@
 # Coordinate Descent for SLOPE
 
-This repository provides code to reproduce the experiments for the academic research paper *Coordinate Descent for SLOPE*.
+This supplement provides code to reproduce the experiments for the academic
+research paper _Coordinate Descent for SLOPE_ along with the appendix.
 
-The code for the project is split into two parts:
+The items in this archive are the following:
 
-- The `code` folder within this directory, which contains the code for the
-  solvers, including our contribution
-- The `benchmark` folder, which is distributed along with the supplement, which
-  contains a [benchopt](https://benchopt.github.io/) benchmark for SLOPE
-
+- The `code` folder contains the code for the solvers, the results produces from
+  our experiments, a few (smaller) experiments, as well as scripts to generate
+  the figures in the paper experiments
+- The `benchmark` folder contains a [benchopt](https://benchopt.github.io/)
+  benchmark for SLOPE, which was used to run the main experiments in the
+  paper on simulated and real data.
+- The `appendix.pdf` file contains proofs for the paper, additional experiments,
+  and other details regarding our work.
 
 ## Installation
 
 First make sure that you have
 [conda](https://conda.io/projects/conda/en/latest/index.html) available on your
-computer.
+computer. Installation instructions are available
+[here](https://conda.io/projects/conda/en/latest/user-guide/install/).
 
 Then, start by creating a conda environment within which the benchmarks should
-be run.
+be run. Here, we also install two R packages that were used in one of the
+experiments.
 
-```python
-conda create -n slope_aistats python=3.10 r=4.2 r-slope=0.4 r-glmnet=4.1
-conda activate slope_aistats
+```bash
+conda create -n aistats_slopecd -c conda-forge -y \
+  python=3.9 r=4.2 r-slope=0.4 r-glmnet=4.1 
+conda activate aistats_slopecd
 pip install benchopt
 ```
 
-After this, run
+After this, make sure that you have navigated to the root folder of the
+extracted archive. Then run
 
-```python
+```bash
 pip install code/
 ```
 
-To install the benchopt benchmark, run
+to install the python module `slope`.
 
-```python
-benchopt install benchmark/
+Finally, to install the benchopt benchmark, run
+
+```bash
+benchopt install -y benchmark/
 ```
 
 ## Running the Experiments
 
 Some experiments are available in `code/expes` and can be run simply by calling
 `python expes/<experiment>`, or `Rscript expes/<experiment>` where
-`<experiment>` is the name of one of the python or R files in the folder. 
+`<experiment>` is the name of one of the python or R files in the folder.
 
-To re-run the main benchmarks in the paper, modify `benchmark/config.yml` to
-include experiments by uncommenting them, and then call
+To re-run the main benchmarks from the paper, modify `benchmark/config.yml` to
+include or exclude objectives, solvers, and datasets by commenting or
+uncommenting them. Then call
 
-```python
+```bash
 benchopt run benchmark/ --config benchmark/config.yml
 ```
+
+to run the benchmark.
 
 ## Results
 

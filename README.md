@@ -22,6 +22,7 @@ following lines
 
 ```bash
 conda config --add channels conda-forge
+conda config --set channel_priority strict
 ```
 
 Then, start by creating a conda environment within which the benchmarks should

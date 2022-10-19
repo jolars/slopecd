@@ -116,7 +116,8 @@ third case.
 We prove the results by establishing two mirror Lemmas for coordinate descent as \textcite[Lemmas 2.2,2.3]{beck2009} is for proximal gradient descent. After this one can just apply the proof of \textcite[Theorem 3.1]{beck2009} directly.
 First we show the corresponding \textcite[Lemmas 2.1]{beck2009} (we follow the notation of the that paper to simplify comparison). We prove the result for a more general function that only LS in \eqref{pb:slope} that is for any convex function $f$ that is Lipschitz continuous gradient with Lipschitz constant $L(f)$ 
 \begin{lemma}
-For any ${y} \in \mathbb{R}^d$, one has ${z}=p_{CD}(\mv{y})$ where $p_{CD}$ is the minimizer of  $G$ in \eqref{pb:cluster-problem}. Then there exists a $\gamma({y}) \in \partial J({z})$ such that
+% For any ${y} \in \mathbb{R}^d$, one has ${z}=p_{CD}(\mv{y})$ where $p_{CD}$ is the minimizer of  $G$ in \eqref{pb:cluster-problem}. Then there exists a $\gamma({y}) \in \partial J({z})$ such that
+For any ${y} \in \mathbb{R}^d$, one has ${z}=p_{CD}(y)$ where $p_{CD}$ is the minimizer of  $G$ in \eqref{pb:cluster-problem}. Then there exists a $\gamma({y}) \in \partial J({z})$ such that
 $$
 \langle {z}- {y},\nabla f({y}) + \gamma(y) \rangle + L(f) ||  {z}-{y}||^2  \leq 0.
 $$

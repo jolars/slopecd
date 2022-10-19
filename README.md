@@ -20,7 +20,7 @@ Then, start by creating a conda environment within which the benchmarks should
 be run.
 
 ```python
-conda create -n slope_aistats python=3.10 r=4.2 r-slope=0.4 r-glmnet=4.1
+conda create -n slope_aistats python=3.9 r=4.2 r-slope=0.4 r-glmnet=4.1
 conda activate slope_aistats
 pip install benchopt
 ```

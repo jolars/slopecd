@@ -123,7 +123,7 @@ T_{PGD}(\beta) & \mbox{if } t\bmod v=0, \\
 T_{CD}(\beta) & \mbox{else,}  \\
 \end{cases}
 $$
-where $T_{PGD}$ is an iteration proximal gradient descent, and $T_{CD}$ is an iteration of coordinate descent. Clearly $P(T_{CD}(\beta)) \leq P(\beta)$. Now note that $$T_{PGD}(\beta)= \argmin_{\hat{\beta}} \left( H(\beta,\hat{\beta}) = f(\beta) + \langle \nabla f(\beta),\hat{\beta} - \beta ) + \frac{L(f)}{2} ||\beta-\hat{\beta}  ||^2+ J(\beta) \right)$$ 
+where $T_{PGD}$ is an iteration proximal gradient descent and $T_{CD}$ is an iteration of coordinate descent. Clearly $P(T_{CD}(\beta)) \leq P(\beta)$. Now note that $$T_{PGD}(\beta)= \argmin_{\hat{\beta}} \left( H(\beta,\hat{\beta}) = f(\beta) + \langle \nabla f(\beta),\hat{\beta} - \beta ) + \frac{L(f)}{2} ||\beta-\hat{\beta}  ||^2+ J(\beta) \right)$$ 
 where $f(\beta) = \frac{1}{2} \norm{y - X \beta}^2$ and $L(f)$ is the Lipschitz constant. Note that by strong convexity that $H(\beta,T_{PGD}(\beta)) \leq F(T_{PGD}(\beta))$.
 Then we can apply Lemma 3 in \textcite{richtarik2014}
 to get

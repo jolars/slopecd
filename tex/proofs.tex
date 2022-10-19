@@ -53,8 +53,8 @@ If $c_m \neq 0$, then the computation proceeds exactly as in case 1.
 
 Recall that \(G(z) : \mathbb{R} \to \mathbb{R}\) is a convex,
 continuous piecewise-differentiable function with breakpoints whenever \(|z| =
-c_i^{\setminus k}\) or \(z = 0\). Let \(\gamma = \tilde{r}^T\tilde{x}\)
-and \(\omega = \tilde{x}^T\tilde{x}\) and note that the optimality criterion for
+c_i^{\setminus k}\) or \(z = 0\). Let \(\gamma = c_k \norm{\tilde{x}}^2+ \tilde x^Tr\)
+and \(\omega = \norm{\tilde{x}}^2\) and note that the optimality criterion for
 \eqref{pb:cluster-problem} is
 \[
   \delta(\omega z - \gamma) + H'(z; \delta) \geq 0, \quad

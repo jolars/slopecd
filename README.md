@@ -27,7 +27,7 @@ experiments.
 
 ```bash
 conda create -n aistats_slopecd -c conda-forge -y \
-  python=3.9 r=4.2 r-slope=0.4 r-glmnet=4.1 
+  python=3.9 r=4.2 r-slope=0.4 r-glmnet=4.1
 conda activate aistats_slopecd
 pip install benchopt
 ```

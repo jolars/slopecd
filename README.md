@@ -17,19 +17,12 @@ First make sure that you have
 computer. Installation instructions are available
 [here](https://conda.io/projects/conda/en/latest/user-guide/install/).
 
-After you have installed conda, you need to enable conda-forge by running the
-following lines
-
-```bash
-conda config --add channels conda-forge
-conda config --set channel_priority strict
-```
-
 Then, start by creating a conda environment within which the benchmarks should
 be run.
 
 ```bash
-conda create -n slope_aistats python=3.9 r=4.2 r-slope=0.4 r-glmnet=4.1
+conda create -n slope_-c conda-forge aistats \
+  python=3.9 r=4.2 r-slope=0.4 r-glmnet=4.1
 conda activate slope_aistats
 pip install benchopt
 ```

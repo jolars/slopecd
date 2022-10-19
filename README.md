@@ -14,12 +14,20 @@ The code for the project is split into two parts:
 
 First make sure that you have
 [conda](https://conda.io/projects/conda/en/latest/index.html) available on your
-computer.
+computer. Installation instructions are available
+[here](https://conda.io/projects/conda/en/latest/user-guide/install/).
+
+After you have installed conda, you need to enable conda-forge by running the
+following lines
+
+```bash
+conda config --add channels conda-forge
+```
 
 Then, start by creating a conda environment within which the benchmarks should
 be run.
 
-```python
+```bash
 conda create -n slope_aistats python=3.9 r=4.2 r-slope=0.4 r-glmnet=4.1
 conda activate slope_aistats
 pip install benchopt
@@ -27,13 +35,13 @@ pip install benchopt
 
 After this, run
 
-```python
+```bash
 pip install code/
 ```
 
 To install the benchopt benchmark, run
 
-```python
+```bash
 benchopt install benchmark/
 ```
 
@@ -46,7 +54,7 @@ Some experiments are available in `code/expes` and can be run simply by calling
 To re-run the main benchmarks in the paper, modify `benchmark/config.yml` to
 include experiments by uncommenting them, and then call
 
-```python
+```bash
 benchopt run benchmark/ --config benchmark/config.yml
 ```
 

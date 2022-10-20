@@ -126,7 +126,7 @@ where $T_{PGD}$ is an iteration of proximal gradient descent and $T_{CD}$ is an 
 $$
 T_{PGD}(\beta)= \argmin_{\hat{\beta}} \left( H(\beta,\hat{\beta}) = f(\beta) + \nabla f(\beta)^T (\hat{\beta} - \beta) + \frac{L(f)}{2} ||\beta-\hat{\beta}  ||^2+ J(\beta) \right)
 $$ 
-where $f(\beta) = \frac{1}{2} \norm{y - X \beta}^2$ and $L(f)$ is the Lipschitz constant. Note that by strong convexity that $H(\beta,T_{PGD}(\beta)) \leq F(T_{PGD}(\beta))$.
+where $f(\beta) = \frac{1}{2} \norm{y - X \beta}^2$ and $L(f)$ is the Lipschitz constant. Note that by strong convexity we have $H(\beta,T_{PGD}(\beta)) \leq F(T_{PGD}(\beta))$.
 Then we can apply Lemma 3 in \textcite{richtarik2014}
 to get
 $$

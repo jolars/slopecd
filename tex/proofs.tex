@@ -122,7 +122,7 @@ T_{PGD}(\beta) & \mbox{if } t\bmod v=0, \\
 T_{CD}(\beta) & \mbox{else,}  \\
 \end{cases}
 $$
-where $T_{PGD}$ is an iteration proximal gradient descent and $T_{CD}$ is an iteration of coordinate descent. Clearly $P(T_{CD}(\beta)) \leq P(\beta)$. Now note that
+where $T_{PGD}$ is an iteration of proximal gradient descent and $T_{CD}$ is an iteration of coordinate descent. Clearly $P(T_{CD}(\beta)) \leq P(\beta)$. Now note that
 $$
 T_{PGD}(\beta)= \argmin_{\hat{\beta}} \left( H(\beta,\hat{\beta}) = f(\beta) + \langle \nabla f(\beta),\hat{\beta} - \beta ) + \frac{L(f)}{2} ||\beta-\hat{\beta}  ||^2+ J(\beta) \right)
 $$ 

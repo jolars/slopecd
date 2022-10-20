@@ -134,8 +134,35 @@ P(T_{PGD}(\beta)) - P(\beta^*)  \leq
 \frac{1}{2}\left( P(\beta) - P(\beta^*)\right) & \mbox{else,}
 \end{cases}
 $$
-where $R^2=||\beta- \beta^*||_L$. To get the convergence rate apply proof of Theorem 1. in \cite{richtarik2014iteration}.
+where $R^2=||\beta- \beta^*||_L$. 
 
+
+To get the convergence rate apply proof of Theorem 1. in \cite{richtarik2014iteration}.
+
+Alternative proof:
+We want to show that the $\lim \beta^{(t)} \in \Omega = \{\beta:0 \in \partial P(\beta)\}$ . To show this we use \cite{Zangwill}[Convergence Theorem A. p.91] For simplicity we assume that our point-to-set map, $A$ is $v$ iterations of Algorithm \ref{alg:hybrid}.  By  Convergence Theorem A the result follows is:
+\begin{enumerate}
+\item For all $t$, $\beta^{(t)}$ is in a compact set.
+\item $P$ is continuous and if $\beta \notin \Omega = \{\beta:0 \in \partial P(\beta)\}$ then
+$
+P(A(\beta)) < 
+P(\beta).
+$
+\item If $\beta  \in \Omega =\{\beta:0 \in \partial P(\beta)\}$ then 
+$
+P(A(\beta)) \leq 
+P(\beta).
+$
+\end{enumerate}
+Before showing these three statements we decompose the map into two parts, $v-1$ coordinate descent step, $A_{CD}$, and $1$ proximal gradient decent step ,$A_{PGD}$. Now clearly we have that $$P(A_{CD}(\beta)) \leq P(\beta)$$ for all $\beta \in \mathbb{R}^p$. For $A_{PGD}$ we have two useful properties: First, if $||A_{PGD}(\beta) - \beta||=0$ then by \cite{beck2009}[Lemma 2.2] it follows that $\beta \in \Omega$. Second,  by \cite{beck2009}[Lemma 2.3 using $x=y$] if follows that $$P(A_{PGD}(\beta)) - P(\beta) \leq  - \frac{L(f)}{2}||A_{PGD}(\beta) - \beta||^2,$$ where $L(f)$ is the Lipschitz constant of $f(\beta)= ||y-A\beta||^2$.
+
+Now we are ready prove the statements:
+\begin{enumerate}
+\item Follows by that the level set of $P$ are compact and that $P(A(\beta)) \leq P(\beta)$.
+\item Follows by that if  $\beta \notin \Omega$ it follows that $||A_{PGD}(\beta) - \beta||>0$ and thus $P(A_{PGD}(\beta)) > P(\beta) \Rightarrow P(A(\beta)) < 
+P(\beta)$.
+\item Follows directly by $P(A(\beta)) \leq P(\beta)$.
+\end{enumerate}
 
 \subsection{Partial smoothness of the sorted $\ell_1$ norm}
 \label{app:sec:partly_smooth}

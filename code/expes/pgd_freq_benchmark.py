@@ -34,6 +34,20 @@ betas = list()
 primals = list()
 gaps = list()
 times = list()
+
+# run once for numba JIT
+beta_cd, _, primals_cd, gap_cd, time_cd, _ = hybrid_cd(
+    X,
+    y,
+    alphas,
+    max_epochs=max_epochs,
+    verbose=verbose,
+    tol=tol,
+    pgd_freq=4,
+    gap_freq=gap_freq,
+    max_time=max_time,
+)
+
 for k in freqs:
     beta_cd, _, primals_cd, gap_cd, time_cd, _ = hybrid_cd(
         X,
@@ -74,7 +88,7 @@ for k in freqs:
 ax.set_ylabel(r"$P(\beta) - P(\beta^*)$")
 ax.set_xlabel("Time (s)")
 ax.set_ylim(1e-10, None)
-ax.set_xlim(0, 2)
+ax.set_xlim(0, 3)
 
 
 if save_fig:

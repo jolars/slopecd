@@ -205,12 +205,36 @@ This allows to apply result about the structure identification of the proximal g
     J(u) = \sum_{k=1}^m \left( \sum_{j \in \cC_k} \lambda_j \right)c_k' \enspace ,
   \end{align}
   hence $J$ is linear on $\cM$ thus $\cC^2$ around $x$. 
-  \item The subdifferential of $J$ at $x$ is 
+  \item The subdifferential of $J$ at $x$ is the set of all $g\in\bbR^p$ such that 
   \begin{align}
-    \partial J(x) = 
+    g_{\cC_i} = \left \{ s \in \bbR^{|C_i|} | 
+    \begin{cases}
+      \mathrm{cumsum}(|s|_{\downarrow} - \lambda_{R(s)_{\cC_i}}) \preceq 0 & \mathrm{if } \beta_{\cC_i} = \textbf{0}, \\
+      \mathrm{cumsum}(|s|_{\downarrow} - \lambda_{R(s)_{\cC_i}}) \preceq 0 \\
+      \mathrm{ and } \sum_{j\in \cC_i} (|s_j| - \lambda_{R(s)_{\cC_i}}) = 0 \\
+      \mathrm{ and } \sign(\beta_{\cC_i}) =  \sign(s) & otherwise
+    \end{cases}
+    \right \} \nonumber
   \end{align}
-  \klopfe{Compute what is the linear hull of subdifferential restricted to one cluster}
-  \item The subdifferential of $J$ is a constant set locally around $x$ along $\cM$ which shows that it is continuous at $x$ relative to $\cM$. 
+ 
+  \klopfe{Prove that the inequality constraint in the case not 0 belongs to the hyperplane defined by the equality constraints}
+\begin{itemize}
+
+  \item We study the case where $|\cC_i|=1$  and $\beta_{\cC_i}\neq 0$. In this case, the set $g_{\cC_i}$ is a singleton $\{\sign(\beta_{\cC_i})\lambda_{R(s)_{\cC_i}}\}$ and its linear hull is simply $\{0\}$. Hence, the orthogonal set of the linear hull of $g_{\cC_i}$ is $\bbR$. 
+
+  \item We study the case where $|\cC_i|\neq 1$  and $\beta_{\cC_i}\neq \textbf{0}$.
+  The two last constraints can be rewritten
+  \begin{align}
+    \sum_{j\in \cC_i} (\sign(\beta_j)s_j - \lambda_{R(s)_{\cC_i}}) = 0 \nonumber \enspace .
+  \end{align}
+  This set is an hyperplane which has a dimension $\bbR^{|\cC_i - 1|}$. Its linear hull is simply the set $\{s\in\bbR^{|\cC_i|} : \sum_{j\in \cC_i} (\sign(\beta_j)s_j = 0\}$. 
+  The orthogonal set is given by the $\Span(w)$ where $w\in\bbR^{|\cC_i|}$ with $w = \sign(\beta_{\cC_i})$.
+
+  \item  We study the case where $\beta_{\cC_i} = \textbf{0}$
+
+\end{itemize}
+  \item The subdifferential of $J$ is a constant set locally around $x$ along $\cM$ since the clusters of any point in the neighboorhood of $x$ in $\cM$ shares the same clusters with $x$. 
+  This shows that it is continuous at $x$ relative to $\cM$. 
 \end{enumerate}
 
 % We will now establish that $J$ is linear on $\mathcal{M}$.
@@ -221,7 +245,7 @@ This allows to apply result about the structure identification of the proximal g
 
 
 
-  $J$ is linear hence smooth on $\cM$, its gradient is TODO $\sum_k (\sum_{j \in \cC_k} \lambda_j) v_k$. \mm{and this is orthogonal to $\cM$ because??? it cannot be, it's in $\cM$}
+  % $J$ is linear hence smooth on $\cM$, its gradient is TODO $\sum_k (\sum_{j \in \cC_k} \lambda_j) v_k$. \mm{and this is orthogonal to $\cM$ because??? it cannot be, it's in $\cM$}
 
   If one cluster of $x$ vanishes ($c_m = 0)$, the same reasoning holds wih the manifold $cM \cap \{u \in \bbR^d: u_{\cC_m} = 0\}$ aka $c'_m = 0$).
 \end{proof}

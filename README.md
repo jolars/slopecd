@@ -1,7 +1,7 @@
 # Coordinate Descent for SLOPE
 
 This repository provides code to reproduce the experiments for the academic
-research paper _Coordinate Descent for SLOPE_ along with the appendix.
+research paper _Coordinate Descent for SLOPE_.
 
 This repository contains the following items:
 

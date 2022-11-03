@@ -1,0 +1,15 @@
+\section{DISCUSSION}\label{sec:discussion}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+In this paper we have presented a new, fast algorithm for solving Sorted L-One Penalized Estimation (SLOPE).
+Our method relies on a combination of proximal gradient descent to identify the cluster structure of the solution and coordinate descent to allow the algorithm to take large steps.
+In our results, we have shown that our method often outperforms all competitors by orders of magnitude for high-to-medium levels of regularization and typically performs among the best algorithms for low levels of regularization.
+
+We have not, in this paper, considered using screening rules for SLOPE~\parencite{larsson2020c,elvira2022}.
+Although screening rules work for any algorithm considered in this article, they are particularly effective when used in tandem with coordinate descent~\parencite{fercoq2015} and, in addition, easy to implement due to the nature of coordinate descent steps.
+Coordinate descent is moreover especially well-adapted to fitting a path of \(\lambda\) sequences~\parencite{friedman2007,friedman2010}, which is standard practice during cross-validating to obtain an optimal \(\lambda\) sequence.
+
+Future research directions may include investigating alternative strategies to split clusters, for instance by considering the directional derivatives with respect to the coefficients of an entire cluster at once.
+Another potential approach could be to see if the full proximal gradient steps might be replaced with batch stochastic gradient descent in order to reduce the costs of these steps.
+It would also be interesting to consider whether gap safe screening rules might be used not only to screen predictors, but also to deduce whether clusters are able to change further during optimization.
+Finally, combining cluster identification of proximal gradient descent with solvers such as second order ones as in~\textcite{bareilles2022newton} is a direction of interest.

@@ -1,0 +1,268 @@
+\section{PROOFS}
+\label{sec:proofs}
+
+\subsection{Proof of \Cref{thm:sl1-directional-derivative}}
+\label{app:proof_directional_derivative}
+
+Let \(c^{\setminus k}\) be the set containing all elements of $c$ except the $k$-th one: $c^{\setminus k} =  \{c_1, \ldots c_{k-1}, c_{k+1}, \ldots, c_m \}$.
+
+From the observations in \Cref{rem:permutation_C_z},
+we have the following cases to consider: \(|z| \in c^{\setminus k}\),
+\(|z| = 0\), and \(|z| \notin \{0\} \cup c^{\setminus k}\).
+
+
+Since \(C(z + \delta h) = C(z) = \cC_k\) and $\sign(z + \delta h) = \sign(z)$ for $h$ small enough,
+\begin{align}
+	H(z + \delta h) - H(z)
+	 & = \sum_{j =1}^p |\beta(z + \delta h)_j| \lambda_{(j)^-_{z + \delta h}}
+	- \sum_{j=1}^p |\beta(z)_j| \lambda_{(j)^-_z} \nonumber                                       \\
+	 & = \sum_{j =1}^p (|\beta(z + \delta h)_j| - |\beta(z)_j|) \lambda_{(j)^-_z} \nonumber       \\
+	 & = \sum_{j =1}^p (|\beta(z + \delta h)_j| - |\beta(z)_j|) \lambda_{(j)^-_z} \nonumber       \\
+	 & = \sum_{j \in C(z)}^p (|\beta(z + \delta h)_j| - |\beta(z)_j|) \lambda_{(j)^-_z} \nonumber \\
+	 & = \sum_{j \in C(z)} \sign(\beta(z)_j) (z + \delta h - z) \lambda_{(j)^-_z} \nonumber       \\
+	 & = \sum_{j \in C(z)} \sign(z) \delta h  \lambda_{(j)^-_z} \nonumber                         \\
+	 & = \sum_{j \in \cC_k} \sign(z) \delta h  \lambda_{(j)^-_z} \, .
+\end{align}
+
+\paragraph{Case 2}
+Then if  $z \neq 0$ and $|z|$ is equal to one of the $c_i$'s, $i \neq k$,  one has $C(z) = \cC_k \cup \cC_i$, $C(z + \delta h) = \cC_k$, and $\sign(z + \delta h) = \sign(z)$ for $h$ small enough.
+Thus
+\begin{align}
+	H(z + \delta h) - H(z)
+	 & = \sum_{j =1}^p |\beta(z + \delta h)_j| \lambda_{(j)^-_{z + \delta h}}
+	- \sum_{i=1}^p |\beta(z)_j| \lambda_{(j)^-_z}  \nonumber                                         \\
+	 & = \sum_{j \in \cC_k \cup \cC_i} \left( |\beta(z + \delta h)_j| \lambda_{(j)^-_{z + \delta h}}
+	- |\beta(z)_j| \lambda_{(j)^-_z} \right)  \nonumber                                              \\
+	 & = \sum_{j \in \cC_k} \left( c_i + \delta h \right) \lambda_{(i)^-_{z + \delta h}}
+	- c_i \lambda_{(i)^-_z}
+	+ \sum_{j \in \cC_i} \left( c_i \lambda_{(j)^-_{z + \delta h}}
+	- c_i \lambda_{(i)^-_z} \right) \, .
+\end{align}
+Note that there is an ambiguity in terms of permutation, since, due to the clustering, there can be more than one permutation reordering $\beta(z)$.
+However, choosing any such permutation result in the same values for the computed sums.
+
+\paragraph{Case 3} Finally let us treat the case $z = 0$.
+If $c_m = 0$ then the proof proceeds as in case 2, with the exception that $|\beta(z + \delta h)| = h$ and so the result is just:
+\begin{align}
+	H(z + \delta h) - H(z)
+	 & = h \sum_{j \in \cC_k} \lambda_{(i)^-_{z + \delta h}} \, .
+\end{align}
+If $c_m \neq 0$, then the computation proceeds exactly as in case 1.
+
+\subsection{Proof of \Cref{thm:thresholding-operator}}
+
+Recall that \(G(z) : \mathbb{R} \to \mathbb{R}\) is a convex,
+continuous piecewise-differentiable function with breakpoints whenever \(|z| =
+c_i^{\setminus k}\) or \(z = 0\). Let \(\gamma = c_k \norm{\tilde{x}}^2+ \tilde x^T r\)
+and \(\omega = \norm{\tilde{x}}^2\) and note that the optimality criterion
+for~\eqref{pb:cluster-problem} is
+\[
+	\delta(\omega z - \gamma) + H'(z; \delta) \geq 0, \quad
+	\forall \delta \in \{-1, 1\},
+\]
+which is equivalent to
+\begin{equation}
+	\label{eq:optimality-inequality}
+	\omega z - H'(z; -1) \leq \gamma \leq \omega z + H'(z; 1).
+\end{equation}
+We now proceed to show that there is a solution \(z^* \in \argmin_{z \in
+	\mathbb{R}} H(z)\) for every interval over \(\gamma \in \mathbb{R}\).
+
+First, assume that the first case in the definition of \(T\) holds
+and note that this is equivalent to~\eqref{eq:optimality-inequality} with \(z
+= 0\) since \(C({\varepsilon_c}) = C(-{\varepsilon_c})\) and
+\(\lambda_{(j)^-_{-{\varepsilon_c}}} = \lambda_{(j)^-_{{\varepsilon_c}}}\).
+This is sufficient for \(z^* = 0\).
+
+Next, assume that the second case holds and observe that this is equivalent
+to~\eqref{eq:optimality-inequality} with
+\(z = c_i^{\setminus k}\), since
+\(C(c_i + {\varepsilon_c}) = C(-c_i - {\varepsilon_c})\) and
+\(C(-c_i + {\varepsilon_c}) = C(c_i - {\varepsilon_c})\). Thus \(z^* =
+\sign(\gamma)c_i^{\setminus k}\).
+
+For the third case, we have
+\[
+	\smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}}
+	=
+	\smashoperator[r]{\sum_{j \in C(c_{i-1} - {\varepsilon_c})}} \lambda_{(j)^-_{c_{i-1} - {\varepsilon_c}}}
+\]
+and therefore~\eqref{eq:optimality-inequality} is equivalent to
+\[
+	c_i < \frac{1}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} \bigg) < c_{i -1}.
+\]
+Now let
+\begin{equation}
+	\label{eq:differentiable-solution}
+	z^* = \frac{\sign(\gamma)}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} \bigg)
+\end{equation}
+and note that \(|z^*| \in \big(c_i^{\setminus k}, c_{i-1}^{\setminus k}\big)\) and hence
+\[
+	\frac{1}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(c_i + {\varepsilon_c})}} \lambda_{(j)^-_{c_i + {\varepsilon_c}}} \bigg)
+	=
+	\frac{1}{\omega} \bigg( |\gamma| - \smashoperator{\sum_{j \in C(z^*)}} \lambda_{(j)^-_{z^*}} \bigg).
+\]
+Furthermore, since \(G\) is differentiable in \(\big(c_i^{\setminus k}, c_{i-1}^{\setminus k}\big)\), we have
+\[
+	\frac{\partial}{\partial z} G(z) \Big|_{z = z^*}
+	= \omega z^* - \gamma + \sign(z^*) \smashoperator{\sum_{j \in C(z^*)}} \lambda_{(j)^-_{z^*}} = 0,
+\]
+and therefore~\eqref{eq:differentiable-solution} must be the solution.
+
+The solution for the last case follows using reasoning analogous to that of the
+third case.
+
+\subsection{Proof of \Cref{lem:convergence}}
+
+To prove the lemma, we will show that $\lim_{t \rightarrow \infty} \beta^{(t)} \in \Omega = \{\beta:0 \in \partial P(\beta)\}$ using Convergence Theorem A in \textcite[p.~91]{zangwill1969}.
+For simplicity, we assume that the point to set map $A$ is generated by $v$ iterations of \Cref{alg:hybrid}, that is $A(\beta^{(0)})= \{\beta^{(vi)}\}_{i=0}^\infty$.
+To be able to use the theorem, we need the following assumptions to hold.
+\begin{enumerate}
+	\item The set of iterates, $A(\beta^{(0)})$ is in a compact set.
+	\item $P$ is continuous and if $\beta \notin \Omega = \{\beta:0 \in \partial P(\beta)\}$, then for any $\hat{\beta} \in A(\beta)$  it holds that $P(\hat{\beta}) < P(\beta)$.
+	\item If $\beta  \in \Omega =\{\beta:0 \in \partial P(\beta)\}$, then for any $\hat{\beta}\in A(\beta)$ it holds that $P(\hat{\beta}) \leq P(\beta)$.
+\end{enumerate}
+
+Before tackling these three assumptions, we decompose the map into two parts: $v-1$ coordinate descent steps, $T_\text{CD}$, and one proximal gradient decent step, $T_{\text{PGD}}$.
+This clearly means that
+$$
+	P(T_\text{CD}(\beta)) \leq P(\beta)
+$$
+for all $\beta \in \mathbb{R}^p$.
+For $T_\text{PGD}$, we have two useful properties: first, if $||T_\text{PGD}(\beta) - \beta||=0$, then by Lemma~2.2 in \textcite{beck2009} it follows that $\beta \in \Omega$.
+Second, by Lemma~2.3 in \textcite{beck2009}, using $x=y$, it follows that
+$$
+	P(T_\text{PGD}(\beta)) - P(\beta) \leq  - \frac{L(f)}{2}||T_\text{PGD}(\beta) - \beta||^2,
+$$
+where $L(f)$ is the Lipschitz constant of the gradient of $f(\beta)= \frac{1}{2}||y-X\beta||^2$.
+
+We are now ready to prove that the three assumptions hold.
+\begin{itemize}
+	\item Assumption 1 follows from the fact that the level sets of $P$ are compact and from $P(T_{PGD}(\beta)) \leq P(\beta)$ and $P(T_{CD}(\beta)) \leq P(\beta)$.
+	\item Assumption 2 holds since if $\beta \notin \Omega$, it follows that $||T_\text{PGD}(\beta) - \beta|| > 0$ and thus $P(T_\text{PGD}(\beta)) < P(\beta)$.
+	\item Assumption 3 follows  from $P(T_{PGD}(\beta)) \leq P(\beta)$ and $P(T_{CD}(\beta)) \leq P(\beta)$.
+\end{itemize}
+Using Theorem~1 from \textcite{zangwill1969}, this means that \Cref{alg:hybrid} converges as stated in the lemma.
+
+\subsection{Partial Smoothness of the Sorted $\ell_1$ Norm}
+\label{app:sec:partly_smooth}
+
+In this section, we prove that the sorted $\ell_1$ norm $J$ is partly smooth~\parencite{lewis2002a}.
+This allows us to apply results about the structure identification of the proximal gradient algorithm.
+
+\begin{definition}
+	Let $J$ be a proper closed convex function and $x$ a point of its domain such that $\partial J(x) \neq \emptyset$.
+	$J$ is said to be partly smooth at $x$ relative to a set $\cM$ containing $x$ if:
+	\begin{enumerate}
+		\item $\cM$ is a $C^2$-manifold around $x$ and $J$ restricted to $\cM$ is $C^2$ around $x$.
+		\item The tangent space of $\cM$ at $x$ is the orthogonal of the parallel space of $\partial J(x)$.
+		\item $\partial J$ is continuous at $x$ relative to $\cM$.
+	\end{enumerate}
+\end{definition}
+
+Because the sorted \(\ell_1\) norm is a polyhedral, it follows immediately that it
+is partly smooth~\parencite[Example 18]{vaiter2017}. But since we believe a direct
+proof is interesting in and of itself, we provide and prove the following proposition here.
+
+\begin{proposition}
+	Suppose that the regularization parameter $\lambda$ is a strictly decreasing sequence. Then the sorted $\ell_1$ norm is partly smooth at any point of $\bbR^p$.
+\end{proposition}
+
+\begin{proof}
+	Let $m$ be the number of clusters of $x$ and $\cC_1, \ldots, \cC_m$ be those clusters, and let $c_1 > \cdots > c_m > 0$ be the  value of  $\lvert x \rvert$ on the clusters.
+
+	We define $\varepsilon_c$ as in \Cref{eq:epsilon-c} and
+	let $\cB = \{u \in \bbR^p: \lVert u - x \rVert_\infty < \varepsilon_c / 2\}$.
+	Let $v_k \in \bbR^p$ for $k \in [m]$  be equal to $\sign(x_{\cC_k})$ on $\cC_k$ and to 0 outside, such that $x = \sum_{k=1}^m c_k v_k$.
+	We define
+	\begin{equation*}
+		\cM =
+		\begin{cases}
+			\Span(v_1, \ldots, v_m) \cap \cB \,     & \text{if } c_m \neq 0 \, , \\
+			\Span(v_1, \ldots, v_{m-1}) \cap \cB \, & \text{otherwise} \, .
+		\end{cases}
+	\end{equation*}
+	We will show that $J$ is partly smooth at $x$ relative to $\cM$.
+
+	As a first statement, we prove that any $u\in\cM$ shares the same clusters as $x$. For any $u\in\cM$ there exists $c' \in \bbR^m$, $u = \sum_{k=1}^m c'_k v_k$ (with $c'_m = 0$ if $c_m = 0$).
+	Suppose that there exist $k \neq k'$ such that $c'_k = c'_{k'}$.
+	Then since $\lVert x - u \rVert_\infty = \max_k |c_k - c'_k|$ and $|c_k - c_{k'}| > \varepsilon_c$, one has:
+	\begin{align*}
+		\varepsilon_c < |c_k - c_{k'}|
+		 & = |c_k - c'_k + c'_{k'} - c_{k'}|      \\
+		 & \leq |c_k - c'_k| + |c'_{k'} - c_{k'}| \\
+		 & \leq 2 \lVert x - u \rVert_\infty      \\
+		 & \leq  \varepsilon_c \, .
+	\end{align*}
+
+	This shows that clusters of any $u \in \cM$ are equal to clusters of $x$.
+	Further, clearly the tangent space of $\cM$ at $x$ is $\Span(v_1, \hdots, v_m)$ if $c_m \neq 0$ and $\Span(v_1, \ldots, v_{m-1})$ otherwise.
+
+	\begin{enumerate}
+		\item The set $\cM$ is then the intersection of a linear subspace and an open ball, and hence is a $\cC^2$ manifold.
+		      Since the clusters of any $u\in\cM$ are the same as the clusters of $x$, we can write that
+		      \begin{align}{}
+			      J(u) = \sum_{k=1}^m \left( \sum_{j \in \cC_k} \lambda_j \right)c_k' \enspace ,
+		      \end{align}
+		      and hence $J$ is linear on $\cM$ and thus $\cC^2$ around $x$.
+		\item We let $x_\downarrow$ denote a version of \(x\) sorted in non-increasing order and let $R:\bbR^p \rightarrow \mathbb{N}^p$ be the function that returns the ranks of the absolute values of its argument. The subdifferential of $J$ at $x$ \parencite[Thm. 1]{larsson2020c}\footnote{We believe there to be a typo in the definition of the subgradient in \parencite[Thm. 1]{larsson2020c}. We believe the argument of \(R\) should be \(g\), not \(s\), since otherwise there is a dimension mismatch.} is the set of all $g\in\bbR^p$ such that
+		      \begin{align}\label{eq:slope_subdiff}
+			      g_{\cC_i} \in \cG_i \triangleq \left \{ s \in \bbR^{|C_i|} :
+			      \begin{cases}
+				      \cumsum(|s|_{\downarrow} - \lambda_{R(g)_{\cC_i}}) \preceq 0 & \text{if } x_{\cC_i} = \textbf{0} \, , \\
+				      \cumsum(|s|_{\downarrow} - \lambda_{R(g)_{\cC_i}}) \preceq 0                                          \\
+				      \quad \text{ and } \sum_{j\in \cC_i} (|s_j| - \lambda_{R(g)_{\cC_i}}) = 0                             \\
+				      \quad \text{ and } \sign(x_{\cC_i}) =  \sign(s)              & \mathrm{otherwise.}
+			      \end{cases}
+			      \right \}
+		      \end{align}
+		      Hence, the problem can be decomposed over clusters.
+		      We will restrict the analysis to a single $\cC_i$ without loss of generality and proceed in $\bbR^{|\cC_i|}$.
+		      \begin{itemize}
+
+			      \item First we treat the case where $|\cC_i|=1$  and $x_{\cC_i}\neq 0$.
+			            The set $\cG_i$ is then the singleton $\{\sign(x_{\cC_i})\lambda_{R(s)_{\cC_i}}\}$ and its parallel space is simply $\{0\}$.
+			            Hence, $\parset(\cG_i)^\perp = \bbR = \Span (\sign(x)_{\cC_i})$.
+			            %
+			      \item Then, we study the case where $|\cC_i|\neq 1$  and $x_{\cC_i}\neq \textbf{0}$.
+			            Since for all $j \in [p]$, $\lambda_j\neq 0$ and $\lambda$ is a strictly decreasing sequence, we have that for $\varepsilon > 0$ small enough, the $|\cC_i| -1$ points $\lambda_{R(g)_{\cC_i}} + \varepsilon [-\sign(x_{\cC_i})_1, \sign(x_{\cC_i})_2, 0, \hdots, 0]^T$, $\lambda_{R(g)_{\cC_i}} + \varepsilon [0, -\sign(x_{\cC_i})_2, \sign(x_{\cC_i})_3, \hdots, 0]^T$, $\hdots$, $\lambda_{R(g)_{\cC_i}} + \varepsilon [0, 0, 0, \hdots,-\sign(x_{\cC_i})_{|\cC_{i}|-1}, \sign(x_{\cC_i})_{|\cC_{i}|}]^T$ belong to $\cG_i$.
+			            Since these vectors are linearly independent, and using the last equality in the feasible set that, we have that
+			            \begin{align}
+				            \sum_{j\in \cC_i} \sign(x_j)s_j = \sum_{j \in \cC_i}  \lambda_{R(g)_{\cC_i}} \nonumber \enspace .
+			            \end{align}
+			            Its parallel space is simply the set $\{s\in\bbR^{|\cC_i|} : \sum_{j\in \cC_i} \sign(x_j)s_j = 0\}$, that is just $\Span(\sign(x_{\cC_i}))^\perp$.
+			            Hence $\parset(\cG_i)^\perp = \Span(\sign(x_{\cC_i}))$.
+
+			      \item  Finally, we study the case where $x_{\cC_m} = \textbf{0}$.
+			            Then the $\ell_\infty$ ball $\{s \in \bbR^{|\cC_m|}: \Vert s \Vert_\infty \leq \lambda_p\}$ is contained in the feasible set of the differential, hence the parallel space of $\cG_m$ is $\bbR^{|\cC_m|}$ and its orthogonal is reduced to $\{ \mathbf{0} \}$.
+		      \end{itemize}
+
+		      We can now prove that $\parset(\partial J(x))^\perp$ is the tangent space of $\cM$.
+		      From the decomposability of $\partial J$ (\Cref{eq:slope_subdiff}), one has that $u \in \parset(\partial J(x)) ^\perp$ if and only if $u_{\cC_i} \in \parset (\cG_i)^\perp$ for all $i \in [m]$.
+
+		      If $c_m > 0$, we have
+		      \begin{equation}
+			      \begin{aligned}
+				      \parset(\partial J(x))^\perp & = \{ u \in \bbR^p : \forall i \in [m], u_{\cC_i} \in \parset (\cG_i)^\perp \}   \\
+				                                   & = \{ u \in \bbR^p : \forall i \in [m], u_{\cC_i} \in \Span(\sign(x_{\cC_i})) \} \\
+				                                   & = \Span(v_1, \ldots, v_m) \, .
+			      \end{aligned}
+		      \end{equation}
+
+		      If $c_m=0$, we have
+		      \begin{equation}
+			      \begin{aligned}
+				      \parset(\partial J(x))^\perp & = \{ u \in \bbR^p : \forall i \in [m], u_{\cC_i} \in \parset (\cG_i)^\perp \}                                             \\
+				                                   & = \{ u \in \bbR^p : \forall i \in [m- 1], u_{\cC_i} \in \Span(\sign(x_{\cC_i}))  \quad  \& \quad u_{\cC_m} = \mathbf{0}\} \\
+				                                   & = \Span(v_1, \ldots, v_{m-1}) \, .
+			      \end{aligned}
+		      \end{equation}
+		\item The subdifferential of $J$ is a constant set locally around $x$ along $\cM$ since the clusters of any point in the neighborhood of $x$ in $\cM$ shares the same clusters with $x$.
+		      This shows that it is continuous at $x$ relative to $\cM$.
+	\end{enumerate}
+\end{proof}
+
+\begin{remark}
+	We believe that the assumption $\lambda_1 > \cdots > \lambda_p$ can be lifted, since for example the $\ell_1$ and $\ell_\infty$ norms are particular instances of $J$ that violate this assumption, yet are still partly smooth.
+	Hence this assumption could probably be lifted in a future work using a slightly different proof.
+\end{remark}

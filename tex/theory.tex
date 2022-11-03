@@ -1,0 +1,288 @@
+%!TEX root = ./main.tex
+
+\section{COORDINATE DESCENT FOR SLOPE}\label{sec:theory}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Proximal coordinate descent cannot be applied to \Cref{pb:slope} because the non-smooth term is not separable.
+If the clusters $\mathcal{C}_1^*, \ldots, \mathcal{C}_{m^*}^*$ and signs of the solution $\beta^*$ were known, however, then the values $c_1^*, \ldots, c_{m^*}^*$ taken by the clusters of $\beta^*$ could be computed by solving
+\begin{problem}\label{pb:separable_slope}
+\begin{multlined}
+  \min_{z \in \bbR^{m^*}}\bigg(
+  \frac{1}{2} \Big\lVert y - X \sum_{i=1}^{m^*} \sum_{j \in \mathcal{C}_i^*} z_i \sign(\beta_j^*) e_j \Big\rVert^2 \\
+  + \sum_{i=1}^{m^*} | z_i | \sum_{j \in \mathcal{C}_i^*} \lambda_j
+  \bigg).
+\end{multlined}
+\end{problem}
+Conditionally on the knowledge of the clusters and the signs of the coefficients, the penalty becomes separable~\parencite{dupuis2021}, which means that coordinate descent could be used.
+
+Based on this idea, we derive a coordinate descent update for minimizing the SLOPE problem~\eqref{pb:slope} with respect to the coefficients of a single cluster at a time~(\Cref{sec:cd-update}).
+Because this update is limited to updating and, possibly, merging clusters, we intertwine it with proximal gradient descent in order to correctly identify the clusters~(\Cref{sec:pgd-update}).
+In \Cref{sec:hybrid-strategy}, we present this hybrid strategy and show that is guaranteed to converge.
+In \Cref{sec:experiments}, we show empirically that our algorithm outperforms competing alternatives for a wide range of problems.
+
+\subsection{Coordinate Descent Update}
+\label{sec:cd-update}
+
+In the sequel, let $\beta$ be fixed with $m$ clusters $\mathcal{C}_1, \ldots, \mathcal{C}_m$ corresponding to values $c_1, \ldots, c_m$.
+In addition, let $k \in [m]$ be fixed and $s_k = \sign \beta_{\mathcal{C}_k}$.
+We are interested in updating $\beta$ by changing only the value taken on the $k$-th cluster.
+To this end, we define $\beta(z) \in \bbR^p$ by:
+\begin{equation}
+  \label{eq:coordinate-update-beta}
+  \beta_i(z) =
+  \begin{cases}
+    \mathrm{sign}(\beta_i) z   \, , & \text{if } i \in \mathcal{C}_k \, , \\
+    \beta_i \, ,                    & \text{otherwise} \, .
+  \end{cases}
+\end{equation}
+Minimizing the objective in this direction amounts to solving the following
+one-dimensional problem:
+\begin{problem}
+  \label{pb:cluster-problem}
+  \min_{z \in \mathbb{R}} \Big(
+  G(z) = P(\beta(z))  = \frac{1}{2} \norm{y - X \beta(z)}^2 + H(z)
+  \Big) \,  ,
+\end{problem}
+where
+\begin{equation}
+  H(z) = |z| \sum_{j \in \mathcal{C}_k} \lambda_{(j)^-_z}
+  + \sum_{j \notin \mathcal{C}_k} |\beta_j| \lambda_{(j)^-_z}
+\end{equation}
+is the \emph{partial sorted \(\ell_1\) norm} with respect to the \(k\)-th cluster and where we write \(\lambda_{(j)^-_z}\) to indicate that the inverse sorting permutation \((j)^-_z\)
+is defined with respect to \(\beta(z)\).
+The optimality condition for \Cref{pb:cluster-problem} is
+\[
+  \forall \delta \in \{-1, 1\}, \quad G'(z; \delta) \geq 0,
+\]
+where $G'(z; \delta) $ is the directional derivative of $G$ in the direction $\delta$.
+Since the first part of the objective is differentiable, we have
+\[
+  G'(z; \delta)  = \delta \sum_{j \in \mathcal{C}_k} X_{:j}^\top(X\beta(z) - y) + H'(z; \delta) \, ,
+\]
+where \(H'(z; \delta)\) is the directional derivative of $H$.
+
+Throughout the rest of this section we derive the solution to \eqref{pb:cluster-problem}.
+To do so, we will introduce the directional derivative for the
+sorted \(\ell_1\) norm with respect to the coefficient of the \(k\)-th cluster.
+First, as illustrated on \Cref{fig:partial_slope}, note that $H$ is piecewise affine, with breakpoints at 0 and all $\pm c_i$'s for $i \neq k$.
+Hence, the partial derivative is piecewise constant, with jumps at these points; in addition, $H'(\cdot; 1) = H'(\cdot, -1)$ except at these points.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{partial_slope.pdf}
+  \caption{Graph of the partial sorted $\ell_1$ norm with \(\beta = [-3, 1, 3, 2]^T\), \(k = 1\), and so $c_1, c_2, c_3 = (3, 2, 1)$.}
+  \label{fig:partial_slope}
+\end{figure}
+
+Let \(C(z)\) be the function that returns the cluster of $\beta(z)$ corresponding to \(|z|\), that is
+\begin{equation}
+  C(z) = \{j : |\beta(z)_j| = |z|\} \,.
+\end{equation}
+
+\begin{remark}\label{rem:permutation_C_z}
+  Note that if $z$ is equal to some $c_i$, then $C(z) = \mathcal{C}_i \cup \mathcal{C}_k$, and otherwise $C(z) = \mathcal{C}_k$.
+  Related to the piecewise affineness of $H$ is the fact that the permutation\footnote{the permutation is in fact not unique, without impact on our results. This is discussed when needed in the proofs.} corresponding to $\beta(z)$ is
+  \begin{equation*}
+    \begin{cases}
+      \cC_k, \cC_m, \ldots, C_1
+       & \text{ if } z \in \left]0, c_m\right[ \, ,                                                                     \\
+      \cC_m, \ldots ,\cC_i, \cC_k, \cC_{i-1}, \ldots, C_1
+       & \splitfrac{\text{ if } z \in \left]c_{i}, c_{i-1} \right[}{\text{ and } i \in \llbracket 2 , m \rrbracket\, ,} \\
+      \cC_m, \ldots C_1,  \cC_k
+       & \text{ if } z \in \left]c_1, +\infty \right[ \, ,                                                              \\
+    \end{cases}
+  \end{equation*}
+  and that this permutation also reorders $\beta(z \pm h)$ for $z \neq c_i \; (i \neq k)$ and $h$ small enough.
+  The only change in permutation happens when $z = 0$ or $z = c_i \; (i \neq k)$.
+  Finally, the permutations differ between $\beta(z + h)$ and $\beta(z - h)$ for arbitrarily small $h$ if and only if $z = c_i \neq 0$.
+\end{remark}
+
+We can now state the directional derivative of $H$.
+
+\begin{theorem}\label{thm:sl1-directional-derivative}
+  Let \(c^{\setminus k}\) be the set containing all elements of $c$ except the $k$-th one: $c^{\setminus k} =  \{c_1, \ldots c_{k-1}, c_{k+1}, \ldots, c_m \}$.
+  Let $\varepsilon_c > 0$ such that
+  \begin{equation}
+    \label{eq:epsilon-c}
+    \varepsilon_c < \big| c_i - c_j\big| , \quad \forall\, i \neq j \text{ and } \varepsilon_c < c_m \text{ if } c_m \neq 0 \, .
+  \end{equation}
+  The directional derivative of the partial sorted $\ell_1$ norm with respect to the $k$-th cluster, \(H\), in the direction \(\delta\) is
+  \[
+    H'(z; \delta) =
+    \begin{cases}
+      \smashoperator[r]{\sum_{j \in C(\varepsilon_c )}} \lambda_{(j)^-_{\varepsilon_c }}
+       & \text{if } z = 0 \, ,                                \\
+      \sign(z)\delta\smashoperator{\sum_{j \in C(z + {\varepsilon_c} \delta)}} \lambda_{(j)^-_{z + {\varepsilon_c}\delta}}
+       & \text{if } |z| \in c^{\setminus k} \setminus \{0\} , \\
+      \sign(z)\delta\smashoperator{\sum_{j \in C(z)}} \lambda_{(j)^-_{z}}
+       & \text{otherwise} \, .
+    \end{cases}
+  \]
+\end{theorem}
+The proof is in \Cref{app:proof_directional_derivative}; in \Cref{fig:directional-derivative}, we show an example of the directional
+derivative and the objective function.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[]{directional-derivative.pdf}
+  \caption{%
+  The function \(G\) and its directional derivative \(G'( \cdot ; \delta)\) for
+  an example with \(\beta = [-3, 1, 3, 2]^T\), \(k = 1\), and consequently
+  \(c^{\setminus k} = \{1, 2\}\). The solution of \Cref{pb:cluster-problem} is the value of \(z\) for
+  which \(G'(z; \delta) \geq 0 \) for \(\delta \in \{-1, 1\}\), which holds only
+  at \(z = 2\), which must therefore be the solution.
+  }
+  \label{fig:directional-derivative}
+\end{figure}
+
+Using the directional derivative, we can now introduce the SLOPE thresholding operator.
+
+\begin{theorem}[The SLOPE Thresholding Operator]
+  \label{thm:thresholding-operator}
+  Define \(S(x) = \sum_{j \in C(x)}\lambda_{(j)^-_{x}}\) and
+  let
+  \[
+    \begin{multlined}
+      T(\gamma; \omega, c, \lambda) = \\
+      \begin{cases}
+        0
+         & \text{if } |\gamma| \leq S(\varepsilon_c),               \\
+        \sign(\gamma)c_i
+         & \text{if } \omega c_i + S(c_i - \varepsilon_c)           \\
+         & \quad \leq |\gamma| \leq                                 \\
+         & \quad \omega c_i + S(c_i + \varepsilon_c),               \\
+        \frac{\sign(\gamma)}{\omega} \big( |\gamma| - S(c_i + \varepsilon_c) \big)
+         & \text{if } \omega c_i + S(c_i + {\varepsilon_c})         \\
+         & \quad < |\gamma| <                                       \\
+         & \quad \omega c_{i - 1} + S(c_{i - 1} - {\varepsilon_c}), \\
+        \frac{\sign(\gamma)}{\omega} \big( |\gamma| - S(c_1 + {\varepsilon_c}) \big)
+         & \text{if } |\gamma| \geq                                 \\
+         & \quad \omega c_1 + S(c_1 + {\varepsilon_c}).
+      \end{cases}
+    \end{multlined}
+  \]
+  with \({\varepsilon_c}\) defined as in \eqref{eq:epsilon-c}.
+  Let $\tilde x = X_{\cC_k} \sign(\beta_{\cC_k})$
+  and \(r = y - X\beta\).
+  Then
+  \begin{equation}
+    \begin{multlined}
+      T \left(c_k\norm{\tilde x}^2 + \tilde x^Tr; \norm{x}^2, c^{\setminus k}, \lambda \right) = \argmin_{z \in \mathbb{R}} G(z) \,.
+    \end{multlined}
+  \end{equation}
+\end{theorem}
+An illustration of this operator is given in \Cref{fig:slope-thresholding}.
+\begin{remark}
+  The minimizer is unique because \(G\) is the sum of a quadratic function in one variable and a norm.
+\end{remark}
+
+\begin{remark}
+  In the lasso case where the $\lambda_i$'s are all equal, the SLOPE thresholding operator reduces to the soft thresholding operator.
+\end{remark}
+
+In practice, it is rarely necessary to compute all sums in \Cref{thm:thresholding-operator}.
+Instead, we first check in which direction we need to search relative to the current order for the cluster and then search in that direction until we find the solution.
+The complexity of this operation depends on how far we need to search and the size of the current cluster and other clusters we need to consider.
+In practice, the cost is typically larger at the start of optimization and becomes marginal as the algorithm approaches convergence and the cluster permutation stabilizes.
+
+\begin{figure*}[htb]
+  \centering
+  \includegraphics[]{slope-thresholding.pdf}
+  \caption{%
+  An example of the SLOPE thresholding operator for \(\beta = [0.5, -0.5, 0.3, 0.7]^T\), \(c = (0.7, 0.5, 0.3)\)
+  with an update for the second cluster (\(k = 2\)), such that
+  \(c^{\setminus k} = (0.5, 0.3)\). Across regions where the function is constant,
+  the operator sets the result to be either exactly 0 or to the value of one
+  of the elements of \(\pm c^{\setminus k}\).
+  }
+  \label{fig:slope-thresholding}
+\end{figure*}
+
+\subsection{Proximal Gradient Descent Update}
+\label{sec:pgd-update}
+
+The coordinate descent update outlined in the previous section updates the coefficients of each cluster in unison, which allows clusters to merge---but not to split.
+This means that the coordinate descent updates are not guaranteed to identify the clusters of the solution on their own.
+To circumvent this issue, we combine these coordinate descent steps with full proximal gradient steps, which enable the algorithm to identify the cluster structure~\parencite{Liang2014} due to the partial smoothness property of the sorted \(\ell_1\) norm that we prove in \Cref{app:sec:partly_smooth}.
+A similar idea has previously been used in \textcite{bareilles2022newton}, wherein Newton steps are taken on the problem structure identified after a proximal gradient descent step. 
+
+\subsection{Hybrid Strategy}
+\label{sec:hybrid-strategy}
+
+We now present the proposed solver in \Cref{alg:hybrid}.
+For the first and every $v$-th iteration\footnote{Our experiments suggest that \(v\) has little impact on performance as long as it is at least 3~(\Cref{sec:pgd-freq-study}). We have therefore set it to 5 in our experiments.}, we perform a proximal gradient descent update.
+For the remaining iterations, we take coordinate descent steps.
+
+\begin{algorithm}[hbt]
+  \SetKwInOut{Input}{input}
+  \caption{%
+    Hybrid coordinate descent and proximal gradient descent algorithm
+    for SLOPE\label{alg:hybrid}}
+  \Input{%
+    \(X \in \mathbb{R}^{n\times p}\),
+    \(y\in \mathbb{R}^n\),
+    \(\lambda \in \{\mathbb{R}^p : \lambda_1 \geq \lambda_2 \geq \cdots > 0\}\),
+    \(v \in \mathbb{N}\),
+    \(\beta \in \mathbb{R}^p\)
+  }
+
+  \For{\(t \gets 0,1,\dots\)}{
+
+    \If{\(t \bmod v = 0\)}{
+      \(\beta \leftarrow \prox_{J/{\norm{X}^2_2}}\Big(\beta - \frac{1}{\norm{X}_2^2}X^T(X \beta - y)\Big)\) \label{alg:hybrid-istastep}
+
+      Update \(c\), \(\mathcal{C}\)
+    }
+    \Else{
+      \(k \gets 1\)
+
+      \While{\(k \leq \lvert \mathcal{C} \rvert\)}{
+        \(\tilde x_k \gets X_{\mathcal{C}_k} \sign(\beta_{\cC_k}) \)
+
+        \(z \gets T(c_k\norm{\tilde x}^2 - \tilde x^T(X\beta - y); \norm{x}^2, c^{\setminus k}, \lambda)\)
+
+        $\beta_{\cC_k} \gets z \sign(\beta_{\cC_k})$
+
+        Update \(c\), \(\mathcal{C}\)
+
+        \(k \gets k + 1\)
+      }
+    }
+  }
+  \Return{\(\beta\)}
+\end{algorithm}
+
+The combination of the proximal gradient steps and proximal coordinate descent allows us to overcome the problem of vanilla proximal coordinate descent getting stuck because of non-separability and allows us to enjoy the speed-up provided by making local updates on each cluster, as we illustrate in \Cref{fig:illustration-solver}.
+
+\begin{figure*}[htb]
+  \centering
+  \includegraphics{illustration_solvers}
+  \caption{Illustration of the proposed solver. The figures show progress
+    until convergence for the coordinate descent (CD) solver that we use as part
+    of the hybrid method, our hybrid method, and  proximal gradient descent
+    (PGD). The orange cross marks the optimum. Dotted lines indicate where the
+    coefficients are equal in absolute value. The dashed lines indicate PGD
+    steps and solid lines CD steps. Each dot marks a complete epoch, which may
+    correspond to only a single coefficient update for the CD and hybrid
+    solvers if the coefficients flip order. Each solver was run until the duality
+    gap was smaller than \(10^{-10}\). Note that the CD algorithm cannot split clusters
+    and is therefore stuck after the third epoch. The hybrid and PGD algorithms,
+    meanwhile, reach convergence after 67 and 156 epochs respectively.}
+  \label{fig:illustration-solver}
+\end{figure*}
+
+We now state that our proposed hybrid algorithm converges to a solution of \Cref{pb:slope}.
+
+\begin{lemma}
+  \label{lem:convergence}
+  Let \(\beta^{(t)}\) be an iterate generated by \Cref{alg:hybrid}. Then
+  \[
+    \lim_{t \rightarrow \infty}\big(P(\beta^{(t)}) - P(\beta^*)\big) = 0.
+  \]
+\end{lemma}
+
+\paragraph{Alternative Datafits}
+
+So far we have only considered sorted \(\ell_1\)-penalized least squares regression.
+In \Cref{sec:other-datafits}, we consider possible extensions to alternative datafits.
+

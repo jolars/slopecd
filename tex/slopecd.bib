@@ -1,0 +1,845 @@
+@article{beck2009,
+  title        = {A Fast Iterative Shrinkage-Thresholding Algorithm for Linear Inverse
+                  Problems},
+  author       = {Beck, Amir and Teboulle, Marc},
+  date         = {2009},
+  journaltitle = {SIAM Journal on Imaging Sciences},
+  shortjournal = {SIAM J. Imaging Sci.},
+  volume       = {2},
+  number       = {1},
+  pages        = {183--202},
+  abstract     = {We consider the class of iterative shrinkage-thresholding
+                  algorithms (ISTA) for solving linear inverse problems arising in
+                  signal/image processing. This class of methods, which can be viewed
+                  as an extension of the classical gradient algorithm, is attractive
+                  due to its simplicity and thus is adequate for solving large-scale
+                  problems even with dense matrix data. However, such methods are
+                  also known to converge quite slowly. In this paper we present a new
+                  fast iterative shrinkage-thresholding algorithm (FISTA) which
+                  preserves the computational simplicity of ISTA but with a global
+                  rate of convergence which is proven to be significantly better,
+                  both theoretically and practically. Initial promising numerical
+                  results for wavelet-based image deblurring demonstrate the
+                  capabilities of FISTA which is shown to be faster than ISTA by
+                  several orders of magnitude.}
+}
+
+@article{bareilles2022newton,
+  title     = {Newton acceleration on manifolds identified by proximal gradient methods},
+  author    = {Bareilles, Gilles and Iutzeler, Franck and Malick, J{\'e}r{\^o}me},
+  journal   = {Mathematical Programming},
+  pages     = {1--34},
+  year      = {2022},
+  publisher = {Springer}
+}
+
+
+@inproceedings{bertrand2021,
+  title        = {Anderson acceleration of coordinate descent},
+  author       = {Bertrand, Quentin and Massias, Mathurin},
+  booktitle    = {AISTATS},
+  pages        = {1288--1296},
+  year         = {2021},
+  organization = {PMLR}
+}
+
+@unpublished{bogdan2013,
+  title         = {Statistical Estimation and Testing via the Sorted {{L1}} Norm},
+  author        = {Bogdan, Małgorzata and family=Berg, given=Ewout, prefix=van den,
+                   useprefix=false and Su, Weijie and Candès, Emmanuel},
+  date          = {2013},
+  eprint        = {1310.1969},
+  eprinttype    = {arxiv},
+  primaryclass  = {math, stat},
+  abstract      = {We introduce a novel method for sparse regression and variable
+                   selection, which is inspired by modern ideas in multiple testing.
+                   Imagine we have observations from the linear model y = X beta + z,
+                   then we suggest estimating the regression coefficients by means of
+                   a new estimator called SLOPE, which is the solution to minimize 0.5
+                   ||y - Xb\textbackslash |\_2\^2 + lambda\_1 |b|\_(1) + lambda\_2 |b|
+                   \_(2) + ... + lambda\_p |b|\_(p); here, lambda\_1 {$>$}=
+                   \textbackslash lambda\_2 {$>$}= ... {$>$}= \textbackslash lambda\_p
+                   {$>$}= 0 and |b|\_(1) {$>$}= |b|\_(2) {$>$}= ... {$>$}= |b|\_(p) is
+                   the order statistic of the magnitudes of b. The regularizer is a
+                   sorted L1 norm which penalizes the regression coefficients
+                   according to their rank: the higher the rank, the larger the
+                   penalty. This is similar to the famous BHq procedure [Benjamini and
+                   Hochberg, 1995], which compares the value of a test statistic taken
+                   from a family to a critical threshold that depends on its rank in
+                   the family. SLOPE is a convex program and we demonstrate an
+                   efficient algorithm for computing the solution. We prove that for
+                   orthogonal designs with p variables, taking lambda\_i = F\^\{-1\}
+                   (1-q\_i) (F is the cdf of the errors), q\_i = iq/(2p), controls the
+                   false discovery rate (FDR) for variable selection. When the design
+                   matrix is nonorthogonal there are inherent limitations on the FDR
+                   level and the power which can be obtained with model selection
+                   methods based on L1-like penalties. However, whenever the columns
+                   of the design matrix are not strongly correlated, we demonstrate
+                   empirically that it is possible to select the parameters lambda\_i
+                   as to obtain FDR control at a reasonable level as long as the
+                   number of nonzero coefficients is not too large. At the same time,
+                   the procedure exhibits increased power over the lasso, which treats
+                   all coefficients equally. The paper illustrates further estimation
+                   properties of the new selection rule through comprehensive
+                   simulation studies.},
+  archiveprefix = {arXiv}
+}
+
+@article{bogdan2015,
+  title        = {{{SLOPE}} - Adaptive Variable Selection via Convex Optimization},
+  author       = {Bogdan, Małgorzata and {van den Berg}, Ewout and Sabatti, Chiara and
+                  Su, Weijie and Candès, Emmanuel},
+  date         = {2015-09},
+  journaltitle = {The annals of applied statistics},
+  shortjournal = {Ann Appl Stat},
+  volume       = {9},
+  number       = {3},
+  pages        = {1103--1140}
+}
+
+@unpublished{bogdan2022,
+  title         = {Pattern Recovery by {{SLOPE}}},
+  author        = {Bogdan, Małgorzata and Dupuis, Xavier and Graczyk, Piotr and
+                   Kołodziejek, Bartosz and Skalski, Tomasz and Tardivel, Patrick and
+                   Wilczyński, Maciej},
+  date          = {2022-05-17},
+  number        = {arXiv:2203.12086},
+  eprint        = {2203.12086},
+  eprinttype    = {arxiv},
+  primaryclass  = {math, stat},
+  pages         = {27},
+  publisher     = {{arXiv}},
+  doi           = {10.48550/arXiv.2203.12086},
+  url           = {http://arxiv.org/abs/2203.12086},
+  urldate       = {2022-06-03},
+  abstract      = {LASSO and SLOPE are two popular methods for dimensionality
+                   reduction in the high-dimensional regression. LASSO can eliminate
+                   redundant predictors by setting the corresponding regression
+                   coefficients to zero, while SLOPE can additionally identify
+                   clusters of variables with the same absolute values of regression
+                   coefficients. It is well known that LASSO Irrepresentability
+                   Condition is sufficient and necessary for the proper estimation of
+                   the sign of sufficiently large regression coefficients. In this
+                   article we formulate an analogous Irrepresentability Condition for
+                   SLOPE, which is sufficient and necessary for the proper
+                   identification of the SLOPE pattern, i.e. of the proper sign as
+                   well as of the proper ranking of the absolute values of individual
+                   regression coefficients, while proper ranking guarantees a proper
+                   clustering. We also provide asymptotic results on the strong
+                   consistency of pattern recovery by SLOPE when the number of columns
+                   in the design matrix is fixed while the sample size diverges to
+                   infinity.},
+  archiveprefix = {arXiv}
+}
+
+@article{boyd2010,
+  title        = {Distributed Optimization and Statistical Learning via the Alternating
+                  Direction Method of Multipliers},
+  author       = {Boyd, Stephen and Parikh, Neil and Chu, Eric and Peleato, Borja and
+                  Eckstein, Jonathan},
+  date         = {2010},
+  journaltitle = {Foundations and Trends® in Machine Learning},
+  volume       = {3},
+  number       = {1},
+  pages        = {1--122},
+  issn         = {1935-8237, 1935-8245}
+}
+
+@article{breheny2011,
+  title        = {Coordinate Descent Algorithms for Nonconvex Penalized Regression,
+                  with Applications to Biological Feature Selection},
+  author       = {Breheny, Patrick and Huang, Jian},
+  date         = {2011},
+  journaltitle = {The Annals of Applied Statistics},
+  shortjournal = {Ann. Appl. Stat.},
+  volume       = {5},
+  number       = {1},
+  pages        = {232--253}
+}
+
+@online{breheny2022,
+  title        = {Patrick {{Breheny}}},
+  author       = {Breheny, Patrick},
+  url          = {https://myweb.uiowa.edu/pbreheny/},
+  urldate      = {2022-05-17},
+  organization = {{University of Iowa}}
+}
+
+@article{chang2011,
+  title        = {{{LIBSVM}}: A Library for Support Vector Machines},
+  shorttitle   = {{{LIBSVM}}},
+  author       = {Chang, Chih-Chung and Lin, Chih-Jen},
+  year         = 2011,
+  journaltitle = {ACM Transactions on Intelligent Systems and Technology},
+  volume       = {2},
+  number       = {3},
+  pages        = {27:1-27:27},
+  abstract     = {LIBSVM is a library for Support Vector Machines (SVMs). We have
+                  been actively developing this package since the year 2000. The goal
+                  is to help users to easily apply SVM to their applications. LIBSVM
+                  has gained wide popularity in machine learning and many other
+                  areas. In this article, we present all implementation details of
+                  LIBSVM. Issues such as solving SVM optimization problems,
+                  theoretical convergence, multi-class classification, probability
+                  estimates, and parameter selection are discussed in detail.
+                  Classification, LIBSVM, optimization, regression, support vector
+                  ma-Keywords:}
+}
+
+@online{chang2016,
+  title        = {{{LIBSVM}} Data: Classification, Regression, and Multi-Label},
+  author       = {Chang, Chih-Chung and Lin, Chih-Jen},
+  url          = {https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/},
+  urldate      = {2022-10-05},
+  organization = {{LIBSVM - A library for Support Vector Machines}}
+}
+
+
+
+@article{combettes2005,
+  title     = {Signal recovery by proximal forward-backward splitting},
+  author    = {Combettes, Patrick and Wajs, Val{\'e}rie},
+  journal   = {Multiscale modeling \& simulation},
+  volume    = {4},
+  number    = {4},
+  pages     = {1168--1200},
+  year      = {2005},
+  publisher = {SIAM}
+}
+
+@article{daubechies2004,
+  title        = {An Iterative Thresholding Algorithm for Linear Inverse Problems with
+                  a Sparsity Constraint},
+  author       = {Daubechies, I. and Defrise, M. and De Mol, C.},
+  date         = {2004-08-26},
+  journaltitle = {Communications on Pure and Applied Mathematics},
+  volume       = {57},
+  number       = {11},
+  pages        = {1413--1457},
+  issn         = {1097-0312},
+  doi          = {10.1002/cpa.20042},
+  urldate      = {2022-05-27},
+  abstract     = {We consider linear inverse problems where the solution is assumed
+                  to have a sparse expansion on an arbitrary preassigned orthonormal
+                  basis. We prove that replacing the usual quadratic regularizing
+                  penalties by weighted 𝓁p-penalties on the coefficients of such
+                  expansions, with 1 ≤ p ≤ 2, still regularizes the problem. Use of
+                  such 𝓁p-penalized problems with p {$<$} 2 is often advocated when
+                  one expects the underlying ideal noiseless solution to have a
+                  sparse expansion with respect to the basis under consideration. To
+                  compute the corresponding regularized solutions, we analyze an
+                  iterative algorithm that amounts to a Landweber iteration with
+                  thresholding (or nonlinear shrinkage) applied at each iteration
+                  step. We prove that this algorithm converges in norm. © 2004 Wiley
+                  Periodicals, Inc.},
+  langid       = {english},
+  annotation   = {\_eprint:
+                  https://onlinelibrary.wiley.com/doi/pdf/10.1002/cpa.20042}
+}
+
+@article{dupuis2021,
+  title    = {Proximal operator for the sorted l1 norm: Application to testing
+              procedures based on SLOPE},
+  journal  = {Journal of Statistical Planning and Inference},
+  volume   = {221},
+  pages    = {1-8},
+  year     = {2022},
+  author   = {Xavier Dupuis and Patrick Tardivel},
+  keywords = {SLOPE, Proximal operator, Sorted norm, False discovery rate}
+}
+
+@preprint{elvira2022,
+  title      = {Safe Rules for the Identification of Zeros in the Solutions of the {{
+                SLOPE}} Problem},
+  author     = {Elvira, Clément and Herzet, Cédric},
+  year       = {2021},
+  number     = {arXiv:2110.11784},
+  eprint     = {2110.11784},
+  eprinttype = {arxiv},
+  publisher  = {{arXiv}}
+}
+
+@article{fan2001,
+  title        = {Variable Selection via Nonconcave Penalized Likelihood and Its Oracle
+                  Properties},
+  author       = {Fan, Jianqing and Li, Runze},
+  year         = {2001},
+  journaltitle = {Journal of the American Statistical Association},
+  volume       = {96},
+  number       = {456},
+  pages        = {1348--1360},
+  abstract     = {Variable selection is fundamental to high-dimensional statistical
+                  modeling, including nonparametric regression. Many approaches in
+                  use are stepwise selection procedures, which can be computationally
+                  expensive and ignore stochastic errors in the variable selection
+                  process. In this article, penalized likelihood approaches are
+                  proposed to handle these kinds of problems. The proposed methods
+                  select variables and estimate coefficients simultaneously. Hence
+                  they enable us to construct confidence intervals for estimated
+                  parameters. The proposed approaches are distinguished from others
+                  in that the penalty functions are symmetric, nonconcave on (0, ∞),
+                  and have singularities at the origin to produce sparse solutions.
+                  Furthermore, the penalty functions should be bounded by a constant
+                  to reduce bias and satisfy certain conditions to yield continuous
+                  solutions. A new algorithm is proposed for optimizing penalized
+                  likelihood functions. The proposed ideas are widely applicable.
+                  They are readily applied to a variety of parametric models such as
+                  generalized linear models and robust regression models. They can
+                  also be applied easily to nonparametric modeling by using wavelets
+                  and splines. Rates of convergence of the proposed penalized
+                  likelihood estimators are established. Furthermore, with proper
+                  choice of regularization parameters, we show that the proposed
+                  estimators perform as well as the oracle procedure in variable
+                  selection; namely, they work as well as if the correct submodel
+                  were known. Our simulation shows that the newly proposed methods
+                  compare favorably with other variable selection techniques.
+                  Furthermore, the standard error formulas are tested to be accurate
+                  enough for practical applications.}
+}
+
+@inproceedings{figueiredo2016,
+  title      = {Ordered Weighted {{L1}} Regularized Regression with Strongly
+                Correlated Covariates: Theoretical Aspects},
+  shorttitle = {Ordered {{Weighted L1 Regularized Regression}} with {{Strongly
+                Correlated Covariates}}},
+  booktitle  = {AISTATS},
+  author     = {Figueiredo, Mario and Nowak, Robert},
+  year       = {2016},
+  pages      = {930--938}
+}
+
+@article{friedman2007,
+  title        = {Pathwise Coordinate Optimization},
+  author       = {Friedman, Jerome and Hastie, Trevor and Höfling, Holger and
+                  Tibshirani, Robert},
+  date         = {2007},
+  journaltitle = {The Annals of Applied Statistics},
+  shortjournal = {Ann. Appl. Stat.},
+  volume       = {1},
+  number       = {2},
+  pages        = {302--332}
+}
+
+
+
+@article{friedman2010,
+  title        = {Regularization Paths for Generalized Linear Models via Coordinate
+                  Descent},
+  author       = {Friedman, Jerome and Hastie, Trevor and Tibshirani, Robert},
+  date         = {2010},
+  journaltitle = {Journal of Statistical Software},
+  volume       = {33},
+  number       = {1},
+  pages        = {1--22}
+}
+
+@article{harris2020,
+  title     = {Array programming with NumPy},
+  author    = {Harris, Charles R and Millman, K Jarrod and Van Der Walt, St{\'e}fan
+               J and Gommers, Ralf and Virtanen, Pauli and Cournapeau, David and
+               Wieser, Eric and Taylor, Julian and Berg, Sebastian and Smith,
+               Nathaniel J and others},
+  journal   = {Nature},
+  volume    = {585},
+  number    = {7825},
+  pages     = {357--362},
+  year      = {2020},
+  publisher = {Nature Publishing Group}
+}
+
+@article{jiang2022,
+  title        = {Adaptive {{Bayesian SLOPE}}: Model Selection with Incomplete Data},
+  shorttitle   = {Adaptive {{Bayesian SLOPE}}},
+  author       = {Jiang, Wei and Bogdan, Małgorzata and Josse, Julie and Majewski,
+                  Szymon and Miasojedow, Błażej and Ročková, Veronika},
+  date         = {2022-01-02},
+  journaltitle = {Journal of Computational and Graphical Statistics},
+  volume       = {31},
+  number       = {1},
+  pages        = {113--137},
+  publisher    = {{Taylor \& Francis}},
+  issn         = {1061-8600},
+  doi          = {10.1080/10618600.2021.1963263},
+  url          = {https://doi.org/10.1080/10618600.2021.1963263},
+  urldate      = {2022-06-03},
+  abstract     = {We consider the problem of variable selection in high-dimensional
+                  settings with missing observations among the covariates. To address
+                  this relatively understudied problem, we propose a new synergistic
+                  procedure—adaptive Bayesian SLOPE with missing values—which
+                  effectively combines SLOPE (sorted l1 regularization) with the
+                  spike-and-slab LASSO (SSL) and is accompanied by an efficient
+                  stochastic approximation of expected maximization (SAEM) algorithm
+                  to handle missing data. Similarly as in SSL, the regression
+                  coefficients are regarded as arising from a hierarchical model
+                  consisting of two groups: the spike for the inactive and the slab
+                  for the active. However, instead of assigning independent spike and
+                  slab Laplace priors for each covariate, here we deploy a joint
+                  SLOPE “spike-and-slab” prior which takes into account the ordering
+                  of coefficient magnitudes in order to control for false
+                  discoveries. We position our approach within a Bayesian framework
+                  which allows for simultaneous variable selection and parameter
+                  estimation while handling missing data. Through extensive
+                  simulations, we demonstrate satisfactory performance in terms of
+                  power, false discovery rate (FDR) and estimation bias under a wide
+                  range of scenarios including complete data and existence of
+                  missingness. Finally, we analyze a real dataset consisting of
+                  patients from Paris hospitals who underwent severe trauma, where we
+                  show competitive performance in predicting platelet levels. Our
+                  methodology has been implemented in C++ and wrapped into open
+                  source R programs for public use. Supplemental files for this
+                  article are available online.},
+  annotation   = {\_eprint: https://doi.org/10.1080/10618600.2021.1963263}
+}
+
+@article{kos2020,
+  title        = {On the Asymptotic Properties of {{SLOPE}}},
+  author       = {Kos, Michał and Bogdan, Małgorzata},
+  date         = {2020},
+  journaltitle = {Sankhya A},
+  shortjournal = {Sankhya A},
+  volume       = {82},
+  number       = {2},
+  pages        = {499--532}
+}
+
+@inproceedings{lam2015,
+  title     = {Numba: A llvm-based python jit compiler},
+  author    = {Lam, Siu Kwan and Pitrou, Antoine and Seibert, Stanley},
+  booktitle = {Proceedings of the Second Workshop on the LLVM Compiler
+               Infrastructure in HPC},
+  pages     = {1--6},
+  year      = {2015}
+}
+
+@inproceedings{larsson2020c,
+  title     = {The Strong Screening Rule for {{SLOPE}}},
+  booktitle = {NeurIPS},
+  author    = {Larsson, Johan and Bogdan, Małgorzata and Wallin, Jonas},
+  date      = {2020},
+  volume    = {33},
+  pages     = {14592--14603},
+  abstract  = {Extracting relevant features from data sets where the number of
+               observations n is much smaller then the number of predictors p is a
+               major challenge in modern statistics. Sorted L-One Penalized
+               Estimation (SLOPE)—a generalization of the lasso---is a promising
+               method within this setting. Current numerical procedures for SLOPE,
+               however, lack the efficiency that respective tools for the lasso
+               enjoy, particularly in the context of estimating a complete
+               regularization path. A key component in the efficiency of the lasso
+               is predictor screening rules: rules that allow predictors to be
+               discarded before estimating the model. This is the first paper to
+               establish such a rule for SLOPE. We develop a screening rule for
+               SLOPE by examining its subdifferential and show that this rule is a
+               generalization of the strong rule for the lasso. Our rule is
+               heuristic, which means that it may discard predictors erroneously.
+               In our paper, however, we show that such situations are rare and
+               easily safeguarded against by a simple check of the optimality
+               conditions. Our numerical experiments show that the rule performs
+               well in practice, leading to improvements by orders of magnitude
+               for data in the p {$>>$} n domain, as well as incurring no
+               additional computational overhead when n {$>$} p.},
+  langid    = {english}
+}
+
+@article{Liang2014,
+  title   = {Local linear convergence of Forward--Backward under partial
+             smoothness},
+  author  = {Liang, Jingwei and Fadili, Jalal and Peyr{\'e}, Gabriel},
+  journal = {Advances in neural information processing systems},
+  volume  = {27},
+  year    = {2014}
+}
+
+@preprint{schneider2020a,
+  title      = {The {{Geometry}} of {{Uniqueness}}, Sparsity and Clustering in
+                Penalized Estimation},
+  author     = {Schneider, Ulrike and Tardivel, Patrick},
+  date       = {2020},
+  number     = {arXiv:2004.09106},
+  eprint     = {2004.09106},
+  eprinttype = {arxiv},
+  pages      = {34},
+  publisher  = {{arXiv}},
+  url        = {http://arxiv.org/abs/2004.09106}
+}
+
+@article{zhang2010,
+  title        = {Nearly Unbiased Variable Selection under Minimax Concave Penalty},
+  author       = {Zhang, Cun-Hui},
+  date         = {2010-04},
+  journaltitle = {The Annals of Statistics},
+  shortjournal = {Ann. Statist.},
+  volume       = {38},
+  number       = {2},
+  pages        = {894--942}
+}
+
+@article{zhang2020,
+  title     = {Globally convergent type-I Anderson acceleration for nonsmooth
+               fixed-point iterations},
+  author    = {Zhang, Junzi and O'Donoghue, Brendan and Boyd, Stephen},
+  journal   = {SIAM Journal on Optimization},
+  volume    = {30},
+  number    = {4},
+  pages     = {3170--3197},
+  year      = {2020},
+  publisher = {SIAM}
+}
+
+@book{rockafellar1970,
+  title      = {Convex Analysis},
+  author     = {Rockafellar, R. Tyrrell},
+  date       = {1970},
+  series     = {Princeton {{Landmarks}} in {{Mathematics}} and {{Physics}}},
+  eprint     = {j.ctt14bs1ff},
+  eprinttype = {jstor},
+  publisher  = {{Princeton University Press}},
+  abstract   = {Available for the first time in paperback, R. Tyrrell
+                Rockafellar's classic study presents readers with a coherent branch
+                of nonlinear mathematical analysis that is especially suited to the
+                study of optimization problems. Rockafellar's theory differs from
+                classical analysis in that differentiability assumptions are
+                replaced by convexity assumptions. The topics treated in this
+                volume include: systems of inequalities, the minimum or maximum of
+                a convex function over a convex set, Lagrange multipliers, minimax
+                theorems and duality, as well as basic results about the structure
+                of convex sets and the continuity and differentiability of convex
+                functions and saddle- functions. This book has firmly established a
+                new and vital area not only for pure mathematics but also for
+                applications to economics and engineering. A sound knowledge of
+                linear algebra and introductory real analysis should provide
+                readers with sufficient background for this book. There is also a
+                guide for the reader who may be using the book as an introduction,
+                indicating which parts are essential and which may be skipped on a
+                first reading.},
+  isbn       = {978-0-691-01586-6},
+  langid     = {english},
+  pagetotal  = {472}
+}
+
+@article{Ziyan2019,
+  author  = {Ziyan Luo and Defeng Sun and Kim-Chuan Toh and Naihua Xiu},
+  title   = {Solving the OSCAR and SLOPE Models Using a Semismooth Newton-Based
+             Augmented Lagrangian Method},
+  journal = {Journal of Machine Learning Research},
+  year    = {2019},
+  volume  = {20},
+  number  = {106},
+  pages   = {1--25}
+}
+
+
+@inproceedings{moreau2022benchopt,
+  title     = {Benchopt: Reproducible, efficient and collaborative optimization
+               benchmarks},
+  author    = {Moreau, Thomas and Massias, Mathurin and Gramfort, Alexandre and
+               Ablin, Pierre and Bannier, Pierre-Antoine and Charlier, Benjamin and
+               Dagr{\'e}ou, Mathieu and la Tour, Tom Dupr{\'e} and Durif, Ghislain
+               and Dantas, Cassio F and Klopfenstein, Quentin and others},
+  booktitle = {NeurIPS},
+  year      = {2022}
+}
+
+
+@preprint{zeng2014ordered,
+  title      = {The Ordered Weighted $\ell_1$ Norm: Atomic Formulation, Projections,
+                and Algorithms},
+  author     = {Zeng, Xiangrong and Figueiredo, Mario},
+  year       = {2014},
+  number     = {arXiv:1409.4271},
+  eprint     = {1409.4271},
+  eprinttype = {arxiv},
+  publisher  = {{arXiv}}
+}
+
+@article{tseng2001convergence,
+  title     = {Convergence of a block coordinate descent method for
+               nondifferentiable minimization},
+  author    = {Tseng, Paul},
+  journal   = {Journal of optimization theory and applications},
+  volume    = {109},
+  number    = {3},
+  pages     = {475--494},
+  year      = {2001},
+  publisher = {Springer}
+}
+
+@software{larsson2022d,
+  title      = {{{SLOPE}}: {{Sorted L1 Penalized Estimation}}},
+  shorttitle = {{{SLOPE}}},
+  author     = {Larsson, Johan and Wallin, Jonas and Bogdan, Malgorzata and
+                family=Berg, given=Ewout, prefix=van den, useprefix=false and Sabatti
+                , Chiara and Candes, Emmanuel and Patterson, Evan and Su, Weijie and
+                Kała, Jakub and Grzesiak, Krystyna and Burdukiewicz, Michal and
+                family=), given=Jerome Friedman (code, prefix=adapted, useprefix=true
+                and family=), given=Trevor Hastie (code, prefix=adapted,
+                useprefix=true and family=), given=Rob Tibshirani (code,
+                prefix=adapted, useprefix=true and family=), given=Balasubramanian
+                Narasimhan (code, prefix=adapted, useprefix=true and family=),
+                given=Noah Simon (code, prefix=adapted, useprefix=true and family=),
+                given=Junyang Qian (code, prefix=adapted, useprefix=true and Goyal,
+                Akarsh},
+  date       = {2022-03-14},
+  url        = {https://CRAN.R-project.org/package=SLOPE},
+  urldate    = {2022-09-20},
+  abstract   = {Efficient implementations for Sorted L-One Penalized Estimation
+                (SLOPE): generalized linear models regularized with the sorted
+                L1-norm (Bogdan et al. (2015) {$<$}doi:10/gfgwzt{$>$}). Supported
+                models include ordinary least-squares regression, binomial
+                regression, multinomial regression, and Poisson regression. Both
+                dense and sparse predictor matrices are supported. In addition, the
+                package features predictor screening rules that enable fast and
+                efficient solutions to high-dimensional problems.},
+  version    = {0.4.1}
+}
+
+@software{friedman2022,
+  title      = {Glmnet: {{Lasso}} and {{Elastic-Net Regularized Generalized Linear
+                Models}}},
+  shorttitle = {Glmnet},
+  author     = {Friedman, Jerome and Hastie, Trevor and Tibshirani, Rob and
+                Narasimhan, Balasubramanian and Tay, Kenneth and Simon, Noah and Qian
+                , Junyang and Yang, James},
+  date       = {2022-04-15},
+  url        = {https://CRAN.R-project.org/package=glmnet},
+  urldate    = {2022-09-20},
+  abstract   = {Extremely efficient procedures for fitting the entire lasso or
+                elastic-net regularization path for linear regression, logistic and
+                multinomial regression models, Poisson regression, Cox model,
+                multiple-response Gaussian, and the grouped multinomial regression.
+                There are two new and important additions. The family argument can
+                be a GLM family object, which opens the door to any programmed
+                family. This comes with a modest computational cost, so when the
+                built-in families suffice, they should be used instead. The other
+                novelty is the relax option, which refits each of the active sets
+                in the path unpenalized. The algorithm uses cyclical coordinate
+                descent in a path-wise fashion, as described in the papers listed
+                in the URL below.},
+  version    = {4.1-4}
+}
+
+@online{nationalcancerinstitute2022,
+  title        = {The {{Cancer Genome Atlas Program}}},
+  author       = {{National Cancer Institute}},
+  url          = {
+                  https://www.cancer.gov/about-nci/organization/ccg/research/structural-genomics/tcga
+                  },
+  urldate      = {2022-05-17},
+  abstract     = {The Cancer Genome Atlas (TCGA) is a landmark cancer genomics
+                  program that sequenced and molecularly characterized over 11,000
+                  cases of primary cancer samples. Learn more about how the program
+                  transformed the cancer research community and beyond.},
+  langid       = {english},
+  organization = {{National Cancer Institute}}
+}
+
+@article{rhee2006,
+  title        = {Genotypic Predictors of Human Immunodeficiency Virus Type 1 Drug
+                  Resistance},
+  author       = {Rhee, Soo-Yon and Taylor, Jonathan and Wadhera, Gauhar and Ben-Hur,
+                  Asa and Brutlag, Douglas L. and Shafer, Robert W.},
+  date         = {2006},
+  journaltitle = {Proceedings of the National Academy of Sciences},
+  volume       = {103},
+  number       = {46},
+  pages        = {17355--17360},
+  publisher    = {{Proceedings of the National Academy of Sciences}}
+}
+
+
+@article{keerthi2005,
+  title        = {A Modified Finite {{Newton}} Method for Fast Solution of Large Scale
+                  Linear {{SVMs}}},
+  author       = {Keerthi, S. Sathiya and DeCoste, Dennis},
+  date         = {2005},
+  journaltitle = {JMLR},
+  volume       = {6},
+  number       = {12},
+  pages        = {341--361}
+}
+
+
+@article{lewis2004,
+  title        = {{{RCV1}}: A New Benchmark Collection for Text Categorization Research
+                  },
+  shorttitle   = {{{RCV1}}},
+  author       = {Lewis, David D. and Yang, Yiming and Rose, Tony G. and Li, Fan},
+  date         = {2004},
+  journaltitle = {JMLR},
+  shortjournal = {J. Mach. Learn. Res.},
+  volume       = {5},
+  pages        = {361--397},
+  abstract     = {Reuters Corpus Volume I (RCV1) is an archive of over 800,000
+                  manually categorized newswire stories recently made available by
+                  Reuters, Ltd. for research purposes. Use of this data for research
+                  on text categorization requires a detailed understanding of the
+                  real world constraints under which the data was produced. Drawing
+                  on interviews with Reuters personnel and access to Reuters
+                  documentation, we describe the coding policy and quality control
+                  procedures used in producing the RCV1 data, the intended semantics
+                  of the hierarchical category taxonomies, and the corrections
+                  necessary to remove errorful data. We refer to the original data as
+                  RCV1-v1, and the corrected data as RCV1-v2. We benchmark several
+                  widely used supervised learning methods on RCV1-v2, illustrating
+                  the collection's properties, suggesting new directions for research
+                  , and providing baseline results for future studies. We make
+                  available detailed, per-category experimental results, as well as
+                  corrected versions of the category assignments and taxonomy
+                  structures, via online appendices.}
+}
+
+@inproceedings{fercoq2015,
+  title     = {Mind the Duality Gap: Safer Rules for the Lasso},
+  booktitle = {ICML},
+  author    = {Fercoq, Olivier and Gramfort, Alexandre and Salmon, Joseph},
+  date      = {2015},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {37},
+  pages     = {333--342}
+}
+
+@article{paige1982,
+  title        = {{{LSQR}}: An Algorithm for Sparse Linear Equations and Sparse Least
+                  Squares},
+  author       = {Paige, Christopher C. and Saunders, Michael A.},
+  date         = {1982},
+  journaltitle = {ACM Transactions on Mathematical Software},
+  shortjournal = {ACM Trans. Math. Softw.},
+  volume       = {8},
+  number       = {1},
+  pages        = {43--71},
+  issn         = {0098-3500}
+}
+
+@online{boyd2011,
+  title        = {{{MATLAB}} Scripts for Alternating Direction Method of Multipliers},
+  author       = {Boyd, Stephen and Parikh, N. and Chu, E. and Peleato, B. and
+                  Eckstein, J.},
+  date         = {2011},
+  url          = {https://web.stanford.edu/~boyd/papers/admm/},
+  urldate      = {2022-10-11},
+  organization = {{Stanford University}}
+}
+
+@inproceedings{Varette2022,
+  author    = {S. Varrette and H. Cartiaux and S. Peter and E. Kieffer and T.
+               Valette and A. Olloh},
+  title     = {{Management of an Academic HPC \& Research Computing Facility: The
+               ULHPC Experience 2.0}},
+  booktitle = {Proc. of the 6th ACM High Performance Computing and Cluster
+               Technologies Conf. (HPCCT 2022)},
+  year      = {2022},
+  month     = {July},
+  address   = {Fuzhou, China},
+  isbn      = {978-1-4503-9664-6},
+  publisher = {Association for Computing Machinery (ACM)}
+}
+
+@article{richtarik2014,
+  title        = {Iteration Complexity of Randomized Block-Coordinate Descent Methods
+                  for Minimizing a Composite Function},
+  author       = {Richtárik, Peter and Takáč, Martin},
+  date         = {2014-04},
+  journaltitle = {Mathematical Programming},
+  shortjournal = {Math. Program.},
+  volume       = {144},
+  number       = {1/2},
+  pages        = {1--38},
+  publisher    = {{Springer Nature}},
+  issn         = {00255610},
+  doi          = {10.1007/s10107-012-0614-z},
+  abstract     = {In this paper we develop a randomized block-coordinate descent
+                  method for minimizing the sum of a smooth and a simple nonsmooth
+                  block-separable convex function and prove that it obtains an \$\$
+                  \textbackslash varepsilon \$\$-accurate solution with probability
+                  at least \$\$1-\textbackslash rho \$\$ in at most \$\$O((n/
+                  \textbackslash varepsilon ) \textbackslash log (1/\textbackslash
+                  rho ))\$\$ iterations, where \$\$n\$\$ is the number of blocks.
+                  This extends recent results of Nesterov (SIAM J Optim 22(2):
+                  341-362, 2012), which cover the smooth case, to composite
+                  minimization, while at the same time improving the complexity by
+                  the factor of 4 and removing \$\$\textbackslash varepsilon \$\$
+                  from the logarithmic term. More importantly, in contrast with the
+                  aforementioned work in which the author achieves the results by
+                  applying the method to a regularized version of the objective
+                  function with an unknown scaling factor, we show that this is not
+                  necessary, thus achieving first true iteration complexity bounds.
+                  For strongly convex functions the method converges linearly. In the
+                  smooth case we also allow for arbitrary probability vectors and
+                  non-Euclidean norms. Finally, we demonstrate numerically that the
+                  algorithm is able to solve huge-scale \$\$\textbackslash ell \_1\$
+                  \$-regularized least squares problems with a billion variables.}
+}
+
+@article{lewis2002a,
+  title        = {Active {{Sets}}, {{Nonsmoothness}}, and {{Sensitivity}}},
+  author       = {Lewis, A. S.},
+  date         = {2002-01},
+  journaltitle = {SIAM Journal on Optimization},
+  shortjournal = {SIAM J. Optim.},
+  volume       = {13},
+  number       = {3},
+  pages        = {702--725},
+  issn         = {1052-6234, 1095-7189},
+  doi          = {10.1137/S1052623401387623},
+  abstract     = {Nonsmoothness pervades optimization, but the way it typically
+                  arises is highly structured. Nonsmooth behavior of an objective
+                  function is usually associated, locally, with an active manifold:
+                  on this manifold the function is smooth, whereas in normal
+                  directions it is “veeshaped.” Active set ideas in optimization
+                  depend heavily on this structure. Important examples of such
+                  functions include the pointwise maximum of some smooth functions
+                  and the maximum eigenvalue of a parametrized symmetric matrix.
+                  Among possible foundations for practical nonsmooth optimization,
+                  this broad class of “partly smooth” functions seems a promising
+                  candidate, enjoying a powerful calculus and sensitivity theory. In
+                  particular, we show under a natural regularity condition that
+                  critical points of partly smooth functions are stable: small
+                  perturbations to the function cause small movements of the critical
+                  point on the active manifold.},
+  langid       = {english}
+}
+
+@book{zangwill1969,
+  title      = {Nonlinear Programming: A Unified Approach},
+  shorttitle = {Nonlinear {{Programming}}},
+  author     = {Zangwill, Willard I.},
+  date       = {1969},
+  edition    = {1},
+  publisher  = {{Prentice-Hall}},
+  location   = {{New Orleans, USA}},
+  isbn       = {978-0-13-623579-8},
+  langid     = {english},
+  pagetotal  = {384}
+}
+
+@article{vaiter2017,
+  title        = {The Degrees of Freedom of Partly Smooth Regularizers},
+  author       = {Vaiter, Samuel and Deledalle, Charles and Fadili, Jalal and Peyré,
+                  Gabriel and Dossal, Charles},
+  date         = {2017-08},
+  journaltitle = {Annals of the Institute of Statistical Mathematics},
+  volume       = {69},
+  number       = {4},
+  pages        = {791--832},
+  publisher    = {{Springer Nature}},
+  issn         = {00203157},
+  doi          = {10.1007/s10463-016-0563-z},
+  abstract     = {We study regularized regression problems where the regularizer is
+                  a proper, lower-semicontinuous, convex and partly smooth function
+                  relative to a Riemannian submanifold. This encompasses several
+                  popular examples including the Lasso, the group Lasso, the max and
+                  nuclear norms, as well as their composition with linear operators
+                  (e.g., total variation or fused Lasso). Our main sensitivity
+                  analysis result shows that the predictor moves locally stably along
+                  the same active submanifold as the observations undergo small
+                  perturbations. This plays a pivotal role in getting a closed-form
+                  expression for the divergence of the predictor w.r.t. observations.
+                  We also show that, for many regularizers, including polyhedral ones
+                  or the analysis group Lasso, this divergence formula holds Lebesgue
+                  a.e. When the perturbation is random (with an appropriate
+                  continuous distribution), this allows us to derive an unbiased
+                  estimator of the degrees of freedom and the prediction risk. Our
+                  results unify and go beyond those already known in the literature.}
+}
+

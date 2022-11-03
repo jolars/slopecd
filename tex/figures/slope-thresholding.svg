@@ -1,0 +1,1157 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="481.43952pt" height="247.43952pt" viewBox="0 0 481.43952 247.43952" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2022-10-14T09:34:26.552892</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.6.0, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 247.43952 
+L 481.43952 247.43952 
+L 481.43952 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 42.161432 218.008075 
+L 453.342154 218.008075 
+L 453.342154 90.796599 
+L 42.161432 90.796599 
+z
+" style="fill: #ffffff"/>
+   </g>
+   <g id="axes_2">
+    <g id="patch_3">
+     <path d="M 42.161432 90.796599 
+L 453.342154 90.796599 
+L 453.342154 90.796599 
+L 42.161432 90.796599 
+z
+" style="fill: #ffffff"/>
+    </g>
+    <g id="matplotlib.axis_1">
+     <g id="xtick_1">
+      <g id="line2d_1">
+       <defs>
+        <path id="m145e9da769" d="M 0 0 
+L 0 -3.5 
+" style="stroke: #000000; stroke-width: 0.8"/>
+       </defs>
+       <g>
+        <use xlink:href="#m145e9da769" x="71.697637" y="90.796599" style="stroke: #000000; stroke-width: 0.8"/>
+       </g>
+      </g>
+      <g id="text_1">
+       <!-- $-\omega c^{\setminus k}_1 - S(c^{\setminus k}_1 + \varepsilon_c)$ -->
+       <g transform="translate(80.708984 82.468336) rotate(-60) scale(0.1 -0.1)">
+        <defs>
+         <path id="LMMathSymbols10-Regular-0" d="M 4442 1600 
+C 4442 1728 4320 1728 4230 1728 
+L 742 1728 
+C 653 1728 531 1728 531 1600 
+C 531 1472 653 1472 742 1472 
+L 4230 1472 
+C 4320 1472 4442 1472 4442 1600 
+z
+" transform="scale(0.015625)"/>
+         <path id="LMMathItalic12-Regular-21" d="M 3642 1533 
+C 3712 1807 3795 2133 3795 2395 
+C 3795 2548 3763 2682 3680 2765 
+C 3642 2797 3590 2816 3539 2816 
+C 3469 2816 3398 2784 3341 2728 
+C 3283 2672 3251 2601 3251 2538 
+C 3251 2487 3270 2436 3309 2398 
+C 3462 2257 3539 2052 3539 1822 
+C 3539 1739 3526 1650 3507 1560 
+C 3360 965 3002 351 2483 351 
+C 2112 351 1907 621 1862 981 
+C 1939 1161 2003 1355 2048 1541 
+C 2061 1598 2074 1663 2074 1721 
+C 2074 1798 2048 1856 1971 1856 
+C 1856 1856 1805 1701 1773 1566 
+C 1722 1374 1690 1180 1683 994 
+C 1472 628 1165 351 800 351 
+C 416 351 250 671 250 1073 
+C 250 1220 275 1373 314 1533 
+C 410 1916 627 2280 877 2625 
+C 890 2650 896 2670 896 2695 
+C 896 2727 883 2759 851 2778 
+C 832 2784 806 2784 806 2784 
+C 768 2784 730 2765 704 2733 
+C 442 2363 275 1961 173 1558 
+C 109 1303 77 1047 77 817 
+C 77 319 250 -64 723 -64 
+C 1133 -64 1459 237 1702 647 
+C 1760 231 1971 -64 2406 -64 
+C 3066 -64 3450 760 3642 1533 
+z
+" transform="scale(0.015625)"/>
+         <path id="LMMathItalic12-Regular-63" d="M 2675 706 
+C 2675 744 2637 776 2611 776 
+C 2592 776 2586 770 2528 713 
+C 2118 162 1510 64 1267 64 
+C 826 64 685 446 685 764 
+C 685 988 794 1605 1024 2039 
+C 1190 2338 1536 2682 1939 2682 
+C 2022 2682 2374 2682 2502 2431 
+C 2381 2431 2323 2431 2234 2355 
+C 2195 2323 2125 2227 2125 2125 
+C 2125 1997 2221 1920 2342 1920 
+C 2496 1920 2669 2044 2669 2292 
+C 2669 2588 2374 2816 1933 2816 
+C 1094 2816 256 1903 256 996 
+C 256 441 602 -64 1254 -64 
+C 2125 -64 2675 622 2675 706 
+z
+" transform="scale(0.015625)"/>
+         <path id="LMMathSymbols10-Regular-6e" d="M 2835 -1472 
+C 2835 -1472 2835 -1440 2803 -1357 
+L 627 4659 
+C 602 4730 576 4800 486 4800 
+C 416 4800 358 4742 358 4672 
+C 358 4672 358 4640 390 4557 
+L 2566 -1459 
+C 2592 -1530 2618 -1600 2707 -1600 
+C 2778 -1600 2835 -1542 2835 -1472 
+z
+" transform="scale(0.015625)"/>
+         <path id="LMMathItalic12-Regular-6b" d="M 3072 913 
+C 3072 945 3046 971 3008 971 
+C 2950 971 2944 945 2918 843 
+C 2829 511 2694 64 2368 64 
+C 2240 64 2157 128 2157 370 
+C 2157 492 2182 632 2208 728 
+C 2234 843 2234 849 2234 926 
+C 2234 1303 1894 1514 1306 1590 
+C 1536 1731 1766 1980 1856 2076 
+C 2221 2484 2470 2689 2765 2689 
+C 2912 2689 2950 2650 2995 2612 
+C 2758 2586 2669 2420 2669 2293 
+C 2669 2139 2790 2088 2880 2088 
+C 3053 2088 3206 2235 3206 2440 
+C 3206 2625 3059 2816 2771 2816 
+C 2419 2816 2131 2567 1677 2056 
+C 1613 1980 1376 1737 1139 1648 
+L 1798 4257 
+C 1805 4283 1818 4321 1818 4352 
+C 1818 4416 1741 4416 1741 4416 
+L 1389 4377 
+C 1280 4377 1184 4358 1069 4358 
+C 915 4345 870 4339 870 4224 
+C 870 4160 934 4160 998 4160 
+C 1325 4160 1325 4103 1325 4040 
+C 1325 4015 1325 4002 1293 3888 
+L 378 248 
+C 352 152 352 140 352 101 
+C 352 -38 461 -64 525 -64 
+C 704 -64 742 77 794 275 
+C 851 511 826 422 1094 1469 
+C 1555 1418 1830 1226 1830 920 
+C 1830 881 1830 856 1811 760 
+C 1786 664 1786 588 1786 556 
+C 1786 185 2029 -64 2355 -64 
+C 2650 -64 2803 204 2854 294 
+C 2989 530 3072 888 3072 913 
+z
+" transform="scale(0.015625)"/>
+         <path id="LMRoman17-Regular-31" d="M 2458 0 
+L 2458 160 
+L 2266 160 
+C 1715 160 1702 230 1702 458 
+L 1702 4058 
+C 1702 4192 1696 4192 1606 4192 
+C 1357 3916 979 3827 621 3827 
+C 602 3827 570 3827 563 3808 
+C 557 3795 557 3782 557 3648 
+C 755 3648 1088 3686 1344 3839 
+L 1344 461 
+C 1344 236 1331 160 781 160 
+L 589 160 
+L 589 0 
+L 1523 0 
+L 2458 0 
+z
+" transform="scale(0.015625)"/>
+         <path id="LMMathItalic12-Regular-53" d="M 3456 1460 
+C 3456 1728 3392 1963 3149 2197 
+C 3014 2331 2899 2363 2310 2516 
+C 1882 2630 1824 2649 1709 2751 
+C 1600 2858 1517 3011 1517 3227 
+C 1517 3761 2061 4308 2669 4308 
+C 3296 4308 3590 3926 3590 3323 
+C 3590 3158 3558 2986 3558 2961 
+C 3558 2903 3610 2903 3629 2903 
+C 3686 2903 3693 2922 3718 3024 
+L 4064 4423 
+C 4064 4480 4006 4480 4006 4480 
+C 3981 4480 3974 4474 3898 4378 
+L 3590 3996 
+C 3379 4410 2957 4480 2688 4480 
+C 1875 4480 1139 3743 1139 3025 
+C 1139 2549 1427 2269 1741 2161 
+C 1811 2135 2189 2033 2381 1989 
+C 2707 1900 2790 1875 2925 1735 
+C 2950 1703 3078 1557 3078 1258 
+C 3078 667 2528 57 1888 57 
+C 1363 57 781 280 781 991 
+C 781 1112 806 1265 826 1328 
+C 826 1348 832 1391 832 1391 
+C 832 1417 819 1449 768 1449 
+C 710 1449 704 1436 678 1328 
+L 352 25 
+L 326 -71 
+C 326 -128 390 -128 390 -128 
+C 416 -128 422 -122 499 -26 
+L 794 356 
+C 947 126 1280 -128 1875 -128 
+C 2701 -128 3456 666 3456 1460 
+z
+" transform="scale(0.015625)"/>
+         <path id="LMRoman17-Regular-28" d="M 1958 -1561 
+C 1958 -1561 1958 -1542 1939 -1523 
+C 1645 -1224 858 -407 858 1581 
+C 858 3569 1632 4379 1946 4697 
+C 1946 4697 1958 4717 1958 4736 
+C 1958 4755 1939 4768 1914 4768 
+C 1843 4768 1299 4296 986 3594 
+C 666 2887 576 2199 576 1588 
+C 576 1128 621 351 1005 -471 
+C 1312 -1135 1837 -1600 1914 -1600 
+C 1946 -1600 1958 -1587 1958 -1561 
+z
+" transform="scale(0.015625)"/>
+         <path id="LMRoman17-Regular-2b" d="M 4307 1580 
+C 4307 1695 4205 1695 4109 1695 
+L 2413 1695 
+L 2413 3386 
+C 2413 3475 2413 3584 2304 3584 
+C 2189 3584 2189 3482 2189 3386 
+L 2189 1695 
+L 493 1695 
+C 403 1695 294 1695 294 1587 
+C 294 1472 397 1472 493 1472 
+L 2189 1472 
+L 2189 -218 
+C 2189 -307 2189 -416 2298 -416 
+C 2413 -416 2413 -314 2413 -218 
+L 2413 1472 
+L 4109 1472 
+C 4198 1472 4307 1472 4307 1580 
+z
+" transform="scale(0.015625)"/>
+         <path id="LMMathItalic12-Regular-22" d="M 2362 532 
+C 2362 565 2336 591 2304 591 
+C 2272 591 2259 572 2234 532 
+C 2163 408 1997 147 1235 147 
+C 838 147 314 251 314 715 
+C 314 937 474 1271 890 1491 
+C 1094 1408 1312 1408 1434 1408 
+C 1600 1408 1933 1408 1933 1580 
+C 1933 1686 1811 1728 1485 1728 
+C 1325 1728 1133 1709 909 1613 
+C 710 1709 634 1856 634 1997 
+C 634 2394 1261 2624 1830 2624 
+C 1939 2624 2170 2624 2438 2425 
+C 2477 2400 2496 2380 2541 2380 
+C 2618 2380 2701 2463 2701 2540 
+C 2701 2656 2330 2899 1888 2899 
+C 1171 2899 493 2476 493 2009 
+C 493 1775 646 1630 755 1554 
+C 384 1341 166 992 166 675 
+C 166 228 563 -128 1178 -128 
+C 2022 -128 2362 442 2362 532 
+z
+M 1786 1573 
+C 1677 1536 1664 1536 1434 1536 
+C 1318 1536 1216 1536 1088 1559 
+C 1261 1600 1427 1600 1472 1600 
+C 1651 1600 1683 1591 1786 1573 
+z
+" transform="scale(0.015625)"/>
+         <path id="LMRoman17-Regular-29" d="M 1683 1581 
+C 1683 2040 1638 2817 1254 3639 
+C 947 4303 422 4768 346 4768 
+C 326 4768 301 4761 301 4729 
+C 301 4729 307 4710 314 4697 
+C 621 4378 1402 3568 1402 1584 
+C 1402 -407 627 -1217 314 -1537 
+C 307 -1549 301 -1568 301 -1568 
+C 301 -1600 326 -1600 346 -1600 
+C 416 -1600 960 -1128 1274 -426 
+C 1594 281 1683 969 1683 1581 
+z
+" transform="scale(0.015625)"/>
+        </defs>
+        <use xlink:href="#LMMathSymbols10-Regular-0" transform="scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-21" transform="translate(77.487468 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-63" transform="translate(141.805814 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathSymbols10-Regular-6e" transform="translate(183.789047 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMMathItalic12-Regular-6b" transform="translate(218.658257 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-31" transform="translate(183.789047 -11.199488) scale(0.697382)"/>
+        <use xlink:href="#LMMathSymbols10-Regular-0" transform="translate(279.150847 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-53" transform="translate(378.777521 0) scale(0.996264)"/>
+        <use xlink:href="#LMRoman17-Regular-28" transform="translate(444.57196 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-63" transform="translate(479.853488 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathSymbols10-Regular-6e" transform="translate(521.836722 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMMathItalic12-Regular-6b" transform="translate(556.705932 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-31" transform="translate(521.836722 -11.199488) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-2b" transform="translate(617.198521 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-22" transform="translate(711.053748 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-63" transform="translate(756.70394 -14.943915) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-29" transform="translate(786.590204 0) scale(0.996264)"/>
+       </g>
+      </g>
+     </g>
+     <g id="xtick_2">
+      <g id="line2d_2">
+       <g>
+        <use xlink:href="#m145e9da769" x="111.152959" y="90.796599" style="stroke: #000000; stroke-width: 0.8"/>
+       </g>
+      </g>
+      <g id="text_2">
+       <!-- $-\omega c^{\setminus k}_1 - S(c^{\setminus k}_1 - \varepsilon_c)$ -->
+       <g transform="translate(120.164306 82.468336) rotate(-60) scale(0.1 -0.1)">
+        <use xlink:href="#LMMathSymbols10-Regular-0" transform="scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-21" transform="translate(77.487468 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-63" transform="translate(141.805814 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathSymbols10-Regular-6e" transform="translate(183.789047 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMMathItalic12-Regular-6b" transform="translate(218.658257 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-31" transform="translate(183.789047 -11.199488) scale(0.697382)"/>
+        <use xlink:href="#LMMathSymbols10-Regular-0" transform="translate(279.150847 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-53" transform="translate(378.777521 0) scale(0.996264)"/>
+        <use xlink:href="#LMRoman17-Regular-28" transform="translate(444.57196 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-63" transform="translate(479.853488 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathSymbols10-Regular-6e" transform="translate(521.836722 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMMathItalic12-Regular-6b" transform="translate(556.705932 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-31" transform="translate(521.836722 -11.199488) scale(0.697382)"/>
+        <use xlink:href="#LMMathSymbols10-Regular-0" transform="translate(617.198521 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-22" transform="translate(716.825196 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-63" transform="translate(762.475388 -14.943915) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-29" transform="translate(792.361652 0) scale(0.996264)"/>
+       </g>
+      </g>
+     </g>
+     <g id="xtick_3">
+      <g id="line2d_3">
+       <g>
+        <use xlink:href="#m145e9da769" x="148.533025" y="90.796599" style="stroke: #000000; stroke-width: 0.8"/>
+       </g>
+      </g>
+      <g id="text_3">
+       <!-- $-\omega c^{\setminus k}_2 - S(c^{\setminus k}_2 + \varepsilon_c)$ -->
+       <g transform="translate(157.544372 82.468336) rotate(-60) scale(0.1 -0.1)">
+        <defs>
+         <path id="LMRoman17-Regular-32" d="M 2669 989 
+L 2554 989 
+C 2490 536 2438 459 2413 420 
+C 2381 369 1920 369 1830 369 
+L 602 369 
+L 1824 1597 
+C 2214 1967 2669 2402 2669 3035 
+C 2669 3790 2067 4224 1395 4224 
+C 691 4224 262 3604 262 3030 
+C 262 2780 448 2748 525 2748 
+C 589 2748 781 2787 781 3010 
+C 781 3207 614 3264 525 3264 
+C 486 3264 448 3258 422 3245 
+C 544 3790 915 4058 1306 4058 
+C 1862 4058 2227 3617 2227 3035 
+C 2227 2479 1901 2000 1536 1584 
+L 262 146 
+L 262 0 
+L 2515 0 
+L 2669 989 
+z
+" transform="scale(0.015625)"/>
+        </defs>
+        <use xlink:href="#LMMathSymbols10-Regular-0" transform="scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-21" transform="translate(77.487468 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-63" transform="translate(141.805814 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathSymbols10-Regular-6e" transform="translate(183.789047 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMMathItalic12-Regular-6b" transform="translate(218.658257 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-32" transform="translate(183.789047 -11.199488) scale(0.697382)"/>
+        <use xlink:href="#LMMathSymbols10-Regular-0" transform="translate(279.150847 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-53" transform="translate(378.777521 0) scale(0.996264)"/>
+        <use xlink:href="#LMRoman17-Regular-28" transform="translate(444.57196 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-63" transform="translate(479.853488 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathSymbols10-Regular-6e" transform="translate(521.836722 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMMathItalic12-Regular-6b" transform="translate(556.705932 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-32" transform="translate(521.836722 -11.199488) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-2b" transform="translate(617.198521 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-22" transform="translate(711.053748 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-63" transform="translate(756.70394 -14.943915) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-29" transform="translate(786.590204 0) scale(0.996264)"/>
+       </g>
+      </g>
+     </g>
+     <g id="xtick_4">
+      <g id="line2d_4">
+       <g>
+        <use xlink:href="#m145e9da769" x="179.18813" y="90.796599" style="stroke: #000000; stroke-width: 0.8"/>
+       </g>
+      </g>
+      <g id="text_4">
+       <!-- $-\omega c^{\setminus k}_2 - S(c^{\setminus k}_2 - \varepsilon_c)$ -->
+       <g transform="translate(188.199477 82.468336) rotate(-60) scale(0.1 -0.1)">
+        <use xlink:href="#LMMathSymbols10-Regular-0" transform="scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-21" transform="translate(77.487468 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-63" transform="translate(141.805814 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathSymbols10-Regular-6e" transform="translate(183.789047 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMMathItalic12-Regular-6b" transform="translate(218.658257 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-32" transform="translate(183.789047 -11.199488) scale(0.697382)"/>
+        <use xlink:href="#LMMathSymbols10-Regular-0" transform="translate(279.150847 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-53" transform="translate(378.777521 0) scale(0.996264)"/>
+        <use xlink:href="#LMRoman17-Regular-28" transform="translate(444.57196 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-63" transform="translate(479.853488 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathSymbols10-Regular-6e" transform="translate(521.836722 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMMathItalic12-Regular-6b" transform="translate(556.705932 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-32" transform="translate(521.836722 -11.199488) scale(0.697382)"/>
+        <use xlink:href="#LMMathSymbols10-Regular-0" transform="translate(617.198521 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-22" transform="translate(716.825196 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-63" transform="translate(762.475388 -14.943915) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-29" transform="translate(792.361652 0) scale(0.996264)"/>
+       </g>
+      </g>
+     </g>
+     <g id="xtick_5">
+      <g id="line2d_5">
+       <g>
+        <use xlink:href="#m145e9da769" x="207.223179" y="90.796599" style="stroke: #000000; stroke-width: 0.8"/>
+       </g>
+      </g>
+      <g id="text_5">
+       <!-- -$S(0)$ -->
+       <g transform="translate(213.694104 82.551269) rotate(-60) scale(0.1 -0.1)">
+        <defs>
+         <path id="LMSans17-Regular-2d" d="M 1664 1216 
+L 1664 1585 
+L 64 1585 
+L 64 1216 
+L 1664 1216 
+z
+" transform="scale(0.015625)"/>
+         <path id="LMRoman17-Regular-30" d="M 2688 2025 
+C 2688 2416 2682 3080 2413 3591 
+C 2176 4039 1798 4198 1466 4198 
+C 1158 4198 768 4058 525 3597 
+C 269 3118 243 2524 243 2025 
+C 243 1661 250 1106 448 619 
+C 723 -39 1216 -128 1466 -128 
+C 1760 -128 2208 -7 2470 600 
+C 2662 1042 2688 1559 2688 2025 
+z
+M 2278 2096 
+C 2278 1680 2278 1169 2202 792 
+C 2067 95 1690 -26 1466 -26 
+C 1056 -26 813 325 723 812 
+C 653 1188 653 1738 653 2096 
+C 653 2588 653 2997 736 3387 
+C 858 3929 1216 4096 1466 4096 
+C 1728 4096 2067 3923 2189 3400 
+C 2272 3036 2278 2607 2278 2096 
+z
+" transform="scale(0.015625)"/>
+        </defs>
+        <use xlink:href="#LMSans17-Regular-2d" transform="scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-53" transform="translate(31.229402 0) scale(0.996264)"/>
+        <use xlink:href="#LMRoman17-Regular-28" transform="translate(97.023841 0) scale(0.996264)"/>
+        <use xlink:href="#LMRoman17-Regular-30" transform="translate(132.305369 0) scale(0.996264)"/>
+        <use xlink:href="#LMRoman17-Regular-29" transform="translate(177.996317 0) scale(0.996264)"/>
+       </g>
+      </g>
+     </g>
+     <g id="xtick_6">
+      <g id="line2d_6">
+       <g>
+        <use xlink:href="#m145e9da769" x="288.280407" y="90.796599" style="stroke: #000000; stroke-width: 0.8"/>
+       </g>
+      </g>
+      <g id="text_6">
+       <!-- $S(0)$ -->
+       <g transform="translate(294.751331 82.551269) rotate(-60) scale(0.1 -0.1)">
+        <use xlink:href="#LMMathItalic12-Regular-53" transform="scale(0.996264)"/>
+        <use xlink:href="#LMRoman17-Regular-28" transform="translate(65.794439 0) scale(0.996264)"/>
+        <use xlink:href="#LMRoman17-Regular-30" transform="translate(101.075967 0) scale(0.996264)"/>
+        <use xlink:href="#LMRoman17-Regular-29" transform="translate(146.766915 0) scale(0.996264)"/>
+       </g>
+      </g>
+     </g>
+     <g id="xtick_7">
+      <g id="line2d_7">
+       <g>
+        <use xlink:href="#m145e9da769" x="316.315456" y="90.796599" style="stroke: #000000; stroke-width: 0.8"/>
+       </g>
+      </g>
+      <g id="text_7">
+       <!-- $\omega c^{\setminus k}_2 + S(c^{\setminus k}_2 - \varepsilon_c)$ -->
+       <g transform="translate(325.326803 82.468336) rotate(-60) scale(0.1 -0.1)">
+        <use xlink:href="#LMMathItalic12-Regular-21" transform="scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-63" transform="translate(64.318346 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathSymbols10-Regular-6e" transform="translate(106.30158 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMMathItalic12-Regular-6b" transform="translate(141.17079 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-32" transform="translate(106.30158 -11.199488) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-2b" transform="translate(201.663379 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-53" transform="translate(295.518606 0) scale(0.996264)"/>
+        <use xlink:href="#LMRoman17-Regular-28" transform="translate(361.313045 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-63" transform="translate(396.594573 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathSymbols10-Regular-6e" transform="translate(438.577806 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMMathItalic12-Regular-6b" transform="translate(473.447016 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-32" transform="translate(438.577806 -11.199488) scale(0.697382)"/>
+        <use xlink:href="#LMMathSymbols10-Regular-0" transform="translate(533.939606 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-22" transform="translate(633.56628 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-63" transform="translate(679.216473 -14.943915) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-29" transform="translate(709.102736 0) scale(0.996264)"/>
+       </g>
+      </g>
+     </g>
+     <g id="xtick_8">
+      <g id="line2d_8">
+       <g>
+        <use xlink:href="#m145e9da769" x="346.970561" y="90.796599" style="stroke: #000000; stroke-width: 0.8"/>
+       </g>
+      </g>
+      <g id="text_8">
+       <!-- $\omega c^{\setminus k}_2 + S(c^{\setminus k}_2 + \varepsilon_c)$ -->
+       <g transform="translate(355.981908 82.468336) rotate(-60) scale(0.1 -0.1)">
+        <use xlink:href="#LMMathItalic12-Regular-21" transform="scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-63" transform="translate(64.318346 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathSymbols10-Regular-6e" transform="translate(106.30158 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMMathItalic12-Regular-6b" transform="translate(141.17079 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-32" transform="translate(106.30158 -11.199488) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-2b" transform="translate(201.663379 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-53" transform="translate(295.518606 0) scale(0.996264)"/>
+        <use xlink:href="#LMRoman17-Regular-28" transform="translate(361.313045 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-63" transform="translate(396.594573 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathSymbols10-Regular-6e" transform="translate(438.577806 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMMathItalic12-Regular-6b" transform="translate(473.447016 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-32" transform="translate(438.577806 -11.199488) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-2b" transform="translate(533.939606 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-22" transform="translate(627.794832 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-63" transform="translate(673.445025 -14.943915) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-29" transform="translate(703.331288 0) scale(0.996264)"/>
+       </g>
+      </g>
+     </g>
+     <g id="xtick_9">
+      <g id="line2d_9">
+       <g>
+        <use xlink:href="#m145e9da769" x="384.350627" y="90.796599" style="stroke: #000000; stroke-width: 0.8"/>
+       </g>
+      </g>
+      <g id="text_9">
+       <!-- $\omega c^{\setminus k}_1 + S(c^{\setminus k}_1 - \varepsilon_c)$ -->
+       <g transform="translate(393.361974 82.468336) rotate(-60) scale(0.1 -0.1)">
+        <use xlink:href="#LMMathItalic12-Regular-21" transform="scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-63" transform="translate(64.318346 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathSymbols10-Regular-6e" transform="translate(106.30158 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMMathItalic12-Regular-6b" transform="translate(141.17079 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-31" transform="translate(106.30158 -11.199488) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-2b" transform="translate(201.663379 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-53" transform="translate(295.518606 0) scale(0.996264)"/>
+        <use xlink:href="#LMRoman17-Regular-28" transform="translate(361.313045 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-63" transform="translate(396.594573 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathSymbols10-Regular-6e" transform="translate(438.577806 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMMathItalic12-Regular-6b" transform="translate(473.447016 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-31" transform="translate(438.577806 -11.199488) scale(0.697382)"/>
+        <use xlink:href="#LMMathSymbols10-Regular-0" transform="translate(533.939606 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-22" transform="translate(633.56628 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-63" transform="translate(679.216473 -14.943915) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-29" transform="translate(709.102736 0) scale(0.996264)"/>
+       </g>
+      </g>
+     </g>
+     <g id="xtick_10">
+      <g id="line2d_10">
+       <g>
+        <use xlink:href="#m145e9da769" x="423.805949" y="90.796599" style="stroke: #000000; stroke-width: 0.8"/>
+       </g>
+      </g>
+      <g id="text_10">
+       <!-- $\omega c^{\setminus k}_1 + S(c^{\setminus k}_1 + \varepsilon_c)$ -->
+       <g transform="translate(432.817296 82.468336) rotate(-60) scale(0.1 -0.1)">
+        <use xlink:href="#LMMathItalic12-Regular-21" transform="scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-63" transform="translate(64.318346 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathSymbols10-Regular-6e" transform="translate(106.30158 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMMathItalic12-Regular-6b" transform="translate(141.17079 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-31" transform="translate(106.30158 -11.199488) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-2b" transform="translate(201.663379 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-53" transform="translate(295.518606 0) scale(0.996264)"/>
+        <use xlink:href="#LMRoman17-Regular-28" transform="translate(361.313045 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-63" transform="translate(396.594573 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathSymbols10-Regular-6e" transform="translate(438.577806 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMMathItalic12-Regular-6b" transform="translate(473.447016 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-31" transform="translate(438.577806 -11.199488) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-2b" transform="translate(533.939606 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-22" transform="translate(627.794832 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-63" transform="translate(673.445025 -14.943915) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-29" transform="translate(703.331288 0) scale(0.996264)"/>
+       </g>
+      </g>
+     </g>
+    </g>
+    <g id="matplotlib.axis_2"/>
+    <g id="patch_4">
+     <path d="M 42.161432 90.796599 
+L 453.342154 90.796599 
+" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+    </g>
+   </g>
+   <g id="axes_3">
+    <g id="patch_5">
+     <path d="M 453.342154 218.008075 
+L 453.342154 218.008075 
+L 453.342154 90.796599 
+L 453.342154 90.796599 
+z
+" style="fill: #ffffff"/>
+    </g>
+    <g id="matplotlib.axis_3"/>
+    <g id="matplotlib.axis_4">
+     <g id="ytick_1">
+      <g id="line2d_11">
+       <defs>
+        <path id="mb0d51aea04" d="M 0 0 
+L 3.5 0 
+" style="stroke: #000000; stroke-width: 0.8"/>
+       </defs>
+       <g>
+        <use xlink:href="#mb0d51aea04" x="453.342154" y="204.00187" style="stroke: #000000; stroke-width: 0.8"/>
+       </g>
+      </g>
+      <g id="text_11">
+       <!-- $-c^{\setminus k}_1$ -->
+       <g transform="translate(460.342154 209.204574) scale(0.1 -0.1)">
+        <use xlink:href="#LMMathSymbols10-Regular-0" transform="scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-63" transform="translate(77.487468 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathSymbols10-Regular-6e" transform="translate(119.470701 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMMathItalic12-Regular-6b" transform="translate(154.339911 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-31" transform="translate(119.470701 -11.199488) scale(0.697382)"/>
+       </g>
+      </g>
+     </g>
+     <g id="ytick_2">
+      <g id="line2d_12">
+       <g>
+        <use xlink:href="#mb0d51aea04" x="453.342154" y="175.65928" style="stroke: #000000; stroke-width: 0.8"/>
+       </g>
+      </g>
+      <g id="text_12">
+       <!-- $-c^{\setminus k}_2$ -->
+       <g transform="translate(460.342154 180.861984) scale(0.1 -0.1)">
+        <use xlink:href="#LMMathSymbols10-Regular-0" transform="scale(0.996264)"/>
+        <use xlink:href="#LMMathItalic12-Regular-63" transform="translate(77.487468 0) scale(0.996264)"/>
+        <use xlink:href="#LMMathSymbols10-Regular-6e" transform="translate(119.470701 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMMathItalic12-Regular-6b" transform="translate(154.339911 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-32" transform="translate(119.470701 -11.199488) scale(0.697382)"/>
+       </g>
+      </g>
+     </g>
+     <g id="ytick_3">
+      <g id="line2d_13">
+       <g>
+        <use xlink:href="#mb0d51aea04" x="453.342154" y="133.145394" style="stroke: #000000; stroke-width: 0.8"/>
+       </g>
+      </g>
+      <g id="text_13">
+       <!-- $c^{\setminus k}_2$ -->
+       <g transform="translate(460.342154 138.348098) scale(0.1 -0.1)">
+        <use xlink:href="#LMMathItalic12-Regular-63" transform="scale(0.996264)"/>
+        <use xlink:href="#LMMathSymbols10-Regular-6e" transform="translate(41.983234 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMMathItalic12-Regular-6b" transform="translate(76.852444 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-32" transform="translate(41.983234 -11.199488) scale(0.697382)"/>
+       </g>
+      </g>
+     </g>
+     <g id="ytick_4">
+      <g id="line2d_14">
+       <g>
+        <use xlink:href="#mb0d51aea04" x="453.342154" y="104.802804" style="stroke: #000000; stroke-width: 0.8"/>
+       </g>
+      </g>
+      <g id="text_14">
+       <!-- $c^{\setminus k}_1$ -->
+       <g transform="translate(460.342154 110.005507) scale(0.1 -0.1)">
+        <use xlink:href="#LMMathItalic12-Regular-63" transform="scale(0.996264)"/>
+        <use xlink:href="#LMMathSymbols10-Regular-6e" transform="translate(41.983234 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMMathItalic12-Regular-6b" transform="translate(76.852444 51.750272) scale(0.697382)"/>
+        <use xlink:href="#LMRoman17-Regular-31" transform="translate(41.983234 -11.199488) scale(0.697382)"/>
+       </g>
+      </g>
+     </g>
+    </g>
+    <g id="patch_6">
+     <path d="M 453.342154 218.008075 
+L 453.342154 90.796599 
+" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+    </g>
+   </g>
+   <g id="matplotlib.axis_5">
+    <g id="xtick_11">
+     <g id="line2d_15">
+      <defs>
+       <path id="m014f1b9d52" d="M 0 0 
+L 0 3.5 
+" style="stroke: #000000; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#m014f1b9d52" x="60.851465" y="218.008075" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_15">
+      <!-- $\mathdefault{−2.0}$ -->
+      <g transform="translate(50.612069 231.926635) scale(0.1 -0.1)">
+       <defs>
+        <path id="LMMathItalic12-Regular-3a" d="M 1178 307 
+C 1178 492 1024 619 870 619 
+C 685 619 557 466 557 313 
+C 557 128 710 0 864 0 
+C 1050 0 1178 153 1178 307 
+z
+" transform="scale(0.015625)"/>
+       </defs>
+       <use xlink:href="#LMMathSymbols10-Regular-0" transform="scale(0.996264)"/>
+       <use xlink:href="#LMRoman17-Regular-32" transform="translate(77.487468 0) scale(0.996264)"/>
+       <use xlink:href="#LMMathItalic12-Regular-3a" transform="translate(123.178416 0) scale(0.996264)"/>
+       <use xlink:href="#LMRoman17-Regular-30" transform="translate(150.275593 0) scale(0.996264)"/>
+      </g>
+     </g>
+    </g>
+    <g id="xtick_12">
+     <g id="line2d_16">
+      <g>
+       <use xlink:href="#m014f1b9d52" x="107.576547" y="218.008075" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_16">
+      <!-- $\mathdefault{−1.5}$ -->
+      <g transform="translate(97.337151 231.926635) scale(0.1 -0.1)">
+       <defs>
+        <path id="LMRoman17-Regular-35" d="M 2669 1264 
+C 2669 2030 2170 2624 1549 2624 
+C 1222 2624 947 2503 730 2274 
+L 730 3692 
+C 794 3666 1056 3584 1325 3584 
+C 1920 3584 2246 3911 2432 4100 
+C 2432 4157 2432 4192 2394 4192 
+C 2394 4192 2374 4192 2323 4163 
+C 2099 4058 1837 3973 1517 3973 
+C 1325 3973 1037 3999 723 4139 
+C 653 4171 634 4171 634 4171 
+C 602 4171 595 4164 595 4037 
+L 595 2203 
+C 595 2089 595 2057 659 2057 
+C 691 2057 704 2070 736 2114 
+C 941 2401 1222 2522 1542 2522 
+C 1766 2522 2246 2382 2246 1289 
+C 2246 1085 2246 715 2054 421 
+C 1894 159 1645 25 1370 25 
+C 947 25 518 320 403 814 
+C 429 807 480 795 506 795 
+C 589 795 749 840 749 1038 
+C 749 1210 627 1280 506 1280 
+C 358 1280 262 1190 262 1011 
+C 262 454 704 -128 1382 -128 
+C 2042 -128 2669 440 2669 1264 
+z
+" transform="scale(0.015625)"/>
+       </defs>
+       <use xlink:href="#LMMathSymbols10-Regular-0" transform="scale(0.996264)"/>
+       <use xlink:href="#LMRoman17-Regular-31" transform="translate(77.487468 0) scale(0.996264)"/>
+       <use xlink:href="#LMMathItalic12-Regular-3a" transform="translate(123.178416 0) scale(0.996264)"/>
+       <use xlink:href="#LMRoman17-Regular-35" transform="translate(150.275593 0) scale(0.996264)"/>
+      </g>
+     </g>
+    </g>
+    <g id="xtick_13">
+     <g id="line2d_17">
+      <g>
+       <use xlink:href="#m014f1b9d52" x="154.301629" y="218.008075" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_17">
+      <!-- $\mathdefault{−1.0}$ -->
+      <g transform="translate(144.062233 231.926635) scale(0.1 -0.1)">
+       <use xlink:href="#LMMathSymbols10-Regular-0" transform="scale(0.996264)"/>
+       <use xlink:href="#LMRoman17-Regular-31" transform="translate(77.487468 0) scale(0.996264)"/>
+       <use xlink:href="#LMMathItalic12-Regular-3a" transform="translate(123.178416 0) scale(0.996264)"/>
+       <use xlink:href="#LMRoman17-Regular-30" transform="translate(150.275593 0) scale(0.996264)"/>
+      </g>
+     </g>
+    </g>
+    <g id="xtick_14">
+     <g id="line2d_18">
+      <g>
+       <use xlink:href="#m014f1b9d52" x="201.026711" y="218.008075" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_18">
+      <!-- $\mathdefault{−0.5}$ -->
+      <g transform="translate(190.787315 231.926635) scale(0.1 -0.1)">
+       <use xlink:href="#LMMathSymbols10-Regular-0" transform="scale(0.996264)"/>
+       <use xlink:href="#LMRoman17-Regular-30" transform="translate(77.487468 0) scale(0.996264)"/>
+       <use xlink:href="#LMMathItalic12-Regular-3a" transform="translate(123.178416 0) scale(0.996264)"/>
+       <use xlink:href="#LMRoman17-Regular-35" transform="translate(150.275593 0) scale(0.996264)"/>
+      </g>
+     </g>
+    </g>
+    <g id="xtick_15">
+     <g id="line2d_19">
+      <g>
+       <use xlink:href="#m014f1b9d52" x="247.751793" y="218.008075" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_19">
+      <!-- $\mathdefault{0.0}$ -->
+      <g transform="translate(241.386769 231.926635) scale(0.1 -0.1)">
+       <use xlink:href="#LMRoman17-Regular-30" transform="scale(0.996264)"/>
+       <use xlink:href="#LMMathItalic12-Regular-3a" transform="translate(45.690948 0) scale(0.996264)"/>
+       <use xlink:href="#LMRoman17-Regular-30" transform="translate(72.788125 0) scale(0.996264)"/>
+      </g>
+     </g>
+    </g>
+    <g id="xtick_16">
+     <g id="line2d_20">
+      <g>
+       <use xlink:href="#m014f1b9d52" x="294.476875" y="218.008075" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_20">
+      <!-- $\mathdefault{0.5}$ -->
+      <g transform="translate(288.111851 231.926635) scale(0.1 -0.1)">
+       <use xlink:href="#LMRoman17-Regular-30" transform="scale(0.996264)"/>
+       <use xlink:href="#LMMathItalic12-Regular-3a" transform="translate(45.690948 0) scale(0.996264)"/>
+       <use xlink:href="#LMRoman17-Regular-35" transform="translate(72.788125 0) scale(0.996264)"/>
+      </g>
+     </g>
+    </g>
+    <g id="xtick_17">
+     <g id="line2d_21">
+      <g>
+       <use xlink:href="#m014f1b9d52" x="341.201957" y="218.008075" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_21">
+      <!-- $\mathdefault{1.0}$ -->
+      <g transform="translate(334.836933 231.926635) scale(0.1 -0.1)">
+       <use xlink:href="#LMRoman17-Regular-31" transform="scale(0.996264)"/>
+       <use xlink:href="#LMMathItalic12-Regular-3a" transform="translate(45.690948 0) scale(0.996264)"/>
+       <use xlink:href="#LMRoman17-Regular-30" transform="translate(72.788125 0) scale(0.996264)"/>
+      </g>
+     </g>
+    </g>
+    <g id="xtick_18">
+     <g id="line2d_22">
+      <g>
+       <use xlink:href="#m014f1b9d52" x="387.927039" y="218.008075" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_22">
+      <!-- $\mathdefault{1.5}$ -->
+      <g transform="translate(381.562015 231.926635) scale(0.1 -0.1)">
+       <use xlink:href="#LMRoman17-Regular-31" transform="scale(0.996264)"/>
+       <use xlink:href="#LMMathItalic12-Regular-3a" transform="translate(45.690948 0) scale(0.996264)"/>
+       <use xlink:href="#LMRoman17-Regular-35" transform="translate(72.788125 0) scale(0.996264)"/>
+      </g>
+     </g>
+    </g>
+    <g id="xtick_19">
+     <g id="line2d_23">
+      <g>
+       <use xlink:href="#m014f1b9d52" x="434.652121" y="218.008075" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_23">
+      <!-- $\mathdefault{2.0}$ -->
+      <g transform="translate(428.287097 231.926635) scale(0.1 -0.1)">
+       <use xlink:href="#LMRoman17-Regular-32" transform="scale(0.996264)"/>
+       <use xlink:href="#LMMathItalic12-Regular-3a" transform="translate(45.690948 0) scale(0.996264)"/>
+       <use xlink:href="#LMRoman17-Regular-30" transform="translate(72.788125 0) scale(0.996264)"/>
+      </g>
+     </g>
+    </g>
+    <g id="text_24">
+     <!-- \(\gamma\) -->
+     <g transform="translate(245.172811 244.782342) scale(0.1 -0.1)">
+      <defs>
+       <path id="LMMathItalic12-Regular-d" d="M 3405 2674 
+C 3405 2674 3398 2726 3341 2726 
+C 3341 2726 3296 2726 3283 2700 
+C 3270 2687 3046 2252 2854 1816 
+C 2758 1599 2630 1310 2419 746 
+C 2406 1060 2394 1553 2150 2130 
+C 2022 2450 1805 2789 1338 2789 
+C 550 2789 122 1785 122 1618 
+C 122 1560 166 1560 186 1560 
+C 243 1560 243 1573 275 1656 
+C 410 2054 819 2368 1261 2368 
+C 2150 2368 2278 1374 2278 740 
+C 2278 335 2234 201 2195 73 
+C 2074 -324 1862 -1119 1862 -1299 
+C 1862 -1350 1882 -1408 1933 -1408 
+C 2029 -1408 2086 -1196 2157 -939 
+C 2310 -375 2349 -94 2381 162 
+C 2400 316 2765 1373 3270 2380 
+C 3315 2482 3405 2655 3405 2674 
+z
+" transform="scale(0.015625)"/>
+      </defs>
+      <use xlink:href="#LMMathItalic12-Regular-d" transform="scale(0.996264)"/>
+     </g>
+    </g>
+   </g>
+   <g id="matplotlib.axis_6">
+    <g id="ytick_5">
+     <g id="line2d_24">
+      <defs>
+       <path id="m81ad1afaac" d="M 0 0 
+L -3.5 0 
+" style="stroke: #000000; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#m81ad1afaac" x="42.161432" y="189.830575" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_25">
+      <!-- $\mathdefault{−0.5}$ -->
+      <g transform="translate(14.68264 193.289855) scale(0.1 -0.1)">
+       <use xlink:href="#LMMathSymbols10-Regular-0" transform="scale(0.996264)"/>
+       <use xlink:href="#LMRoman17-Regular-30" transform="translate(77.487468 0) scale(0.996264)"/>
+       <use xlink:href="#LMMathItalic12-Regular-3a" transform="translate(123.178416 0) scale(0.996264)"/>
+       <use xlink:href="#LMRoman17-Regular-35" transform="translate(150.275593 0) scale(0.996264)"/>
+      </g>
+     </g>
+    </g>
+    <g id="ytick_6">
+     <g id="line2d_25">
+      <g>
+       <use xlink:href="#m81ad1afaac" x="42.161432" y="154.402337" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_26">
+      <!-- $\mathdefault{0.0}$ -->
+      <g transform="translate(22.431384 157.861617) scale(0.1 -0.1)">
+       <use xlink:href="#LMRoman17-Regular-30" transform="scale(0.996264)"/>
+       <use xlink:href="#LMMathItalic12-Regular-3a" transform="translate(45.690948 0) scale(0.996264)"/>
+       <use xlink:href="#LMRoman17-Regular-30" transform="translate(72.788125 0) scale(0.996264)"/>
+      </g>
+     </g>
+    </g>
+    <g id="ytick_7">
+     <g id="line2d_26">
+      <g>
+       <use xlink:href="#m81ad1afaac" x="42.161432" y="118.974099" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_27">
+      <!-- $\mathdefault{0.5}$ -->
+      <g transform="translate(22.431384 122.433379) scale(0.1 -0.1)">
+       <use xlink:href="#LMRoman17-Regular-30" transform="scale(0.996264)"/>
+       <use xlink:href="#LMMathItalic12-Regular-3a" transform="translate(45.690948 0) scale(0.996264)"/>
+       <use xlink:href="#LMRoman17-Regular-35" transform="translate(72.788125 0) scale(0.996264)"/>
+      </g>
+     </g>
+    </g>
+    <g id="text_28">
+     <!-- \(T(\gamma, \omega; c, \lambda)\) -->
+     <g transform="translate(8.19198 179.717881) rotate(-90) scale(0.1 -0.1)">
+      <defs>
+       <path id="LMMathItalic12-Regular-54" d="M 4230 3050 
+L 4416 4184 
+C 4429 4243 4429 4256 4429 4275 
+C 4429 4345 4390 4345 4262 4345 
+L 762 4345 
+C 614 4345 608 4339 570 4224 
+L 179 3070 
+C 173 3056 154 2980 154 2980 
+C 154 2948 179 2916 218 2916 
+C 269 2916 282 2941 307 3024 
+C 576 3801 710 4160 1562 4160 
+L 1990 4160 
+C 2144 4160 2208 4160 2208 4089 
+C 2208 4069 2208 4057 2176 3941 
+L 1318 499 
+C 1254 249 1242 185 563 185 
+C 403 185 358 185 358 64 
+C 358 0 429 0 461 0 
+C 621 0 787 0 947 0 
+L 1946 0 
+C 2106 0 2278 0 2438 0 
+C 2509 0 2573 0 2573 121 
+C 2573 185 2528 185 2362 185 
+C 1786 185 1786 243 1786 339 
+C 1786 339 1786 391 1811 494 
+L 2669 3910 
+C 2707 4064 2720 4121 2816 4147 
+C 2867 4160 3078 4160 3213 4160 
+C 3853 4160 4154 4134 4154 3634 
+C 4154 3537 4128 3295 4090 3057 
+L 4083 2980 
+C 4083 2954 4109 2916 4147 2916 
+C 4211 2916 4211 2948 4230 3050 
+z
+" transform="scale(0.015625)"/>
+       <path id="LMMathItalic12-Regular-3b" d="M 1248 -31 
+C 1248 343 1126 619 864 619 
+C 659 619 557 453 557 313 
+C 557 172 653 0 870 0 
+C 954 0 1024 26 1082 83 
+C 1094 96 1107 96 1107 96 
+C 1107 96 1120 5 1120 -27 
+C 1120 -240 1082 -659 710 -1080 
+C 640 -1157 640 -1183 640 -1183 
+C 640 -1216 672 -1248 704 -1248 
+C 755 -1248 1248 -771 1248 -31 
+z
+" transform="scale(0.015625)"/>
+       <path id="LMRoman17-Regular-3b" d="M 1062 2491 
+C 1062 2650 934 2752 800 2752 
+C 672 2752 538 2650 538 2491 
+C 538 2332 666 2230 800 2230 
+C 928 2230 1062 2332 1062 2491 
+z
+M 1082 -61 
+C 1082 189 1062 522 800 522 
+C 659 522 538 427 538 261 
+C 538 96 659 0 800 0 
+C 864 0 934 19 979 64 
+L 979 -71 
+C 979 -483 851 -817 634 -1126 
+C 595 -1170 595 -1190 595 -1190 
+C 595 -1222 621 -1248 646 -1248 
+C 678 -1248 1082 -805 1082 -61 
+z
+" transform="scale(0.015625)"/>
+       <path id="LMMathItalic12-Regular-15" d="M 3424 -13 
+C 3424 13 3418 19 3392 45 
+C 3334 116 3290 231 3264 308 
+L 1978 3993 
+C 1818 4448 1312 4448 1229 4448 
+C 1190 4448 1120 4448 1120 4384 
+C 1120 4333 1158 4327 1190 4320 
+C 1286 4308 1363 4295 1466 4109 
+C 1530 3987 2189 2061 2189 2061 
+C 2189 2061 2182 2048 2131 1997 
+L 467 314 
+C 390 237 339 186 339 102 
+C 339 12 416 -64 518 -64 
+C 544 -64 614 -51 653 -13 
+C 755 83 1670 1203 2253 1894 
+L 2822 264 
+C 2854 167 2886 78 2976 -6 
+C 3040 -64 3053 -64 3232 -64 
+L 3354 -64 
+C 3379 -64 3424 -64 3424 -13 
+z
+" transform="scale(0.015625)"/>
+      </defs>
+      <use xlink:href="#LMMathItalic12-Regular-54" transform="scale(0.996264)"/>
+      <use xlink:href="#LMRoman17-Regular-28" transform="translate(70.723632 0) scale(0.996264)"/>
+      <use xlink:href="#LMMathItalic12-Regular-d" transform="translate(106.00516 0) scale(0.996264)"/>
+      <use xlink:href="#LMMathItalic12-Regular-3b" transform="translate(162.023728 0) scale(0.996264)"/>
+      <use xlink:href="#LMMathItalic12-Regular-21" transform="translate(205.72531 0) scale(0.996264)"/>
+      <use xlink:href="#LMRoman17-Regular-3b" transform="translate(270.043656 0) scale(0.996264)"/>
+      <use xlink:href="#LMMathItalic12-Regular-63" transform="translate(311.520078 0) scale(0.996264)"/>
+      <use xlink:href="#LMMathItalic12-Regular-3b" transform="translate(353.503312 0) scale(0.996264)"/>
+      <use xlink:href="#LMMathItalic12-Regular-15" transform="translate(397.204894 0) scale(0.996264)"/>
+      <use xlink:href="#LMRoman17-Regular-29" transform="translate(454.108966 0) scale(0.996264)"/>
+     </g>
+    </g>
+   </g>
+   <g id="LineCollection_1">
+    <path d="M 60.851465 154.402337 
+L 434.652121 154.402337 
+" clip-path="url(#pb088c2744c)" style="fill: none; stroke: #d3d3d3"/>
+   </g>
+   <g id="LineCollection_2">
+    <path d="M 71.697637 212.225736 
+L 71.697637 96.578939 
+" clip-path="url(#pb088c2744c)" style="fill: none; stroke-dasharray: 1,1.65; stroke-dashoffset: 0; stroke: #a9a9a9"/>
+    <path d="M 111.152959 212.225736 
+L 111.152959 96.578939 
+" clip-path="url(#pb088c2744c)" style="fill: none; stroke-dasharray: 1,1.65; stroke-dashoffset: 0; stroke: #a9a9a9"/>
+    <path d="M 148.533025 212.225736 
+L 148.533025 96.578939 
+" clip-path="url(#pb088c2744c)" style="fill: none; stroke-dasharray: 1,1.65; stroke-dashoffset: 0; stroke: #a9a9a9"/>
+    <path d="M 179.18813 212.225736 
+L 179.18813 96.578939 
+" clip-path="url(#pb088c2744c)" style="fill: none; stroke-dasharray: 1,1.65; stroke-dashoffset: 0; stroke: #a9a9a9"/>
+    <path d="M 207.223179 212.225736 
+L 207.223179 96.578939 
+" clip-path="url(#pb088c2744c)" style="fill: none; stroke-dasharray: 1,1.65; stroke-dashoffset: 0; stroke: #a9a9a9"/>
+    <path d="M 288.280407 212.225736 
+L 288.280407 96.578939 
+" clip-path="url(#pb088c2744c)" style="fill: none; stroke-dasharray: 1,1.65; stroke-dashoffset: 0; stroke: #a9a9a9"/>
+    <path d="M 316.315456 212.225736 
+L 316.315456 96.578939 
+" clip-path="url(#pb088c2744c)" style="fill: none; stroke-dasharray: 1,1.65; stroke-dashoffset: 0; stroke: #a9a9a9"/>
+    <path d="M 346.970561 212.225736 
+L 346.970561 96.578939 
+" clip-path="url(#pb088c2744c)" style="fill: none; stroke-dasharray: 1,1.65; stroke-dashoffset: 0; stroke: #a9a9a9"/>
+    <path d="M 384.350627 212.225736 
+L 384.350627 96.578939 
+" clip-path="url(#pb088c2744c)" style="fill: none; stroke-dasharray: 1,1.65; stroke-dashoffset: 0; stroke: #a9a9a9"/>
+    <path d="M 423.805949 212.225736 
+L 423.805949 96.578939 
+" clip-path="url(#pb088c2744c)" style="fill: none; stroke-dasharray: 1,1.65; stroke-dashoffset: 0; stroke: #a9a9a9"/>
+   </g>
+   <g id="line2d_27">
+    <path d="M 60.851465 212.225736 
+L 71.697637 204.00187 
+L 111.152959 204.00187 
+L 148.533025 175.65928 
+L 179.18813 175.65928 
+L 207.223179 154.402337 
+L 288.280407 154.402337 
+L 316.315456 133.145394 
+L 346.970561 133.145394 
+L 384.350627 104.802804 
+L 423.805949 104.802804 
+L 434.652121 96.578939 
+L 434.652121 96.578939 
+" clip-path="url(#pb088c2744c)" style="fill: none; stroke: #000000; stroke-linecap: square"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 42.161432 218.008075 
+L 42.161432 90.796599 
+" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 453.342154 218.008075 
+L 453.342154 90.796599 
+" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 42.161432 218.008075 
+L 453.342154 218.008075 
+" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 42.161432 90.796599 
+L 453.342154 90.796599 
+" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pb088c2744c">
+   <rect x="42.161432" y="90.796599" width="411.180722" height="127.211476"/>
+  </clipPath>
+ </defs>
+</svg>

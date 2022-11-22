@@ -21,7 +21,7 @@ To investigate the performance of our algorithm, we performed an extensive bench
 
 We used \pkg{Benchopt}~\parencite{moreau2022benchopt} to obtain the convergence curves for the different solvers.
 \pkg{Benchopt} is a collaborative framework that allows reproducible and automatic benchmarks.
-The repository to reproduce the benchmark is available at \href{https://github.com/klopfe/benchmark\_slope}{\url{github.com/klopfe/benchmark\_slope}}.
+The repository to reproduce the benchmark is available in the supplementary material.
 
 Unless we note otherwise, we used the Benjamini--Hochberg method to compute the \(\lambda\) sequence~\parencite{bogdan2015},
 which sets $\lambda_j = \eta^{-1}(1 - q\times j / (2p))$ for $j=1, 2, \hdots, p$ where $\eta^{-1}$ is the probit function.
@@ -33,7 +33,7 @@ We pre-process datasets by first removing features with less than three non-zero
 For sparse data, we scale each feature by its maximum absolute value.
 
 Each solver was coded in \pkg{python}, using \pkg{numpy}~\parencite{harris2020} and \pkg{numba}~\parencite{lam2015} for performance-critical code.
-The code is available at \href{https://github.com/jolars/slopecd}{\url{github.com/jolars/slopecd}}.
+The code will be made open source upon publication and is available in the supplement.
 In \Cref{sec:solver-details}, we provide additional details on the implementations of some of the solvers used in our benchmarks.
 
 The computations were carried out on a computing cluster with dual Intel Xeon CPUs (28 cores) and 128 GB of RAM.

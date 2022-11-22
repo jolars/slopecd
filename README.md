@@ -1,17 +1,18 @@
 # Coordinate Descent for SLOPE
 
-This repository provides code to reproduce the experiments for the academic
-research paper _Coordinate Descent for SLOPE_.
+This supplement provides code to reproduce the experiments for the academic
+research paper _Coordinate Descent for SLOPE_ along with the appendix.
 
-This repository contains the following items:
+The items in this archive are the following:
 
 - The `code` folder contains the code for the solvers, the results produces from
   our experiments, a few (smaller) experiments, as well as scripts to generate
   the figures in the paper experiments
-- The `tex` folder contains the source code for the paper.
-- The `benchmark_slope` folder is a submodule of the benchopt benchmark
-  located at <https://github.com/klopfe/benchmark_slope>, which was used
-  to run the main benchmarks in the paper.
+- The `benchmark` folder contains a [benchopt](https://benchopt.github.io/)
+  benchmark for SLOPE, which was used to run the main experiments in the
+  paper on simulated and real data.
+- The `appendix.pdf` file contains proofs for the paper, additional experiments,
+  and other details regarding our work.
 
 ## Installation
 
@@ -25,9 +26,9 @@ be run. Here, we also install two R packages that were used in one of the
 experiments.
 
 ```bash
-conda create -n slopecd -c conda-forge -y \
+conda create -n aistats_slopecd -c conda-forge -y \
   python=3.9 r=4.2 r-slope=0.4 r-glmnet=4.1
-conda activate slopecd
+conda activate aistats_slopecd
 pip install benchopt
 ```
 
@@ -43,7 +44,7 @@ to install the python module `slope`.
 Finally, to install the benchopt benchmark, run
 
 ```bash
-benchopt install -y benchmark_slope/
+benchopt install -y benchmark/
 ```
 
 ## Running the Experiments
@@ -52,12 +53,12 @@ Some experiments are available in `code/expes` and can be run simply by calling
 `python expes/<experiment>`, or `Rscript expes/<experiment>` where
 `<experiment>` is the name of one of the python or R files in the folder.
 
-To re-run the main benchmarks from the paper, modify `benchmark_slope/config.yml` to
+To re-run the main benchmarks from the paper, modify `benchmark/config.yml` to
 include or exclude objectives, solvers, and datasets by commenting or
 uncommenting them. Then call
 
 ```bash
-benchopt run benchmark_slope/ --config benchmark_slope/config.yml
+benchopt run benchmark/ --config benchmark/config.yml
 ```
 
 to run the benchmark.

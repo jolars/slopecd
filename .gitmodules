@@ -1,3 +1,0 @@
-[submodule "benchmark_slope"]
-	path = benchmark_slope
-	url = https://github.com/klopfe/benchmark_slope

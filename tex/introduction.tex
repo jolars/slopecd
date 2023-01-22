@@ -52,7 +52,7 @@ In addition to FISTA and ADMM, there has also been research into Newton-based au
 But this method is adapted only to the \(p \gg n\) regime and, as we show in our paper, is outperformed by our method even in this scenario.
 Applying coordinate descent to SLOPE is not,
 however, straightforward since convergence guarantees for coordinate descent
-require the non-smooth part of the objective to be separable, which is not the case for SLOPE. As a
+require the non-smooth part of the objective to be coordinate-wise separable, which is not the case for SLOPE. As a
 result, naive coordinate descent schemes can get
 stuck~(\Cref{fig:naive-cd-stuck}).
 

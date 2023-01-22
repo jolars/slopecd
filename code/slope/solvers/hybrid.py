@@ -165,6 +165,7 @@ def hybrid_cd(
     max_time=np.inf,
     verbose=False,
     callback=None,
+    reg=[1.0],
 ):
     is_X_sparse = sparse.issparse(X)
     n_samples, n_features = X.shape
@@ -174,10 +175,6 @@ def hybrid_cd(
     intercept = 0.0 if intercept_start is None else intercept_start
 
     n_clusters = []
-    monitor = ConvergenceMonitor(
-        X, y, alphas, tol, gap_freq, max_time, verbose, intercept_column=False
-    )
-
     XTX = np.empty(n_features, dtype=np.float64)
 
     previously_active = np.zeros(n_features, dtype=bool)
@@ -189,70 +186,82 @@ def hybrid_cd(
 
     c, cluster_ptr, cluster_indices, cluster_perm, n_c = get_clusters(w)
 
-    epoch = 0
-    if callback is not None:
-        proceed = callback(np.hstack((intercept, w)))
-    else:
-        proceed = True
-    while proceed:
-        if epoch % pgd_freq == 0:
-            w = prox_slope(w + (X.T @ R) / (L * n_samples), alphas / L)
-            R[:] = y - X @ w
-            if fit_intercept:
-                intercept = np.mean(R)
-                R -= intercept
+    for step in range(len(reg)):
+        monitor = ConvergenceMonitor(
+            X,
+            y,
+            alphas * reg[step],
+            tol,
+            gap_freq,
+            max_time,
+            verbose,
+            intercept_column=False,
+        )
 
-            c, cluster_ptr, cluster_indices, cluster_perm, n_c = get_clusters(w)
-
-        else:
-            if is_X_sparse:
-                n_c = block_cd_epoch_sparse(
-                    w,
-                    X.data,
-                    X.indices,
-                    X.indptr,
-                    R,
-                    alphas,
-                    cluster_indices,
-                    cluster_ptr,
-                    cluster_perm,
-                    c,
-                    n_c,
-                    cluster_updates,
-                    update_zero_cluster,
-                )
-            else:
-                n_c = block_cd_epoch(
-                    w,
-                    X,
-                    XTX,
-                    R,
-                    alphas,
-                    cluster_indices,
-                    cluster_ptr,
-                    cluster_perm,
-                    c,
-                    n_c,
-                    cluster_updates,
-                    update_zero_cluster,
-                    previously_active,
-                )
-
-            if fit_intercept:
-                intercept_update = np.mean(R)
-                R -= intercept_update
-                intercept += intercept_update
-
-        epoch += 1
-        if callback is None:
-            proceed = epoch < max_epochs
-        else:
+        epoch = 0
+        if callback is not None:
             proceed = callback(np.hstack((intercept, w)))
-        converged = monitor.check_convergence(w, intercept, epoch)
-        n_clusters.append(n_c)
-        if callback is None and converged:
-            break
+        else:
+            proceed = True
+        while proceed:
+            if epoch % pgd_freq == 0:
+                w = prox_slope(w + (X.T @ R) / (L * n_samples), alphas * reg[step] / L)
+                R[:] = y - X @ w
+                if fit_intercept:
+                    intercept = np.mean(R)
+                    R -= intercept
 
-    primals, gaps, times = monitor.get_results()
+                c, cluster_ptr, cluster_indices, cluster_perm, n_c = get_clusters(w)
+
+            else:
+                if is_X_sparse:
+                    n_c = block_cd_epoch_sparse(
+                        w,
+                        X.data,
+                        X.indices,
+                        X.indptr,
+                        R,
+                        alphas * reg[step],
+                        cluster_indices,
+                        cluster_ptr,
+                        cluster_perm,
+                        c,
+                        n_c,
+                        cluster_updates,
+                        update_zero_cluster,
+                    )
+                else:
+                    n_c = block_cd_epoch(
+                        w,
+                        X,
+                        XTX,
+                        R,
+                        alphas * reg[step],
+                        cluster_indices,
+                        cluster_ptr,
+                        cluster_perm,
+                        c,
+                        n_c,
+                        cluster_updates,
+                        update_zero_cluster,
+                        previously_active,
+                    )
+
+                if fit_intercept:
+                    intercept_update = np.mean(R)
+                    R -= intercept_update
+                    intercept += intercept_update
+
+            epoch += 1
+            if callback is None:
+                proceed = epoch < max_epochs
+            else:
+                proceed = callback(np.hstack((intercept, w)))
+            converged = monitor.check_convergence(w, intercept, epoch)
+            n_clusters.append(n_c)
+            if callback is None and converged:
+                break
+
+        primals, gaps, times = monitor.get_results()
 
     return w, intercept, primals, gaps, times, n_clusters

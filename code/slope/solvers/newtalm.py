@@ -220,8 +220,7 @@ def inner_step(
     return converged, x, y, ATy
 
 
-def newt_alm(
-    A,
+def newt_alm( A,
     b,
     lambdas,
     fit_intercept=True,
@@ -235,7 +234,8 @@ def newt_alm(
     max_epochs=1000,
     max_time=np.inf,
     verbose=False,
-    callback=None
+    callback=None,
+    reg=[1.0],
 ):
     if solver not in ["auto", "standard", "woodbury", "cg"]:
         raise ValueError("`solver` must be one of auto, standard, woodbury, and cg")
@@ -253,10 +253,6 @@ def newt_alm(
         A = add_intercept_column(A)
         n += 1
 
-    monitor = ConvergenceMonitor(
-        A, b, lambdas, tol, gap_freq, max_time, verbose, intercept_column=fit_intercept
-    )
-
     lambdas = lambdas.copy() * m
 
     x = np.zeros(n)
@@ -264,58 +260,83 @@ def newt_alm(
 
     ATy = A.T @ y
 
-    epoch = 0
-    intercept = x[0] if fit_intercept else 0.0
-    if callback is not None:
-        proceed = callback(np.hstack((intercept, x[fit_intercept:])))
-    else:
-        proceed = True
-    while proceed:
-        # step 1
-        local_param["delta_prime"] *= 0.999
-        local_param["epsilon"] *= 0.9
-        local_param["delta"] *= 0.999
+    null_dev = np.linalg.norm(b - np.mean(b) * fit_intercept) ** 2
+    dev_prev = np.inf
 
-        x_old = x.copy()
+    for step in range(len(reg)):
+        monitor = ConvergenceMonitor(
+            A,
+            b,
+            lambdas * reg[step],
+            tol,
+            gap_freq,
+            max_time,
+            verbose,
+            intercept_column=fit_intercept,
+        )
 
-        for j in range(max_inner_it):
-            converged, x, y, ATy = inner_step(
-                A,
-                b,
-                x_old,
-                y,
-                ATy,
-                lambdas,
-                x_old,
-                local_param,
-                line_search_param,
-                cg_param,
-                solver,
-                fit_intercept,
-            )
-            if converged:
-                break
-
-            if j == max_inner_it - 1:
-                warnings.warn("The inner solver did not converge.")
-
-        # step 3, update sigma
-        # TODO: The paper says nothing about how sigma is updated except
-        # that it is always increased.
-        local_param["sigma"] *= 1.1
+        epoch = 0
 
         intercept = x[0] if fit_intercept else 0.0
-
-        converged = monitor.check_convergence(x[fit_intercept:], intercept, epoch)
-        epoch += 1
-        if callback is None:
-            proceed = epoch < max_epochs
-        else:
+        if callback is not None:
             proceed = callback(np.hstack((intercept, x[fit_intercept:])))
-        if callback is None and converged:
-            break
+        else:
+            proceed = True
+        while proceed:
+            # step 1
+            local_param["delta_prime"] *= 0.999
+            local_param["epsilon"] *= 0.9
+            local_param["delta"] *= 0.999
 
-    primals, gaps, times = monitor.get_results()
-    intercept = x[0] if fit_intercept else 0.0
+            x_old = x.copy()
+
+            for j in range(max_inner_it):
+                converged, x, y, ATy = inner_step(
+                    A,
+                    b,
+                    x_old,
+                    y,
+                    ATy,
+                    lambdas * reg[step],
+                    x_old,
+                    local_param,
+                    line_search_param,
+                    cg_param,
+                    solver,
+                    fit_intercept,
+                )
+                if converged:
+                    break
+
+                if j == max_inner_it - 1:
+                    warnings.warn("The inner solver did not converge.")
+
+            # step 3, update sigma
+            # TODO: The paper says nothing about how sigma is updated except
+            # that it is always increased.
+            local_param["sigma"] *= 1.1
+
+            intercept = x[0] if fit_intercept else 0.0
+
+            converged = monitor.check_convergence(x[fit_intercept:], intercept, epoch)
+            epoch += 1
+            if callback is None:
+                proceed = epoch < max_epochs
+            else:
+                proceed = callback(np.hstack((intercept, x[fit_intercept:])))
+            if callback is None and converged:
+                break
+
+            primals, gaps, times = monitor.get_results()
+            intercept = x[0] if fit_intercept else 0.0
+
+        n_c = len(np.unique(np.abs(x)))
+        dev = np.linalg.norm(b - intercept - A @ x) ** 2
+        dev_ratio = 1 - dev / null_dev
+        dev_change = 1 - dev / dev_prev
+
+        print(
+            f"step: {step + 1}, dev_ratio: {dev_ratio:.4f}, dev_change: {dev_change:.6f} n_clusters: {n_c}"
+        )
 
     return x[fit_intercept:], intercept, primals, gaps, times

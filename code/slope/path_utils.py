@@ -48,7 +48,8 @@ def setup_path(
 
         if verbose:
             print(
-                f"step: {step + 1}, dev_ratio: {dev_ratio:.4f}, dev_change: {dev_change:.6f} n_clusters: {n_c}"
+                f"step: {step + 1}, dev_ratio: {dev_ratio:.4f}, "
+                + f"dev_change: {dev_change:.6f} n_clusters: {n_c}"
             )
 
         if dev_ratio >= 0.999 or n_c > min(n, p) or dev_change < 1e-5:

@@ -7,7 +7,6 @@ from scipy.sparse.linalg import lsqr
 from slope.utils import (
     ConvergenceMonitor,
     add_intercept_column,
-    lambda_sequence,
     prox_slope,
 )
 

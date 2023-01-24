@@ -220,7 +220,8 @@ def inner_step(
     return converged, x, y, ATy
 
 
-def newt_alm( A,
+def newt_alm(
+    A,
     b,
     lambdas,
     fit_intercept=True,
@@ -336,7 +337,8 @@ def newt_alm( A,
         dev_change = 1 - dev / dev_prev
 
         print(
-            f"step: {step + 1}, dev_ratio: {dev_ratio:.4f}, dev_change: {dev_change:.6f} n_clusters: {n_c}"
+            f"step: {step + 1}, dev_ratio: {dev_ratio:.4f}, "
+            + f"dev_change: {dev_change:.6f} n_clusters: {n_c}"
         )
 
     return x[fit_intercept:], intercept, primals, gaps, times

@@ -2,7 +2,7 @@ import numpy as np
 from numpy.linalg import norm
 from scipy import sparse
 
-from slope.utils import ConvergenceMonitor, lambda_sequence, prox_slope
+from slope.utils import ConvergenceMonitor, prox_slope
 
 
 def prox_grad(

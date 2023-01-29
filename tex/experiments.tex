@@ -15,6 +15,7 @@ To investigate the performance of our algorithm, we performed an extensive bench
 
   \item The hybrid (our) solver (see \Cref{alg:hybrid}) combines proximal gradient descent
         and coordinate descent to overcome the non-separability of the SLOPE problem.
+        We perform a coordinate descent step every fifth iteration~(\(v = 5\)) in the algorithm. (See \Cref{sec:hybrid-strategy}.)
   \item The oracle solver (\texttt{oracle CD}) solves \Cref{pb:separable_slope} with coordinate descent, using the clusters obtained via another solver.
         Note that it cannot be used in practice as it requires knowledge of the solution's clusters.
 \end{itemize}

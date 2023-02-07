@@ -1,28 +1,59 @@
 #!/usr/bin/python
 
+import os
 import sys
 from pathlib import Path
 from timeit import default_timer as timer
 
+import certifi
 import numpy as np
+from benchopt.datasets import make_correlated_data
 from pyprojroot import here
 
-from slope.data import get_data
 from slope.path_utils import setup_path
 from slope.solvers import admm, hybrid_cd, newt_alm, prox_grad
 from slope.utils import preprocess
 
-dataset = str(sys.argv[1])
+scenario = str(sys.argv[1])
 solver = str(sys.argv[2])
 
-results_dir = Path(here()) / "results" / "path"
+results_dir = Path(here()) / "results" / "path_simulated"
 results_dir.mkdir(parents=True, exist_ok=True)
-file_path = results_dir / f"{dataset}_{solver}.csv"
+file_path = results_dir / f"scenario{scenario}_{solver}.csv"
+
+os.environ["REQUESTS_CA_BUNDLE"] = certifi.where()
+os.environ["SSL_CERT_FILE"] = certifi.where()
 
 if file_path.exists():
-    print(f"dataset: {dataset}, solver: {solver} results already exist!")
+    print(f"scenario: {scenario}, solver: {solver} results already exist!")
 else:
-    X, y = get_data(dataset)
+    random_state = 49
+
+    if scenario == "1":
+        X_density = 1.0
+        density = 0.001
+        n_samples = 200
+        n_features = 20_000
+    elif scenario == "2":
+        X_density = 1.0
+        density = 0.04
+        n_samples = 20_000
+        n_features = 1_000
+    elif scenario == "3":
+        X_density = 0.001
+        density = 1e-04
+        n_samples = 200
+        n_features = 200_000
+    else:
+        raise ValueError("scenario does not exist")
+
+    X, y, _ = make_correlated_data(
+        n_samples,
+        n_features,
+        random_state=random_state,
+        density=density,
+        X_density=X_density,
+    )
 
     X = preprocess(X)
 
@@ -89,6 +120,6 @@ else:
 
     time = timer() - t0
 
-    file_path.write_text(f"{dataset},{solver},{time}\n", encoding="utf-8")
+    file_path.write_text(f"{scenario},{solver},{time}\n", encoding="utf-8")
 
-    print(f"dataset: {dataset}, solver: {solver}, time: {time}")
+    print(f"scenario: {scenario}, solver: {solver}, time: {time}")

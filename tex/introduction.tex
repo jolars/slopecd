@@ -24,8 +24,10 @@ The sorted $\ell_1$ norm is a sparsity-enforcing penalty that has become
 increasingly popular due to several appealing properties, such as its ability
 to control false discovery rate~\parencite{bogdan2015,kos2020}, cluster
 coefficients~\parencite{figueiredo2016, schneider2020a}, and recover sparsity and
-ordering patterns in the solution~\parencite{bogdan2022}. Unlike other competing
-sparse regularization methods such as MCP~\parencite{zhang2010} and
+ordering patterns in the solution~\parencite{bogdan2022}.
+Contrary to other coefficient clustering approaches such as the fused Lasso~\parencite{tibshirani2005sparsity}, it is
+independent of feature order, and in addition does not require prior knowledge of the number of clusters.
+Finally, unlike other competing sparse regularization methods such as MCP~\parencite{zhang2010} and
 SCAD~\parencite{fan2001}, SLOPE has the advantage of being a convex problem~\parencite{bogdan2015}.
 
 In spite of the availability of predictor screening
@@ -37,9 +39,9 @@ the lasso (\(\ell_1\) norm regularization) and ridge regression
 As a small illustration of this issue, we compared the speed at which the \pkg{SLOPE}~\parencite{larsson2022d} and \pkg{glmnet}~\parencite{friedman2022} packages solve a SLOPE and lasso problem, respectively, for the \dataset{bcTCGA} data set.
 \pkg{SLOPE} takes 43 seconds to reach convergence, whilst \pkg{glmnet} requires only 0.14 seconds\footnote{See~\Cref{sec:slope-vs-glmnet} for details on this experiment.}.
 This lackluster performance has hampered the applicability of SLOPE to many real-world applications.
-In this paper we present a remedy for this issue, by presenting an algorithm that reaches convergence in only 2.9 seconds on the same problem\footnote{Note that we do not use any screening rule in the current implementation of our algorithm, unlike the \pkg{SLOPE} package, which uses the strong screening rule for SLOPE~\parencite{larsson2020c}.}.
+In this paper, we present a remedy for this issue, by presenting an algorithm that reaches convergence in only 2.9 seconds on the same problem\footnote{Note that we do not use any screening rule in the current implementation of our algorithm, unlike the \pkg{SLOPE} package, which uses the strong screening rule for SLOPE~\parencite{larsson2020c}.}.
 
-A major reason for why algorithms for solving
+A major reason why algorithms for solving
 $\ell_1$-, MCP-, or SCAD-regularized problems enjoy better performance is that
 they use coordinate
 descent~\parencite{tseng2001convergence,friedman2010,breheny2011}. Current SLOPE
@@ -69,7 +71,7 @@ stuck~(\Cref{fig:naive-cd-stuck}).
   \label{fig:naive-cd-stuck}
 \end{figure}
 
-In this article we address this problem by introducing a new, highly effective
+In this article, we address this problem by introducing a new, highly effective
 algorithm for SLOPE based on a hybrid proximal gradient and coordinate descent
 scheme. Our method features convergence guarantees and reduces the time
 required to fit SLOPE by orders of magnitude in our empirical experiments.

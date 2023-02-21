@@ -294,7 +294,7 @@ We examine the complexity of the proximal gradient step and the coordinate
 descent separately. For the proximal gradient step, the complexity is $\mathcal{O}(np
 + p\log(p))$, where $np$ is from matrix-vector multiplication and $p\log(p)$ is
 for the computation of the proximal operator of the sorted $\ell_1$ norm~\parencite{zeng2014ordered}.
-For the coordinate descent step the worst case complexity is  $\mathcal{O}(np + m(m + n))$.
+For the coordinate descent step the worst case complexity is $\mathcal{O}(np + m(m + n))$.
 Yet, this complexity was not observed in practice. For instance, if all clusters are
 constant and they retain their ordering unchanged then the complexity, in our
 implementation of \Cref{alg:hybrid}, is $\mathcal{O}(np + mn)$.

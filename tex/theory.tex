@@ -212,7 +212,7 @@ structure~\parencite{Liang2014} due to the partial smoothness property of the
 sorted \(\ell_1\) norm that we prove in \Cref{app:sec:partly_smooth}. A similar
 idea has previously been used in \textcite{bareilles2022newton}, wherein Newton
 steps are taken on the problem structure identified after a proximal gradient
-descent step. 
+descent step.
 
 \subsection{Hybrid Strategy}
 \label{sec:hybrid-strategy}
@@ -292,14 +292,15 @@ We now state that our proposed hybrid algorithm converges to a solution of \Cref
 \paragraph{Computional complexity}
 We examine the complexity of the proximal gradient step and the coordinate
 descent separately. For the proximal gradient, the complexity is $\mathcal{O}(np
-+ p\log(p))$. Here $np$ is from matrix-vector multiplication and $p\log(p)$ is
-for sorting the sorting in the prox-step. For the coordinate descent step the
-worst case complexity is  $\mathcal{O}(np + m(m + n) )$. Now, this complexity is
-something one does not see in practice. For instance, if all clusters are
-constant and they retain they're ordering unchanged then the complexity, in our
-implementation of algorithm \ref*{alg:hybrid}, is $\mathcal{O}(mn)$.
-\paragraph{Alternative Datafits}
++ p\log(p))$, where $np$ is from matrix-vector multiplication and $p\log(p)$ is
+for the computation of the proximal operator of the sorted $\ell_1$ norm~\parencite{zeng2014ordered}.
+For the coordinate descent step, the worst case complexity is  $\mathcal{O}(np + m(m + n))$.
+Yet, this complexity was not observed in practice. For instance, if all clusters are
+constant and they retain their ordering unchanged then the complexity, in our
+implementation of algorithm \ref*{alg:hybrid}, is $\mathcal{O}(np + mn)$.
 
+
+\paragraph{Alternative Datafits}
 So far we have only considered sorted \(\ell_1\)-penalized least squares regression.
 In \Cref{sec:other-datafits}, we consider possible extensions to alternative datafits.
 

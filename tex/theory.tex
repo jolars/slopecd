@@ -291,14 +291,13 @@ We now state that our proposed hybrid algorithm converges to a solution of \Cref
 
 \paragraph{Computional Complexity}
 We examine the complexity of the proximal gradient step and the coordinate
-descent separately. For the proximal gradient step, the complexity is $\mathcal{O}(np
-+ p\log(p))$, where $np$ is from matrix-vector multiplication and $p\log(p)$ is
-for the computation of the proximal operator of the sorted $\ell_1$ norm~\parencite{zeng2014ordered}.
-For the coordinate descent step the worst case complexity is $\mathcal{O}(np + m(m + n))$.
-Yet, this complexity was not observed in practice. For instance, if all clusters are
-constant and they retain their ordering unchanged then the complexity, in our
-implementation of \Cref{alg:hybrid}, is $\mathcal{O}(np + mn)$.
-
+descent separately. For the proximal gradient step, the complexity is $\mathcal{O}\big(np
++ p\log(p)\big)$, where $np$ comes from the matrix-vector multiplication and $p\log(p)$ 
+from the computation of the proximal operator of the sorted $\ell_1$ norm~\parencite{zeng2014ordered}.
+For the coordinate descent step, the worst case complexity is $\mathcal{O}\big(np + m(m + n)\big)$.
+As we will see in \Cref{sec:experiments}, however, the cost of the coordinate descent step turns out to be much lower in practice.
+The reason for this is that the order of the clusters become increasingly stable during optimization.
+If, for instance, the order of the clusters is unchanged with respect to the previous step, then the complexity, in our implementation of \Cref{alg:hybrid}, reduces to $\mathcal{O}(np + mn)$.
 
 \paragraph{Alternative Datafits}
 So far we have only considered sorted \(\ell_1\)-penalized least squares regression.

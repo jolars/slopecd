@@ -39,7 +39,7 @@ the lasso (\(\ell_1\) norm regularization) and ridge regression
 As a small illustration of this issue, we compared the speed at which the \pkg{SLOPE}~\parencite{larsson2022d} and \pkg{glmnet}~\parencite{friedman2022} packages solve a SLOPE and lasso problem, respectively, for the \dataset{bcTCGA} data set.
 \pkg{SLOPE} takes 43 seconds to reach convergence, whilst \pkg{glmnet} requires only 0.14 seconds\footnote{See~\Cref{sec:slope-vs-glmnet} for details on this experiment.}.
 This lackluster performance has hampered the applicability of SLOPE to many real-world applications.
-In this paper, we present a remedy for this issue, by presenting an algorithm that reaches convergence in only 2.9 seconds on the same problem\footnote{Note that we do not use any screening rule in the current implementation of our algorithm, unlike the \pkg{SLOPE} package, which uses the strong screening rule for SLOPE~\parencite{larsson2020c}.}.
+In this paper, we present a remedy for this issue: an algorithm that reaches convergence in only 2.9 seconds on the same problem\footnote{Note that we do not use any screening rule in the current implementation of our algorithm, unlike the \pkg{SLOPE} package, which uses the strong screening rule for SLOPE~\parencite{larsson2020c}.}.
 
 A major reason for why algorithms for solving
 $\ell_1$-, MCP-, or SCAD-regularized problems enjoy better performance is that

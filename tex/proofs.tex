@@ -160,7 +160,7 @@ This allows us to apply results about the structure identification of the proxim
 	\end{enumerate}
 \end{definition}
 
-Because the sorted \(\ell_1\) norm is a polyhedral, it follows immediately that it
+Because the sorted \(\ell_1\) norm is polyhedral, it follows immediately that it
 is partly smooth~\parencite[Example 18]{vaiter2017}. But since we believe a direct
 proof is interesting in and of itself, we provide and prove the following proposition here.
 
@@ -226,7 +226,7 @@ proof is interesting in and of itself, we provide and prove the following propos
 			            %
 			      \item Then, we study the case where $|\cC_i|\neq 1$  and $x_{\cC_i}\neq \textbf{0}$.
 			            Since for all $j \in [p]$, $\lambda_j\neq 0$ and $\lambda$ is a strictly decreasing sequence, we have that for $\varepsilon > 0$ small enough, the $|\cC_i| -1$ points $\lambda_{R(g)_{\cC_i}} + \varepsilon [-\sign(x_{\cC_i})_1, \sign(x_{\cC_i})_2, 0, \hdots, 0]^T$, $\lambda_{R(g)_{\cC_i}} + \varepsilon [0, -\sign(x_{\cC_i})_2, \sign(x_{\cC_i})_3, \hdots, 0]^T$, $\hdots$, $\lambda_{R(g)_{\cC_i}} + \varepsilon [0, 0, 0, \hdots,-\sign(x_{\cC_i})_{|\cC_{i}|-1}, \sign(x_{\cC_i})_{|\cC_{i}|}]^T$ belong to $\cG_i$.
-			            Since these vectors are linearly independent, and using the last equality in the feasible set that, we have that
+			            Since these vectors are linearly independent, and using the last equality in the feasible set, we have that
 			            \begin{align}
 				            \sum_{j\in \cC_i} \sign(x_j)s_j = \sum_{j \in \cC_i}  \lambda_{R(g)_{\cC_i}} \nonumber \enspace .
 			            \end{align}
@@ -264,5 +264,5 @@ proof is interesting in and of itself, we provide and prove the following propos
 
 \begin{remark}
 	We believe that the assumption $\lambda_1 > \cdots > \lambda_p$ can be lifted, since for example the $\ell_1$ and $\ell_\infty$ norms are particular instances of $J$ that violate this assumption, yet are still partly smooth.
-	Hence this assumption could probably be lifted in a future work using a slightly different proof.
+	Hence this assumption could probably be lifted in future work using a slightly different proof.
 \end{remark}

@@ -15,6 +15,7 @@ To investigate the performance of our algorithm, we performed an extensive bench
 
   \item The hybrid (our) solver (see \Cref{alg:hybrid}) combines proximal gradient descent
         and coordinate descent to overcome the non-separability of the SLOPE problem.
+        We perform a coordinate descent step every fifth iteration~(\(v = 5\)) in the algorithm. (See \Cref{sec:hybrid-strategy}.)
   \item The oracle solver (\texttt{oracle CD}) solves \Cref{pb:separable_slope} with coordinate descent, using the clusters obtained via another solver.
         Note that it cannot be used in practice as it requires knowledge of the solution's clusters.
 \end{itemize}
@@ -29,8 +30,10 @@ For the rest of the experiments section, the parameter $q$ of this sequence has 
 We let \(\lambda_\text{max}\) be the \(\lambda\) sequence such that \(\beta^* = 0\), but for which any scaling with a strictly positive scalar smaller than one produces a solution with at least one non-zero coefficient.
 We then parameterize the experiments by scaling \(\lambda_\text{max}\), using the fixed factors \(1/2\), \(1/10\), and \(1/50\), which together cover the range of very sparse solutions to the almost-saturated case.
 
-We pre-process datasets by first removing features with less than three non-zero values. Then, for dense data we center and scale each feature by its mean and standard deviation respectively.
+We pre-process datasets by first removing features with less than three non-zero values.
+Then, we center and scale each feature by its mean and standard deviation respectively.
 For sparse data, we scale each feature by its maximum absolute value.
+This approach is in line with recommendations in, for instance, \textcite{pedregosa2022}.
 
 Each solver was coded in \pkg{python}, using \pkg{numpy}~\parencite{harris2020} and \pkg{numba}~\parencite{lam2015} for performance-critical code.
 The code is available at \href{https://github.com/jolars/slopecd}{\url{github.com/jolars/slopecd}}.
@@ -44,7 +47,7 @@ The computations were carried out on a computing cluster with dual Intel Xeon CP
 \begin{figure*}[!t]
   \centering
   \includegraphics{simulated_legend.pdf}
-  \includegraphics{simulated.pdf} \caption{Benchmark on simulated datasets. The plots show suboptimality as a function of time for SLOPE on multiple simulated datasets and $\lambda$ sequences of varying strength.}
+  \includegraphics{simulated.pdf} \caption{Benchmark on simulated datasets. The plots show suboptimality (difference between the objective at the current iterate, \(P(\beta)\), and the optimum, \(P(\beta^*)\)) as a function of time for SLOPE on multiple simulated datasets and $\lambda$ sequences of varying strength.}
   \label{fig:simulated}
 \end{figure*}
 
@@ -56,14 +59,16 @@ The different scenarios for the simulated data are described in \Cref{tab:simula
 
 \begin{table}[hbt]
   \centering
-  \caption{Scenarios for the simulated data in our benchmarks}
+  \caption{Scenarios for the simulated data in our benchmarks, including 
+    the number of rows~(\(n\)), columns~(\(p\)), signals~(\(k\)), and the
+    fraction of non-zero entries (density) of \(X\).}
   \label{tab:simulated-data}
   \begin{tabular}{
       l
-      S[table-format=5.0,round-mode=off]
-      S[table-format=7.0,round-mode=off]
-      S[table-format=2.0,round-mode=off]
-      S[table-format=1.3,round-mode=off]
+      S[table-format=5.0]
+      S[table-format=7.0]
+      S[table-format=2.0]
+      S[table-format=1.3]
     }
     \toprule
     {Scenario} & {\(n\)} & {\(p\)} & {\(k\)} & {Density} \\ \midrule
@@ -90,14 +95,16 @@ The datasets used for the experiments have been described in \Cref{tab:real-data
 \begin{table}[hbt]
   \centering
   \caption{%
-    List of real datasets used in our experiments.
+    List of real datasets used in our experiments, including 
+    the number of rows~(\(n\)), columns~(\(p\)), signals~(\(k\)), and the
+    fraction of non-zero entries (density) of the corresponding \(X\) matrices.
     See \Cref{tab:dataset-sources} in \Cref{sec:dataset-sources} for references on these datasets.
   }
   \label{tab:real-data}
   \begin{tabular}{
       l
-      S[table-format=5.0,round-mode=off]
-      S[table-format=7.0,round-mode=off]
+      S[table-format=5.0]
+      S[table-format=7.0]
       S[table-format=1.5,round-mode=figures,round-precision=2]
     }
     \toprule
@@ -117,7 +124,7 @@ This is even more visible for the \dataset{news20} dataset where we see that our
   \centering
   \includegraphics{real_legend.pdf}
   \includegraphics{real.pdf}
-  \caption{Benchmark on real datasets. The plots show suboptimality as a function of time for SLOPE on multiple simulated datasets and $\lambda$ sequences of varying strength.}
+  \caption{Benchmark on real datasets. The plots show suboptimality (difference between the objective at the current iterate, \(P(\beta)\), and the optimum, \(P(\beta^*)\)) as a function of time for SLOPE on multiple simulated datasets and $\lambda$ sequences of varying strength.}
   \label{fig:real-data}
 \end{figure*}
 

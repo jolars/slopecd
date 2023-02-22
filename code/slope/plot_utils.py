@@ -16,6 +16,14 @@ def fig_path(x):
     return fig_dir / x
 
 
+def table_path(x):
+    code_dir = Path(here())
+    root_dir = code_dir.parent
+    fig_dir = root_dir / "tex" / "tables"
+
+    return fig_dir / x
+
+
 def plot_legend_apart(ax, figname, ncol=None, title=None):
     """Plot legend apart from figure."""
     # Do all your plots with fig, ax = plt.subplots(),

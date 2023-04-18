@@ -168,17 +168,20 @@
 	\begin{column}{.3\linewidth}
 		\begin{block}{\textbf{\color{malgared} The SLOPE penalty}}
 			\justifying
-			Sparse penalty with built-in coefficients clustering
+			A cool sparse penalty with \textbf{\color{malgared}{built-in coefficients clustering}}
 	\begin{equation*}
 		J(\beta) = \sum_{j=1}^p \lambda_j|\beta_{(j)}|
     \end{equation*}
-    is the \emph{sorted \(\ell_1\) norm}, defined through
-\begin{equation}
-  |\beta_{(1)}| \geq |\beta_{(2)}| \geq \cdots \geq |\beta_{(p)}| \enspace,
-\end{equation}
-with \(\lambda\) being a fixed non-increasing and non-negative sequence.
+    with :
+\begin{align*}
+  &|\beta_{(1)}| \geq |\beta_{(2)}| \geq \cdots \geq |\beta_{(p)}|  \\
+  &\lambda_1 \geq \ldots \ldots \lambda_p \geq 0
+\end{align*}
 
-Graph level lines : clustering coefficients
+\begin{center}
+	\includegraphics[width=0.8\linewidth]{./images/slope
+	}
+\end{center}
 
 Better sparse recovery properties than L1
 

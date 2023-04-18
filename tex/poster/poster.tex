@@ -285,15 +285,15 @@ Issues: not separable, solvers are slow!
 			\begin{center}
 					\begin{minipage}{0.9\linewidth}
 					\begin{beamerboxesrounded}[lower=headerCol]{}
-						\textbf{Code : \url{https://github.com/scikit-learn-contrib/skglm}}
+						\textbf{Code : \url{https://github.com/jolars/slopecd}}
 					\end{beamerboxesrounded}
 				\end{minipage}
 			\end{center}
-			% Experiments were done using \texttt{benchopt}
+			Experiments were done using \texttt{benchopt}
 			\begin{center}
 				\begin{minipage}{0.48\linewidth}
 				\centering
-				%\includegraphics[width=300px]{benchopt_logo_black_path}
+				\includegraphics[width=300px]{images/benchopt_logo_black_path}
 				\begin{beamerboxesrounded}[lower=headerCol]{}
 					\textbf{\url{https://benchopt.github.io/}}
 				\end{beamerboxesrounded}
@@ -301,40 +301,25 @@ Issues: not separable, solvers are slow!
 			\end{center}
 			%
 			\begin{figure}[tb]
-				%\includegraphics[width=0.7\linewidth]{../icml2022/images/lasso_legend.pdf}
-				%\includegraphics[width=0.8\linewidth]{../icml2022/images/lasso.pdf}
+				\includegraphics[width=0.7\linewidth]{./images/simulated_legend.pdf}
+				\includegraphics[width=0.8\linewidth]{./images/simulated.pdf}
 
-				\textbf{Lasso} Normalized duality gap
+				\textbf{Simulated data}
 			\end{figure}
-			\vspace{1.5em}
-			{\color{malgared}Flexibility} \texttt{skglm} only requires gradient, prox and penalty subdifferential / fixed-point: $40$ lines of code to add an elastic net
+			\vspace{.5em}
 
 			\begin{figure}[tb]
-					% %\includegraphics[width=0.7\linewidth]{../icml2022/images/enet_legend.pdf}
-					% %\includegraphics[width=0.8\linewidth]{../icml2022/images/enet.pdf}
+				\includegraphics[width=0.8\linewidth]{./images/real.pdf}
 
-					\textbf{Enet} Normalized duality gap
+				\textbf{Real data}
 			\end{figure}
-			\vspace{1.5em}
-			$40$ lines to add an $\ell_{2/3}$ penalty, {\color{malgared}already used by the optimization community!}
-			%
-			\begin{center}
-				% %\includegraphics[width=0.5\linewidth]{../slides_neurips/prebuiltimages/screenshot_ali.png}
-			\end{center}
-			%
-			% \begin{itemize}
-			% 	\item TODO Comment experiments
-			% 	% \item \textbf{Inertially accelerated} coordinate descent can \textbf{slow down}  convergence
-			% 	% \item \textbf{Anderson accelerated} coordinate descent always provide \textbf{speedups}
-			% 	% \item Experimentally, Anderson generalizes to non quadratic objectives
-			% \end{itemize}
-		% \vspace{-2em}
-		% \begin{block}{References}
+
 			References
 			\nocite{*}
 			\normalsize\bibliography{neuripsBibposter}
 		% \end{block}
 	\end{block}
+
 
 	\end{column}
 \end{columns}

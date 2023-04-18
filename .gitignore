@@ -307,3 +307,5 @@ TSWLatexianTemp*
 #*Notes.bib
 
 submissions/*
+/tex/poster/poster.pdf
+/.vscode/settings.json

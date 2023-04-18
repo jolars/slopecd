@@ -1,0 +1,361 @@
+%==========================================================
+% Preamble
+%==========================================================
+% Fonts/languages
+\documentclass[english,final,t]{beamer}
+\usepackage[orientation=landscape,size=custom,width=129.1,height=86.9,scale=1]{beamerposter}
+%\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+%\usepackage{lmodern}          % allows LaTeX to make any arbitrary font size
+\usepackage{babel}            % For bibliographies
+
+%\usepackage[scaled]{beramono}  % Load typewriter font first, since Arial doesn't have one
+\usepackage{beamerthemePosterExample}
+
+% Beamer Theme
+\mode<presentation>
+{\usetheme{PosterExample}}
+\setbeamertemplate{footline}{}                             % remove footer line
+\setbeamercovered{transparent}
+
+% Useful Packages
+\usepackage{amsthm}
+\usepackage{amssymb}                                               % For fancy math symbols
+\usepackage{amsmath}                                               % For awesome equations/equation arrays
+\usepackage{mathtools}
+\usepackage{float}
+\usepackage{prettyref}
+\usepackage{graphicx}
+\usepackage{enumerate}                                             % For cusomtizable lists
+\usepackage{pdflscape}                                             % For landscape-oriented pages
+\usepackage{booktabs}
+\usepackage{ragged2e}
+\usepackage{bm}
+\usepackage[most]{tcolorbox}
+\usepackage{siunitx}
+\usepackage{soul}
+
+%%%%%%%%%%%%%%%% ALGORITHMS  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage[titlenumbered,linesnumbered,ruled,noend,algo2e]{algorithm2e}
+% \newcommand\mycommfont[1]{\footnotesize\ttfamily\textcolor{blue}{#1}}
+\newcommand\mycommfont[1]{\large \ttfamily\textcolor{blue}{#1}}
+\SetCommentSty{mycommfont}
+\SetEndCharOfAlgoLine{}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\bbR}{\mathbb{R}}
+\newcommand{\eg}{{\em e.g.,~}}
+\newcommand{\cS}{\mathcal{S}}
+
+% \usepackage{xcolor}
+% \newcommand{\marron}[1]{\textcolor{marron}{#1}}
+% \newcommand{\bfmarron}[1]{\textbf{\textcolor{marron}{#1}}}
+
+
+\robustify\bfseries
+\sisetup{
+	binary-units            = true,
+	tight-spacing           = true,
+	separate-uncertainty    = true,
+	multi-part-units        = single
+}
+\usepackage[sort&compress]{natbib}
+\bibliographystyle{unsrtnat}
+
+\usepackage{tikz}
+%% TIKZ Libraries
+\usetikzlibrary{calc,
+	decorations,
+	patterns,
+	shapes,
+	arrows.meta,
+	decorations.pathmorphing,
+	bending,
+	math,
+	positioning,
+	shapes.misc,
+	plotmarks,
+	fit,
+	shadows.blur}
+%% TIKZ mark command
+\newcommand{\tikzmark}[1]{\tikz[baseline,remember picture] \coordinate (#1) {};}
+
+\DeclarePairedDelimiterX{\norm}[1]{\lVert}{\rVert}{#1}
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\argmin}{argmin}
+
+\setbeamerfont{title}{size={\fontsize{90}{90}}}
+\setbeamerfont{block title}{size={\fontsize{56}{49}}}
+\setbeamerfont{block body}{size={\fontsize{36}{42}}}
+
+
+%% Define colors
+\definecolor{bluee}{HTML}{3153ea}
+\definecolor{greenn}{HTML}{318e2a}
+\definecolor{orangee}{HTML}{b27910}
+\definecolor{redd}{HTML}{aa0d0d}
+
+\definecolor{grayy}{HTML}{494949}
+\colorlet{inactive}{grayy!60!white}
+\definecolor{boxgreen}{HTML}{296b1f}
+\definecolor{boxyellow}{HTML}{d8ce38}
+\definecolor{boxred}{HTML}{c43a00}
+\definecolor{azure}{rgb}{0.0, 0.7, 1}
+
+
+
+\newtcolorbox{mybox}{boxrule=6pt,
+	colframe=azure}
+
+\newtcolorbox{mybox2}[2][]{colback=malgared!10!white,
+	colframe=malgared,fonttitle=\bfseries,
+	colbacktitle=malgared,enhanced,
+	title=#2,#1}
+
+\title{
+	Coordinate descent for SLOPE}
+\author{%
+\texorpdfstring{
+	\begin{minipage}{.7\linewidth}
+	\begin{columns}%
+		\column{.3\linewidth}
+		\centering
+		\Large Johan Larsson \\
+		\large Mila \& Université de Montréal
+		\column{.3\linewidth}
+		\centering
+		\Large Quentin Klopfenstein \\
+		\large Université du Luxembourg
+		\column{.28\linewidth}
+		\centering
+		\Large Mathurin Massias \\
+		\large Univ. Lyon, Inria, CNRS, ENS de Lyon
+		\centering
+		\Large Jonas Wallin \\
+		\large Univ. Lyon, Inria, CNRS, ENS de Lyon
+	\end{columns}
+	%
+	\vspace{1em}
+	%
+	% \begin{columns}%
+	% 	\column{.6\linewidth}
+	% 	\centering
+	% 	\Large Gauthier Gidel \\
+	% 	\large Mila \& Université de Montréal, Canada CIFAR AI Chair
+	% 	\column{.4\linewidth}
+	% 	\centering
+	% 	\Large Mathurin Massias \\
+	% \end{columns}
+\end{minipage}}{}
+}
+\setul{0.5ex}{0.3ex}
+
+
+\DeclareMathOperator{\prox}{prox}
+\newcommand{\X}{\mathbf{X}}
+\newcommand{\Y}{\mathbf{y}}
+\newcommand{\w}{w}
+\newcommand{\cL}{\mathcal{L}}
+%\setulcolor{red}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\begin{frame}{}
+\begin{columns}[t]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\begin{column}{.3\linewidth}
+		\begin{block}{\textbf{\color{malgared} The SLOPE penalty}}
+			\justifying
+			Sparse penalty with built-in coefficients clustering
+	\begin{equation*}
+        \hat
+        \beta
+        \in
+        \argmin_{\beta \in \bbR^p}
+        \underbrace{F(X\beta)}_{
+			= f(\beta)}
+        + \sum_{j=1}^p g_j(\beta_j)
+        \enspace ?
+    \end{equation*}
+    % \begin{itemize}
+       $F$ convex smooth
+
+	   $g_j$ non-smooth, $\alpha$-semi-convex
+    % \end{itemize}
+% \end{block}
+% %   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %   \vspace{1em}
+% 	\begin{block}{\textbf{\color{malgared} Applications}}
+% \begin{itemize}
+	\vspace{1em}
+
+	\textbf{\color{malgared} Applications of sparsity}
+
+	Regularized empirical risk minimization when
+		$\# \text{samples} \ll \# \text{features}$, \eg genomics, vision
+
+		Regularized ill-posed inverse problems, \eg neuroimaging
+	% \end{itemize}
+
+	\vspace{2em}
+
+		\begin{center}
+			%\includegraphics[width=0.8\linewidth]{../icml2022/images/path_mcp_lasso_legend.pdf} \\[4mm]
+			%\includegraphics[width=0.8\linewidth]{../icml2022/images/path_mcp_lasso.pdf}
+		\end{center}
+		Non-convex penalties yield {\color{malgared} better sparse recovery}
+	\end{block}
+	%
+	%
+	\begin{block}{\textbf{\color{malgared} Contributions}}
+			New state-of-the-art solvers for
+			$\alpha$-semi-convex penalties
+			\begin{itemize}
+				\item  \textbf{\color{malgared}Working sets strategies}: we design new scores to prioritize features, even for non-convex problems
+				\item  \textbf{\color{malgared}Support identification}: problems become smooth ``at some point''
+				\item  \textbf{\color{malgared}Anderson acceleration + support identification}: once the support is identified, the convergence is accelerated
+			\end{itemize}
+	\end{block}
+
+	% \vspace{1em}
+	\begin{block}{\textbf{\color{malgared} Intuition}}
+
+	Empirically, working sets algorithms quickly identify the generalized support
+
+	Once the support has been identified, the problem is locally quadratic
+
+	Anderon extrapolation provides speedups in this phase
+
+	\end{block}
+\end{column}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{column}{.3\linewidth}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\begin{block}{\textbf{\color{malgared}{\# 1 Features Priorization}}}
+		\begin{itemize}
+			\item
+			\textbf{Rank features} by their violation of the optimality condition:
+			  $\mathrm{score}^\partial_j = \mathrm{dist}(-\nabla_j f (\beta), \partial g_j (\beta_j))$
+			\item \textbf{Solve subproblems} restricted to the largest $n_k$ features violating the optimality condition
+		\end{itemize}
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		\textbf{\color{malgared}Property}: if the inner solver converges to a critical point, solving successive sub-problems converges to a critical point
+		% \begin{center}
+	% 	\LARGE\color{malgared}\textbf{\underline{We propose the first practically efficient} \underline{acceleration of coordinate descent}
+	% 	}
+	% \end{center}
+	% \vspace{5mm}
+		\end{block}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\begin{block}{\textbf{\color{malgared}{\# 2 Support Identification}}}
+		%
+		{\color{malgared}{Assumptions}}:
+		\begin{itemize}
+			\item
+			$\alpha$-semi convex penalties $g_j / L_j$
+			\\
+			(common for MCP and SCAD but excludes $\ell_p$, $p<1$)
+			\item
+			Convergence to a non-degenerated critical point $\hat \beta \in \bbR^p$:\\
+			 $\forall j \notin \mathrm{gsupp}(\hat \beta)$,
+			$- \nabla f_j (\hat \beta) \in \, \mathrm{int}(\partial g_j(\hat \beta_j))$, with
+			$\mathrm{gsupp}(\beta) = \{j \in [p]: \partial g_j(\beta_j) \, \mathrm{is \; a \; singleton}\}$
+		\end{itemize}
+
+		 \vspace{0.5em}
+
+		\textbf{\color{malgared}Property}:  Coordinate descent \textbf{identifies the model} in a finite number of iterations: for $\cS = \mathrm{gsupp}(\hat \beta)$, there exists $K>0$ such that for all $k\geq K$, $\beta_{\cS^c}^{(k)} = \hat \beta_{\cS^c}$
+		\end{block}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\begin{block}{\textbf{\color{malgared}{\# 3 Anderson Acceleration}}}
+
+		{\color{malgared}Recall}: Anderson acceleration is a non linear acceleration procedure to accelerate the convergence of fixed point sequences
+
+		\textbf{\color{malgared}Theorem} (informal): Once the support is identified, Anderson extrapolation provides acceleration
+
+		\begin{center}
+			%\includegraphics[width=1\linewidth]{../slides_smai_mode2022/prebuiltimages/abla_study_legend}
+			%\includegraphics[width=1\linewidth]{../slides_smai_mode2022/prebuiltimages/abla_study}
+		\end{center}
+
+		Both Anderson acceleration and working sets provide speedups, but
+		Anderson acceleration without working sets is not always useful
+
+		\end{block}
+	\end{column}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\begin{column}{.3\linewidth}
+		\begin{block}{\textbf{\color{malgared}Experimental Results}}
+			\setbeamercolor{headerCol}{fg=black,bg=lightgray}
+			\begin{center}
+					\begin{minipage}{0.9\linewidth}
+					\begin{beamerboxesrounded}[lower=headerCol]{}
+						\textbf{Code : \url{https://github.com/scikit-learn-contrib/skglm}}
+					\end{beamerboxesrounded}
+				\end{minipage}
+			\end{center}
+			% Experiments were done using \texttt{benchopt}
+			\begin{center}
+				\begin{minipage}{0.48\linewidth}
+				\centering
+				%\includegraphics[width=300px]{benchopt_logo_black_path}
+				\begin{beamerboxesrounded}[lower=headerCol]{}
+					\textbf{\url{https://benchopt.github.io/}}
+				\end{beamerboxesrounded}
+			\end{minipage}
+			\end{center}
+			%
+			\begin{figure}[tb]
+				%\includegraphics[width=0.7\linewidth]{../icml2022/images/lasso_legend.pdf}
+				%\includegraphics[width=0.8\linewidth]{../icml2022/images/lasso.pdf}
+
+				\textbf{Lasso} Normalized duality gap
+			\end{figure}
+			\vspace{1.5em}
+			{\color{malgared}Flexibility} \texttt{skglm} only requires gradient, prox and penalty subdifferential / fixed-point: $40$ lines of code to add an elastic net
+
+			\begin{figure}[tb]
+					% %\includegraphics[width=0.7\linewidth]{../icml2022/images/enet_legend.pdf}
+					% %\includegraphics[width=0.8\linewidth]{../icml2022/images/enet.pdf}
+
+					\textbf{Enet} Normalized duality gap
+			\end{figure}
+			\vspace{1.5em}
+			$40$ lines to add an $\ell_{2/3}$ penalty, {\color{malgared}already used by the optimization community!}
+			%
+			\begin{center}
+				% %\includegraphics[width=0.5\linewidth]{../slides_neurips/prebuiltimages/screenshot_ali.png}
+			\end{center}
+			%
+			% \begin{itemize}
+			% 	\item TODO Comment experiments
+			% 	% \item \textbf{Inertially accelerated} coordinate descent can \textbf{slow down}  convergence
+			% 	% \item \textbf{Anderson accelerated} coordinate descent always provide \textbf{speedups}
+			% 	% \item Experimentally, Anderson generalizes to non quadratic objectives
+			% \end{itemize}
+		% \vspace{-2em}
+		% \begin{block}{References}
+			References
+			\nocite{*}
+			\normalsize\bibliography{neuripsBibposter}
+		% \end{block}
+	\end{block}
+
+	\end{column}
+\end{columns}
+\end{frame}
+\end{document}

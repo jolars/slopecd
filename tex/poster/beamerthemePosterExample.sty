@@ -1,0 +1,148 @@
+\ProvidesPackage{beamerthemePosterExample}  % this style was adapted by Tyler Ransom from a similar style created by Thomas Deselaers an Philippe Dreuw
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\RequirePackage{tangocolors}
+%\selectcolormodel{RGB}
+\usepackage{xcolor}
+\definecolor{dgreen}{rgb}{0.,0.6,0.}
+\definecolor{forest}{RGB}{34.,139.,34.}
+\definecolor{byublue}{RGB}{0.,30.,76.}
+\definecolor{dukeblue}{RGB}{0.,0.,156.}
+\definecolor{malgared}{rgb}{0.8627450980392157, 0.34901960784313724, 0.34901960784313724}
+\definecolor{malgagray}{rgb}{0.2275, 0.2275, 0.2275}
+
+\definecolor{mfg}{HTML}{000000}
+
+\mode<presentation>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% NOTE: "fg" means "foreground"; "bg" means "background"
+\setbeamercolor{headline}{fg=mfg,bg=white}
+\setbeamercolor{footline}{fg=mfg,bg=white}
+\setbeamerfont{footline}{size=\large,series=\tt}
+\setbeamercolor{separation line}{bg=black}
+\setbeamercolor{title in headline}{fg=mfg}
+\setbeamercolor{author in headline}{fg=mfg}
+\setbeamercolor{institute in headline}{fg=mfg}
+
+\setbeamercolor{framesubtitle}{fg=mfg, bg=white}
+\setbeamercolor{author in head/foot}{fg=mfg, bg=white}
+\setbeamercolor{title in head/foot} {fg=mfg, bg=white}
+
+\setbeamercolor*{normal text}{bg=white}
+\setbeamercolor*{block body}{fg=black}
+\setbeamercolor*{block title}{fg=mfg,bg=white}
+%\setbeamerfont{block title}{size=\large,series=\bf}
+\setbeamercolor{upper separation line head}{fg=white}
+
+\setbeamercolor*{example body}{fg=gray,bg=white}
+\setbeamercolor*{example text}{fg=gray,bg=white}
+\setbeamercolor*{example title}{bg=gray,fg=white}
+
+\setbeamercolor{structure}{fg=mfg}
+
+\setbeamercolor{itemize items}{fg=mfg}
+\setbeamertemplate{itemize items}[triangle] % use triangles instead of bullets
+\setbeamertemplate{navigation symbols}{}    % no navigation on a poster
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setbeamertemplate{block begin}{
+\vskip.75ex
+\begin{beamercolorbox}[ht=5ex,leftskip=-2.3em]{block title}%
+	\usebeamerfont{block title}{\phantom{Gg}\insertblocktitle}% phantom because of baseline problem
+\end{beamercolorbox}%
+{\ifbeamercolorempty[bg]{block body}{}{\nointerlineskip\vskip-0.5pt}}%
+\usebeamerfont{block body}%
+\vspace*{0.5em}%
+\begin{beamercolorbox}[sep=0.5ex,vmode]{block body}%
+	%\ifbeamercolorempty[bg]{block body}{\vskip-.25ex}{\vskip-.75ex}\vbox{}%
+	}
+	\setbeamertemplate{block end}{
+\end{beamercolorbox}
+\vspace*{1.5em}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setbeamertemplate{headline}{
+	\leavevmode
+	\begin{beamercolorbox}[wd=\paperwidth]{headline}
+		\vskip10ex
+		\begin{columns}[T]
+			\begin{column}{.3\paperwidth}
+				\begin{figure}
+					% \includegraphics[height=.05\textheight]{./loghi/mila_logo.png} \hspace{2cm}
+					% \includegraphics[height=.05\textheight]{./loghi/udem_logo.png}\\  \vspace{0.8cm}
+					% \includegraphics[height=.05\textheight]{./loghi/inria} \hspace{3cm}
+					% \includegraphics[height=.05\textheight]{./loghi/uni_lux_logo}
+				\end{figure}
+			\end{column}
+			\hfill
+			\begin{column}{.48\paperwidth}
+				%\centering
+				\raggedright
+				\usebeamercolor{title in headline}{\color{fg}{\usebeamerfont{title}{\inserttitle}\\[1ex]}}
+				\usebeamercolor{author in headline}{\color{fg}\large{\insertauthor}\\[1ex]}
+			\end{column}
+			\hfill
+			\begin{column}{.2\paperwidth}
+				\begin{center}
+					%\includegraphics[width=.25\linewidth]{duke_univ_blue.png}
+					% \includegraphics[height=.1\textheight]{neurips_logo.png}
+				\end{center}
+				\vskip2ex
+			\end{column}
+		\end{columns}
+		\vskip2ex
+	\end{beamercolorbox}
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Theorem Redefinition %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setbeamertemplate{theorem begin}
+{%
+	\begin{\inserttheoremblockenv}
+		{%
+			\inserttheoremheadfont
+			\inserttheoremaddition
+			%\inserttheoremname
+			%\ifx\inserttheoremaddition\@empty\else\ of\ \inserttheoremaddition\fi%
+			%\inserttheorempunctuation
+		}%
+		}
+		\setbeamertemplate{theorem end}{\end{\inserttheoremblockenv}}%
+
+
+\def\th@mystyle{%
+	\normalfont % body font
+	\setbeamercolor{block title example}{bg=orange,fg=white}
+	\setbeamercolor{block body example}{bg=orange!20,fg=black}
+	\def\inserttheoremblockenv{exampleblock}
+}
+\theoremstyle{mystyle}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Display a grid to help align images ... and it looks nice with this color scheme
+%\beamertemplategridbackground[1cm]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\mode<all>
+
+% adapt height of imtemize rectangles
+\setbeamertemplate{itemize items}[triangle]
+\setbeamertemplate{itemize item}{\raisebox{0.12ex}{$\blacktriangleright$}\hskip-0.1em}
+\setbeamertemplate{itemize subitem}{\raisebox{0.12ex}{$\triangleright$}\hskip0.1em}
+% or define your own template using \defbeamertemplate{itemize item}, see beameruserguide.pdf
+
+% equal font sizes for all levels
+%\setbeamerfont{itemize/enumerate body}{size=\normalsize}
+%\setbeamerfont{itemize/enumerate subbody}{size=\normalsize}
+%\setbeamerfont{itemize/enumerate subsubbody}{size=\normalsize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-PDF-mode: t
+%%% TeX-master: "poster-surf"
+%%% End:

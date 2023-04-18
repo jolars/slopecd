@@ -170,63 +170,44 @@
 			\justifying
 			Sparse penalty with built-in coefficients clustering
 	\begin{equation*}
-        \hat
-        \beta
-        \in
-        \argmin_{\beta \in \bbR^p}
-        \underbrace{F(X\beta)}_{
-			= f(\beta)}
-        + \sum_{j=1}^p g_j(\beta_j)
-        \enspace ?
+		J(\beta) = \sum_{j=1}^p \lambda_j|\beta_{(j)}|
     \end{equation*}
-    % \begin{itemize}
-       $F$ convex smooth
+    is the \emph{sorted \(\ell_1\) norm}, defined through
+\begin{equation}
+  |\beta_{(1)}| \geq |\beta_{(2)}| \geq \cdots \geq |\beta_{(p)}| \enspace,
+\end{equation}
+with \(\lambda\) being a fixed non-increasing and non-negative sequence.
 
-	   $g_j$ non-smooth, $\alpha$-semi-convex
-    % \end{itemize}
-% \end{block}
-% %   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% %   \vspace{1em}
-% 	\begin{block}{\textbf{\color{malgared} Applications}}
-% \begin{itemize}
-	\vspace{1em}
+Graph level lines : clustering coefficients
 
-	\textbf{\color{malgared} Applications of sparsity}
+Better sparse recovery properties than L1
 
-	Regularized empirical risk minimization when
-		$\# \text{samples} \ll \# \text{features}$, \eg genomics, vision
+Issues: not separable, solvers are slow!
 
-		Regularized ill-posed inverse problems, \eg neuroimaging
-	% \end{itemize}
-
-	\vspace{2em}
-
-		\begin{center}
-			%\includegraphics[width=0.8\linewidth]{../icml2022/images/path_mcp_lasso_legend.pdf} \\[4mm]
-			%\includegraphics[width=0.8\linewidth]{../icml2022/images/path_mcp_lasso.pdf}
-		\end{center}
-		Non-convex penalties yield {\color{malgared} better sparse recovery}
 	\end{block}
 	%
 	%
 	\begin{block}{\textbf{\color{malgared} Contributions}}
-			New state-of-the-art solvers for
-			$\alpha$-semi-convex penalties
+			A new, highly effective solver for SLOPE:
+			\vspace{1em}
 			\begin{itemize}
-				\item  \textbf{\color{malgared}Working sets strategies}: we design new scores to prioritize features, even for non-convex problems
-				\item  \textbf{\color{malgared}Support identification}: problems become smooth ``at some point''
-				\item  \textbf{\color{malgared}Anderson acceleration + support identification}: once the support is identified, the convergence is accelerated
+				\item  based on \textbf{\color{malgared}hybrid} proximal gradient and coordinate descent
+				\item  with \textbf{\color{malgared}guaranteed convergence}
+				\item  \textbf{\color{malgared}reduces by orders of magnitude the time}
+				required to fit SLOPE by orders of magnitude in our empirical experiments.
 			\end{itemize}
 	\end{block}
 
 	% \vspace{1em}
 	\begin{block}{\textbf{\color{malgared} Intuition}}
 
-	Empirically, working sets algorithms quickly identify the generalized support
+	Naive is fast but gets stuck
 
-	Once the support has been identified, the problem is locally quadratic
+	PGD steps identify the cluster
 
-	Anderon extrapolation provides speedups in this phase
+	Mixing the two: best of both worlds
+
+	TODO include CD picture
 
 	\end{block}
 \end{column}

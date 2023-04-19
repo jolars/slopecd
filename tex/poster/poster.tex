@@ -3,7 +3,7 @@
 %==========================================================
 % Fonts/languages
 \documentclass[english,final,t]{beamer}
-\usepackage[orientation=landscape,size=custom,width=129.1,height=86.9,scale=1]{beamerposter}
+\usepackage[orientation=landscape,size=custom,width=118.9,height=84.1,scale=1]{beamerposter}
 %\usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 %\usepackage{lmodern}          % allows LaTeX to make any arbitrary font size
@@ -169,7 +169,7 @@
 		\justifying
 		SLOPE: a cool sparse penalty with \textbf{\color{malgared}{built-in coefficients clustering}}
 		\begin{equation*}
-			\mathrm{slope}(\beta) = \sum_{j=1}^p \lambda_j|\beta_{(j)}|
+			\text{slope}(\beta) = \sum_{j=1}^p \lambda_j|\beta_{(j)}|
 		\end{equation*}
 		\vspace{.2em}
 		Largest coefficients get penalized more:
@@ -189,7 +189,7 @@
 		Automatically clusters some coefficients together, better recovery than L1
 		\vspace{.4em}
 
-		Issues: not separable, \textbf{\textcolor{malgared}{solvers are slow!}}
+		Issue: not separable, \textbf{\textcolor{malgared}{solvers are slow!}}
 
 	\end{block}
 	%
@@ -213,7 +213,7 @@
 
 			Naive CD is fast but gets stuck // PGD steps identify the cluster \\[5mm]
 
-			Hybrid: best of both worlds
+			\textbf{\textcolor{malgared}{Hybrid: best of both worlds}}
 		\end{center}
 
 	\end{block}
@@ -221,11 +221,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{column}{.3\linewidth}
+\begin{column}{.32\linewidth}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\begin{block}{\textbf{\color{malgared}{\#1 Clusterwise minimization}}}
-		If we know the clusters of the solution we can find the value of $\beta^*$ on it by solving with CD:
+		If we know the clusters $\cC_1^*, \ldots, \cC_m^*$ of the solution we can find the value of $\beta^*$ on it by solving quickly with CD:
 		\begin{equation*}
 			\min_{z \in \bbR^{m^*}}\bigg(
 				\frac{1}{2} \Big\lVert y - X \sum_{i=1}^{m^*} \sum_{j \in \mathcal{C}_i^*} z_i \sign(\beta_j^*) e_j \Big\rVert^2
@@ -237,31 +237,35 @@
 		\begin{equation*}
 			\beta_i(z) =
 			\begin{cases}
-			  \mathrm{sign}(\beta_i) z   \, , & \text{if } i \in \mathcal{C}_k \, , \\
+			  \text{sign}(\beta_i) z   \, , & \text{if } i \in \mathcal{C}_k \, , \\
 			  \beta_i \, ,                    & \text{otherwise} \, .
 			\end{cases}
 		\end{equation*}
 
-		\textbf{\textcolor{malgared}{Property}}: Minimization with respect to a single cluster has a closed-form given by the \emph{SLOPE-thresholding operator}
+		\textbf{\textcolor{malgared}{Property}}: Minimizing SLOPE-regularized least squares with respect to a single cluster has a closed-form given by the \emph{SLOPE-thresholding operator}
 
 		\begin{center}
-			\includegraphics[width=0.7\linewidth]{images/slope-thresholding}
+			\includegraphics[width=0.6\linewidth]{images/slope-thresholding}
 		\end{center}
+		\vspace*{-1cm}
 		\end{block}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\vspace*{-1.5cm}
 	\begin{block}{\textbf{\color{malgared}{\#2 Cluster identification}}}
 		%
-		{\textbf{\color{malgared}{Property}}}: If $\lambda$ is a strictly decreasing sequence, the sorted $\ell_1$ norm is \textbf{partly smooth} and so Proximal Gradient identifies the clusters of the solution in a finite number of steps.
+		{\textbf{\color{malgared}{Property}}}: If $\lambda$ is a strictly decreasing sequence, the sorted $\ell_1$ norm is \textbf{partly smooth} and so Proximal Gradient identifies the clusters of the solution in a finite number of steps. \\[0.2em]
+		$\hookrightarrow$ intertwine PGD step to identify the clusters and CD steps to minimize quickly the objective
 	\end{block}
-
+	\vspace*{-1.5cm}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\begin{block}{\textbf{\color{malgared}{\#3 Algorithm}}}
+		\vspace*{-.5cm}
 
 		\begin{algorithm}[H]
 			\SetKwInOut{Input}{input}
@@ -278,20 +282,21 @@
 
 			\For{\(t \gets 0,1,\dots\)}{
 
-			  \If{\(t \bmod v = 0\)}{
-				\(\beta \leftarrow \prox_{J/{\norm{X}^2_2}}\Big(\beta - \frac{1}{\norm{X}_2^2}X^T(X \beta - y)\Big)\) \label{alg:hybrid-istastep}
+			  \If(\tcp*[h]{cluster identification step}){\(t \bmod v = 0\)}{
+				\(\beta \leftarrow \prox_{\frac{1}{\norm{X}^2_2}  \, \text{slope}}\Big(\beta - \frac{1}{\norm{X}_2^2}X^T(X \beta - y)\Big)\) \label{alg:hybrid-istastep}
 
-				Update \(c\), \(\mathcal{C}\)
+				Update \(c\), \(\mathcal{C}\)  \tcp{clusters and $\beta$ value on clusters}
 			  }
 			  \Else{
 				\(k \gets 1\)
 
-				\While{\(k \leq \lvert \mathcal{C} \rvert\)}{
-				  \(\tilde x_k \gets X_{\mathcal{C}_k} \mathrm{sign}(\beta_{\cC_k}) \)
+				\While(\tcp*[h]{fast coordinate descent steps}){\(k \leq \lvert \mathcal{C} \rvert\)}
+				{
+				  \(\tilde x_k \gets X_{\mathcal{C}_k} \text{sign}(\beta_{\cC_k}) \)
 
-				  \(z \gets T(c_k\norm{\tilde x}^2 - \tilde x^T(X\beta - y); \norm{x}^2, c^{\setminus k}, \lambda)\)
+				  \(z \gets T(c_k\norm{\tilde x}^2 - \tilde x^T(X\beta - y); \norm{x}^2, c^{\setminus k}, \lambda)\) \tcp{SLOPE-thresholding operator}
 
-				  $\beta_{\cC_k} \gets z \mathrm{	sign}(\beta_{\cC_k})$
+				  $\beta_{\cC_k} \gets z \text{	sign}(\beta_{\cC_k})$
 
 				  Update \(c\), \(\mathcal{C}\)
 
@@ -309,7 +314,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\begin{column}{.3\linewidth}
-		\begin{block}{\textbf{\color{malgared}Experimental Results}}
+		\begin{block}{\textbf{\color{malgared}Experimental results}}
 			\setbeamercolor{headerCol}{fg=black,bg=lightgray}
 			\begin{center}
 					\begin{minipage}{0.9\linewidth}
@@ -333,6 +338,7 @@
 				\textbf{Real data}
 			\end{figure}
 
+			\vspace*{6cm}
 			References
 			\nocite{*}
 			\normalsize\bibliography{neuripsBibposter}

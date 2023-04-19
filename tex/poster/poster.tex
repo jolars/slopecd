@@ -47,7 +47,8 @@
 \newcommand{\bbR}{\mathbb{R}}
 \newcommand{\eg}{{\em e.g.,~}}
 \newcommand{\cS}{\mathcal{S}}
-
+\newcommand{\cC}{\mathcal{C}}
+\DeclareMathOperator{\sign}{sign}
 % \usepackage{xcolor}
 % \newcommand{\marron}[1]{\textcolor{marron}{#1}}
 % \newcommand{\bfmarron}[1]{\textbf{\textcolor{marron}{#1}}}
@@ -119,13 +120,13 @@
 \texorpdfstring{
 	\begin{minipage}{.98\linewidth}
 	\begin{columns}%
-		\column{.24\linewidth}
+		\column{.44\linewidth}
 		\centering
 		\Large Johan Larsson \\
 		\large Lund University, Sweden \\[2em]
 		\Large Mathurin Massias \\
 		\large Univ. Lyon, Inria, CNRS, ENS de Lyon
-		\column{.24\linewidth}
+		\column{.44\linewidth}
 		\centering
 		\Large Quentin Klopfenstein \\
 		\large Université du Luxembourg \\[2em]
@@ -223,26 +224,37 @@
 \begin{column}{.3\linewidth}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\begin{block}{\textbf{\color{malgared}{\# 1 Features Priorization}}}
-		\begin{itemize}
-			\item
-			\textbf{Rank features} by their violation of the optimality condition:
-			  $\mathrm{score}^\partial_j = \mathrm{dist}(-\nabla_j f (\beta), \partial g_j (\beta_j))$
-			\item \textbf{Solve subproblems} restricted to the largest $n_k$ features violating the optimality condition
-		\end{itemize}
-		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		\textbf{\color{malgared}Property}: if the inner solver converges to a critical point, solving successive sub-problems converges to a critical point
-		% \begin{center}
-	% 	\LARGE\color{malgared}\textbf{\underline{We propose the first practically efficient} \underline{acceleration of coordinate descent}
-	% 	}
-	% \end{center}
-	% \vspace{5mm}
+	\begin{block}{\textbf{\color{malgared}{\#1 Clusterwise minimization}}}
+		If we know the clusters of the solution we can find the value of $\beta^*$ on it by solving with CD:
+		\begin{equation*}
+			\min_{z \in \bbR^{m^*}}\bigg(
+				\frac{1}{2} \Big\lVert y - X \sum_{i=1}^{m^*} \sum_{j \in \mathcal{C}_i^*} z_i \sign(\beta_j^*) e_j \Big\rVert^2
+				+ \sum_{i=1}^{m^*} | z_i | \sum_{j \in \mathcal{C}_i^*} \lambda_j
+				\bigg).
+		\end{equation*}
+
+		Idea: allow iterate $\beta$ to \textbf{move only on one cluster} and minimize wrt value on cluster:
+		\begin{equation*}
+			\beta_i(z) =
+			\begin{cases}
+			  \mathrm{sign}(\beta_i) z   \, , & \text{if } i \in \mathcal{C}_k \, , \\
+			  \beta_i \, ,                    & \text{otherwise} \, .
+			\end{cases}
+		\end{equation*}
+
+		\textbf{\textcolor{malgared}{Property}}: Minimization with respect to a single clsuter has a closed form given by the \emph{SLOPE-thresholding operator}
+		% If we know the true clusters, we need to solve the 1D minimization problem:
+		% \begin{equation}
+		% 	\min_{z \in \mathbb{R}} \Big(
+		% 		G(z) = P(\beta(z))  = \frac{1}{2} \norm{y - X \beta(z)}^2 + H(z)
+		% 		\Big) \,  ,
+		% \end{equation}
 		\end{block}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\begin{block}{\textbf{\color{malgared}{\# 2 Support Identification}}}
+	\begin{block}{\textbf{\color{malgared}{\# 2 Cluster identification}}}
 		%
 		{\color{malgared}{Assumptions}}:
 		\begin{itemize}
@@ -265,19 +277,46 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\begin{block}{\textbf{\color{malgared}{\# 3 Anderson Acceleration}}}
+	\begin{block}{\textbf{\color{malgared}{Algorithm}}}
 
-		{\color{malgared}Recall}: Anderson acceleration is a non linear acceleration procedure to accelerate the convergence of fixed point sequences
+		\begin{algorithm}[H]
+			\SetKwInOut{Input}{input}
+			\caption{%
+			  Hybrid coordinate descent and proximal gradient descent algorithm
+			  for SLOPE\label{alg:hybrid}}
+			\Input{%
+			  \(X \in \mathbb{R}^{n\times p}\),
+			  \(y\in \mathbb{R}^n\),
+			  \(\lambda \in \{\mathbb{R}^p : \lambda_1 \geq \lambda_2 \geq \cdots > 0\}\),
+			  \(v \in \mathbb{N}\),
+			  \(\beta \in \mathbb{R}^p\)
+			}
 
-		\textbf{\color{malgared}Theorem} (informal): Once the support is identified, Anderson extrapolation provides acceleration
+			\For{\(t \gets 0,1,\dots\)}{
 
-		\begin{center}
-			%\includegraphics[width=1\linewidth]{../slides_smai_mode2022/prebuiltimages/abla_study_legend}
-			%\includegraphics[width=1\linewidth]{../slides_smai_mode2022/prebuiltimages/abla_study}
-		\end{center}
+			  \If{\(t \bmod v = 0\)}{
+				\(\beta \leftarrow \prox_{J/{\norm{X}^2_2}}\Big(\beta - \frac{1}{\norm{X}_2^2}X^T(X \beta - y)\Big)\) \label{alg:hybrid-istastep}
 
-		Both Anderson acceleration and working sets provide speedups, but
-		Anderson acceleration without working sets is not always useful
+				Update \(c\), \(\mathcal{C}\)
+			  }
+			  \Else{
+				\(k \gets 1\)
+
+				\While{\(k \leq \lvert \mathcal{C} \rvert\)}{
+				  \(\tilde x_k \gets X_{\mathcal{C}_k} \mathrm{sign}(\beta_{\cC_k}) \)
+
+				  \(z \gets T(c_k\norm{\tilde x}^2 - \tilde x^T(X\beta - y); \norm{x}^2, c^{\setminus k}, \lambda)\)
+
+				  $\beta_{\cC_k} \gets z \mathrm{	sign}(\beta_{\cC_k})$
+
+				  Update \(c\), \(\mathcal{C}\)
+
+				  \(k \gets k + 1\)
+				}
+			  }
+			}
+			\Return{\(\beta\)}
+		  \end{algorithm}
 
 		\end{block}
 	\end{column}

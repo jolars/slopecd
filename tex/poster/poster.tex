@@ -242,42 +242,26 @@
 			\end{cases}
 		\end{equation*}
 
-		\textbf{\textcolor{malgared}{Property}}: Minimization with respect to a single clsuter has a closed form given by the \emph{SLOPE-thresholding operator}
-		% If we know the true clusters, we need to solve the 1D minimization problem:
-		% \begin{equation}
-		% 	\min_{z \in \mathbb{R}} \Big(
-		% 		G(z) = P(\beta(z))  = \frac{1}{2} \norm{y - X \beta(z)}^2 + H(z)
-		% 		\Big) \,  ,
-		% \end{equation}
+		\textbf{\textcolor{malgared}{Property}}: Minimization with respect to a single cluster has a closed-form given by the \emph{SLOPE-thresholding operator}
+
+		\begin{center}
+			\includegraphics[width=0.7\linewidth]{images/slope-thresholding}
+		\end{center}
 		\end{block}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\begin{block}{\textbf{\color{malgared}{\# 2 Cluster identification}}}
+	\begin{block}{\textbf{\color{malgared}{\#2 Cluster identification}}}
 		%
-		{\color{malgared}{Assumptions}}:
-		\begin{itemize}
-			\item
-			$\alpha$-semi convex penalties $g_j / L_j$
-			\\
-			(common for MCP and SCAD but excludes $\ell_p$, $p<1$)
-			\item
-			Convergence to a non-degenerated critical point $\hat \beta \in \bbR^p$:\\
-			 $\forall j \notin \mathrm{gsupp}(\hat \beta)$,
-			$- \nabla f_j (\hat \beta) \in \, \mathrm{int}(\partial g_j(\hat \beta_j))$, with
-			$\mathrm{gsupp}(\beta) = \{j \in [p]: \partial g_j(\beta_j) \, \mathrm{is \; a \; singleton}\}$
-		\end{itemize}
+		{\textbf{\color{malgared}{Property}}}: If $\lambda$ is a strictly decreasing sequence, the sorted $\ell_1$ norm is \textbf{partly smooth} and so Proximal Gradient identifies the clusters of the solution in a finite number of steps.
+	\end{block}
 
-		 \vspace{0.5em}
-
-		\textbf{\color{malgared}Property}:  Coordinate descent \textbf{identifies the model} in a finite number of iterations: for $\cS = \mathrm{gsupp}(\hat \beta)$, there exists $K>0$ such that for all $k\geq K$, $\beta_{\cS^c}^{(k)} = \hat \beta_{\cS^c}$
-		\end{block}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\begin{block}{\textbf{\color{malgared}{Algorithm}}}
+	\begin{block}{\textbf{\color{malgared}{\#3 Algorithm}}}
 
 		\begin{algorithm}[H]
 			\SetKwInOut{Input}{input}

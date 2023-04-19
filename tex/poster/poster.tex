@@ -163,27 +163,32 @@
 \begin{frame}{}
 \begin{columns}[t]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\begin{column}{.3\linewidth}
-		\begin{block}{\textbf{\color{malgared} The SLOPE penalty}}
-			\justifying
-			A cool sparse penalty with \textbf{\color{malgared}{built-in coefficients clustering}}
-	\begin{equation*}
-		J(\beta) = \sum_{j=1}^p \lambda_j|\beta_{(j)}|
-    \end{equation*}
-    with :
-\begin{align*}
-  &|\beta_{(1)}| \geq |\beta_{(2)}| \geq \cdots \geq |\beta_{(p)}|  \\
-  &\lambda_1 \geq \ldots \ldots \lambda_p \geq 0
-\end{align*}
+\begin{column}{.3\linewidth}
+	\begin{block}{\textbf{\color{malgared} SLOPE and Coordinate descent}}
+		\justifying
+		SLOPE: a cool sparse penalty with \textbf{\color{malgared}{built-in coefficients clustering}}
+		\begin{equation*}
+			\mathrm{slope}(\beta) = \sum_{j=1}^p \lambda_j|\beta_{(j)}|
+		\end{equation*}
+		\vspace{.2em}
+		Largest coefficients get penalized more:
+		\vspace{.2em}
+		\begin{align*}
+		&|\beta_{(1)}| \geq |\beta_{(2)}| \geq \cdots \geq |\beta_{(p)}|  \\[5mm]
+		& \quad \quad \lambda_1 \geq \ldots \ldots \lambda_p \geq 0
+		\end{align*}
 
-\begin{center}
-	\includegraphics[width=0.8\linewidth]{./images/slope
-	}
-\end{center}
+		\vspace{.3em}
 
-Better sparse recovery properties than L1
+		\begin{center}
+		\includegraphics[width=0.8\linewidth]{./images/slope_level_lines
+		}
+		\end{center}
 
-Issues: not separable, solvers are slow!
+		Automatically clusters some coefficients together, better recovery than L1
+		\vspace{.4em}
+
+		Issues: not separable, \textbf{\textcolor{malgared}{solvers are slow!}}
 
 	\end{block}
 	%
@@ -195,20 +200,20 @@ Issues: not separable, solvers are slow!
 				\item  based on \textbf{\color{malgared}hybrid} proximal gradient and coordinate descent
 				\item  with \textbf{\color{malgared}guaranteed convergence}
 				\item  \textbf{\color{malgared}reduces by orders of magnitude the time}
-				required to fit SLOPE by orders of magnitude in our empirical experiments.
+				 to fit SLOPE
 			\end{itemize}
 	\end{block}
 
 	% \vspace{1em}
 	\begin{block}{\textbf{\color{malgared} Intuition}}
 
-	Naive is fast but gets stuck
+		\begin{center}
+			\includegraphics[width=0.8\linewidth]{images/illustration_solvers}
 
-	PGD steps identify the cluster
+			Naive CD is fast but gets stuck // PGD steps identify the cluster \\[5mm]
 
-	Mixing the two: best of both worlds
-
-	TODO include CD picture
+			Hybrid: best of both worlds
+		\end{center}
 
 	\end{block}
 \end{column}
